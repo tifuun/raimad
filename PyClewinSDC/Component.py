@@ -3,8 +3,10 @@ Class for base component
 """
 
 import numpy as np
+from copy import deepcopy
 
 from PyClewinSDC.LayerParams import LayerParams
+from PyClewinSDC.Dotdict import Dotdict
 
 # Possibilities:
 # None can be used when parent and child have identical layers
@@ -87,14 +89,42 @@ class Component(object):
     """
     Class for base component
     """
-    def __init__(self):
+    default_opts = Dotdict()
+
+    def __init__(self, *args, **kwargs):
         """
+        args and kwargs are interpreted the same way as Dotdict,
+        so can be used to set parameters during creation.
         """
         self.subcomponents = []
         self.subpolygons = []
         self.layers = []  # List of layer names
+        self.set_opts(Dotdict(*args, **kwargs))
 
         self.layer_params = {}  # Maps layer names to parameters
+
+    def update_opts(self, opts: dict):
+        """
+        Apply new options to component, keeping
+        old ones in place.
+        """
+        if not set(opts.keys()).issubset(self.default_opts.keys()):
+            raise Exception(
+                "opts must be a subset of default opts"
+                )
+        self.opts.update(opts)
+
+    def set_opts(self, opts: dict):
+        """
+        Apply new options,
+        overwriting old options.
+        """
+        if not set(opts.keys()).issubset(self.default_opts.keys()):
+            raise Exception(
+                "opts must be a subset of default opts"
+                )
+        self.opts = deepcopy(self.default_opts)
+        self.opts.update(opts)
 
     def add_subcomponent(
             self,
@@ -184,6 +214,15 @@ class Component(object):
             layers[subpolygon.layermap].extend(subpolygon.get_polygon(include_layers))
 
         return layers
+
+    def make(self):
+        """
+        This method should actually generate all subpolygons
+        and subcomponents.
+
+        This is an abstract base class,
+        so here this method actually does nothing.
+        """
 
 
 class Subcomponent(Transformable):
