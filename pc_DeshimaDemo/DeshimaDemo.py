@@ -1,4 +1,4 @@
-from PyClewinSDC.Component import Component
+from PyClewinSDC.Component import Component, Transformable
 
 from pc_Fundamental.Mesh import ArbitraryMesh
 
@@ -42,14 +42,13 @@ class DeshimaDemo(Component):
         self.add_subcomponent(mesh, 'backside')
 
     def make_squares(self):
-        ctx = self.new_context()
-        ctx.rotate(10)
-        ctx.translate(500, 500)
-        ctx.scale(0.9)
-        ctx.rotate(-10)
+        trans = Transformable()
+        trans.rotate(10)
+        trans.translate(500, 500)
+        trans.scale(0.9)
+        #trans.rotate(-10)
         mesh = MeshDeshima2(1000, 1000)
         mesh.make()
-        ctx.add_subcomponent(mesh, 'poly')
-        pass
+        self.add_subcomponent(mesh, 'poly', trans)
 
 
