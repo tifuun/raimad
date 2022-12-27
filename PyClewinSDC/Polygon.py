@@ -24,7 +24,7 @@ class Polygon(object):
 
         new_polygon = Polygon(
             np.array([
-                (affine_mat.dot(np.append(point, 0)))[:2]
+                (affine_mat.dot(np.append(point, 1)))[:2]
                 for point in self.xyarray
                 ])
             )

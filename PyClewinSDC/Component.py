@@ -16,6 +16,143 @@ SubcomponentLayermapShorthand = None | str | dict
 SubpolygonLayermapShorthand = None | str
 
 
+class AffineMatrix(object):
+    def __init__(self, affine_mat=None):
+        if affine_mat is None:
+            self.affine_mat = np.identity(3)
+        else:
+            self.affine_mat = affine_mat
+
+    def fix_affine(self):
+        #self.affine_mat[0, 2] = 0
+        #self.affine_mat[1, 2] = 0
+        self.affine_mat[2, 0] = 0
+        self.affine_mat[2, 1] = 0
+        self.affine_mat[2, 2] = 1
+
+    def translate(self, x, y):
+        self.affine_mat = np.matmul(
+            np.array([
+                [1, 0, x],
+                [0, 1, y],
+                [0, 0, 1],
+                ]),
+            self.affine_mat,
+            )
+        self.fix_affine()
+
+    def scale(self, x, y=None):
+        if y is None:
+            y = x
+        self.affine_mat = np.matmul(
+            np.array([
+                [x, 0, 0],
+                [0, y, 0],
+                [1, 0, 1],
+                ]),
+            self.affine_mat,
+            )
+        self.fix_affine()
+
+    def rotate(self, degrees):
+        cosine = np.cos(np.radians(degrees))
+        sine = np.sin(np.radians(degrees))
+        self.affine_mat = np.matmul(
+            np.array([
+                [cosine, -sine, 0],
+                [sine, cosine, 0],
+                [1, 0, 1],
+                ]),
+            self.affine_mat,
+            )
+        self.fix_affine()
+
+
+class Context(AffineMatrix):
+    """
+    Transformation State container
+
+    Keep track of transformations, options, and layermaps [todo]
+    transformation is kept track by self.affine_mat (of parent class)
+    options is kept track of by optmap, mapping component types
+    (classes) to a dict of default options
+    """
+    def __init__(self, component, parent=None):
+        super().__init__()
+        self.component = component
+        self.parent = parent
+
+        self.optmap = {}
+
+    def get_optmap(self):
+        """
+        Get optmap by compositing all parents' optmaps
+        """
+        optmap = {}
+        self._compose_optmap(optmap)
+        return optmap
+
+    def mapopt(self, component_class, opts):
+        self.optmap[component_class] = opts
+
+    @classmethod
+    def _compose_optmap(self, optmap):
+        """
+        makes get_optmap work
+        """
+        if self.parent is not None:
+            self.parent._compose_optmap(optmap)
+
+        for component, opts in self.optmap.items():
+            if component not in optmap.keys():
+                optmap[component] = {}
+            optmap[component].update(opts)
+
+
+    def get_affine(self):
+        """
+        Go up the ancestry line and calculate final affine matrix
+        """
+        if self.parent is None:
+            return self.affine_mat
+        return np.matmul(self.parent.get_affine(), self.affine_mat)
+
+    def add_subcomponent(self, component, layermap_shorthand: SubcomponentLayermapShorthand = None):
+        """
+        Layermap map subcomponent layers to component layers
+        """
+        layermap = parse_subcomponent_layermap_shorthand(
+            self.component.layers,
+            component.layers,
+            layermap_shorthand,
+            )
+
+        component.update_opts_without_overriding
+
+        self.component.subcomponents.append(
+            Subcomponent(
+                component,
+                layermap,
+                self.get_affine(),
+                )
+            )
+
+    def add_subpolygon(self, polygon, layermap_shorthand: SubpolygonLayermapShorthand = None):
+        """
+        Layermap map subcomponent layers to component layers
+        """
+        layermap = parse_subpolygon_layermap_shorthand(
+            self.component.layers,
+            layermap_shorthand
+            )
+
+        self.component.subpolygons.append(Subpolygon(
+            polygon, layermap, self.get_affine()))
+
+    def new_child(self):
+        return Context(self.component, self)
+
+
 class Component(object):
     """
     Class for base component
@@ -26,14 +163,25 @@ class Component(object):
         self.subcomponents = []
         self.subpolygons = []
         self.layers = []
+        self.ctx = Context(self)
 
         self.layer_params = {}
 
-    def add_layer(self, name, color1='', color2=''):
+    def new_context(self):
+        return self.ctx.new_child()
+
+    def add_subcomponent(self, component, layermap_shorthand: SubcomponentLayermapShorthand = None):
+        self.ctx.add_subcomponent(component, layermap_shorthand)
+
+    def add_subpolygon(self, polygon, layermap_shorthand: SubpolygonLayermapShorthand = None):
+        self.ctx.add_subpolygon(polygon, layermap_shorthand)
+
+    def add_layer(self, name, fancy_name='', color1='', color2=''):
         self.layers.append(name)
         self.layer_params[name] = LayerParams(
             len(self.layers) - 1,
             name,
+            fancy_name,
             color1,
             color2
             )
@@ -57,49 +205,24 @@ class Component(object):
 
         layers = {layer: [] for layer in include_layers}
         for subcomponent in self.subcomponents:
-            for layer, polygons in subcomponent.get_polygons(include_layers).items():
-                layers[layer].extend(polygons)
+            for child_layer, polygons in subcomponent.get_polygons(include_layers).items():
+                parent_layer = subcomponent.layermap[child_layer]
+                if parent_layer is None:
+                    continue
+                layers[parent_layer].extend(polygons)
 
         for subpolygon in self.subpolygons:
             layers[subpolygon.layermap].extend(subpolygon.get_polygon(include_layers))
 
         return layers
 
-    def add_shape(self, shape, layer):
-        self.layers[layer].append(shape)
-
-    def add_shapes(self, shapes, layer):
-        self.layers[layer].extend(shapes)
-
-    def add_subcomponent(self, component, layermap_shorthand: SubcomponentLayermapShorthand = None):
-        """
-        Layermap map subcomponent layers to component layers
-        """
-        layermap = parse_subcomponent_layermap_shorthand(
-            self.layers,
-            component.layers,
-            layermap_shorthand,
-            )
-
-        self.subcomponents.append(Subcomponent(component, layermap))
-
-    def add_subpolygon(self, component, layermap_shorthand: SubpolygonLayermapShorthand = None):
-        """
-        Layermap map subcomponent layers to component layers
-        """
-        layermap = parse_subpolygon_layermap_shorthand(
-            self.layers,
-            layermap_shorthand
-            )
-
-        self.subpolygons.append(Subpolygon(component, layermap))
 
 
-class Subcomponent(object):
-    def __init__(self, component, layermap):
+class Subcomponent(AffineMatrix):
+    def __init__(self, component, layermap, affine_mat):
+        super().__init__(affine_mat)
         self.component = component
         self.layermap = layermap
-        self.affine_mat = np.identity(3)
 
     def get_polygons(self, include_layers):
         """
@@ -127,11 +250,11 @@ class Subcomponent(object):
         return transformed_layers
 
 
-class Subpolygon(object):
-    def __init__(self, polygon, layermap):
+class Subpolygon(AffineMatrix):
+    def __init__(self, polygon, layermap, affine_mat):
+        super().__init__(affine_mat)
         self.polygon = polygon
         self.layermap = layermap
-        self.affine_mat = np.identity(3)
 
     def get_polygon(self, include_layers):
         """
@@ -190,7 +313,7 @@ def parse_subcomponent_layermap_shorthand(parent_layers, child_layers, layermap_
             )
 
     # Pad layermap
-    for missing_layer in set(child_layers) - set(parent_layers):
+    for missing_layer in set(child_layers) - set(layermap):
         layermap[missing_layer] = None
 
     return layermap
