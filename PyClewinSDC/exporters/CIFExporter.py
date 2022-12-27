@@ -2,42 +2,26 @@
 Caltech Intermediate Form Exporter
 """
 
-from io import StringIO
-
 import numpy as np
 
-from PyClewinSDC.exporters.Exporter import Exporter
-from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.LayerParams import LayerParams
+from PyClewinSDC.Component import Component
 
 
-class CIFExporter(Exporter):
-    def __init__(self, output=None):
-        self.output = output or StringIO()
+def CIFExporter(stream, component: Component):
+    stream.write('(CIF written by CleWin 3.1);\n')
+    stream.write('(1 unit = 0.001 micron);\n')
+    stream.write('(SRON);\n')
+    stream.write('(Sorbonnelaan 2);\n')
+    stream.write('(3584 CA  Utrecht);\n')
+    stream.write('(Nederland);\n')
 
-    def writeline(self, text=''):
-        self.output.write(''.join((text, '\n')))
+    for layer_name, polys in component.get_polygons().items():
+        stream.write(f"L L{component.layer_params[layer_name].index};\n")
+        for poly in polys:
+            stream.write('P ')
+            for point in np.nditer(poly.xyarray):
+                stream.write(f"{point:6.0f} ")
+            stream.write(';\n')
 
-    def write(self, text):
-        self.output.write(text)
-
-    def write_header(self):
-        self.writeline('(CIF written by CleWin 3.1);')
-        self.writeline('(1 unit = 0.001 micron);')
-        self.writeline('(SRON);')
-        self.writeline('(Sorbonnelaan 2);')
-        self.writeline('(3584 CA  Utrecht);')
-        self.writeline('(Nederland);')
-
-    def write_footer(self):
-        self.writeline('E')
-
-    def write_polygon(self, polygon: Polygon):
-        self.write('P ')
-        for point in np.nditer(polygon.xyarray):
-            self.write(f"{point:6.0f} ")
-        self.writeline(';')
-
-    def write_layer(self, layer: LayerParams):
-        self.writeline(f"L L{layer.index};")
+    stream.write('E\n')
 

@@ -224,6 +224,9 @@ class Component(object):
         so here this method actually does nothing.
 
         opts allows to pass a custom options list
+
+        Note that make() should work with all default parameters.
+        This will actually be used for making the preview image.
         """
 
 

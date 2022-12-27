@@ -1,5 +1,3 @@
-import shapely as shp
-
 from PyClewinSDC.Component import Component
 from PyClewinSDC.Dotdict import Dotdict
 

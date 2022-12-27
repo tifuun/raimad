@@ -4,4 +4,8 @@ __pycache__
 *.sw*
 *.log
 *.cif
+*.pdf
+*.svg
+
+module_browser
 

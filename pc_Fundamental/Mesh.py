@@ -4,14 +4,21 @@ from PyClewinSDC.Dotdict import Dotdict
 
 
 class Mesh(Component):
+    """
+    Mesh
+    Grid of lines that forms a mesh.
+    Long description here.
+    Something that can be used to absorb leaking radiation.
+    Lorem Ipsum Dolor Sit Amet.
+    """
     default_opts = Dotdict(
         Component.default_opts,
         width=100,
         height=100,
         void_width=10,
         void_height=10,
-        line_width=10,
-        line_height=10,
+        line_width=1,
+        line_height=1,
         )
 
     def __init__(self, *args, **kwargs):
