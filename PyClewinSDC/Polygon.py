@@ -43,4 +43,4 @@ class Polygon(object):
 
     @classmethod
     def rect_wh(cls, x1, y1, width, height):
-        return cls.rect_2point(x1, y1, x1 + width, y1 + width)
+        return cls.rect_2point(x1, y1, x1 + width, y1 + height)

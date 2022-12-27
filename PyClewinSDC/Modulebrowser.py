@@ -12,6 +12,8 @@ from PyClewinSDC.exporters.SVGExporter import SVGExporter
 compo_template = """\
 <div class="component" id="__NAME__">
     <div class="component-left">
+        Preview:
+        <br />
         <img width="99px" src="components/__NAME__/preview.svg" class="preview" id="__NAME__-preview" / >
     </div>
     <div class="component-right">
@@ -37,18 +39,21 @@ html_template = """\
     <head>
         <style>
             .component {
-                width: 50%;
-                border: 10px solid black;
+                margin-left: 10%;
+                margin-bottom: 10px;
+                margin-top: 10px;
+                border: 4px solid black;
+                width: 80%;
                 background-color: #8888ff;
                 padding: 20px;
                 float: left;
             }
             .component-left {
-                width: 19%;
+                width: 20%;
                 float: left;
             }
             .component-right {
-                width: 59%;
+                width: 80%;
                 float: left;
             }
             .component-title {
@@ -106,7 +111,7 @@ def generate_entries(Compos: List[Type[Component]], path: Path):
         html_compo = generate_entry(Compo, path)
         html_compos.append(html_compo)
 
-    html = html_template.replace('__BODY__', html_compo)
+    html = html_template.replace('__BODY__', '\n'.join(html_compos))
     (path / 'index.html').write_text(html)
 
 

@@ -17,5 +17,5 @@ if __name__ == '__main__':
     with open('DeshimaDemo.svg', 'w') as f:
         SVGExporter(f, demo)
 
-    generate_entries((Mesh, ), Path('./module_browser'))
+    generate_entries((Mesh, MSFilter), Path('./module_browser'))
 
