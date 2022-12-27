@@ -20,7 +20,9 @@ class DeshimaDemo(Component):
         self.add_layer('dummy_gnd', 'dummy_NbTiN_GND', '05fefefe', '05fefefe')  # L9
         self.add_layer('poly', 'Polymide', '0ff0f000', '0ff0f000')  # L10
 
-    def make(self):
+    def make(self, opts=None):
+        if opts is None:
+            opts = self.opts
         self._make_mesh()
         self._make_squares()
 

@@ -18,32 +18,30 @@ class Mesh(Component):
         super().__init__(*args, **kwargs)
         self.add_layer('main')
 
-    @property
-    def cell_width(self):
-        return self.opts.void_width + self.opts.line_width
+    def make(self, opts=None):
+        if opts is None:
+            opts = self.opts
 
-    @property
-    def cell_height(self):
-        return self.opts.void_height + self.opts.line_height
+        cell_width = opts.void_width + opts.line_width
+        cell_height = opts.void_height + opts.line_height
 
-    def make(self):
-        for col in range(self.opts.width // self.cell_width):
+        for col in range(opts.width // cell_width):
             self.add_subpolygon(
                 Polygon.rect_2point(
-                    col * self.cell_width,
+                    col * cell_width,
                     0,
-                    col * self.cell_width + self.opts.line_width,
-                    self.opts.height,
+                    col * cell_width + opts.line_width,
+                    opts.height,
                     ),
                 )
 
-        for row in range(self.opts.height // self.cell_height):
+        for row in range(opts.height // cell_height):
             self.add_subpolygon(
                 Polygon.rect_2point(
                     0,
-                    row * self.cell_height,
-                    self.opts.width,
-                    row * self.cell_height + self.opts.line_height,
+                    row * cell_height,
+                    opts.width,
+                    row * cell_height + opts.line_height,
                     ),
                 )
 

@@ -215,13 +215,15 @@ class Component(object):
 
         return layers
 
-    def make(self):
+    def make(self, opts=None):
         """
         This method should actually generate all subpolygons
         and subcomponents.
 
         This is an abstract base class,
         so here this method actually does nothing.
+
+        opts allows to pass a custom options list
         """
 
 
