@@ -11,7 +11,7 @@ class Mesh(Component):
     Something that can be used to absorb leaking radiation.
     Lorem Ipsum Dolor Sit Amet.
     """
-    default_opts, opt_descriptions = make_opts(
+    optspecs = make_opts(
         Component,
         width=(100, "Total width of the Mesh"),
         height=(100, "Total height of the Mesh"),

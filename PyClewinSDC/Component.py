@@ -17,6 +17,8 @@ from PyClewinSDC.Dotdict import Dotdict
 SubcomponentLayermapShorthand = None | str | dict
 SubpolygonLayermapShorthand = None | str
 
+Shadow = None
+
 
 class Transformable(object):
     """
@@ -89,8 +91,7 @@ class Component(object):
     """
     Class for base component
     """
-    default_opts = Dotdict()
-    opt_descriptions = Dotdict()
+    optspecs = {}
 
     def __init__(self, *args, **kwargs):
         """
@@ -109,9 +110,9 @@ class Component(object):
         Apply new options to component, keeping
         old ones in place.
         """
-        if not set(opts.keys()).issubset(self.default_opts.keys()):
+        if not set(opts.keys()).issubset(self.optspecs.keys()):
             raise Exception(
-                "opts must be a subset of default opts"
+                "opts must be a subset of optspecs"
                 )
         self.opts.update(opts)
 
@@ -120,11 +121,15 @@ class Component(object):
         Apply new options,
         overwriting old options.
         """
-        if not set(opts.keys()).issubset(self.default_opts.keys()):
+        if not set(opts.keys()).issubset(self.optspecs.keys()):
             raise Exception(
-                "opts must be a subset of default opts"
+                "opts must be a subset of optspecs"
                 )
-        self.opts = deepcopy(self.default_opts)
+        self.opts = Dotdict({
+            name: optspec.default
+            for name, optspec
+            in self.optspecs.items()
+            })
         self.opts.update(opts)
 
     def add_subcomponent(
@@ -231,12 +236,53 @@ class Component(object):
         """
 
     @classmethod
+    def parent(cls):
+        """
+        Return parent class.
+        This is a shorthand for cls.__bases__[0]
+        """
+        return cls.__bases__[0]
+
+    @classmethod
     def lint(cls):
         """
         Check whether this component class violtates any rules
         """
         if not cls.default_opts.keys() == cls.opt_descriptions.keys():
             print("Options and option descriptions don't match!")
+
+        if len(cls.__bases__) > 1:
+            print(
+                "Multiple base classes detected. "
+                "Please don't use multiple inheritance, "
+                "it may seem like a smart choice now, "
+                "but you will just hurt yourself in the end. "
+                "A wiser approach is encapsulation."
+                )
+        # Big comment block here where I can jot down any other rules:
+        #
+        #
+        #
+        #
+        #
+        #
+
+
+class Optspec(object):
+    """
+    Specification of an option:
+    includes default value, description, shadow status
+    """
+    def __init__(self, default, desc='', shadow=False):
+        self.default = default
+        self.desc = desc
+        self.shadow = bool(shadow)
+
+    def get_shadow(self):
+        """
+        Get shadow version of this optspec
+        """
+        return Optspec(self.default, self.desc, True)
 
 
 def make_opts(parent_class, **kwargs):
@@ -246,14 +292,14 @@ def make_opts(parent_class, **kwargs):
     You must pass in the parent class
     TODO add example
     """
-    default_opts = Dotdict(parent_class.default_opts)
-    opt_descriptions = Dotdict(parent_class.opt_descriptions)
+    optspecs = Dotdict(parent_class.optspecs)
+    for name, spec in kwargs.items():
+        if spec is Shadow:
+            optspecs[name] = parent_class.optspecs[name].get_shadow()
+        else:
+            optspecs[name] = Optspec(*spec)
 
-    for opt_name, (default_value, description) in kwargs.items():
-        default_opts[opt_name] = default_value
-        opt_descriptions[opt_name] = description
-
-    return default_opts, opt_descriptions
+    return optspecs
 
 
 class Subcomponent(Transformable):

@@ -1,4 +1,4 @@
-from PyClewinSDC.Component import Component
+from PyClewinSDC.Component import Component, make_opts, Shadow
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.Dotdict import Dotdict
 
@@ -17,24 +17,14 @@ class MSFilter(Component):
     this comes from the original PyClewin codebase.
     Anyway, this is just some filler to pad out the description.
     """
-    default_opts = Dotdict(
-        Component.default_opts,
-        top_length=100,
-        bottom_length=70,
-        top_thickness=10,
-        bottom_thickness=10,
-        beam_length=100,
-        beam_thickness=10,
-        )
-
-    opt_descriptions = Dotdict(
-        Component.opt_descriptions,
-        top_length="Length of the top part of the filter",
-        bottom_length="Length of the bottom part of the filter",
-        top_thickness="Thickness of the top part of the filter",
-        bottom_thickness="Thickness of the bottom part of the filter",
-        beam_length="Length of the beam",
-        beam_thickness="Thickness of the beam",
+    optspecs = make_opts(
+        Component,
+        top_length=(100, "Length of the top part of the filter"),
+        bottom_length=(70, "Length of the bottom part of the filter"),
+        top_thickness=(10, "Thickness of the top part of the filter"),
+        bottom_thickness=(10, "Thickness of the bottom part of the filter"),
+        beam_length=(100, "Length of the beam"),
+        beam_thickness=(10, "Thickness of the beam"),
         )
 
     def __init__(self):
@@ -83,4 +73,17 @@ class MSFilter(Component):
             'eb',
             )
 
+
+class MSFilterParametric(MSFilter):
+    """
+    I-Shaped filter
+    But this one now takes function-based parameters
+    like frequency in order to compute the geometric parameters
+    , which is probably more useful
+    """
+    optspecs = make_opts(
+        MSFilter,
+        f0=(1e6, "Base frequency"),
+        top_length=Shadow,
+        )
 
