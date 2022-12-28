@@ -3,6 +3,7 @@ Module browser
 makes it easy to look through existing modules
 """
 from typing import Type, List
+import inspect
 
 from pathlib import Path
 
@@ -19,6 +20,9 @@ compo_template = """\
     <div class="component-right">
         <div class="component-title">
             <h1>__FANCY_NAME__</h1>
+            Author: __AUTHOR__
+            Package: __PACKAGE__
+            Name in code: __NAME__
         </div>
         <div class="component-blurb">
             __BLURB__
@@ -28,6 +32,14 @@ compo_template = """\
             <ul>
             __OPTS__
             </ul>
+        </div>
+        <div class="component-layers">
+            Layers:
+            <ul>
+            </ul>
+        </div>
+        <div class="component-howtoget">
+            How to get: __HOWTOGET__
         </div>
     </div>
 </div>
@@ -81,6 +93,8 @@ def generate_entry(Compo: Type[Component], path: Path):
     name = Compo.__name__
     fancy_name = Compo.__doc__.split('\n')[1]
     blurb = '\n'.join(Compo.__doc__.split('\n')[2:])
+    howtoget = Compo.modulebrowser_howtoget or \
+        f"from {inspect.getmodule(Compo).__name__} import {Compo.__name__}"
 
     opts_list = '\n'.join([
         f'<li><strike><b>{name}</b> = {spec.default}: <i>{spec.desc}</i></strike></li>'
@@ -102,7 +116,10 @@ def generate_entry(Compo: Type[Component], path: Path):
         ).replace('__NAME__', name
         ).replace('__FANCY_NAME__', fancy_name
         ).replace('__BLURB__', blurb
-        ).replace('__OPTS__', opts_list)
+        ).replace('__OPTS__', opts_list
+        ).replace('__LAYERS__', ''
+        ).replace('__HOWTOGET__', howtoget
+        )
 
     return html_compo
 
@@ -114,6 +131,15 @@ def generate_entries(Compos: List[Type[Component]], path: Path):
         html_compos.append(html_compo)
 
     html = html_template.replace('__BODY__', '\n'.join(html_compos))
+    return html
+
+
+def generate_package_entries(package, path: Path):
+    html = generate_entries(package.pc_export_components, path)
+    html = (html
+        ).replace('__AUTHOR__', package.__author__
+        ).replace('__PACKAGE__', package.__name__
+        )
     (path / 'index.html').write_text(html)
 
 

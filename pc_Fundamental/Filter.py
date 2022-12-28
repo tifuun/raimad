@@ -76,7 +76,7 @@ class MSFilter(Component):
 
 class MSFilterParametric(MSFilter):
     """
-    I-Shaped filter
+    I-Shaped filter -- Parametric design
     But this one now takes function-based parameters
     like frequency in order to compute the geometric parameters
     , which is probably more useful
