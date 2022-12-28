@@ -27,6 +27,16 @@ class MSFilter(Component):
         beam_thickness=10,
         )
 
+    opt_descriptions = Dotdict(
+        Component.opt_descriptions,
+        top_length="Length of the top part of the filter",
+        bottom_length="Length of the bottom part of the filter",
+        top_thickness="Thickness of the top part of the filter",
+        bottom_thickness="Thickness of the bottom part of the filter",
+        beam_length="Length of the beam",
+        beam_thickness="Thickness of the beam",
+        )
+
     def __init__(self):
         super().__init__()
 

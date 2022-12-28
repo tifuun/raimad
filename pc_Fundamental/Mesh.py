@@ -1,4 +1,4 @@
-from PyClewinSDC.Component import Component
+from PyClewinSDC.Component import Component, make_opts
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.Dotdict import Dotdict
 
@@ -11,14 +11,14 @@ class Mesh(Component):
     Something that can be used to absorb leaking radiation.
     Lorem Ipsum Dolor Sit Amet.
     """
-    default_opts = Dotdict(
-        Component.default_opts,
-        width=100,
-        height=100,
-        void_width=10,
-        void_height=10,
-        line_width=1,
-        line_height=1,
+    default_opts, opt_descriptions = make_opts(
+        Component,
+        width=(100, "Total width of the Mesh"),
+        height=(100, "Total height of the Mesh"),
+        void_width=(10, "Width of the blank cells"),
+        void_height=(10, "Height of the blank cells"),
+        line_width=(1, "Horizontal thickness of the mesh lines"),
+        line_height=(1, "Vertical thickness of the mesh lines"),
         )
 
     def __init__(self, *args, **kwargs):

@@ -90,6 +90,7 @@ class Component(object):
     Class for base component
     """
     default_opts = Dotdict()
+    opt_descriptions = Dotdict()
 
     def __init__(self, *args, **kwargs):
         """
@@ -228,6 +229,31 @@ class Component(object):
         Note that make() should work with all default parameters.
         This will actually be used for making the preview image.
         """
+
+    @classmethod
+    def lint(cls):
+        """
+        Check whether this component class violtates any rules
+        """
+        if not cls.default_opts.keys() == cls.opt_descriptions.keys():
+            print("Options and option descriptions don't match!")
+
+
+def make_opts(parent_class, **kwargs):
+    """
+    Helper function to generate options and option descriptions
+    for a component class.
+    You must pass in the parent class
+    TODO add example
+    """
+    default_opts = Dotdict(parent_class.default_opts)
+    opt_descriptions = Dotdict(parent_class.opt_descriptions)
+
+    for opt_name, (default_value, description) in kwargs.items():
+        default_opts[opt_name] = default_value
+        opt_descriptions[opt_name] = description
+
+    return default_opts, opt_descriptions
 
 
 class Subcomponent(Transformable):

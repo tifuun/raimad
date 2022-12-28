@@ -83,7 +83,7 @@ def generate_entry(Compo: Type[Component], path: Path):
     blurb = '\n'.join(Compo.__doc__.split('\n')[2:])
 
     opts_list = '\n'.join([
-        f'<li>{name} = {default_value}</li>'
+        f'<li><b>{name}</b> = {default_value}: <i>{Compo.opt_descriptions[name]}</i></li>'
         for name, default_value in Compo.default_opts.items()
         ])
 
