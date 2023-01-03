@@ -13,7 +13,7 @@ def get_bounding_box(polygons):
 
     for layer, polys in polygons.items():
         for poly in polys:
-            for point in poly.xyarray:
+            for point in poly.get_xyarray():
                 if point[0] > max_x:
                     max_x = point[0]
                 elif point[0] < min_x:
@@ -41,7 +41,7 @@ def SVGExporter(stream, component: Component):
     for layer_name, polys in polygons.items():
         for poly in polys:
             stream.write('\t<polygon points="')
-            for point in poly.xyarray:
+            for point in poly.get_xyarray():
                 stream.write(f"{point[0] - min_x},{point[1] - min_y} ")
             stream.write('" />\n')
 
