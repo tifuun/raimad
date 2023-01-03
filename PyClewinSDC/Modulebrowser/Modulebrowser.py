@@ -96,6 +96,8 @@ def generate_entry(Compo: Type[Component], path: Path):
 def generate_entries(Compos: List[Type[Component]], path: Path):
     html_compos = []
     for Compo in Compos:
+        if Compo.interface_name != Component.interface_name:
+            continue
         html_compo = generate_entry(Compo, path)
         html_compos.append(html_compo)
 

@@ -76,11 +76,12 @@ class MSFilter(Component):
 
 class MSFilterParametric(MSFilter):
     """
-    I-Shaped filter -- Parametric design
+    I-Shaped filter -- Functional design
     But this one now takes function-based parameters
     like frequency in order to compute the geometric parameters
     , which is probably more useful
     """
+    interface_name = 'Functional'
     optspecs = make_opts(
         MSFilter,
         f0=(1e6, "Base frequency"),
