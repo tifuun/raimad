@@ -2,13 +2,12 @@ import numpy as np
 
 from PyClewinSDC.Component import Component, make_opts, Shadow, make_layers
 from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.Dotdict import Dotdict
-from PyClewinSDC.Transformable import Transformable as T
+from PyClewinSDC.PolygonGroup import PolygonGroup
 
 
-class LeakyDESHIMA(Component):
+class LeakyAntennaExample(Component):
     """
-    Leaky antenna for DESHIMA
+    Leaky antenna example
     Long description Long description Long description
     Long description Long description Long description
     Long description Long description Long description
@@ -73,25 +72,6 @@ class LeakyDESHIMA(Component):
                 ],
             ])
 
-        self.add_subpolygon(
-            diagonal.copy().movex(wslot/2),
-            'eb',
-            )
-
-        self.add_subpolygon(
-            diagonal.copy().hflip().movex(-wslot / 2),
-            'eb',
-            )
-        
-        self.add_subpolygon(
-            diagonal.copy().hflip().vflip().move(-wslot / 2, -hslot / 2),
-            'eb',
-            )
-        self.add_subpolygon(
-            diagonal.copy().vflip().move(wslot/2, -hslot / 2),
-            'eb',
-            )
-
         barlength = htotal + 2 * opts.overlap + 2 * ladd1
         vertical = Polygon.rect_wh(
             0,
@@ -100,15 +80,17 @@ class LeakyDESHIMA(Component):
             barlength,
             )
 
-        self.add_subpolygon(
-            vertical.copy().movex(ltaper + 2 * opts.overlap),
-            'eb',
+        wing_right = PolygonGroup(
+            diagonal,
+            diagonal.copy().hflip().movey(-wslot / 2),
+            vertical.copy().movex(ltaper),
             )
 
-        self.add_subpolygon(
-            vertical.copy().hflip().movex(-(ltaper + 2 * opts.overlap)),
-            'eb',
-            )
+        wing_left = wing_right.copy().vflip()
+
+        self.add_subpolygons(wing_right, 'eb')
+        self.add_subpolygons(wing_left, 'eb')
+
 
         #go(-self.hSlot/2., self.wSlot/2.*updown)
 

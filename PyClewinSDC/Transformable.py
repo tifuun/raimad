@@ -58,14 +58,14 @@ class Transformable(object):
 
     def hflip(self):
         """
-        Horizontal flip
+        Flip along horizontal axis
         """
         self.transform.hflip()
         return self
 
     def vflip(self):
         """
-        Vertical flip
+        Flip along vertical axis
         """
         self.transform.vflip()
         return self

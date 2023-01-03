@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 from copy import deepcopy
 
+from PyClewinSDC.PolygonGroup import PolygonGroup
 from PyClewinSDC.Transformable import Transformable
 from PyClewinSDC.LayerParams import LayerParams
 from PyClewinSDC.Dotdict import Dotdict
@@ -110,6 +111,17 @@ class Component(Transformable):
             )
 
         self.subpolygons.append(subpolygon)
+
+    def add_subpolygons(
+            self,
+            polygon_group: PolygonGroup,
+            layermap: SubpolygonLayermapShorthand = None,
+            ):
+        """
+        Add subpolygons from PolygonGroup
+        """
+        for polygon in polygon_group.get_polygons():
+            self.add_subpolygon(polygon, layermap)
 
     def get_polygons(self, include_layers=None):
         """

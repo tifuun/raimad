@@ -15,14 +15,11 @@ __author__ = "MaybE_Tree"
 # Module header example:
 # https://stackoverflow.com/a/1523456
 
-from pc_Fundamental.Mesh import Mesh
-from pc_Fundamental.Filter import MSFilter, MSFilterParametric
+from pc_LeakyAntenna.LeakyAntennaExample import LeakyAntennaExample
 
 # Yes, (most) imports go AFTER dunders, this is pep8.
 
 pc_export_components = [
-    Mesh,
-    MSFilter,
-    MSFilterParametric,
+    LeakyAntennaExample
     ]
 

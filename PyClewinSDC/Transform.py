@@ -93,11 +93,11 @@ class Transform(object):
         return self
 
     def hflip(self):
-        self.scale(-1, 1)
+        self.scale(1, -1)
         return self
 
     def vflip(self):
-        self.scale(1, -1)
+        self.scale(-1, 1)
         return self
 
     def flip(self):

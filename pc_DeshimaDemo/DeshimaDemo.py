@@ -2,7 +2,7 @@ from PyClewinSDC.Component import Component, make_layers
 from PyClewinSDC.Transform import Transform
 
 from pc_Fundamental.Mesh import Mesh
-from pc_Fundamental.Antennas import LeakyDESHIMA
+from pc_LeakyAntenna.LeakyAntennaExample import LeakyAntennaExample
 
 
 class DeshimaDemo(Component):
@@ -32,7 +32,7 @@ class DeshimaDemo(Component):
         self._make_mesh()
         self._make_squares()
 
-        antenna = LeakyDESHIMA()
+        antenna = LeakyAntennaExample()
         antenna.make()
         self.add_subcomponent(
             antenna,
