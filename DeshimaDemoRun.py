@@ -2,7 +2,7 @@ from pathlib import Path
 
 from PyClewinSDC.exporters.CIFExporter import CIFExporter
 from PyClewinSDC.exporters.SVGExporter import SVGExporter
-from PyClewinSDC.Modulebrowser import generate_package_entries
+from PyClewinSDC.Modulebrowser.Modulebrowser import generate_package_entries
 
 from pc_DeshimaDemo.DeshimaDemo import DeshimaDemo
 import pc_Fundamental

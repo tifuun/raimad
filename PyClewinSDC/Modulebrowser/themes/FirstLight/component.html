@@ -1,0 +1,75 @@
+<div class="compo-wrapper">
+	<div class="compo" id="compo-$name">
+		<input id="compo-checkbox-$name" type=checkbox class="compo-checkbox"/>
+
+		<div class="compo-body">
+			<div class="compo-left">
+				<img
+						src='components/$name/preview.svg'
+						class='compo-preview'
+						alt='$name'>
+			</div>
+			<div class="compo-right">
+				<span class="compo-name"> $fancy_name</span>
+				<p class="compo-desc">
+				$description
+				</p>
+			</div>
+		</div>
+
+		<div class="compo-footer">
+
+			<div class="compo-lists-wrapper">
+				<div class="compo-lists">
+					<div class="compo-options">
+						$num_options Option$options_plural
+						<ul>
+							$options
+						</ul>
+					</div>
+					<div class="compo-layers">
+						$num_layers Layer$layers_plural
+						<ul>
+							$layers
+						</ul>
+					</div>
+					<div class="compo-interfaces">
+						$num_interfaces Interface$interfaces_plural
+						<ul>
+							<li>Geometric</li>
+						</ul>
+					</div>
+				</div>
+				<br>
+			</div>
+
+			<div class="compo-codeblocks">
+				<div class="compo-codeblock">
+					<div class="compo-codelabel">Install: </div>
+					<div class="compo-codetext">$ pip install somerepo</div>
+				</div>
+				<div class="compo-codeblock">
+					<div class="compo-codelabel">Add to project: </div>
+					<div class="compo-codetext">from $modulename import $name</div>
+				</div>
+				<div class="compo-codeblock">
+					<div class="compo-codelabel">Author: </div>
+					<div class="compo-codetext">$author</div>
+				</div>
+			</div>
+			<div class="compo-footer-pad"></div>
+		</div>
+	</div>
+
+	<div class="compo-checkbox-label-jail">
+		<label for="compo-checkbox-$name" class="compo-checkbox-label">
+			<!--<span>Expand $name</span>-->
+			<img
+					src='expand.svg'
+					class='compo-expand'
+					alt='Expand button'>
+		</label>
+	</div>
+</div>
+<br>
+

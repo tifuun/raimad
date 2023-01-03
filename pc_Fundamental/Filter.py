@@ -1,4 +1,4 @@
-from PyClewinSDC.Component import Component, make_opts, Shadow
+from PyClewinSDC.Component import Component, make_opts, Shadow, make_layers
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.Dotdict import Dotdict
 
@@ -27,14 +27,14 @@ class MSFilter(Component):
         beam_thickness=(10, "Thickness of the beam"),
         )
 
-    def __init__(self):
-        super().__init__()
-
-        self.add_layer('diel1', 'Dielectric 1')
-        self.add_layer('diel2', 'Dielectric 2')
-        self.add_layer('line', 'Through-line')
-        self.add_layer('gnd', 'Ground')
-        self.add_layer('eb', 'No clue lol')
+    layerspecs = make_layers(
+        Component,
+        ('diel1', 'Dielectric 1'),
+        ('diel2', 'Dielectric 2'),
+        ('line', 'Through-line'),
+        ('gnd', 'Ground'),
+        ('eb', 'Main Layer'),
+        )
 
     def make(self, opts=None):
         if opts is None:

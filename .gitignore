@@ -1,11 +1,22 @@
+# Python temporary files
 __pycache__
 *.py[cod]
 
+# VIM files
 *.sw*
-*.log
+*.vim
+
+# PyClewin Output files
 *.cif
 *.pdf
 *.svg
-
 module_browser
+
+# human-generated backup files
+*.bak
+*.old
+
+# Misc files
+*.log
+
 

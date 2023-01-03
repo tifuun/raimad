@@ -1,6 +1,6 @@
 import numpy as np
 
-from PyClewinSDC.Component import Component, make_opts, Shadow
+from PyClewinSDC.Component import Component, make_opts, Shadow, make_layers
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.Dotdict import Dotdict
 from PyClewinSDC.Transformable import Transformable as T
@@ -23,15 +23,15 @@ class LeakyDESHIMA(Component):
         thickness=(100, "Membrane thickness"),
         )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.add_layer('koh', '')
-        self.add_layer('sin', '')
-        self.add_layer('gnd', '')
-        self.add_layer('eb', '')
-        self.add_layer('mesh', '')
-        self.add_layer('diel', '')
+    layerspecs = make_layers(
+        Component,
+        ('koh', ''),
+        ('sin', ''),
+        ('gns', 'Ground'),
+        ('eb', 'Main Layer'),
+        ('mesh', 'Mesh Layer'),
+        ('diel', 'Dielectric'),
+        )
 
     def make(self, opts=None):
         if opts is None:

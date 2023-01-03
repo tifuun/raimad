@@ -1,4 +1,4 @@
-from PyClewinSDC.Component import Component, make_opts
+from PyClewinSDC.Component import Component, make_opts, make_layers
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.Dotdict import Dotdict
 
@@ -21,9 +21,10 @@ class Mesh(Component):
         line_height=(1, "Vertical thickness of the mesh lines"),
         )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.add_layer('main')
+    layerspecs = make_layers(
+        Component,
+        ('main', )
+        )
 
     def make(self, opts=None):
         if opts is None:
