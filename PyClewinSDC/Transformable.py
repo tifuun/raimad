@@ -1,96 +1,79 @@
-import numpy as np
+"""
+Utility class for creating classes that encapsulate a Transform
+"""
+
+from PyClewinSDC.Transform import Transform
 
 
 class Transformable(object):
-    """
-    Container for an affine matrix
-    with methods to apply elementary transformations
-    to that matrix.
-
-    This is my first time working with affine matrices,
-    so expect some obtuse code.
-
-    You can see that the transformation methods all return
-    the object themselves.
-    You can use this for shortuts like
-
-    flipped = transformable.copy().hflip()
-    """
-    def __init__(self, affine_mat=None):
-        if affine_mat is None:
-            self.affine_mat = np.identity(3)
+    def __init__(self, transform=None):
+        if transform is None:
+            self.transform = Transform()
         else:
-            self.affine_mat = affine_mat
+            self.transform = transform.copy()
 
-    def copy(self):
-        return Transformable(self.affine_mat)
-
-    def _fix_affine(self):
-        self.affine_mat[2, 0] = 0
-        self.affine_mat[2, 1] = 0
-        self.affine_mat[2, 2] = 1
-
-    def transform(self, transformable):
+    def apply_transform(self, transform):
         """
-        Apply another Transformable to this Transformable
+        Apply a Transform to this polygon
         """
-        self.affine_mat = np.matmul(
-            transformable.affine_mat,
-            self.affine_mat,
-            )
+        self.transform.apply_transform(transform)
         return self
 
     def move(self, x, y):
-        self.affine_mat = np.matmul(
-            np.array([
-                [1, 0, x],
-                [0, 1, y],
-                [0, 0, 1],
-                ]),
-            self.affine_mat,
-            )
-        self._fix_affine()
+        """
+        Move horizontally or vertically
+        """
+        self.transform.move(x, y)
         return self
 
     def movex(self, x):
-        return self.move(x, 0)
+        """
+        Move horizontally
+        """
+        self.transform.movex(x)
+        return self
 
     def movey(self, y):
-        return self.move(0, y)
+        """
+        Move vertically
+        """
+        self.transform.movey(y)
+        return self
 
     def scale(self, x, y=None):
-        if y is None:
-            y = x
-        self.affine_mat = np.matmul(
-            np.array([
-                [x, 0, 0],
-                [0, y, 0],
-                [1, 0, 1],
-                ]),
-            self.affine_mat,
-            )
-        self._fix_affine()
+        """
+        Apply scaling factor.
+        Either pass one argument, or
+        two separate arguments for horizontal and vertical factor
+        """
+        self.transform.scale(x, y)
         return self
 
     def rot(self, degrees):
-        cosine = np.cos(np.radians(degrees))
-        sine = np.sin(np.radians(degrees))
-        self.affine_mat = np.matmul(
-            np.array([
-                [cosine, -sine, 0],
-                [sine, cosine, 0],
-                [1, 0, 1],
-                ]),
-            self.affine_mat,
-            )
-        self._fix_affine()
+        """
+        Rotate by a fixed number of degrees
+        """
+        self.transform.rot(degrees)
         return self
 
     def hflip(self):
-        self.scale(-1, 1)
+        """
+        Horizontal flip
+        """
+        self.transform.hflip()
         return self
 
     def vflip(self):
-        self.scale(1, -1)
+        """
+        Vertical flip
+        """
+        self.transform.vflip()
+        return self
+
+    def flip(self):
+        """
+        Vertical flip, then horizontal flip.
+        """
+        self.transform.flip()
         return self
 

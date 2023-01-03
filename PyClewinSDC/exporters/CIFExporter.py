@@ -19,7 +19,7 @@ def CIFExporter(stream, component: Component):
         stream.write(f"L L{component.layerspecs[layer_name].index};\n")
         for poly in polys:
             stream.write('P ')
-            for point in np.nditer(poly.xyarray):
+            for point in np.nditer(poly.get_xyarray()):
                 stream.write(f"{point:6.0f} ")
             stream.write(';\n')
 

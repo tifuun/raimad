@@ -1,5 +1,5 @@
 from PyClewinSDC.Component import Component, make_layers
-from PyClewinSDC.Transformable import Transformable
+from PyClewinSDC.Transform import Transform
 
 from pc_Fundamental.Mesh import Mesh
 from pc_Fundamental.Antennas import LeakyDESHIMA
@@ -45,13 +45,13 @@ class DeshimaDemo(Component):
         self.add_subcomponent(mesh, 'backside')
 
     def _make_squares(self):
-        trans = Transformable()
+        trans = Transform()
         trans.rot(10)
         trans.move(500, 500)
         trans.scale(0.9)
         #trans.rot(-10)
-        mesh = Mesh(width=1000, height=1000)
+        mesh = Mesh(width=1000, height=1000).apply_transform(trans)
         mesh.make()
-        self.add_subcomponent(mesh, 'poly', trans)
+        self.add_subcomponent(mesh, 'poly')
 
 

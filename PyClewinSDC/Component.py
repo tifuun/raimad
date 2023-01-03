@@ -23,7 +23,7 @@ SubpolygonLayermapShorthand = None | str
 Shadow = None
 
 
-class Component(object):
+class Component(Transformable):
     """
     Class for base component
     """
@@ -38,6 +38,7 @@ class Component(object):
         args and kwargs are interpreted the same way as Dotdict,
         so can be used to set parameters during creation.
         """
+        super().__init__()
         self.subcomponents = []
         self.subpolygons = []
         self.set_opts(Dotdict(*args, **kwargs))
@@ -73,7 +74,6 @@ class Component(object):
             self,
             component,
             layermap_shorthand: SubcomponentLayermapShorthand = None,
-            transform: Transformable | None = None,
             ):
         """
         Add new component as a subcomponent.
@@ -89,16 +89,12 @@ class Component(object):
             layermap,
             )
 
-        if transform is not None:
-            subcomponent.transform(transform)
-
         self.subcomponents.append(subcomponent)
 
     def add_subpolygon(
             self,
             polygon,
             layermap: SubpolygonLayermapShorthand = None,
-            transform: Transformable | None = None,
             ):
         """
         Layermap map subcomponent layers to component layers
@@ -112,9 +108,6 @@ class Component(object):
             polygon,
             layermap_full,
             )
-
-        if transform is not None:
-            subpolygon.transform(transform)
 
         self.subpolygons.append(subpolygon)
 
@@ -135,16 +128,27 @@ class Component(object):
         else:
             assert set(include_layers).issubset(self.layerspecs.keys())
 
+        #layers = {layer: [] for layer in include_layers}
+        #for subcomponent in self.subcomponents:
+        #    for child_layer, polygons in subcomponent.get_polygons(include_layers).items():
+        #        parent_layer = subcomponent.layermap[child_layer]
+        #        if parent_layer is None:
+        #            continue
+        #        layers[parent_layer].extend(polygons)
+
         layers = {layer: [] for layer in include_layers}
         for subcomponent in self.subcomponents:
-            for child_layer, polygons in subcomponent.get_polygons(include_layers).items():
-                parent_layer = subcomponent.layermap[child_layer]
-                if parent_layer is None:
-                    continue
-                layers[parent_layer].extend(polygons)
+            for layer, polygons in subcomponent.get_polygons(include_layers).items():
+                for polygon in polygons:
+                    polygon.apply_transform(self.transform)
+                    layers[layer].append(polygon)
 
         for subpolygon in self.subpolygons:
-            layers[subpolygon.layermap].extend(subpolygon.get_polygon(include_layers))
+            polygon = subpolygon.get_polygon(include_layers)
+            if not polygon:
+                continue
+            polygon.apply_transform(self.transform)
+            layers[subpolygon.layermap].append(polygon)
 
         return layers
 
@@ -192,6 +196,8 @@ class Component(object):
         #
         #
         #
+        #
+        # And also for general codestyle:
         #
 
 
@@ -252,9 +258,8 @@ def make_layers(parent_class, *args):
     return layerspecs
 
 
-class Subcomponent(Transformable):
+class Subcomponent(object):
     def __init__(self, component, layermap):
-        super().__init__()
         self.component = component
         self.layermap = layermap
 
@@ -274,28 +279,35 @@ class Subcomponent(Transformable):
             ]
 
         child_layers = self.component.get_polygons(include_layers_child)
-        transformed_layers = {}
-        for layer_name, polygons in child_layers.items():
-            transformed_layers[layer_name] = [
-                poly.get_transformed(self.affine_mat)
-                for poly in polygons
-                ]
+        parent_layers = {
+            self.layermap[child_layer_name]: polys
+            for child_layer_name, polys in child_layers.items()
+            }
+        #for polygons in child_layers.values():
+        #    for poly in polygons:
+        #        poly.apply_transform(self.transform)
+        #        # Subpolygon.get_polygon copies
+        #        # the polygon, so it's okay
+        #        # to transform it in-place here.
 
-        return transformed_layers
+        return parent_layers
 
 
-class Subpolygon(Transformable):
+class Subpolygon(object):
     def __init__(self, polygon, layermap):
-        super().__init__()
         self.polygon = polygon
         self.layermap = layermap
+        # ^ this is called a layermap, but
+        # really it's just a single string
+        # specifying which layer in the parent component
+        # will this polygon go to.
 
     def get_polygon(self, include_layers):
         """
         """
         if self.layermap in include_layers:
-            return [self.polygon.get_transformed(self.affine_mat)]
-        return []
+            return self.polygon
+        return None
 
 
 def parse_subcomponent_layermap_shorthand(parent_layers, child_layers, layermap_shorthand: SubcomponentLayermapShorthand):

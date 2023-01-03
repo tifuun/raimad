@@ -74,24 +74,22 @@ class LeakyDESHIMA(Component):
             ])
 
         self.add_subpolygon(
-            diagonal,
+            diagonal.copy().movex(wslot/2),
             'eb',
-            T().movex(wslot/2)
+            )
+
+        self.add_subpolygon(
+            diagonal.copy().hflip().movex(-wslot / 2),
+            'eb',
+            )
+        
+        self.add_subpolygon(
+            diagonal.copy().hflip().vflip().move(-wslot / 2, -hslot / 2),
+            'eb',
             )
         self.add_subpolygon(
-            diagonal,
+            diagonal.copy().vflip().move(wslot/2, -hslot / 2),
             'eb',
-            T().hflip().movex(-wslot / 2)
-            )
-        self.add_subpolygon(
-            diagonal,
-            'eb',
-            T().hflip().vflip().move(-wslot / 2, -hslot / 2)
-            )
-        self.add_subpolygon(
-            diagonal,
-            'eb',
-            T().vflip().move(wslot/2, -hslot / 2)
             )
 
         barlength = htotal + 2 * opts.overlap + 2 * ladd1
@@ -103,15 +101,13 @@ class LeakyDESHIMA(Component):
             )
 
         self.add_subpolygon(
-            vertical,
+            vertical.copy().movex(ltaper + 2 * opts.overlap),
             'eb',
-            T().movex(ltaper + 2 * opts.overlap)
             )
 
         self.add_subpolygon(
-            vertical,
+            vertical.copy().hflip().movex(-(ltaper + 2 * opts.overlap)),
             'eb',
-            T().hflip().movex(-(ltaper + 2 * opts.overlap))
             )
 
         #go(-self.hSlot/2., self.wSlot/2.*updown)

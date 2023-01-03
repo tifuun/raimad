@@ -5,34 +5,39 @@ that can be exported to cif
 
 import numpy as np
 
+from PyClewinSDC.Transformable import Transformable
 
-class Polygon(object):
+
+class Polygon(Transformable):
     """
-    Polygon
-    It's meant to be immutable btw
+    Polygon.
+    Inheritrs from Transformable, so you can transform it.
     """
-    def __init__(self, xyarray=None):
-        self.xyarray = [] if xyarray is None else xyarray
+    def __init__(self, xyarray, transform=None):
+        super().__init__(transform)
+        self.xyarray = xyarray.copy()
 
-    def get_transformed(self, affine_mat):
+    def get_xyarray(self):
         """
-        Copy polygon and apply affine matrix to the copy
+        Return transformed xyarray
         """
-        for point in self.xyarray:
-            pass
-            #print((affine_mat * np.append(point, 0))[:3])
+        return np.array([
+            (self.transform.get_matrix().dot(np.append(point, 1)))[:2]
+            for point in self.xyarray
+            ])
 
-        new_polygon = Polygon(
-            np.array([
-                (affine_mat.dot(np.append(point, 1)))[:2]
-                for point in self.xyarray
-                ])
-            )
+    def copy(self):
+        """
+        Return a copy of this polygon
+        """
+        new_polygon = self.__class__(self.xyarray, self.transform)
         return new_polygon
-
 
     @classmethod
     def rect_2point(cls, x1, y1, x2, y2):
+        """
+        Helper class method for creating a rectangle from two points
+        """
         return cls(np.array([
             (x1, y1),
             (x2, y1),
@@ -40,7 +45,10 @@ class Polygon(object):
             (x1, y2),
             ]))
 
-
     @classmethod
     def rect_wh(cls, x1, y1, width, height):
+        """
+        Helper class method for creating a rectangle from a point,
+        width, and height
+        """
         return cls.rect_2point(x1, y1, x1 + width, y1 + height)
