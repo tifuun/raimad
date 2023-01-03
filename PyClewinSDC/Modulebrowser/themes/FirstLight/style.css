@@ -10,6 +10,11 @@
 		--code-bg-color: #000;
 		--code-border-color: #000;
 		--backdrop-filter: contrast(15%) brightness(200%);
+
+		--highlight-color: #11A;
+
+		--hyperlink-color: #22F;
+		--visited-hyperlink-color: #F2F;
 }
 body {
 	background-color: #FFF;
@@ -29,6 +34,11 @@ body {
 			--code-bg-color: #FFF;
 			--code-border-color: #FFF;
 			--backdrop-filter: invert(1) contrast(45%) brightness(30%);
+
+			--highlight-color: #FA0;
+
+			--hyperlink-color: #FA0;
+			--visited-hyperlink-color: #F50;
 	}
 	.compo-preview {
 		filter: invert(1);
@@ -42,6 +52,14 @@ body {
 
 * {
 	box-sizing: border-box;
+}
+
+a {
+	color: var(--hyperlink-color);
+}
+
+a:visited {
+	color: var(--visited-hyperlink-color);
 }
 
 
@@ -147,6 +165,11 @@ body {
 	flex-grow: 1;
 }
 
+.compo-option.shadow
+{
+	text-decoration: line-through;
+}
+
 .compo-layers {
 	border-left: 1px solid var(--border-color);
 }
@@ -221,6 +244,12 @@ body {
 {
 	max-height: none;
 	background: none;
+}
+
+
+.compo:target
+{
+	border: 5px solid var(--highlight-color);
 }
 
 .compo-checkbox {
