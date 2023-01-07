@@ -1,6 +1,6 @@
 from PyClewinSDC.Component import Component, make_opts, make_layers
 from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.Dotdict import Dotdict
+from PyClewinSDC.OptCategory import OptCategory, Geometric
 
 
 class Mesh(Component):
@@ -13,17 +13,17 @@ class Mesh(Component):
     """
     optspecs = make_opts(
         Component,
-        width=(100, "Total width of the Mesh"),
-        height=(100, "Total height of the Mesh"),
-        void_width=(10, "Width of the blank cells"),
-        void_height=(10, "Height of the blank cells"),
-        line_width=(1, "Horizontal thickness of the mesh lines"),
-        line_height=(1, "Vertical thickness of the mesh lines"),
+        width=(100, "Total width of the Mesh", Geometric),
+        height=(100, "Total height of the Mesh", Geometric),
+        void_width=(10, "Width of the blank cells", Geometric),
+        void_height=(10, "Height of the blank cells", Geometric),
+        line_width=(1, "Horizontal thickness of the mesh lines", Geometric),
+        line_height=(1, "Vertical thickness of the mesh lines", Geometric),
         )
 
     layerspecs = make_layers(
         Component,
-        ('main', )
+        main=("I-Shape", ),
         )
 
     def make(self, opts=None):

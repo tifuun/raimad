@@ -3,7 +3,7 @@ Class for base component
 """
 
 from typing import Any, Type, Self
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import numpy as np
 from copy import deepcopy
 
@@ -11,6 +11,7 @@ from PyClewinSDC.PolygonGroup import PolygonGroup
 from PyClewinSDC.Transformable import Transformable
 from PyClewinSDC.LayerParams import LayerParams
 from PyClewinSDC.Dotdict import Dotdict
+from PyClewinSDC.OptCategory import OptCategory, Unspecified
 
 # Possibilities:
 # None can be used when parent and child have identical layers
@@ -250,6 +251,10 @@ class Optspec(object):
     """
     default: Any
     desc: str = ''
+    category: OptCategory = field(
+        default_factory=lambda: Unspecified,
+        )
+    # Shadow must be kept last!
     shadow: bool = False
 
     def get_shadow(self):
@@ -268,6 +273,7 @@ class Layerspec(object):
     fancy_name: str = ''
     color1: str = ''
     color2: str = ''
+    # Index should be kept last
     index: int = -1
 
 
@@ -283,17 +289,23 @@ def make_opts(parent_class, **kwargs):
         if spec is Shadow:
             optspecs[name] = parent_class.optspecs[name].get_shadow()
         else:
-            optspecs[name] = Optspec(*spec)
+            if isinstance(spec, dict):
+                optspecs[name] = Optspec(**spec)
+            else:
+                optspecs[name] = Optspec(*spec)
 
     return optspecs
 
 
-def make_layers(parent_class, *args):
+def make_layers(parent_class, **kwargs):
     """
     """
     layerspecs = Dotdict(parent_class.layerspecs)
-    for index, (name, *spec) in enumerate(args):
-        layerspecs[name] = Layerspec(*spec, index=index)
+    for index, (name, spec) in enumerate(kwargs.items()):
+        if isinstance(spec, dict):
+            layerspecs[name] = Layerspec(**spec, index=index)
+        else:
+            layerspecs[name] = Layerspec(*spec, index=index)
     # TODO should we allow overwriting layers of parent?
 
     return layerspecs

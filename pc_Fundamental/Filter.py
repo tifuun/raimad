@@ -1,6 +1,6 @@
 from PyClewinSDC.Component import Component, make_opts, Shadow, make_layers
 from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.Dotdict import Dotdict
+from PyClewinSDC.OptCategory import Geometric
 
 
 #def MSFilter(direction, updown, ii, line_hybrid, w_coarse, w_upper, short_length, dummy_offset,
@@ -19,21 +19,27 @@ class MSFilter(Component):
     """
     optspecs = make_opts(
         Component,
-        top_length=(100, "Length of the top part of the filter"),
-        bottom_length=(70, "Length of the bottom part of the filter"),
-        top_thickness=(10, "Thickness of the top part of the filter"),
-        bottom_thickness=(10, "Thickness of the bottom part of the filter"),
-        beam_length=(100, "Length of the beam"),
-        beam_thickness=(10, "Thickness of the beam"),
+        top_length=(
+            100, "Length of the top part of the filter", Geometric),
+        bottom_length=(
+            70, "Length of the bottom part of the filter", Geometric),
+        top_thickness=(
+            10, "Thickness of the top part of the filter", Geometric),
+        bottom_thickness=(
+            10, "Thickness of the bottom part of the filter", Geometric),
+        beam_length=(
+            100, "Length of the beam", Geometric),
+        beam_thickness=(
+            10, "Thickness of the beam", Geometric),
         )
 
     layerspecs = make_layers(
         Component,
-        ('diel1', 'Dielectric 1'),
-        ('diel2', 'Dielectric 2'),
-        ('line', 'Through-line'),
-        ('gnd', 'Ground'),
-        ('eb', 'Main Layer'),
+        diel1=('Dielectric 1', ),
+        diel2=('Dielectric 2', ),
+        line=('Through-line', ),
+        gnd=('Ground', ),
+        eb=('Main Layer', ),
         )
 
     def make(self, opts=None):

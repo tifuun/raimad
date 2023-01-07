@@ -3,6 +3,7 @@ import numpy as np
 from PyClewinSDC.Component import Component, make_opts, Shadow, make_layers
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.PolygonGroup import PolygonGroup
+from PyClewinSDC.OptCategory import Geometric
 
 
 class LeakyAntennaExample(Component):
@@ -17,19 +18,19 @@ class LeakyAntennaExample(Component):
     """
     optspecs = make_opts(
         Component,
-        width=(100, "Membrane width"),
-        overlap=(2, "??? in um"),
-        thickness=(100, "Membrane thickness"),
+        width=(100, "Membrane width", Geometric),
+        overlap=(2, "??? in um", Geometric),
+        thickness=(100, "Membrane thickness", Geometric),
         )
 
     layerspecs = make_layers(
         Component,
-        ('koh', ''),
-        ('sin', ''),
-        ('gns', 'Ground'),
-        ('eb', 'Main Layer'),
-        ('mesh', 'Mesh Layer'),
-        ('diel', 'Dielectric'),
+        koh=('', ),
+        sin=('', ),
+        gnd=('Ground', ),
+        eb=('Main Layer', ),
+        mesh=('Mesh Layer', ),
+        diel=('Dielectric', ),
         )
 
     def make(self, opts=None):
