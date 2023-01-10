@@ -2,6 +2,7 @@ from PyClewinSDC.Component import Component, make_layers
 from PyClewinSDC.Transform import Transform
 
 from pc_Fundamental.Mesh import Mesh
+from pc_DeshimaPort.Filter import Filter
 from pc_LeakyAntenna.LeakyAntennaExample import LeakyAntennaExample
 
 
@@ -12,7 +13,7 @@ class DeshimaDemo(Component):
         gnd=('NbTiN_GND', '0f00bbff', '0f00bbff'),  # L1
         back=('SiN_back', '0f00cbff', '0f00cbff'),  # L2
         al=('Aluminum', '0fff0000', '0fff0000'),  # L3
-        si=('aSilicon', '05000000', '05000000'),  # L4
+        asi=('aSilicon', '05000000', '05000000'),  # L4
         line_opt=('NbTiN_lineOPT', '050000ff', '050000ff'),  # L5
         line_eb=('NbTiN_lineEB', '0f0000ff', '0f0000ff'),  # L6
         backside=('Ta backside', '0fc0c0c0', '0fc0c0c0'),  # L7
@@ -37,6 +38,19 @@ class DeshimaDemo(Component):
         self.add_subcomponent(
             antenna,
             {'eb': 'line_eb_coarse'}
+            )
+
+        filt = Filter()
+        filt.make()
+        filt.move(-100, -200)
+        self.add_subcomponent(
+            filt,
+            {
+                'gnd': 'gnd',
+                'opt': 'line_opt',
+                'diel': 'asi',
+                'eb': 'line_eb',
+                },
             )
 
     def _make_mesh(self):

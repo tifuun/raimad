@@ -2,11 +2,12 @@
 Class for base component
 """
 
-from typing import Any, Type, Self
+from typing import Any, Type, Self, List
 from dataclasses import dataclass, field
 import numpy as np
 from copy import deepcopy
 
+from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.PolygonGroup import PolygonGroup
 from PyClewinSDC.Transformable import Transformable
 from PyClewinSDC.LayerParams import LayerParams
@@ -115,14 +116,26 @@ class Component(Transformable):
 
     def add_subpolygons(
             self,
-            polygon_group: PolygonGroup,
+            polys: List[Polygon | PolygonGroup] | Polygon | PolygonGroup,
             layermap: SubpolygonLayermapShorthand = None,
             ):
         """
-        Add subpolygons from PolygonGroup
+        Add multiple subpolygons or subpolygon groups.
         """
-        for polygon in polygon_group.get_polygons():
-            self.add_subpolygon(polygon, layermap)
+        if isinstance(polys, Polygon):
+            self.add_subpolygon(polys, layermap)
+
+        elif isinstance(polys, PolygonGroup):
+            for polygon in polys.get_polygons():
+                self.add_subpolygon(polygon, layermap)
+
+        elif isinstance(polys, list | tuple | set):
+            # TODO isiterable
+            for poly in polys:
+                self.add_subpolygons(poly, layermap)
+
+        else:
+            raise Exception("Please only pass polygons or polygongroups")
 
     def get_polygons(self, include_layers=None):
         """

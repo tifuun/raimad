@@ -40,6 +40,11 @@ Environmental = OptCategory(
     'Physical constants / effects that influence the design.',
     )
 
+Manufacture = OptCategory(
+    'Manufacture',
+    'geometric options that regard the manufacturing process.'
+    )
+
 Dev_Debug = OptCategory(
     'Developer Debug',
     'Options used for debugging by the component developer.',
