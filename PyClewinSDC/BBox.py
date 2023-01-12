@@ -4,40 +4,8 @@ BBox -- bounding box
 
 import numpy as np
 
-from dataclasses import dataclass
-
 from PyClewinSDC.Transform import Transform
-
-
-@dataclass
-class CoordPair(object):
-    x: float = 0
-    y: float = 0
-
-    def __iter__(self):
-        """
-        Iterator method allows unpacking
-        a CoordPair into [x, y]
-        """
-        return iter((self.x, self.y))
-
-    def __add__(self, other):
-        """
-        Allow adding CoordPairs together
-        """
-        return CoordPair(
-            self.x + other.x,
-            self.y + other.y,
-            )
-
-    def __sub__(self, other):
-        """
-        Allow subtractin CoordPairs
-        """
-        return CoordPair(
-            self.x - other.x,
-            self.y - other.y,
-            )
+from PyClewinSDC.Point import Point
 
 
 class BBox(object):
@@ -134,7 +102,7 @@ class BBox(object):
         1,1 is bottom right, 0.5,0.5 is center,
         and 0.5,1 is bottom middle.
         """
-        return CoordPair(
+        return Point(
             self.min_x + self.width * x_ratio,
             self.min_y + self.height * y_ratio,
             )
@@ -155,12 +123,12 @@ class BBox(object):
         return self.interpolate(0.5, 1)
 
     @property
-    def left_mid(self):
+    def mid_left(self):
         assert self.is_valid()
         return self.interpolate(0, 0.5)
 
     @property
-    def right_mid(self):
+    def mid_right(self):
         assert self.is_valid()
         return self.interpolate(1, 0.5)
 

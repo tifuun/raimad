@@ -9,7 +9,7 @@ from copy import deepcopy
 
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.PolygonGroup import PolygonGroup
-from PyClewinSDC.Transformable import Transformable
+from PyClewinSDC.Alignable import Alignable
 from PyClewinSDC.LayerParams import LayerParams
 from PyClewinSDC.Dotdict import Dotdict
 from PyClewinSDC.OptCategory import OptCategory, Unspecified
@@ -26,7 +26,7 @@ SubpolygonLayermapShorthand = None | str
 Shadow = None
 
 
-class Component(Transformable):
+class Component(Alignable):
     """
     Class for base component
     """

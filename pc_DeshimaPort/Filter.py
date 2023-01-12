@@ -114,7 +114,7 @@ class Filter(Component):
         bot_coup = Polygon.rect_center(0, 0, opts.l_bot, opts.w_coup)
 
         top_coup.snap_top(beam)
-        bot_coup.snap_bottom(beam)
+        bot_coup.snap_bot(beam)
 
         Ishape = PolygonGroup(beam, top_coup, bot_coup)
         self.add_subpolygons(Ishape, 'eb')
@@ -131,17 +131,17 @@ class Filter(Component):
         diel = Polygon.rect_float(
             Ishape.bbox.width + 2 * opts.diel_pad,
             Ishape.bbox.height + 2 * opts.diel_pad,
-            ).align_mid(Ishape)
+            ).mid.align(Ishape.mid)
 
         optical = Polygon.rect_float(
             diel.bbox.width + 2 * opts.opt_pad,
             diel.bbox.height + 2 * opts.opt_pad,
-            ).align_mid(Ishape)
+            ).mid.align(Ishape.mid)
 
         gnd = Polygon.rect_float(
             optical.bbox.width + 2 * opts.gnd_pad,
             optical.bbox.height + 2 * opts.gnd_pad,
-            ).align_mid(Ishape)
+            ).mid.align(Ishape.mid)
 
         self.add_subpolygon(diel, 'diel')
 
@@ -174,8 +174,8 @@ class Filter(Component):
             )
 
         # Align the rectangles together into one wire
-        left.align(left.bbox.top_mid, horiz.bbox.left_mid)
-        right.align(right.bbox.top_mid, horiz.bbox.right_mid)
+        left.top_mid.align(horiz.mid_left)
+        right.top_mid.align(horiz.mid_right)
 
         # Fill in the corners with triangles to make a smooth wire
 
@@ -185,8 +185,8 @@ class Filter(Component):
         tri_left = tri.copy()
         tri_right = tri.copy().vflip()
 
-        tri_left.align(tri_left.bbox.bot_right, horiz.bbox.left_mid)
-        tri_right.align(tri_right.bbox.bot_right, horiz.bbox.right_mid)
+        tri_left.bot_right.align(horiz.mid_left)
+        tri_right.bot_right.align(horiz.mid_right)
 
         self.add_subpolygons([horiz, right, left, tri_left, tri_right], 'eb')
 

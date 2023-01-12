@@ -7,17 +7,16 @@ from typing import Self
 
 import numpy as np
 
-from PyClewinSDC.Transformable import Transformable
-from PyClewinSDC.BBox import BBox
+from PyClewinSDC.Alignable import Alignable
 
 
-class Polygon(Transformable):
+class Polygon(Alignable):
     """
     Polygon.
     Inheritrs from Transformable, so you can transform it.
     """
     def __init__(self, xyarray, transform=None, bbox=None):
-        super().__init__(transform)
+        super().__init__(transform=transform, bbox=bbox)
 
         #if isinstance(xyarray, np.ndarray):
         #    self.xyarray = xyarray.copy()
@@ -25,10 +24,7 @@ class Polygon(Transformable):
         #    self.xyarray = np.array(xyarray)
 
         self.xyarray = xyarray.copy()
-
-        # Outsiders can access this bbox directly
-        # TODO read up on how private / public is done in Python
-        self._bbox = bbox.copy() if bbox else BBox(self.xyarray)
+        self._bbox.add_xyarray(self.xyarray)
 
     def get_xyarray(self):
         """
@@ -39,50 +35,12 @@ class Polygon(Transformable):
             for point in self.xyarray
             ])
 
-    @property
-    def bbox(self):
-        # TODO caching
-        return self._bbox.copy().apply_transform(self.transform)
-
     def copy(self):
         """
         Return a copy of this polygon
         """
         new_polygon = self.__class__(self.xyarray, self.transform, self.bbox)
         return new_polygon
-
-    def snap_top(self, to: Self):
-        """
-        Snap on to the top of another polygon.
-        """
-        # TODO Function overloading in Python?
-        # to pass CoordPair or separate x,y to self.move?
-        self.move(*(to.bbox.top_mid - self.bbox.bot_mid))
-        return self
-
-    def snap_bottom(self, to: Self):
-        """
-        Snap on to the bottom of another polygon.
-        """
-        # TODO Function overloading in Python?
-        # to pass CoordPair or separate x,y to self.move?
-        self.move(*(to.bbox.bot_mid - self.bbox.top_mid))
-        return self
-
-    def align_mid(self, to: Self):
-        """
-        Align centers with another polygon.
-        """
-        # TODO class for this, like transformable
-        self.move(*(to.bbox.mid - self.bbox.mid))
-        return self
-
-    def align(self, own_point, target_point):
-        """
-        Align two arbitrary points
-        """
-        self.move(*(target_point - own_point))
-        return self
 
     @classmethod
     def rect_2point(cls, x1, y1, x2, y2):

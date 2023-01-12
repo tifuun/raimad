@@ -30,15 +30,15 @@ class DeshimaDemo(Component):
         if opts is None:
             opts = self.opts
 
-        self._make_mesh()
-        self._make_squares()
+        #self._make_mesh()
+        #self._make_squares()
 
-        antenna = LeakyAntennaExample()
-        antenna.make()
-        self.add_subcomponent(
-            antenna,
-            {'eb': 'line_eb_coarse'}
-            )
+        #antenna = LeakyAntennaExample()
+        #antenna.make()
+        #self.add_subcomponent(
+        #    antenna,
+        #    {'eb': 'line_eb_coarse'}
+        #    )
 
         filt = Filter(
             )

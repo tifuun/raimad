@@ -16,5 +16,5 @@ if __name__ == '__main__':
     with open('DeshimaDemo.svg', 'w') as f:
         SVGExporter(f, demo)
 
-    generate_package_entries(pc_Fundamental, Path('./module_browser'))
+    #generate_package_entries(pc_Fundamental, Path('./module_browser'))
 

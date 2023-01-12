@@ -16,6 +16,8 @@ class Transform(object):
 
     flipped = transformable.copy().hflip()
     """
+    transform_methods = {}
+
     def __init__(self, affine_mat=None):
         if affine_mat is None:
             self.affine_mat = np.identity(3)
