@@ -48,6 +48,12 @@ class Filter(Component):
             Geometric,
             ),
 
+        meander_coup_spacing=(
+            2,
+            "Meander to coupler spacing",
+            Geometric,
+            ),
+
         l_res=(
             100,
             "Resonator length. "
@@ -64,7 +70,7 @@ class Filter(Component):
             ),
 
         diel_pad=(
-            5,
+            20,
             "Additional size to dielectric layer. "
             "At `diel_pad`=0, the dielectric layer barely fits the I-shape. ",
             Geometric
@@ -83,7 +89,7 @@ class Filter(Component):
             ),
 
         short_length=(
-            100,
+            10,
             "Length of the electrical short between coupler and ground layer.",
             Geometric
             ),
@@ -100,8 +106,8 @@ class Filter(Component):
 
     def make(self):
         Ishape = self.make_Ishape()
-        self.make_padding(Ishape)
-        self.make_meander()
+        diel, gnd, optical = self.make_padding(Ishape)
+        self.make_meander(diel, Ishape)
 
     def make_Ishape(self):
         """
@@ -148,11 +154,11 @@ class Filter(Component):
         self.add_subpolygon(optical, 'opt')
         self.add_subpolygon(gnd, 'gnd')
 
-        padding_rects = PolygonGroup(diel, optical, gnd)
+        #padding_rects = PolygonGroup(diel, optical, gnd)
 
-        return padding_rects
+        return diel, gnd, optical
 
-    def make_meander(self):
+    def make_meander(self, diel, IShape):
         """
         Construct meander.
         """
@@ -161,16 +167,19 @@ class Filter(Component):
         # top part of meander, coupled to the filter
         horiz = Polygon.rect_float(opts.l_meander, opts.w_meander)
 
+        base_side_meander_length = \
+            opts.diel_pad - opts.meander_coup_spacing - opts.w_meander / 2
+
         # left part of meander, shorted to ground
         left = Polygon.rect_float(
             opts.w_meander,
-            opts.diel_pad + opts.short_length,
+            base_side_meander_length + opts.short_length,
             )
 
         # right part of meander, connected to mkid
         right = Polygon.rect_float(
             opts.w_meander,
-            opts.opt_pad,
+            base_side_meander_length,
             )
 
         # Align the rectangles together into one wire
@@ -179,7 +188,7 @@ class Filter(Component):
 
         # Fill in the corners with triangles to make a smooth wire
 
-        tri = Polygon([[0, 1], [1, 1], [1, 0]])
+        tri = Polygon([[0, 0], [1, 1], [1, 0]])
         tri.scale(opts.w_meander / 2)
 
         tri_left = tri.copy()
@@ -188,7 +197,11 @@ class Filter(Component):
         tri_left.bot_right.align(horiz.mid_left)
         tri_right.bot_right.align(horiz.mid_right)
 
-        self.add_subpolygons([horiz, right, left, tri_left, tri_right], 'eb')
+        meander = PolygonGroup(horiz, right, left, tri_left, tri_right)
+        meander.top_mid.align(IShape.bot_mid)
+        meander.movey(- opts.meander_coup_spacing)
+
+        self.add_subpolygons(meander, 'eb')
 
 
 

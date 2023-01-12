@@ -20,7 +20,7 @@ def CIFExporter(stream, component: Component):
         for poly in polys:
             stream.write('P ')
             for point in np.nditer(poly.get_xyarray()):
-                stream.write(f"{point:6.0f} ")
+                stream.write(f"{point:9.0f} ")
             stream.write(';\n')
 
     stream.write('E\n')

@@ -43,7 +43,8 @@ class DeshimaDemo(Component):
         filt = Filter(
             )
         filt.make()
-        filt.move(-100, -200)
+        #filt.move(-100, -200)
+        filt.scale(10) # TODO figure out how snapping works in CleWin/klayout
         self.add_subcomponent(
             filt,
             {
