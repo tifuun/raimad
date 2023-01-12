@@ -40,7 +40,8 @@ class DeshimaDemo(Component):
             {'eb': 'line_eb_coarse'}
             )
 
-        filt = Filter()
+        filt = Filter(
+            )
         filt.make()
         filt.move(-100, -200)
         self.add_subcomponent(

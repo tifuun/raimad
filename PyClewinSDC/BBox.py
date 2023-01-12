@@ -140,7 +140,7 @@ class BBox(object):
             )
 
     @property
-    def center(self):
+    def mid(self):
         assert self.is_valid()
         return self.interpolate(0.5, 0.5)
 

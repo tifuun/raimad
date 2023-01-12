@@ -9,6 +9,7 @@ __credits__ = [
 
 from PyClewinSDC.Component import Component, make_opts, make_layers
 from PyClewinSDC.Polygon import Polygon
+from PyClewinSDC.PolygonGroup import PolygonGroup
 from PyClewinSDC.OptCategory import Geometric, Manufacture
 
 
@@ -16,7 +17,7 @@ class Filter(Component):
     optspecs = make_opts(
         Component,
         l_top=(
-            100,
+            70,
             "Top coupler length, edge to edge.",
             Geometric,
             ),
@@ -63,7 +64,7 @@ class Filter(Component):
             ),
 
         diel_pad=(
-            100,
+            5,
             "Additional size to dielectric layer. "
             "At `diel_pad`=0, the dielectric layer barely fits the I-shape. ",
             Geometric
@@ -98,8 +99,9 @@ class Filter(Component):
         )
 
     def make(self):
-        self.make_Ishape()
-        self.make_padding()
+        Ishape = self.make_Ishape()
+        self.make_padding(Ishape)
+        self.make_meander()
 
     def make_Ishape(self):
         """
@@ -114,13 +116,81 @@ class Filter(Component):
         top_coup.snap_top(beam)
         bot_coup.snap_bottom(beam)
 
-        self.add_subpolygons([beam, top_coup, bot_coup], 'eb')
+        Ishape = PolygonGroup(beam, top_coup, bot_coup)
+        self.add_subpolygons(Ishape, 'eb')
+        return Ishape
 
-    def make_padding(self):
+    def make_padding(self, Ishape):
         """
         Generate Ground, optical NbTiN, and Dielectric layers.
         This function is for demonstration, I do not know
         the correct proprtions of the rectangles in these layers.
         """
+        opts = self.opts
+
+        diel = Polygon.rect_float(
+            Ishape.bbox.width + 2 * opts.diel_pad,
+            Ishape.bbox.height + 2 * opts.diel_pad,
+            ).align_mid(Ishape)
+
+        optical = Polygon.rect_float(
+            diel.bbox.width + 2 * opts.opt_pad,
+            diel.bbox.height + 2 * opts.opt_pad,
+            ).align_mid(Ishape)
+
+        gnd = Polygon.rect_float(
+            optical.bbox.width + 2 * opts.gnd_pad,
+            optical.bbox.height + 2 * opts.gnd_pad,
+            ).align_mid(Ishape)
+
+        self.add_subpolygon(diel, 'diel')
+
+        self.add_subpolygon(optical, 'opt')
+        self.add_subpolygon(gnd, 'gnd')
+
+        padding_rects = PolygonGroup(diel, optical, gnd)
+
+        return padding_rects
+
+    def make_meander(self):
+        """
+        Construct meander.
+        """
+        opts = self.opts
+
+        # top part of meander, coupled to the filter
+        horiz = Polygon.rect_float(opts.l_meander, opts.w_meander)
+
+        # left part of meander, shorted to ground
+        left = Polygon.rect_float(
+            opts.w_meander,
+            opts.diel_pad + opts.short_length,
+            )
+
+        # right part of meander, connected to mkid
+        right = Polygon.rect_float(
+            opts.w_meander,
+            opts.opt_pad,
+            )
+
+        # Align the rectangles together into one wire
+        left.align(left.bbox.top_mid, horiz.bbox.left_mid)
+        right.align(right.bbox.top_mid, horiz.bbox.right_mid)
+
+        # Fill in the corners with triangles to make a smooth wire
+
+        tri = Polygon([[0, 1], [1, 1], [1, 0]])
+        tri.scale(opts.w_meander / 2)
+
+        tri_left = tri.copy()
+        tri_right = tri.copy().vflip()
+
+        tri_left.align(tri_left.bbox.bot_right, horiz.bbox.left_mid)
+        tri_right.align(tri_right.bbox.bot_right, horiz.bbox.right_mid)
+
+        self.add_subpolygons([horiz, right, left, tri_left, tri_right], 'eb')
+
+
+
 
 
