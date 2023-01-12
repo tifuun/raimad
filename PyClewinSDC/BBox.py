@@ -7,6 +7,9 @@ import numpy as np
 from PyClewinSDC.Transform import Transform
 from PyClewinSDC.Point import Point
 
+# Disable to use computer-style Y axis (increases downwards)
+MATHEMATIC_Y_AXIS = True
+
 
 class BBox(object):
     def __init__(self, xyarray=None):
@@ -81,7 +84,7 @@ class BBox(object):
     @property
     def top(self):
         assert self.is_valid()
-        return self.min_y
+        return self.max_y if MATHEMATIC_Y_AXIS else self.min_y
 
     @property
     def right(self):
@@ -91,7 +94,7 @@ class BBox(object):
     @property
     def bottom(self):
         assert self.is_valid()
-        return self.max_y
+        return self.min_y if MATHEMATIC_Y_AXIS else self.max_y
 
     def interpolate(self, x_ratio, y_ratio):
         """
@@ -115,12 +118,12 @@ class BBox(object):
     @property
     def top_mid(self):
         assert self.is_valid()
-        return self.interpolate(0.5, 0)
+        return self.interpolate(0.5, MATHEMATIC_Y_AXIS)
 
     @property
     def bot_mid(self):
         assert self.is_valid()
-        return self.interpolate(0.5, 1)
+        return self.interpolate(0.5, not MATHEMATIC_Y_AXIS)
 
     @property
     def mid_left(self):
@@ -135,20 +138,20 @@ class BBox(object):
     @property
     def top_left(self):
         assert self.is_valid()
-        return self.interpolate(0, 0)
+        return self.interpolate(0, MATHEMATIC_Y_AXIS)
 
     @property
     def top_right(self):
         assert self.is_valid()
-        return self.interpolate(1, 0)
+        return self.interpolate(1, MATHEMATIC_Y_AXIS)
 
     @property
     def bot_left(self):
         assert self.is_valid()
-        return self.interpolate(0, 1)
+        return self.interpolate(0, not MATHEMATIC_Y_AXIS)
 
     @property
     def bot_right(self):
         assert self.is_valid()
-        return self.interpolate(1, 1)
+        return self.interpolate(1, not MATHEMATIC_Y_AXIS)
 
