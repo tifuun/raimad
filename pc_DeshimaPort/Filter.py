@@ -11,9 +11,15 @@ from PyClewinSDC.Component import Component, make_opts, make_layers
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.PolygonGroup import PolygonGroup
 from PyClewinSDC.OptCategory import Geometric, Manufacture
+from PyClewinSDC.LayerCategory import Foreground, Background
 
 
 class Filter(Component):
+    """
+    I-Shaped Filter
+    Filter porter from DESHIMA2 project,
+    initially written by Kenichi Karatsu.
+    """
     optspecs = make_opts(
         Component,
         l_top=(
@@ -104,10 +110,10 @@ class Filter(Component):
 
     layerspecs = make_layers(
         Component,
-        gnd=("NbTiN Ground", ),
-        opt=("Optically exposed NbTiN", ),
-        diel=("Dielectric", ),
-        eb=("Electrobeam-deposited NbTiN", ),
+        gnd=("NbTiN Ground", Background),
+        opt=("Optically exposed NbTiN", Background),
+        diel=("Dielectric", Background),
+        eb=("Electrobeam-deposited NbTiN", Foreground),
         )
 
     def make(self):

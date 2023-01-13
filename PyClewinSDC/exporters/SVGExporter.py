@@ -3,6 +3,7 @@ Scalable Vector Graphics Exporter
 """
 
 from PyClewinSDC.Component import Component
+from PyClewinSDC.LayerCategory import Unspecified, Foreground, Background
 
 
 def get_bounding_box(polygons):
@@ -27,6 +28,13 @@ def get_bounding_box(polygons):
     return min_x, min_y, max_x, max_y
 
 
+layer_styles = {
+    Unspecified: '',
+    Foreground: '',
+    Background: 'fill="none" stroke-width="1px" stroke="#000" ',
+    }
+
+
 def SVGExporter(stream, component: Component):
     polygons = component.get_polygons()
 
@@ -39,10 +47,13 @@ def SVGExporter(stream, component: Component):
         )
 
     for layer_name, polys in polygons.items():
+        layer = component.layerspecs[layer_name]
+        style = layer_styles[layer.category]
+
         for poly in polys:
-            stream.write('\t<polygon points="')
+            stream.write(f'\t<polygon {style} points="')
             for point in poly.get_xyarray():
-                stream.write(f"{point[0] - min_x},{point[1] - min_y} ")
+                stream.write(f"{point[0] - min_x},{max_y - point[1]} ")
             stream.write('" />\n')
 
     stream.write('</svg>\n')

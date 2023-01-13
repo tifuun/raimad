@@ -12,7 +12,8 @@ from PyClewinSDC.PolygonGroup import PolygonGroup
 from PyClewinSDC.Markable import Markable
 from PyClewinSDC.LayerParams import LayerParams
 from PyClewinSDC.Dotdict import Dotdict
-from PyClewinSDC.OptCategory import OptCategory, Unspecified
+from PyClewinSDC import OptCategory
+from PyClewinSDC import LayerCategory
 
 # Possibilities:
 # None can be used when parent and child have identical layers
@@ -264,8 +265,8 @@ class Optspec(object):
     """
     default: Any
     desc: str = ''
-    category: OptCategory = field(
-        default_factory=lambda: Unspecified,
+    category: OptCategory.OptCategory = field(
+        default_factory=lambda: OptCategory.Unspecified,
         )
     # Shadow must be kept last!
     shadow: bool = False
@@ -284,8 +285,12 @@ class Layerspec(object):
     index, name, fancy name, color1, color2
     """
     fancy_name: str = ''
-    color1: str = ''
-    color2: str = ''
+    #color1: str = ''
+    #color2: str = ''
+    category: LayerCategory.LayerCategory = field(
+        default_factory=lambda: LayerCategory.Unspecified,
+        )
+
     # Index should be kept last
     index: int = -1
 

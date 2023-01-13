@@ -145,3 +145,29 @@ def generate_package_entries(package, path: Path):
     (path / 'background-dark.svg').write_text(read_text(FirstLight, 'background-dark.svg'))
 
 
+def generate_multi_package_entries(packages, path: Path):
+
+    html_compos = []
+
+    for package in packages:
+        Compos = package.pc_export_components
+        interface_db = generate_interface_db(Compos)
+        for Compo in Compos:
+            html_compo = generate_entry(Compo, path, interface_db)
+            html_compos.append(html_compo)
+
+    html = format_resource(
+        'index.html',
+        components='\n'.join(html_compos),
+        )
+
+    html = format_string(
+        html,
+        author=package.__author__,
+        package=package.__name__,
+        )
+    (path / 'index.html').write_text(html)
+    (path / 'style.css').write_text(read_text(FirstLight, 'style.css'))
+    (path / 'expand.svg').write_text(read_text(FirstLight, 'expand.svg'))
+    (path / 'background-light.svg').write_text(read_text(FirstLight, 'background-light.svg'))
+    (path / 'background-dark.svg').write_text(read_text(FirstLight, 'background-dark.svg'))
