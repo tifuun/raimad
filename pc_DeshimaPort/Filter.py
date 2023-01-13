@@ -54,6 +54,12 @@ class Filter(Component):
             Geometric,
             ),
 
+        line_coup_spacing=(
+            2,
+            "Line to coupler spacing (offset of line mark)",
+            Geometric,
+            ),
+
         l_res=(
             100,
             "Resonator length. "
@@ -123,6 +129,9 @@ class Filter(Component):
         bot_coup.snap_bot(beam)
 
         Ishape = PolygonGroup(beam, top_coup, bot_coup)
+
+        self.add_mark('line', Ishape.top_mid.move(0, opts.line_coup_spacing))
+
         self.add_subpolygons(Ishape, 'eb')
         return Ishape
 

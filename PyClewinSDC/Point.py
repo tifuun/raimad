@@ -2,6 +2,9 @@
 Point -- storage for x, y coordinate pair
 """
 
+import numpy as np
+
+from PyClewinSDC.Transform import Transform
 
 class Point(object):
     def __init__(self, x: float = 0, y: float = 0):
@@ -32,4 +35,20 @@ class Point(object):
             self.x - other.x,
             self.y - other.y,
             )
+
+    def move(self, x, y):
+        self.x += x
+        self.y += y
+        return self
+
+    def apply_transform(self, transform: Transform):
+        # TODO forms of this are copy-pasted in multiple places.
+        self.x, self.y, _ = transform.get_matrix().dot(
+                np.array([self.x, self.y, 1]))
+        return self
+
+    def copy(self):
+        # TODO use python standard copy?
+        new_point = Point(self.x, self.y)
+        return new_point
 

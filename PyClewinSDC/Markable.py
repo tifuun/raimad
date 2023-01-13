@@ -9,6 +9,9 @@ points can be used
 from PyClewinSDC.Alignable import Alignable
 from PyClewinSDC.Transform import Transform
 from PyClewinSDC.BBox import BBox
+from PyClewinSDC.Dotdict import Dotdict
+from PyClewinSDC.Point import Point
+from PyClewinSDC.PointRef import PointRef
 
 
 class Markable(Alignable):
@@ -18,8 +21,19 @@ class Markable(Alignable):
             bbox: BBox | None = None,
             ):
 
-        super().__init__(self, transform=transform, bbox=bbox)
+        super().__init__(transform=transform, bbox=bbox)
+        self.marks = Dotdict()
 
-    def add_mark(self, name, point: Point):
-        pass
+    def add_mark(self, name: str, point: Point):
+        """
+        Add point
+        """
+        ref = PointRef(self, point)
+        self.marks[name] = ref
+
+    def get_mark(self, name):
+        """
+        Retrieve point and apply transform
+        """
+        return self.marks[name].copy().apply_transform(self.transform)
 
