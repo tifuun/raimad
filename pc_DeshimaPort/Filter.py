@@ -130,7 +130,7 @@ class Filter(Component):
 
         Ishape = PolygonGroup(beam, top_coup, bot_coup)
 
-        self.add_mark('line', Ishape.top_mid.move(0, opts.line_coup_spacing))
+        self.marks.line = Ishape.top_mid.move(0, opts.line_coup_spacing)
 
         self.add_subpolygons(Ishape, 'eb')
         return Ishape

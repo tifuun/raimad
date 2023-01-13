@@ -14,6 +14,31 @@ from PyClewinSDC.Point import Point
 from PyClewinSDC.PointRef import PointRef
 
 
+class MarkContainer(object):
+    """
+    """
+    def __init__(self, transform):
+        self._transform = transform
+        self._marks = {}
+
+    def __getattr__(self, name):
+        if name not in self._marks.keys():
+            raise Exception("No such mark.")
+
+        point = self._marks[name]
+        return point.copy().apply_transform(self._transform)
+
+    def __setattr__(self, name, value):
+        if name.startswith('_'):
+            return super().__setattr__(name, value)
+
+        if not isinstance(value, Point):
+            raise Exception("Can only add Points to MarkContainer")
+
+        self._marks[name] = value
+
+
+
 class Markable(Alignable):
     def __init__(
             self,
@@ -22,18 +47,4 @@ class Markable(Alignable):
             ):
 
         super().__init__(transform=transform, bbox=bbox)
-        self.marks = Dotdict()
-
-    def add_mark(self, name: str, point: Point):
-        """
-        Add point
-        """
-        ref = PointRef(self, point)
-        self.marks[name] = ref
-
-    def get_mark(self, name):
-        """
-        Retrieve point and apply transform
-        """
-        return self.marks[name].copy().apply_transform(self.transform)
-
+        self.marks = MarkContainer(self.transform)

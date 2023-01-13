@@ -57,7 +57,7 @@ class DeshimaDemo(Component):
             )
 
         rect = Polygon.rect_float(10000, 20)
-        rect.bot_mid.align(filt.get_mark('line'))
+        rect.bot_mid.align(filt.marks.line)
         self.add_subpolygon(rect, 'line_eb')
 
     def _make_mesh(self):
