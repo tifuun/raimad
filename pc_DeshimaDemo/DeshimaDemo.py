@@ -1,6 +1,7 @@
 from PyClewinSDC.Component import Component, make_layers
 from PyClewinSDC.Polygon import Polygon
 from PyClewinSDC.Transform import Transform
+from PyClewinSDC.Dotdict import Dotdict
 
 from pc_Fundamental.Mesh import Mesh
 from pc_DeshimaPort.Filter import Filter
@@ -45,52 +46,60 @@ class DeshimaDemo(Component):
     #    line_eb_coarse=('NbTiN_lineEB_coarse', '0fff00ff', '0fff00ff'),  # L14
     #    )
 
-    def make(self, opts=None):
-        if opts is None:
-            opts = self.opts
+    def make(self):
+        self._make_mesh()
+        #self._make_antenna()
 
-        #self._make_mesh()
-        #self._make_squares()
+        line = Polygon.rect_wh(-500, 0, 1000, 2)
+        self.add_subpolygon(line, 'line_eb')
 
-        #antenna = LeakyAntennaExample()
-        #antenna.make()
-        #self.add_subcomponent(
-        #    antenna,
-        #    {'eb': 'line_eb_coarse'}
-        #    )
-
-        filt = Filter(
-            )
-        filt.make()
-        #filt.move(-100, -200)
-        filt.scale(10) # TODO figure out how snapping works in CleWin/klayout
-        self.add_subcomponent(
-            filt,
-            {
-                'gnd': 'gnd',
-                'opt': 'line_opt',
-                'diel': 'asi',
-                'eb': 'line_eb',
-                },
-            )
-
-        rect = Polygon.rect_float(10000, 20)
-        rect.bot_mid.align(filt.marks.line)
-        self.add_subpolygon(rect, 'line_eb')
+        self._make_filters(line)
 
     def _make_mesh(self):
-        mesh = Mesh(width=1000, height=1000, void_width=100, void_height=100)
+        mesh = Mesh(
+            Dotdict(
+                width=1000,
+                height=1000,
+                void_width=100,
+                void_height=100,
+                ),
+            )
         mesh.make()
+        mesh.move(-500, -500)
         self.add_subcomponent(mesh, 'backside')
 
-    def _make_squares(self):
+    def _make_antenna(self):
+        antenna = LeakyAntennaExample()
+        antenna.make()
+        self.add_subcomponent(
+            antenna,
+            {'eb': 'line_eb_coarse'}
+            )
+
+    def _make_filters(self, line):
         trans = Transform()
-        trans.rot(10)
-        trans.move(500, 500)
-        trans.scale(0.9)
-        #trans.rot(-10)
-        mesh = Mesh(width=1000, height=1000).apply_transform(trans)
-        mesh.make()
-        self.add_subcomponent(mesh, 'poly')
+
+        for filter_index in range(0, 10):
+            filt = Filter(
+                Dotdict(
+                    l_res=filter_index * 10 + 70,
+                    ),
+                transform=trans,
+                )
+            filt.make()
+            filt.marks.line.aligny(line.bot_mid)
+            self.add_subcomponent(
+                filt,
+                {
+                    'gnd': 'gnd',
+                    'opt': 'line_opt',
+                    'diel': 'asi',
+                    'eb': 'line_eb',
+                    },
+                )
+
+            trans.movex(200)
+
+
 
 
