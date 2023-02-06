@@ -1,5 +1,5 @@
 """
-Port of DESHIMA2 components to PyClewinSDC.
+Port of DESHIMA2 components to PyCIF.
 
 So far, code is Written by Nikita,
 based off the original codebase by Kenichi

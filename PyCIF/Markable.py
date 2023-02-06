@@ -6,12 +6,12 @@ marks that can be used to align the component in the same way as bbox
 points can be used
 """
 
-from PyClewinSDC.Alignable import Alignable
-from PyClewinSDC.Transform import Transform
-from PyClewinSDC.BBox import BBox
-from PyClewinSDC.Dotdict import Dotdict
-from PyClewinSDC.Point import Point
-from PyClewinSDC.PointRef import PointRef
+from PyCIF.Alignable import Alignable
+from PyCIF.Transform import Transform
+from PyCIF.BBox import BBox
+from PyCIF.Dotdict import Dotdict
+from PyCIF.Point import Point
+from PyCIF.PointRef import PointRef
 
 
 class MarkContainer(object):

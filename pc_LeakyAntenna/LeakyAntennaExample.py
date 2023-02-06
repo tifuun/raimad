@@ -1,9 +1,9 @@
 import numpy as np
 
-from PyClewinSDC.Component import Component, make_opts, Shadow, make_layers
-from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.PolygonGroup import PolygonGroup
-from PyClewinSDC.OptCategory import Geometric
+from PyCIF.Component import Component, make_opts, Shadow, make_layers
+from PyCIF.Polygon import Polygon
+from PyCIF.PolygonGroup import PolygonGroup
+from PyCIF.OptCategory import Geometric
 
 
 class LeakyAntennaExample(Component):

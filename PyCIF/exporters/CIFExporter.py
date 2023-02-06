@@ -4,7 +4,7 @@ Caltech Intermediate Form Exporter
 
 import numpy as np
 
-from PyClewinSDC.Component import Component
+from PyCIF.Component import Component
 
 
 def CIFExporter(stream, component: Component):

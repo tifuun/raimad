@@ -4,9 +4,9 @@ Alignable -- encapsulates transform and bbox
 
 from typing import Self
 
-from PyClewinSDC.Transform import Transform
-from PyClewinSDC.BBox import BBox
-from PyClewinSDC.PointRef import PointRef
+from PyCIF.Transform import Transform
+from PyCIF.BBox import BBox
+from PyCIF.PointRef import PointRef
 
 
 def wrap_transform_method(method):

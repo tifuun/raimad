@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from PyClewinSDC.exporters.CIFExporter import CIFExporter
-from PyClewinSDC.exporters.SVGExporter import SVGExporter
-from PyClewinSDC.Modulebrowser.Modulebrowser import generate_multi_package_entries
+from PyCIF.exporters.CIFExporter import CIFExporter
+from PyCIF.exporters.SVGExporter import SVGExporter
+from PyCIF.Modulebrowser.Modulebrowser import generate_multi_package_entries
 
 from pc_DeshimaDemo2.DeshimaDemo2 import DeshimaDemo2
 import pc_DeshimaPort

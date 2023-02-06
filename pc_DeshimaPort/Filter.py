@@ -7,11 +7,11 @@ __credits__ = [
     "Kenichi Karatsu",
     ]
 
-from PyClewinSDC.Component import Component, make_opts, make_layers
-from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.PolygonGroup import PolygonGroup
-from PyClewinSDC.OptCategory import Geometric, Manufacture
-from PyClewinSDC.LayerCategory import Foreground, Background
+from PyCIF.Component import Component, make_opts, make_layers
+from PyCIF.Polygon import Polygon
+from PyCIF.PolygonGroup import PolygonGroup
+from PyCIF.OptCategory import Geometric, Manufacture
+from PyCIF.LayerCategory import Foreground, Background
 
 
 class Filter(Component):

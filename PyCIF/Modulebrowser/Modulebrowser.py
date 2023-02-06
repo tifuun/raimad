@@ -9,9 +9,9 @@ from string import Template
 
 from pathlib import Path
 
-from PyClewinSDC.Component import Component
-from PyClewinSDC.exporters.SVGExporter import SVGExporter
-from PyClewinSDC.Modulebrowser.themes import FirstLight
+from PyCIF.Component import Component
+from PyCIF.exporters.SVGExporter import SVGExporter
+from PyCIF.Modulebrowser.themes import FirstLight
 
 
 def generate_interface_db(component_list: List[Type[Component]]):

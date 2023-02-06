@@ -1,6 +1,6 @@
-from PyClewinSDC.Component import Component, make_opts, make_layers
-from PyClewinSDC.Polygon import Polygon
-from PyClewinSDC.OptCategory import OptCategory, Geometric
+from PyCIF.Component import Component, make_opts, make_layers
+from PyCIF.Polygon import Polygon
+from PyCIF.OptCategory import OptCategory, Geometric
 
 
 class Mesh(Component):

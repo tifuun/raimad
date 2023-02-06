@@ -1,6 +1,6 @@
-from PyClewinSDC.Component import Component, make_layers
-from PyClewinSDC.Transform import Transform
-from PyClewinSDC.Polygon import Polygon
+from PyCIF.Component import Component, make_layers
+from PyCIF.Transform import Transform
+from PyCIF.Polygon import Polygon
 
 from pc_Fundamental.Mesh import Mesh
 from pc_DeshimaPort.Filter import Filter

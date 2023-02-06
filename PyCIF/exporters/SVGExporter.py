@@ -2,8 +2,8 @@
 Scalable Vector Graphics Exporter
 """
 
-from PyClewinSDC.Component import Component
-from PyClewinSDC.LayerCategory import Unspecified, Foreground, Background
+from PyCIF.Component import Component
+from PyCIF.LayerCategory import Unspecified, Foreground, Background
 
 
 def get_bounding_box(polygons):

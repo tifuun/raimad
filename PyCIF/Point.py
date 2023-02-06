@@ -4,7 +4,7 @@ Point -- storage for x, y coordinate pair
 
 import numpy as np
 
-from PyClewinSDC.Transform import Transform
+from PyCIF.Transform import Transform
 
 class Point(object):
     def __init__(self, x: float = 0, y: float = 0):

@@ -7,7 +7,7 @@ from typing import Self
 
 import numpy as np
 
-from PyClewinSDC.Alignable import Alignable
+from PyCIF.Alignable import Alignable
 
 
 class Polygon(Alignable):

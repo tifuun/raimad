@@ -2,8 +2,8 @@
 PointRef -- reference to a point and a transformable
 """
 
-from PyClewinSDC.Point import Point
-#from PyClewinSDC.Alignable import Alignable
+from PyCIF.Point import Point
+#from PyCIF.Alignable import Alignable
 # TODO correct type annotation requires circular import
 
 

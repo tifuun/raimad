@@ -4,8 +4,8 @@ Polygon group -- used for grouping polygons together for transformations
 
 from typing import Self
 
-from PyClewinSDC.Alignable import Alignable
-from PyClewinSDC.BBox import BBox
+from PyCIF.Alignable import Alignable
+from PyCIF.BBox import BBox
 
 
 class PolygonGroup(Alignable):
