@@ -7,11 +7,11 @@ __credits__ = [
     "Kenichi Karatsu",
     ]
 
-from PyCIF.Component import Component, make_opts, make_layers
-from PyCIF.Polygon import Polygon
-from PyCIF.PolygonGroup import PolygonGroup
-from PyCIF.OptCategory import Geometric, Manufacture
-from PyCIF.LayerCategory import Foreground, Background
+from PyCIF.draw.Component import Component, make_opts, make_layers
+from PyCIF.draw.Polygon import Polygon
+from PyCIF.draw.PolygonGroup import PolygonGroup
+from PyCIF.draw.OptCategory import Geometric, Manufacture
+from PyCIF.draw.LayerCategory import Foreground, Background
 
 
 class Filter(Component):

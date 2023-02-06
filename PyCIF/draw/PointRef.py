@@ -2,8 +2,8 @@
 PointRef -- reference to a point and a transformable
 """
 
-from PyCIF.Point import Point
-#from PyCIF.Alignable import Alignable
+from PyCIF.draw.Point import Point
+#from PyCIF.draw.Alignable import Alignable
 # TODO correct type annotation requires circular import
 
 

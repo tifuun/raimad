@@ -4,16 +4,13 @@ Class for base component
 
 from typing import Any, Type, Self, List
 from dataclasses import dataclass, field
-import numpy as np
-from copy import deepcopy
 
-from PyCIF.Polygon import Polygon
-from PyCIF.PolygonGroup import PolygonGroup
-from PyCIF.Markable import Markable
-from PyCIF.LayerParams import LayerParams
-from PyCIF.Dotdict import Dotdict
-from PyCIF import OptCategory
-from PyCIF import LayerCategory
+from PyCIF.draw.Polygon import Polygon
+from PyCIF.draw.PolygonGroup import PolygonGroup
+from PyCIF.draw.Markable import Markable
+from PyCIF.draw import OptCategory
+from PyCIF.draw import LayerCategory
+from PyCIF.misc.Dotdict import Dotdict
 
 # Possibilities:
 # None can be used when parent and child have identical layers

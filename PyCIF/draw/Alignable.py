@@ -4,9 +4,9 @@ Alignable -- encapsulates transform and bbox
 
 from typing import Self
 
-from PyCIF.Transform import Transform
-from PyCIF.BBox import BBox
-from PyCIF.PointRef import PointRef
+from PyCIF.draw.Transform import Transform
+from PyCIF.draw.BBox import BBox
+from PyCIF.draw.PointRef import PointRef
 
 
 def wrap_transform_method(method):

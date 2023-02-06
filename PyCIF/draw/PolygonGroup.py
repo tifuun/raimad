@@ -2,10 +2,7 @@
 Polygon group -- used for grouping polygons together for transformations
 """
 
-from typing import Self
-
-from PyCIF.Alignable import Alignable
-from PyCIF.BBox import BBox
+from PyCIF.draw.Alignable import Alignable
 
 
 class PolygonGroup(Alignable):

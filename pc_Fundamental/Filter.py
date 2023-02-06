@@ -1,6 +1,6 @@
-from PyCIF.Component import Component, make_opts, Shadow, make_layers
-from PyCIF.Polygon import Polygon
-from PyCIF.OptCategory import Geometric
+from PyCIF.draw.Component import Component, make_opts, Shadow, make_layers
+from PyCIF.draw.Polygon import Polygon
+from PyCIF.draw.OptCategory import Geometric
 
 
 #def MSFilter(direction, updown, ii, line_hybrid, w_coarse, w_upper, short_length, dummy_offset,

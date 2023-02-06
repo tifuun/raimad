@@ -1,9 +1,9 @@
 import numpy as np
 
-from PyCIF.Component import Component, make_opts, Shadow, make_layers
-from PyCIF.Polygon import Polygon
-from PyCIF.PolygonGroup import PolygonGroup
-from PyCIF.OptCategory import Geometric
+from PyCIF.draw.Component import Component, make_opts, Shadow, make_layers
+from PyCIF.draw.Polygon import Polygon
+from PyCIF.draw.PolygonGroup import PolygonGroup
+from PyCIF.draw.OptCategory import Geometric
 
 
 class LeakyAntennaExample(Component):

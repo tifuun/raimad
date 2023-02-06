@@ -4,8 +4,8 @@ BBox -- bounding box
 
 import numpy as np
 
-from PyCIF.Transform import Transform
-from PyCIF.Point import Point
+from PyCIF.draw.Transform import Transform
+from PyCIF.draw.Point import Point
 
 # Disable to use computer-style Y axis (increases downwards)
 MATHEMATIC_Y_AXIS = True

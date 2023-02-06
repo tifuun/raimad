@@ -1,7 +1,7 @@
-from PyCIF.Component import Component, make_layers
-from PyCIF.Polygon import Polygon
-from PyCIF.Transform import Transform
-from PyCIF.Dotdict import Dotdict
+from PyCIF.draw.Component import Component, make_layers
+from PyCIF.draw.Polygon import Polygon
+from PyCIF.draw.Transform import Transform
+from PyCIF.misc.Dotdict import Dotdict
 
 from pc_Fundamental.Mesh import Mesh
 from pc_DeshimaPort.Filter import Filter

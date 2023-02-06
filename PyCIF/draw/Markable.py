@@ -6,12 +6,12 @@ marks that can be used to align the component in the same way as bbox
 points can be used
 """
 
-from PyCIF.Alignable import Alignable
-from PyCIF.Transform import Transform
-from PyCIF.BBox import BBox
-from PyCIF.Dotdict import Dotdict
-from PyCIF.Point import Point
-from PyCIF.PointRef import PointRef
+from PyCIF.draw.Alignable import Alignable
+from PyCIF.draw.Transform import Transform
+from PyCIF.draw.BBox import BBox
+from PyCIF.draw.Point import Point
+from PyCIF.draw.PointRef import PointRef
+from PyCIF.misc.Dotdict import Dotdict
 
 
 class MarkContainer(object):

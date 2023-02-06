@@ -1,6 +1,6 @@
-from PyCIF.Component import Component, make_opts, make_layers
-from PyCIF.Polygon import Polygon
-from PyCIF.OptCategory import OptCategory, Geometric
+from PyCIF.draw.Component import Component, make_opts, make_layers
+from PyCIF.draw.Polygon import Polygon
+from PyCIF.draw.OptCategory import OptCategory, Geometric
 
 
 class Mesh(Component):
