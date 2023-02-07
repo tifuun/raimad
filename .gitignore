@@ -2,6 +2,11 @@
 __pycache__
 *.py[cod]
 
+# pip/stuptools/twine files
+*.egg-info
+build
+dist
+
 # VIM files
 *.sw*
 *.vim

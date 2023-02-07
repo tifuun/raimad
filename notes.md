@@ -48,6 +48,13 @@ Other rules ensure there's not too many.
 1. E123
 WTF?
 
+1. EPS326
+I like implicit string concat
+
+1. E131
+My way of formatting implicit string concats
+is interpreted as hanging indent
+
 ## Structuring of exporters
 every exporter is a file inside `PyCIF/exporters`.
 Each exporter is imported and referenced in `PyCIF/exporters/__init__.py`
