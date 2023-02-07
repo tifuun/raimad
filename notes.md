@@ -66,3 +66,11 @@ Finally, `run_cli` takes in an argparse `args` object
 and runs the exporter.
 This consists of instantiating the component and passing it
 to the `export` function.
+
+## Structure of modulebrowser themes
+1. `basedir` directory, containing all static files.
+This will be the root of the modulebrowser directory
+1. `index.html`, jinja2 template for the index
+1. Component previews will be placed under
+`components/{name}/preview.svg`
+

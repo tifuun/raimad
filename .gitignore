@@ -8,9 +8,9 @@ __pycache__
 *.obsession*
 
 # PyClewin Output files
-*.cif
-*.pdf
-*.svg
+/*.cif
+/*.pdf
+/*.svg
 module_browser
 
 # human-generated backup files
