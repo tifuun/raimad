@@ -20,9 +20,9 @@ from pc_Fundamental.Filter import MSFilter, MSFilterParametric
 
 # Yes, (most) imports go AFTER dunders, this is pep8.
 
-pc_export_components = [
+PC_EXPORT_COMPONENTS = (
     Mesh,
     MSFilter,
     MSFilterParametric,
-    ]
+    )
 

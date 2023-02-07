@@ -23,7 +23,7 @@ from pc_DeshimaPort.Filter import Filter
 
 # Yes, (most) imports go AFTER dunders, this is pep8.
 
-pc_export_components = [
+PC_EXPORT_COMPONENTS = (
     Filter,
-    ]
+    )
 

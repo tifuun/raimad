@@ -47,3 +47,22 @@ Other rules ensure there's not too many.
 
 1. E123
 WTF?
+
+## Structuring of exporters
+every exporter is a file inside `PyCIF/exporters`.
+Each exporter is imported and referenced in `PyCIF/exporters/__init__.py`
+in the `CLI_EXPORTERS` variable.
+This is used by `cli.py` to determine which exporters there are.
+
+Exporters must define a constant called `CLI_NAME`, this
+will be how they are referenced in the CLI.
+Then, there is the `export` function, which takes in a stream and a component
+(component class, not component instance).
+`create_parser_options` takes in a parser and adds the arguments used by this
+exporter. Most exporters will need to define a output file argument
+and a component argument. There are shortcuts for these in
+`PyCIF/exporters/argparse_utils.py`.
+Finally, `run_cli` takes in an argparse `args` object
+and runs the exporter.
+This consists of instantiating the component and passing it
+to the `export` function.

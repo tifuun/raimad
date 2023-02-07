@@ -43,8 +43,12 @@ def cli():
                 exporter.run_cli(args)
                 break
             else:
+                # This should never happen, since
+                # argparse validates this.
                 parser.error('Unknown exporter')
     else:
+        # This should never happen, since
+        # argparse validates this.
         parser.error('Unknown action')
 
 

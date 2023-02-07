@@ -19,7 +19,7 @@ from pc_LeakyAntenna.LeakyAntennaExample import LeakyAntennaExample
 
 # Yes, (most) imports go AFTER dunders, this is pep8.
 
-pc_export_components = [
-    LeakyAntennaExample
-    ]
+PC_EXPORT_COMPONENTS = (
+    LeakyAntennaExample,
+    )
 

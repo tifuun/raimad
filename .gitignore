@@ -5,6 +5,7 @@ __pycache__
 # VIM files
 *.sw*
 *.vim
+*.obsession*
 
 # PyClewin Output files
 *.cif

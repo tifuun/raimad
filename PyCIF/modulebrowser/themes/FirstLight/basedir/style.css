@@ -18,7 +18,7 @@
 }
 body {
 	background-color: #FFF;
-	background-image: url('background-light.svg');
+	background-image: url('img/background-light.svg');
 }
 
 @media (prefers-color-scheme: dark) {
@@ -45,7 +45,7 @@ body {
 	}
 	body {
 		background-color: #111;
-		background-image: url('background-dark.svg');
+		background-image: url('img/background-dark.svg');
 	}
 }
 
