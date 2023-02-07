@@ -39,3 +39,21 @@ def import_from_string(import_str: str) -> Any:
         )
 
     return instance
+
+
+def import_package_from_string(import_str: str) -> Any:
+    if not import_str:
+        message = (
+            'Import string "{import_str}" must be in format "<module>:<attribute>".'
+        )
+        raise ImportFromStringError(message.format(import_str=import_str))
+
+    try:
+        module = importlib.import_module(import_str)
+    except ImportError as exc:
+        if exc.name != import_str:
+            raise exc from None
+        message = 'Could not import module "{module_str}".'
+        raise ImportFromStringError(message.format(module_str=import_str))
+
+    return module

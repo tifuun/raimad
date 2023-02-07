@@ -7,8 +7,10 @@ etc.
 """
 
 import argparse
+from pathlib import Path
 
 from PyCIF import exporters
+from PyCIF.misc.import_from_string import import_package_from_string
 
 
 def cli():
@@ -22,18 +24,8 @@ def cli():
         description='Which action to perform',
         )
 
-    parser_export = subparsers.add_parser(
-        'export',
-        )
-
-    subparsers_export = parser_export.add_subparsers(
-        title='Export',
-        dest='exporter',
-        description='Export component to CAD file',
-        )
-
-    for exporter in exporters.CLI_EXPORTERS:
-        add_exporter_parser(subparsers_export, exporter)
+    _add_export_action(subparsers)
+    _add_modulebrowser_action(subparsers)
 
     args = parser.parse_args()
 
@@ -46,13 +38,48 @@ def cli():
                 # This should never happen, since
                 # argparse validates this.
                 parser.error('Unknown exporter')
+
+    elif args.action == 'browser':
+
+        if args.mb_action == 'generate':
+            from PyCIF.modulebrowser.Modulebrowser import Modulebrowser
+            browser = Modulebrowser()
+
+            for package in args.packages:
+                browser.register_package(package)
+
+            browser.generate_html(args.browser_dir)
+
+        elif args.mb_action == 'open':
+            import webbrowser
+            # Web browser needs to know the absolute path
+            index_path = args.browser_dir.resolve() / 'index.html'
+            webbrowser.open(f'file://{index_path}')
     else:
         # This should never happen, since
         # argparse validates this.
         parser.error('Unknown action')
 
 
-def add_exporter_parser(subparsers, exporter):
+def _add_export_action(subparsers):
+    """
+    Setup parsers for 'export' action
+    """
+    parser_export = subparsers.add_parser(
+        'export',
+        )
+
+    subparsers_export = parser_export.add_subparsers(
+        title='Export',
+        dest='exporter',
+        description='Export component to CAD file',
+        )
+
+    for exporter in exporters.CLI_EXPORTERS:
+        _add_exporter_parser(subparsers_export, exporter)
+
+
+def _add_exporter_parser(subparsers, exporter):
     """
     Add a parser for a given exporter.
     This generates a new parser based on the parser's
@@ -67,3 +94,51 @@ def add_exporter_parser(subparsers, exporter):
         )
 
     exporter.create_parser_options(parser)
+
+
+def _add_modulebrowser_action(subparsers):
+    """
+    Setup parsers for 'export' action
+    """
+    parser_mb = subparsers.add_parser(
+        'browser',
+        )
+
+    subparsers_mb = parser_mb.add_subparsers(
+        title='Modulebrowser Action',
+        dest='mb_action',
+        description='Modulebrowser action',
+        )
+
+    parser_mb_gen = subparsers_mb.add_parser(
+        'generate',
+        )
+
+    parser_mb_gen.add_argument(
+        'packages',
+        nargs='+',
+        help='List of packages to include',
+        type=import_package_from_string,
+        )
+
+    parser_mb_gen.add_argument(
+        '--browser-dir',
+        '-d',
+        type=Path,
+        help='Output directory',
+        default='./module_browser',
+        )
+
+    parser_mb_open = subparsers_mb.add_parser(
+        'open',
+        )
+
+    parser_mb_open.add_argument(
+        '--browser-dir',
+        '-d',
+        type=Path,
+        help='Module browser directory',
+        default='./module_browser',
+        )
+
+
