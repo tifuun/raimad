@@ -195,6 +195,13 @@ body {
 	/*border-left: 1px solid var(--border-color);*/
 }
 
+.compo-methods ul {
+	list-style-type: none;
+	/* "Methods" box uses `summary` elements,
+	 * which come with their own bullet points
+	 */
+}
+
 .compo-codeblocks {
 	width: 100%;
 	padding: 15px;

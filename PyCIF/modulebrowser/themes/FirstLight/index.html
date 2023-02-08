@@ -73,13 +73,33 @@
 										</ul>
 									</div>
 
+									<div class="compo-methods">
+										{{compo.methods | length}}
+										Custom Method{{'' if compo.methods | length == 1 else 's'}}
+										<ul>
+											{% for method in compo.methods %}
+												<li>
+													<details>
+														<summary>
+															<b>{{method.name}}</b>:
+															{{method.short_description}}
+														</summary>
+														<p>
+															{{method.long_description}}
+														</p>
+													</details>
+												</li>
+											{% endfor %}
+										</ul>
+									</div>
+
 									<div class="compo-options">
 										{{compo.options | length}}
 										Option{{'' if compo.options | length == 1 else 's'}}
 										<ul>
 											{% for opt in compo.options %}
 												<li class="compo-option {{'shadow' if opt.shadow else ''}}">
-													{{opt.name}} = {{opt.value}}
+													{{opt.name}} = {{opt.default_value}}
 													<i>{{opt.description}}</i>
 												</li>
 											{% endfor %}

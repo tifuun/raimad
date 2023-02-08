@@ -19,6 +19,7 @@ import jinja2
 from PyCIF.draw.Component import Component
 from PyCIF.exporters.svg import export as svgexport
 from PyCIF.modulebrowser.themes import FirstLight
+from PyCIF.misc.docparse import split_docstring
 
 
 @dataclass
@@ -72,6 +73,17 @@ class CTXMark(object):
 
 
 @dataclass
+class CTXMethod(object):
+    """
+    jinja2 context for a method.
+    """
+
+    name: str
+    short_description: str
+    long_description: str
+
+
+@dataclass
 class CTXComponent(object):
     """
     jinja2 context for a component.
@@ -86,6 +98,7 @@ class CTXComponent(object):
     layers: List[CTXLayer]
     interfaces: List[CTXInterface]
     marks: List[CTXMark]
+    methods: List[CTXMethod]
     preview_image: str
 
 
@@ -124,12 +137,14 @@ class Modulebrowser(object):
         instance = compo()
         instance.make()
 
+        compo_docstring = split_docstring(compo.__doc__)
+
         return CTXComponent(
             name=compo.__name__,
-            fancy_name=compo.__doc__.split('\n')[1],
+            fancy_name=compo_docstring.heading,
             module_name=module.__name__,
             author=sys.modules[module.__package__].__author__,
-            description='\n'.join(compo.__doc__.split('\n')[2:]),
+            description=compo_docstring.description,
             options=[
                 CTXOption(
                     name=name,
@@ -152,10 +167,18 @@ class Modulebrowser(object):
                 for interface in entry.interfaces
                 ],
             marks=[
-                CTXInterface(
+                CTXMark(
                     name=mark_name,
                     )
                 for mark_name in instance.marks.keys()
+                ],
+            methods=[
+                CTXMethod(
+                    name=method_name,
+                    short_description=(s:=split_docstring(method.__doc__))[0],
+                    long_description=s[1],
+                    )
+                for method_name, method in compo.get_custom_methods().items()
                 ],
             preview_image=self._generate_inline_preview_image(instance),
             )

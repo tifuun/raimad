@@ -4,6 +4,7 @@ Class for base component
 
 from typing import Any, Type, Self, List
 from dataclasses import dataclass, field
+import inspect
 
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.PolygonGroup import PolygonGroup
@@ -227,6 +228,26 @@ class Component(Markable):
         else:
             if issubclass(cls, of):
                 return True
+
+    @classmethod
+    def get_custom_methods(cls):
+        """
+        Extract custom methods from this component class.
+        For example, automatic connection methods
+        from CPWs.
+        """
+        # TODO can interfaces override or pass through
+        # custom methods? How would this work?
+
+        # Maybe we need a special decorator
+        # for external methods?
+
+        return {
+            attr_name: attr
+            for attr_name, attr
+            in cls.__dict__.items()
+            if not attr_name.startswith('_') and inspect.isfunction(attr)
+            }
 
     @classmethod
     def lint(cls):
