@@ -16,10 +16,11 @@
 
 						<div class="compo-body">
 							<div class="compo-left">
-								<img
+								{{compo.preview_image}}
+								<!--<img
 										src='components/{{compo.name}}/preview.svg'
 										class='compo-preview'
-										alt='{{compo.fancy_name}}'>
+										alt='{{compo.fancy_name}}'> -->
 							</div>
 							<div class="compo-right">
 								<span class="compo-name"> {{compo.fancy_name}}</span>
@@ -33,18 +34,6 @@
 
 							<div class="compo-lists-wrapper">
 								<div class="compo-lists">
-									<div class="compo-options">
-										{{compo.options | length}}
-										Option{{'' if compo.options | length == 1 else 's'}}
-										<ul>
-											{% for opt in compo.options %}
-												<li class="compo-option {{'shadow' if opt.shadow else ''}}">
-													{{opt.name}} = {{opt.value}}
-													<i>{{opt.description}}</i>
-												</li>
-											{% endfor %}
-										</ul>
-									</div>
 
 									<div class="compo-layers">
 										{{compo.layers | length}}
@@ -71,6 +60,33 @@
 											{% endfor %}
 										</ul>
 									</div>
+
+									<div class="compo-marks">
+										{{compo.marks | length}}
+										Mark{{'' if compo.marks | length == 1 else 's'}}
+										<ul>
+											{% for mark in compo.marks %}
+												<li>
+													{{mark.name}}
+												</li>
+											{% endfor %}
+										</ul>
+									</div>
+
+									<div class="compo-options">
+										{{compo.options | length}}
+										Option{{'' if compo.options | length == 1 else 's'}}
+										<ul>
+											{% for opt in compo.options %}
+												<li class="compo-option {{'shadow' if opt.shadow else ''}}">
+													{{opt.name}} = {{opt.value}}
+													<i>{{opt.description}}</i>
+												</li>
+											{% endfor %}
+										</ul>
+									</div>
+
+
 								</div>
 								<br>
 							</div>

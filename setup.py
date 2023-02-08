@@ -32,6 +32,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires='>=3',
     install_requires=[
+        'numpy==1.24.2',
+        'addict==2.4.0',
         ],
     extras_require={
         'modulebrowser': [

@@ -93,6 +93,8 @@ class Component(Markable):
             layermap,
             )
 
+        # TODO update bbox here?
+
         self.subcomponents.append(subcomponent)
 
     def add_subpolygon(
@@ -112,6 +114,8 @@ class Component(Markable):
             polygon,
             layermap_full,
             )
+
+        self._bbox.add_xyarray(polygon.get_xyarray())
 
         self.subpolygons.append(subpolygon)
 

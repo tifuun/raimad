@@ -12,6 +12,7 @@ from pathlib import Path
 from dataclasses import dataclass, field
 import sys
 import shutil
+from io import StringIO
 
 import jinja2
 
@@ -62,6 +63,15 @@ class CTXInterface(object):
 
 
 @dataclass
+class CTXMark(object):
+    """
+    jinja2 context for a mark.
+    """
+
+    name: str
+
+
+@dataclass
 class CTXComponent(object):
     """
     jinja2 context for a component.
@@ -75,6 +85,8 @@ class CTXComponent(object):
     options: List[CTXOption]
     layers: List[CTXLayer]
     interfaces: List[CTXInterface]
+    marks: List[CTXMark]
+    preview_image: str
 
 
 class Modulebrowser(object):
@@ -109,6 +121,8 @@ class Modulebrowser(object):
         """
         entry = self.components[compo]
         module = inspect.getmodule(compo)
+        instance = compo()
+        instance.make()
 
         return CTXComponent(
             name=compo.__name__,
@@ -137,6 +151,13 @@ class Modulebrowser(object):
                     )
                 for interface in entry.interfaces
                 ],
+            marks=[
+                CTXInterface(
+                    name=mark_name,
+                    )
+                for mark_name in instance.marks.keys()
+                ],
+            preview_image=self._generate_inline_preview_image(instance),
             )
 
     def _generate_context(self):
@@ -177,6 +198,19 @@ class Modulebrowser(object):
         with svg_path.open('w') as svgfile:
             svgexport(svgfile, instance)
 
+    def _generate_inline_preview_image(self, instance):
+        """
+        Generate preview images for component
+        """
+        instance.make()
+
+        io = StringIO()
+        svgexport(io, instance)
+        svgstring = io.getvalue()
+        io.close()
+        return svgstring
+
+
     def _generate_preview_images(self, path: Path):
         """
         Generate preview images for all components in database
@@ -187,11 +221,11 @@ class Modulebrowser(object):
 
     def generate_html(self, path: Path):
         self._copy_basedir(path)
-        self._generate_preview_images(path)
+        #self._generate_preview_images(path)
 
         context = self._generate_context()
         theme = FirstLight
-        env = jinja2.Environment(autoescape=True)
+        env = jinja2.Environment(autoescape=False)
         template = env.from_string(read_text(theme, 'index.html'))
         (path / 'index.html').write_text(template.render(context))
 

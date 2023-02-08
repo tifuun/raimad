@@ -38,6 +38,15 @@ class MarkContainer(object):
 
         self._marks[name] = value
 
+    def items(self):
+        return self._marks.items()
+
+    def keys(self):
+        return self._marks.keys()
+
+    def values(self):
+        return self._marks.values()
+
 
 
 class Markable(Alignable):
@@ -49,3 +58,4 @@ class Markable(Alignable):
 
         super().__init__(transform=transform, bbox=bbox)
         self.marks = MarkContainer(self, self.transform)
+
