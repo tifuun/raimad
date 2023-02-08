@@ -5,6 +5,7 @@ Class for base component
 from typing import Any, Type, Self, List
 from dataclasses import dataclass, field
 import inspect
+from abc import ABC, abstractmethod
 
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.PolygonGroup import PolygonGroup
@@ -25,7 +26,7 @@ SubpolygonLayermapShorthand = None | str
 Shadow = None
 
 
-class Component(Markable):
+class Component(ABC, Markable):
     """
     Class for base component
     """
@@ -184,6 +185,7 @@ class Component(Markable):
 
         return layers
 
+    @abstractmethod
     def make(self, opts=None):
         """
         This method should actually generate all subpolygons
