@@ -2,6 +2,8 @@
 Point -- storage for x, y coordinate pair
 """
 
+from typing import Self
+
 import numpy as np
 
 from PyCIF.draw.Transform import Transform
@@ -41,14 +43,44 @@ class Point(object):
         self.y += y
         return self
 
+    def move_polar(self, distance, radians):
+        self.x += np.cos(radians) * distance
+        self.y += np.sin(radians) * distance
+        return self
+
     def apply_transform(self, transform: Transform):
         # TODO forms of this are copy-pasted in multiple places.
         self.x, self.y, _ = transform.get_matrix().dot(
-                np.array([self.x, self.y, 1]))
+            np.array([self.x, self.y, 1]))
         return self
 
     def copy(self):
         # TODO use python standard copy?
-        new_point = Point(self.x, self.y)
-        return new_point
+        return Point(self.x, self.y)
+
+    def distance_to(self, other: Self) -> float:
+        """
+        Get the distance between two points.
+        returns the absolute distance between this point and `other` point.
+        """
+        return np.linalg.norm(
+            (self.x, self.y),
+            (other.x, other.y),
+            )
+
+    def radians_to(self, other: Self) -> float:
+        """
+        Get angle between two points.
+        Return the angle, in radians, formed between the vertical and the
+        line connecting this point and `other` point.
+        The angle is measured from the right.
+        """
+        a = np.arctan2(
+            (other.x - self.x),
+            (other.y - self.y),
+            )
+        while a < 0:
+            a += 2 * np.pi
+        print(a / np.pi)
+        return a
 

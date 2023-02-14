@@ -6,6 +6,7 @@ from typing import Any, Type, Self, List
 from dataclasses import dataclass, field
 import inspect
 from abc import ABC, abstractmethod
+import logging
 
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.PolygonGroup import PolygonGroup
@@ -117,7 +118,7 @@ class Component(ABC, Markable):
             layermap_full,
             )
 
-        self._bbox.add_xyarray(polygon.get_xyarray())
+        #self._bbox.add_xyarray(polygon.get_xyarray())
 
         self.subpolygons.append(subpolygon)
 

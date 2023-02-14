@@ -25,14 +25,12 @@ class PointRef(Point):
     def alignx(self, to: Point):
         """
         """
-        # TODO overloading thing so asterisk is not needed
         self.alignable.movex((to - self).x)
         return self.alignable
 
     def aligny(self, to: Point):
         """
         """
-        # TODO overloading thing so asterisk is not needed
         self.alignable.movey((to - self).y)
         return self.alignable
 

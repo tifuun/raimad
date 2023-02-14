@@ -1,108 +1,109 @@
+import inspect
+from dataclasses import dataclass
+from typing import Self, ClassVar
+
 import numpy as np
 
+from PyCIF.misc import encapsulation
+from PyCIF.misc.hackery import new_without_init
 
+full_circle = 360
+
+
+def _move(xyarray, x, y, /):
+    xyarray += (x, y)
+    return xyarray
+
+
+def _scale(xyarray, x, y, /):
+    xyarray *= (x, y)
+    return xyarray
+
+
+def _rot(xyarray, angle, x, y, /):
+    radians = np.radians(angle)
+    rotmatrix = np.array((
+        (np.cos(radians), -np.sin(radians)),
+        (np.sin(radians), np.cos(radians)),
+        ))
+
+    xyarray -= (x, y)
+    xyarray = xyarray @ rotmatrix
+    # TODO replace with @= when it becomes implemented.
+    xyarray += (x, y)
+    return xyarray
+
+
+@encapsulation.expose_class
 class Transform(object):
     """
-    Container for an affine matrix
-    with methods to apply elementary transformations
-    to that matrix.
-
-    This is my first time working with affine matrices,
-    so expect some obtuse code.
-
-    You can see that the transformation methods all return
-    the object themselves.
-    You can use this for shortuts like
-
-    flipped = transformable.copy().hflip()
+    Transformation: stores new origin, rotation, x and y scale.
     """
-    transform_methods = {}
 
-    def __init__(self, affine_mat=None):
-        if affine_mat is None:
-            self.affine_mat = np.identity(3)
-        else:
-            self.affine_mat = affine_mat.copy()
+    def __init__(self):
+        self.history = []
 
-    def copy(self):
-        return Transform(self.affine_mat)
+    def transform_xyarray(self, xyarray: np.ndarray):
+        for action, *args in self.history:
+            xyarray = action(xyarray, *args)
+        return xyarray
 
-    def get_matrix(self):
+    def copy(self) -> Self:
+        new_transform = new_without_init(self.__class__)
+        # Copy every item in this transform's history to the new one.
+        new_transform = self.history[:]
+        return new_transform
+
+    __copy__ = copy
+
+    def __str__(self):
+        return '[\n%s]\b]' % ''.join([f'\t{action}\n' for action in self.history])
+
+    @encapsulation.exposable
+    def apply_transform(self, other: Self) -> Self:
         """
-        Return affine matrix
+        Apply another Transform to this Transform.
         """
-        return self.affine_mat
-
-    def _fix_affine(self):
-        self.affine_mat[2, 0] = 0
-        self.affine_mat[2, 1] = 0
-        self.affine_mat[2, 2] = 1
-
-    def apply_transform(self, transform):
-        """
-        Apply another Transform to this Transform
-        """
-        self.affine_mat = np.matmul(
-            transform.affine_mat,
-            self.affine_mat,
-            )
+        self.history.extend(other.history)
         return self
 
-    def move(self, x, y):
-        self.affine_mat = np.matmul(
-            np.array([
-                [1, 0, x],
-                [0, 1, y],
-                [0, 0, 1],
-                ]),
-            self.affine_mat,
-            )
-        self._fix_affine()
+    @encapsulation.exposable
+    def move(self, x: float, y: float) -> Self:
+        self.history.append((_move, x, y))
         return self
 
-    def movex(self, x):
-        return self.move(x, 0)
-
-    def movey(self, y):
-        return self.move(0, y)
-
-    def scale(self, x, y=None):
-        if y is None:
-            y = x
-        self.affine_mat = np.matmul(
-            np.array([
-                [x, 0, 0],
-                [0, y, 0],
-                [1, 0, 1],
-                ]),
-            self.affine_mat,
-            )
-        self._fix_affine()
+    @encapsulation.exposable
+    def movex(self, x: float) -> Self:
+        self.history.append((_move, x, 0))
         return self
 
-    def rot(self, degrees):
-        cosine = np.cos(np.radians(degrees))
-        sine = np.sin(np.radians(degrees))
-        self.affine_mat = np.matmul(
-            np.array([
-                [cosine, -sine, 0],
-                [sine, cosine, 0],
-                [1, 0, 1],
-                ]),
-            self.affine_mat,
-            )
-        self._fix_affine()
+    @encapsulation.exposable
+    def movey(self, y: float) -> Self:
+        self.history.append((_move, 0, y))
         return self
 
-    def hflip(self):
-        self.scale(1, -1)
+    @encapsulation.exposable
+    def scale(self, x: float, y: float | None = None) -> Self:
+        self.history.append((_scale, x, x if y is None else y))
         return self
 
-    def vflip(self):
-        self.scale(-1, 1)
+    @encapsulation.exposable
+    def rot(self, angle: float, x: float = 0, y: float = 0) -> Self:
+        self.history.append((_rot, angle, x, y))
         return self
 
-    def flip(self):
-        self.scale(-1, -1)
+    @encapsulation.exposable
+    def hflip(self) -> Self:
+        self.history.append((_scale, 1, -1))
+        return self
+
+    @encapsulation.exposable
+    def vflip(self) -> Self:
+        self.history.append((_scale, -1, 1))
+        return self
+
+    @encapsulation.exposable
+    def flip(self) -> Self:
+        self.history.append((_scale, -1, -1))
         return self
 

@@ -8,7 +8,6 @@ points can be used
 
 from PyCIF.draw.Alignable import Alignable
 from PyCIF.draw.Transform import Transform
-from PyCIF.draw.BBox import BBox
 from PyCIF.draw.Point import Point
 from PyCIF.draw.PointRef import PointRef
 from PyCIF.misc.Dotdict import Dotdict
@@ -53,9 +52,8 @@ class Markable(Alignable):
     def __init__(
             self,
             transform: Transform | None = None,
-            bbox: BBox | None = None,
             ):
 
-        super().__init__(transform=transform, bbox=bbox)
+        super().__init__()
         self.marks = MarkContainer(self, self.transform)
 

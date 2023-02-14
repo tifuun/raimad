@@ -26,8 +26,8 @@ def export(stream, component: Component):
         stream.write(f'L L{layer_index};\n')
         for poly in polys:
             stream.write('P ')
-            for point in np.nditer(poly.get_xyarray()):
-                point2 = point * 10  # TODO wtf??
+            for point in np.nditer(poly.xyarray):
+                point2 = point * 100  # TODO wtf??
                 stream.write(f'{point2:9.0f} ')
             stream.write(';\n')
 
