@@ -10,6 +10,8 @@ from copy import deepcopy
 import numpy as np
 
 from PyCIF.draw.Alignable import Alignable
+from PyCIF.draw.Point import Point
+from PyCIF.draw.PointRef import PointRef
 
 
 class Polygon(ABC, Alignable):
@@ -19,8 +21,9 @@ class Polygon(ABC, Alignable):
     """
     @abstractmethod
     def __init__(self):
+        """
+        """
         super().__init__()
-        pass
 
     @property
     @abstractmethod
@@ -45,4 +48,20 @@ class Polygon(ABC, Alignable):
         Return a copy of this polygon
         """
         return deepcopy(self)
+
+    @property
+    def origin(self):
+        """
+        Polygon origin mark.
+        This mark is available to all Polygons.
+        """
+        return PointRef(self, Point(0, 0))
+
+    # TODO TODO clear indication own coordinates or external coordinates??
+    # this one is own
+    def polar(self, angle, radius):
+        radians = np.radians(angle)
+        x = np.sin(radians) * radius
+        y = np.cos(radians) * radius
+        return PointRef(self, Point(x, y))
 

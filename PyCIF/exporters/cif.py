@@ -25,11 +25,21 @@ def export(stream, component: Component):
         layer_index = component.layerspecs[layer_name].index
         stream.write(f'L L{layer_index};\n')
         for poly in polys:
+            if len(poly.xyarray) == 0:
+                continue
+
             stream.write('P ')
-            for point in np.nditer(poly.xyarray):
-                point2 = point * 100  # TODO wtf??
-                stream.write(f'{point2:9.0f} ')
-            stream.write(';\n')
+
+            try:
+                for point in np.nditer(poly.xyarray):
+                    point2 = point * 100  # TODO wtf??
+                    stream.write(f'{point2:9.0f} ')
+                stream.write(';\n')
+
+            except Exception as e:
+                raise Exception(
+                    f'Failed to export polygon {poly}. ',
+                    ) from e
 
     stream.write('E\n')
 
