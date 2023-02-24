@@ -205,6 +205,17 @@ class Bearing(Angle):
 
 @bounded_angle(Angle.Degrees(-180), Angle.Degrees(180))
 class Turn(Angle):
+    class Direction(Enum):
+        RIGHT = 0
+        LEFT = 1
+        STRAIGHT = 2
+        BACKWARDS = 3
+
+    RIGHT = Direction.RIGHT
+    LEFT = Direction.LEFT
+    STRAIGHT = Direction.STRAIGHT
+    BACKWARDS = Direction.BACKWARDS
+
     @classmethod
     def Right(cls, angle: Angle):
         return cls(degrees=angle.degrees)
@@ -222,23 +233,23 @@ class Turn(Angle):
         return cls(degrees=-180)
 
     def __str__(self):
-        if self.direction in {self.Straight, self.Backwards}:
-            return self.direction.__name__
-        return f'{abs(self._degrees)}\xb0 {self.direction.__name__}'
+        if self.direction in {self.STRAIGHT, self.BACKWARDS}:
+            return self.direction.name
+        return f'{abs(self.degrees)}\xb0 {self.direction.name}'
 
     @property
     def direction(self):
         if self._degrees == 0:
-            return self.Straight
+            return self.STRAIGHT
 
         if self._degrees == -180:
-            return self.Backwards
+            return self.BACKWARDS
 
         if self._degrees <= 0:
-            return self.Left
+            return self.LEFT
 
         if self._degrees >= 0:
-            return self.Right
+            return self.RIGHT
 
     def Between_bearings(incoming: Bearing, outgoing: Bearing):
         #outgoing = outgoing - Semicircle
