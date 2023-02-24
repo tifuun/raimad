@@ -13,7 +13,7 @@ from PyCIF.draw.PolygonGroup import PolygonGroup
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw import OptCategory
 from PyCIF.draw import LayerCategory
-from PyCIF.misc.Dotdict import Dotdict
+from PyCIF.helpers.Dotdict import Dotdict
 
 # Possibilities:
 # None can be used when parent and child have identical layers

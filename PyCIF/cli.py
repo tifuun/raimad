@@ -10,7 +10,7 @@ import argparse
 from pathlib import Path
 
 from PyCIF import exporters
-from PyCIF.misc.import_from_string import import_package_from_string
+from PyCIF.helpers.import_from_string import import_package_from_string
 
 
 def cli():

@@ -4,8 +4,8 @@ from typing import Self, ClassVar, Tuple
 
 import numpy as np
 
-from PyCIF.misc import encapsulation
-from PyCIF.misc.hackery import new_without_init
+from PyCIF.helpers import encapsulation
+from PyCIF.helpers.hackery import new_without_init
 
 FULL_CIRCLE = 360
 

@@ -10,7 +10,7 @@ from PyCIF.draw.Alignable import Alignable
 from PyCIF.draw.Transform import Transform
 from PyCIF.draw.Point import Point
 from PyCIF.draw.PointRef import PointRef
-from PyCIF.misc.Dotdict import Dotdict
+from PyCIF.helpers.Dotdict import Dotdict
 
 
 class MarkContainer(object):

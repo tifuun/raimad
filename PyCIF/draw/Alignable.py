@@ -6,7 +6,7 @@ from typing import Self
 
 from PyCIF.draw.Transform import Transform
 from PyCIF.draw.PointRef import PointRef
-from PyCIF.misc import encapsulation
+from PyCIF.helpers import encapsulation
 
 
 #def wrap_transform_method(method):

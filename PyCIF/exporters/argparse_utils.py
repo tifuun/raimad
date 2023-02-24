@@ -3,7 +3,7 @@ argparse-related shorthands.
 """
 
 import argparse
-from PyCIF.misc.import_from_string import import_from_string
+from PyCIF.helpers.import_from_string import import_from_string
 
 
 def arg_output_file(parser):
