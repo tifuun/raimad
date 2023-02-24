@@ -9,6 +9,7 @@ import numpy as np
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.Point import Point
 from PyCIF.draw.PointRef import PointRef
+from PyCIF.draw.angles import angspace, Bearing
 
 
 class Arc(Polygon):
@@ -59,16 +60,16 @@ class Arc(Polygon):
         #    angle_end = np.radians(self.angle_end),
 
         # BEARING!!
-        if self.backwards:
-            while self.angle_start < self.angle_end:
-                self.angle_start += 360
+        #if self.backwards:
+        #    while self.angle_start < self.angle_end:
+        #        self.angle_start += 360
 
-        else:
-            while self.angle_end < self.angle_start:
-                self.angle_end += 360
+        #else:
+        #    while self.angle_end < self.angle_start:
+        #        self.angle_end += 360
 
-        angle_start = np.radians(- self.angle_start + 90)
-        angle_end = np.radians(- self.angle_end + 90)
+        #angle_start = np.radians(- self.angle_start + 90)
+        #angle_end = np.radians(- self.angle_end + 90)
 
         #angle_start = np.radians(self.angle_start)
         #angle_end = np.radians(self.angle_end)
@@ -76,15 +77,22 @@ class Arc(Polygon):
         #print(self.angle_start, self.angle_end)
         #print('--', self.angle_start % 360, self.angle_end % 360)
 
-        points = np.linspace(
-            angle_start,
-            angle_end,
+        #points = np.linspace(
+        #    angle_start,
+        #    angle_end,
+        #    )
+        points = angspace(
+            self.angle_start,
+            self.angle_end,
+            backwards=self.backwards,
             )
 
+        #points = [Bearing.Deg(d) for d in np.linspace(0, 300)]
         return np.array([
             (
-                self._center.x + np.cos(angle) * radius,
-                self._center.y + np.sin(angle) * radius,
+                #self._center.x + np.cos(angle) * radius,
+                #self._center.y + np.sin(angle) * radius,
+                *(angle.as_point() * radius + self._center),
             )
             for radius in (self.radius_inner, self.radius_outter)
             for angle in (points, reversed(points))[
@@ -109,7 +117,8 @@ class Arc(Polygon):
         Midway between the two radii,
         at the start of the arc
         """
-        return self.polar(self.angle_start, self.midradius) + self._center
+        return PointRef(self, self.angle_start.as_point() * self.midradius + self._center)
+        #return self.polar(self.angle_start, self.midradius) + self._center
 
     @property
     def end_mid(self):
@@ -117,5 +126,6 @@ class Arc(Polygon):
         Midway between the two radii,
         at the start of the arc
         """
-        return self.polar(self.angle_end, self.midradius) + self._center
+        return PointRef(self, self.angle_end.as_point() * self.midradius + self._center)
+        #return self.polar(self.angle_end, self.midradius) + self._center
 

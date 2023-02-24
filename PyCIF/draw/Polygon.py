@@ -12,6 +12,7 @@ import numpy as np
 from PyCIF.draw.Alignable import Alignable
 from PyCIF.draw.Point import Point
 from PyCIF.draw.PointRef import PointRef
+from PyCIF.draw.angles import Bearing
 
 
 class Polygon(ABC, Alignable):
@@ -59,9 +60,9 @@ class Polygon(ABC, Alignable):
 
     # TODO TODO clear indication own coordinates or external coordinates??
     # this one is own
-    def polar(self, angle, radius):
-        radians = np.radians(angle)
-        x = np.sin(radians) * radius
-        y = np.cos(radians) * radius
-        return PointRef(self, Point(x, y))
+    #def polar(self, bearing, radius):
+    #    radians = np.radians(angle)
+    #    x = np.sin(radians) * radius
+    #    y = np.cos(radians) * radius
+    #    return PointRef(self, Point(x, y))
 

@@ -38,6 +38,26 @@ class Point(object):
             self.y - other.y,
             )
 
+    def __mul__(self, multiplier: float):
+        """
+        Treat point as if it was vector and multiply
+        """
+        return Point(
+            self.x * multiplier,
+            self.y * multiplier,
+            )
+    # FIXME separate class for vector?
+
+    def __truediv__(self, divisor: float):
+        """
+        Treat point as if it was vector and multiply
+        """
+        return Point(
+            self.x / divisor,
+            self.y / divisor,
+            )
+    # FIXME separate class for vector?
+
     def move(self, x, y):
         self.x += x
         self.y += y
