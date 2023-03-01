@@ -40,8 +40,7 @@ class RectWire(Polygon):
             angle + 90,
             )
 
-    @property
-    def _xyarray(self) -> np.ndarray:
+    def _get_xyarray(self) -> np.ndarray:
         return np.array(
             (
                 (self.v1.x, self.v1.y),
