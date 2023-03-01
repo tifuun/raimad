@@ -2,10 +2,10 @@
 Polygon group -- used for grouping polygons together for transformations
 """
 
-from PyCIF.draw.Alignable import Alignable
+from PyCIF.draw.Transformable import Transformable
 
 
-class PolygonGroup(Alignable):
+class PolygonGroup(Transformable):
     def __init__(self, *args, transform=None, bbox=None):
         super().__init__(transform=transform, bbox=bbox)
         self.polygons = args

@@ -25,13 +25,15 @@ def export(stream, component: Component):
         layer_index = component.layerspecs[layer_name].index
         stream.write(f'L L{layer_index};\n')
         for poly in polys:
-            if len(poly.xyarray) == 0:
+            xyarray = poly.get_xyarray()
+
+            if len(xyarray) == 0:
                 continue
 
             stream.write('P ')
 
             try:
-                for point in np.nditer(poly.xyarray):
+                for point in np.nditer(xyarray):
                     point2 = point * 100  # TODO wtf??
                     stream.write(f'{point2:9.0f} ')
                 stream.write(';\n')

@@ -6,9 +6,13 @@ from typing import Self
 
 import numpy as np
 
-from PyCIF.draw.Transform import Transform
+#from PyCIF.draw.Transform import Transform
+
 
 class Point(object):
+    """
+    Immutable (supposedly) container for x, y
+    """
     def __init__(self, x: float = 0, y: float = 0):
         self.x = x
         self.y = y
@@ -24,7 +28,7 @@ class Point(object):
         """
         Allow adding CoordPairs together
         """
-        return Point(
+        return type(self)(
             self.x + other.x,
             self.y + other.y,
             )
@@ -33,7 +37,7 @@ class Point(object):
         """
         Allow subtractin CoordPairs
         """
-        return Point(
+        return type(self)(
             self.x - other.x,
             self.y - other.y,
             )
@@ -42,7 +46,7 @@ class Point(object):
         """
         Treat point as if it was vector and multiply
         """
-        return Point(
+        return type(self)(
             self.x * multiplier,
             self.y * multiplier,
             )
@@ -52,32 +56,30 @@ class Point(object):
         """
         Treat point as if it was vector and multiply
         """
-        return Point(
+        return type(self)(
             self.x / divisor,
             self.y / divisor,
             )
     # FIXME separate class for vector?
 
     def move(self, x, y):
-        self.x += x
-        self.y += y
-        return self
+        return type(self)(
+            self.x + x,
+            self.y + y,
+            )
 
     def move_polar(self, distance, angle):
         angle = np.radians(angle)
-        self.x += np.cos(angle) * distance
-        self.y += np.sin(angle) * distance
-        return self
+        return type(self)(
+            self.x + np.cos(angle) * distance,
+            self.y + np.sin(angle) * distance,
+            )
 #
 #    def apply_transform(self, transform: Transform):
 #        # TODO forms of this are copy-pasted in multiple places.
 #        self.x, self.y, _ = transform.get_matrix().dot(
 #            np.array([self.x, self.y, 1]))
 #        return self
-
-    def copy(self):
-        # TODO use python standard copy?
-        return Point(self.x, self.y)
 
 #    def distance_to(self, other: Self) -> float:
 #        """

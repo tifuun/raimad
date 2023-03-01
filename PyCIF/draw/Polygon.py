@@ -9,13 +9,14 @@ from copy import deepcopy
 
 import numpy as np
 
-from PyCIF.draw.Alignable import Alignable
+from PyCIF.draw.Transform import Transform
+from PyCIF.draw.Markable import Markable
 from PyCIF.draw.Point import Point
 from PyCIF.draw.PointRef import PointRef
 from PyCIF.draw.angles import Bearing
 
 
-class Polygon(ABC, Alignable):
+class Polygon(ABC, Markable):
     """
     Polygon.
     Inheritrs from Transformable, so you can transform it.
@@ -26,23 +27,32 @@ class Polygon(ABC, Alignable):
         """
         super().__init__()
 
-    @property
+        self._add_mark('origin', Point(0, 0))
+
     @abstractmethod
-    def _xyarray(self):
+    def _get_xyarray(self):
         """
         Get array of x,y coordinate pairs in internal coordinates
-        (i.e. without applying transformation)
+        (i.e. without applying transformation).
+
+        Polygons should override this method with one that actually
+        generates their representation as an xyarray in internal coordinates.
         """
 
-    @property
-    def xyarray(self):
+    def get_xyarray(self):
         """
         Get array of x,y coordinate pairs in external coordinates
-        (i.e. with transformation)
+        (i.e. with transformation).
+
+        Polygons should not override this method.
+        Polygons should instead override the provate method
+        `_get_xyarray()`.
+        This method simply calls `_get_xyarray()` and applies
+        the transformation.
         """
-        xyarray = self._xyarray.copy()
-        xyarray = self.transform.transform_xyarray(xyarray)
-        return xyarray
+        xyarray = self._get_xyarray()
+        transformed = self.transform.transform_xyarray(xyarray)
+        return transformed
 
     def copy(self):
         """
@@ -50,13 +60,14 @@ class Polygon(ABC, Alignable):
         """
         return deepcopy(self)
 
-    @property
-    def origin(self):
+    def _export_transform(self, transform):
         """
-        Polygon origin mark.
-        This mark is available to all Polygons.
+        Transform this polygon in-place.
+        For use during the export process.
         """
-        return PointRef(self, Point(0, 0))
+        self.transform.translate_x += transform.translate_x
+        self.transform.translate_y += transform.translate_y
+
 
     # TODO TODO clear indication own coordinates or external coordinates??
     # this one is own
@@ -65,4 +76,5 @@ class Polygon(ABC, Alignable):
     #    x = np.sin(radians) * radius
     #    y = np.cos(radians) * radius
     #    return PointRef(self, Point(x, y))
+
 

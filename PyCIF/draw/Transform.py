@@ -4,6 +4,7 @@ from typing import Self, ClassVar, Tuple
 
 import numpy as np
 
+from PyCIF.draw.Point import Point
 from PyCIF.helpers import encapsulation
 from PyCIF.helpers.hackery import new_without_init
 
@@ -38,6 +39,9 @@ class Transform(object):
         self.angle = 0
 
     def transform_xyarray(self, xyarray: np.ndarray):
+        """
+        Apply transformation to xyarray and return new transformed xyarray
+        """
         if len(xyarray) == 0:
             return xyarray
 
@@ -46,37 +50,46 @@ class Transform(object):
 
         return xyarray
 
-    def copy(self) -> Self:
-        new_transform = new_without_init(self.__class__)
-        new_transform.translate_x = self.translate_x
-        new_transform.translate_y = self.translate_y
-        new_transform.angle = self.angle
-        return new_transform
+    def transform_point(self, point: Point):
+        """
+        Apply transformation to point and return new transformed point
+        """
+        xyarray = np.array([[point.x, point.y]])
+        transformed = self.transform_xyarray(xyarray)
+        return Point(transformed[0][0], transformed[0][1])
 
-    __copy__ = copy
+
+    #def copy(self) -> Self:
+    #    new_transform = new_without_init(self.__class__)
+    #    new_transform.translate_x = self.translate_x
+    #    new_transform.translate_y = self.translate_y
+    #    new_transform.angle = self.angle
+    #    return new_transform
+
+    #__copy__ = copy
 
     #def __str__(self):
     #    return '[\n%s]\b]' % ''.join([f'\t{action}\n' for action in self.history])
 
-    @encapsulation.exposable
-    def apply_transform(self, other: Self) -> Self:
-        """
-        Apply another Transform to this Transform.
-        """
-        #self.history.extend(other.history)
-        return self
+    #@encapsulation.exposable
+    #def apply_transform(self, other: Self) -> Self:
+    #    """
+    #    Apply another Transform to this Transform.
+    #    """
+    #    #self.history.extend(other.history)
+    #    return self
 
-    @encapsulation.exposable
-    def move(self, x: float, y: float) -> Self:
-        self.translate_x += x
-        self.translate_y += y
-        return self
-        #arr = np.array((x, y), np.float64)
-        #arr = self.transform_xyarray(arr)
-        #x = float(arr[0])
-        #y = float(arr[1])
-        #self.history.append((_move, x, y))
-        #return self
+    #@encapsulation.exposable
+    #def move(self, x: float, y: float) -> Self:
+    #    self.translate_x += x
+    #    self.translate_y += y
+    #    return self
+    #    #arr = np.array((x, y), np.float64)
+    #    #arr = self.transform_xyarray(arr)
+    #    #x = float(arr[0])
+    #    #y = float(arr[1])
+    #    #self.history.append((_move, x, y))
+    #    #return self
 
     #@encapsulation.exposable
     #def movex(self, x: float) -> Self:

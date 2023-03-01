@@ -278,13 +278,9 @@ def angspace(
     start = Angle(start)
     end = Angle(end)
 
-    print('aaa', start, end, end=' ')
-
     if backwards:
         while end > start:
             end -= Fullcircle
-
-    print('aaa', start, end, end='\n\n')
 
     return [
             #-Bearing.Rad(rad) + Quartercircle

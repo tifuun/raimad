@@ -20,22 +20,22 @@ class RectWire(Polygon):
             p2.x - p1.x,
             ))
 
-        self.v1 = p1.copy().move_polar(
+        self.v1 = p1.move_polar(
             thickness / 2,
             angle + 90,
             )
 
-        self.v2 = p1.copy().move_polar(
+        self.v2 = p1.move_polar(
             thickness / 2,
             angle - 90,
             )
 
-        self.v3 = p2.copy().move_polar(
+        self.v3 = p2.move_polar(
             thickness / 2,
             angle - 90,
             )
 
-        self.v4 = p2.copy().move_polar(
+        self.v4 = p2.move_polar(
             thickness / 2,
             angle + 90,
             )

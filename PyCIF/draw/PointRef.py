@@ -13,25 +13,25 @@ class PointRef(Point):
         self.y = point.y
         self.alignable = alignable
 
-    def align(self, to: Point):
-        """
-        Align the referenced transformable such that the referenced point is
-        matched with the target point (or PointRef)
-        """
-        # TODO overloading thing so asterisk is not needed
-        #self.alignable.move(*(to - self))
+    #def align(self, to: Point):
+    #    """
+    #    Align the referenced transformable such that the referenced point is
+    #    matched with the target point (or PointRef)
+    #    """
+    #    # TODO overloading thing so asterisk is not needed
+    #    #self.alignable.move(*(to - self))
 
-        self.alignable.transform.translate_x = \
-            to.x - self.x
-        self.alignable.transform.translate_y = \
-            to.y - self.y
+    #    self.alignable.transform.translate_x = \
+    #        to.x - self.x
+    #    self.alignable.transform.translate_y = \
+    #        to.y - self.y
 
-        self.alignable.transform.rotate_x = self.x
-        self.alignable.transform.rotate_y = self.y
+    #    self.alignable.transform.rotate_x = self.x
+    #    self.alignable.transform.rotate_y = self.y
 
-        #self.alignable.transform.angle = \
-        #    (to.angle - self.angle) % 360
-        return self.alignable
+    #    #self.alignable.transform.angle = \
+    #    #    (to.angle - self.angle) % 360
+    #    return self.alignable
 
     #def alignx(self, to: Point):
     #    """

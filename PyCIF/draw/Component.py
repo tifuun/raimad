@@ -42,7 +42,7 @@ class Component(ABC, Markable):
         args and kwargs are interpreted the same way as Dotdict,
         so can be used to set parameters during creation.
         """
-        super().__init__(transform=transform)
+        super().__init__()
         self.subcomponents = []
         self.subpolygons = []
 
@@ -157,31 +157,25 @@ class Component(ABC, Markable):
         include_layers is to specify which layers
         are needed, None means all.
         """
+
         if include_layers is None:
             include_layers = self.layerspecs.keys()
         else:
             assert set(include_layers).issubset(self.layerspecs.keys())
 
-        #layers = {layer: [] for layer in include_layers}
-        #for subcomponent in self.subcomponents:
-        #    for child_layer, polygons in subcomponent.get_polygons(include_layers).items():
-        #        parent_layer = subcomponent.layermap[child_layer]
-        #        if parent_layer is None:
-        #            continue
-        #        layers[parent_layer].extend(polygons)
-
         layers = {layer: [] for layer in include_layers}
+
         for subcomponent in self.subcomponents:
             for layer, polygons in subcomponent.get_polygons(include_layers).items():
                 for polygon in polygons:
-                    polygon.apply_transform(self.transform)
+                    polygon._export_transform(self.transform)
                     layers[layer].append(polygon)
 
         for subpolygon in self.subpolygons:
             polygon = subpolygon.get_polygon(include_layers)
             if not polygon:
                 continue
-            polygon.apply_transform(self.transform)
+            polygon._export_transform(self.transform)
             layers[subpolygon.layermap].append(polygon)
 
         return layers
@@ -358,6 +352,9 @@ def make_layers(parent_class, **kwargs):
 
 
 class Subcomponent(object):
+    """
+    Container for component that is part of another component.
+    """
     def __init__(self, component, layermap):
         self.component = component
         self.layermap = layermap
@@ -365,29 +362,27 @@ class Subcomponent(object):
     def get_polygons(self, include_layers):
         """
         This is the counterpart to component.get_polygons()
-        that applies the correct transformations and everything.
+        that applies the correct transformations and
 
         So basically it's a constant flip-flop between component.get_polygons()
         and subcomponent.get_polygons(), in a sort of tree,
         with the leaves being subpolygons
         """
+        # Which layers (of the child) need to be included?
         include_layers_child = [
             child_layer
             for child_layer, parent_layer in self.layermap.items()
             if parent_layer is not None
             ]
 
+        # Get a dict mapping child layer names to lists of polys
         child_layers = self.component.get_polygons(include_layers_child)
+
+        # Create a dict mapping *parent* layer names to lists of polys
         parent_layers = {
             self.layermap[child_layer_name]: polys
             for child_layer_name, polys in child_layers.items()
             }
-        #for polygons in child_layers.values():
-        #    for poly in polygons:
-        #        poly.apply_transform(self.transform)
-        #        # Subpolygon.get_polygon copies
-        #        # the polygon, so it's okay
-        #        # to transform it in-place here.
 
         return parent_layers
 
@@ -404,9 +399,15 @@ class Subpolygon(object):
     def get_polygon(self, include_layers):
         """
         """
-        if self.layermap in include_layers:
-            return self.polygon
-        return None
+        if self.layermap not in include_layers:
+            return None
+
+        # Here, the polygon is copied for export.
+        # This means that any transforms that are applied
+        # during export (i.e. to flatten the coordinate hierarchy)
+        # don't affect the actual polygon,
+        # so that the component can be used later on.
+        return self.polygon.copy()
 
 
 def parse_subcomponent_layermap_shorthand(parent_layers, child_layers, layermap_shorthand: SubcomponentLayermapShorthand):
