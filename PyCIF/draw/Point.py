@@ -81,16 +81,16 @@ class Point(object):
 #            np.array([self.x, self.y, 1]))
 #        return self
 
-#    def distance_to(self, other: Self) -> float:
-#        """
-#        Get the distance between two points.
-#        returns the absolute distance between this point and `other` point.
-#        """
-#        return np.linalg.norm(
-#            (self.x, self.y),
-#            (other.x, other.y),
-#            )
-#
+    def distance_to(self, to: Self) -> float:
+        """
+        Get the distance to another point.
+        returns the absolute distance between this point and `other` point.
+        """
+        return (
+            (to.x - self.x) ** 2 +
+            (to.y - self.y) ** 2
+            ) ** (1 / 2)
+
 #    def radians_to(self, other: Self) -> float:
 #        """
 #        Get angle between two points.

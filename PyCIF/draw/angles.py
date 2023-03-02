@@ -16,13 +16,13 @@ class Angle():
     """
     def __init__(self, degrees: float | Self):
         """
-        Create new Angle, given a measure in degrees.
+        Create new Angle, given a measure in egrees.
         It is preferred to use the Degrees, Radians, and CircleFraction
         classmethods
         rather than using the __init__ method directly.
         """
         if isinstance(degrees, type(self)) or isinstance(self, type(degrees)):
-            degrees = degrees.degrees
+            degrees = degrees._degrees
 
         self._setvalue(degrees)
 
@@ -67,19 +67,17 @@ class Angle():
         """
         return cls(degrees=degrees)
 
-    @property
     def degrees(self):
         """
         Get value in degrees.
         """
         return self._degrees
 
-    @property
     def radians(self):
         """
         Get value in radians.
         """
-        return self._degrees / 180 * np.pi
+        return self.degrees() / 180 * np.pi
 
     @staticmethod
     def _verify_angle(obj: Any):
@@ -95,46 +93,62 @@ class Angle():
                 "Angle.Rad, or Angle.Frac instead."
                 )
 
+    def cos(self):
+        """
+        Calculate cosine.
+        This functions allows Angle objects to be used as arguments
+        for np.cos
+        """
+        return np.cos(self.radians())
+
+    def sin(self):
+        """
+        Calculate cosine.
+        This functions allows Angle objects to be used as arguments
+        for np.sin
+        """
+        return np.sin(self.radians())
+
     def __str__(self):
-        return f'{self.degrees}\xb0'
+        return f'{self.degrees()}\xb0'
 
     __repr__ = __str__
 
     def __abs__(self):
-        return self.__class__(degrees=abs(self._degrees))
+        return type(self)(degrees=abs(self._degrees))
 
     def __neg__(self):
-        return self.__class__(degrees=-self._degrees)
+        return type(self)(degrees=-self._degrees)
 
     def __add__(self, other: Self):
         self._verify_angle(other)
-        return self.__class__(degrees=self.degrees + other.degrees)
+        return type(self)(degrees=self._degrees + other._degrees)
 
     def __sub__(self, other: Self):
         self._verify_angle(other)
-        return self.__class__(degrees=self.degrees - other.degrees)
+        return type(self)(degrees=self._degrees - other._degrees)
 
     def __mul__(self, multiplier: float):
-        return self.__class__(degrees=self.degrees * multiplier)
+        return type(self)(degrees=self._degrees * multiplier)
 
     def __truediv__(self, dividend: float):
-        return self.__class__(degrees=self.degrees / dividend)
+        return type(self)(degrees=self._degrees / dividend)
 
     def __gt__(self, other: Self):
         self._verify_angle(other)
-        return self.degrees > other.degrees
+        return self.degrees() > other.degrees()
 
     def __lt__(self, other: Self):
         self._verify_angle(other)
-        return self.degrees < other.degrees
+        return self.degrees() < other.degrees()
 
     def __ge__(self, other: Self):
         self._verify_angle(other)
-        return self.degrees >= other.degrees
+        return self.degrees() >= other.degrees()
 
     def __le__(self, other: Self):
         self._verify_angle(other)
-        return self.degrees <= other.degrees
+        return self.degrees() <= other.degrees()
 
 
 Delta = Angle.Degrees(0.1)
@@ -144,13 +158,13 @@ Quartercircle = Angle.CircleFraction(1 / 4)
 
 
 def sin(angle: Angle):
-    return np.sin(angle.radians)
+    return np.sin(angle.radians())
 
 def cos(angle: Angle):
-    return np.sin(angle.radians)
+    return np.sin(angle.radians())
 
 def tan(angle: Angle):
-    return np.sin(angle.radians)
+    return np.sin(angle.radians())
 
 
 def bounded_angle(minimum: Angle, maximum: Angle):
@@ -166,7 +180,7 @@ def bounded_angle(minimum: Angle, maximum: Angle):
     def _setvalue(self, degrees: float):
         #if not (minimum.degrees <= degrees < maximum.degrees):
         #    raise Exception(f'Not in range {minimum}, {maximum}')
-        degrees = ((degrees - minimum.degrees) % _range.degrees + minimum.degrees)
+        degrees = ((degrees - minimum.degrees()) % _range.degrees() + minimum.degrees())
         Angle._setvalue(self, degrees)
 
     def make_bounded_angle(cls):
@@ -195,12 +209,30 @@ class Bearing(Angle):
         x, y = (destination - source)
         return cls.Arctan2(y, x)
 
+    def __sub__(self, other: Self):
+        self._verify_angle(other)
+
+        # difference of two Bearings is an Angle
+        if isinstance(other, Bearing):
+            return Angle(degrees=self._degrees - other._degrees)
+
+        return super().__sub__(other)
+
+    def degrees(self):
+        """
+        Get value in degrees.
+        This will not be the value that was specified during creation, but
+        rather its equivalent in the numpy angle system.
+        """
+        return (90 - self._degrees) % 360
+
     def as_point(self) -> Point:
-        mathangle = np.radians(-self._degrees + 90)
-        return Point(np.cos(mathangle), np.sin(mathangle))
+        #mathangle = np.radians(-self._degrees + 90)
+        return Point(np.cos(self), np.sin(self))
 
     def __neg__(self):
-        return self.__class__(self + Semicircle)
+        #print(self, Semicircle, self.__class__)
+        return type(self)(self + Semicircle)
 
 
 @bounded_angle(Angle.Degrees(-180), Angle.Degrees(180))
@@ -218,11 +250,11 @@ class Turn(Angle):
 
     @classmethod
     def Right(cls, angle: Angle):
-        return cls(degrees=angle.degrees)
+        return cls(degrees=angle.degrees())
 
     @classmethod
     def Left(cls, angle: Angle):
-        return cls(degrees=-angle.degrees)
+        return cls(degrees=-angle.degrees())
 
     @classmethod
     def Straight(cls):
@@ -235,7 +267,7 @@ class Turn(Angle):
     def __str__(self):
         if self.direction in {self.STRAIGHT, self.BACKWARDS}:
             return self.direction.name
-        return f'{abs(self.degrees)}\xb0 {self.direction.name}'
+        return f'{abs(self.degrees())}\xb0 {self.direction.name}'
 
     @property
     def direction(self):
@@ -255,7 +287,13 @@ class Turn(Angle):
         #outgoing = outgoing - Semicircle
         #outgoing = outgoing
 
+        #print(type(incoming), type(outgoing))
+        #print(incoming, outgoing)
+        #print(incoming._degrees, outgoing._degrees)
+        #print(incoming - outgoing)
+
         if abs(incoming - outgoing) < Delta:
+            print('yo')
             return Turn.Straight()
 
         if incoming > outgoing:
@@ -263,6 +301,8 @@ class Turn(Angle):
 
         if outgoing > incoming:
             return Turn.Right(outgoing - incoming)
+
+        assert False, 'Should never reach here'
 
 
 def angspace(
@@ -286,6 +326,6 @@ def angspace(
             #-Bearing.Rad(rad) + Quartercircle
         Bearing.Rad(rad)
         for rad
-        in np.linspace(start.radians, end.radians, num_steps)
+        in np.linspace(start.radians(), end.radians(), num_steps)
         ]
 
