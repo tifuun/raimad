@@ -66,10 +66,10 @@ class Markable(Transformable):
         (specified in external coordinates)
         """
         source_point_ext = self.transform.transform_point(source_point)
-        self.transform.translate_x = \
-            target_point.x - source_point_ext.x
-        self.transform.translate_y = \
-            target_point.y - source_point_ext.y
+        self.move(
+            target_point.x - source_point_ext.x,
+            target_point.y - source_point_ext.y,
+            )
 
     def align_mark_to_point(self, source_mark_name: str, target_point: Point):
         """
@@ -95,5 +95,27 @@ class Markable(Transformable):
         self.align_mark_to_point(
             source_mark_name,
             target_markable.get_mark(target_mark_name)
+            )
+
+    def rotate_around_point(self,
+            point: Point,
+            angle,
+            ):
+        """
+        Rotate around a point (in internal coords)
+        """
+        point_ext = self.transform.transform_point(point)
+        self.rotate(angle, point_ext.x, point_ext.y)
+
+    def rotate_around_mark(self,
+            mark_name: str,
+            angle,
+            ):
+        """
+        Rotate around a mark
+        """
+        self.rotate_around_point(
+            self._get_mark(mark_name),
+            angle,
             )
 

@@ -29,6 +29,12 @@ class Polygon(ABC, Markable):
 
         self._add_mark('origin', Point(0, 0))
 
+    def __str__(self):
+        return (
+            f'Polygon {type(self).__name__} '
+            f'with {str(self.transform)}'
+            )
+
     @abstractmethod
     def _get_xyarray(self):
         """
@@ -59,15 +65,6 @@ class Polygon(ABC, Markable):
         Return a copy of this polygon
         """
         return deepcopy(self)
-
-    def _export_transform(self, transform):
-        """
-        Transform this polygon in-place.
-        For use during the export process.
-        """
-        self.transform.translate_x += transform.translate_x
-        self.transform.translate_y += transform.translate_y
-
 
     # TODO TODO clear indication own coordinates or external coordinates??
     # this one is own

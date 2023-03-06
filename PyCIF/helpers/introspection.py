@@ -6,16 +6,12 @@ def print_component(compo, depth=0):
     print(
         '    ' * depth,
         compo,
-        compo.transform.translate_x,
-        compo.transform.translate_y,
         )
 
 def print_polygon(poly, depth=0):
     print(
         '    ' * depth,
         poly,
-        poly.transform.translate_x,
-        poly.transform.translate_y,
         )
 
 def print_component_tree(compo, depth=0):

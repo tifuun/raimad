@@ -5,38 +5,34 @@ from typing import Self, ClassVar, Tuple
 import numpy as np
 
 from PyCIF.draw.Point import Point
+from PyCIF.draw.angles import Bearing, Angle
 from PyCIF.helpers import encapsulation
 from PyCIF.helpers.hackery import new_without_init
 
-FULL_CIRCLE = 360
 
+def _rot(angle):
+    return np.array([
+        [np.cos(angle), -np.sin(angle), 0],
+        [np.sin(angle), np.cos(angle), 0],
+        [0, 0, 1],
+        ])
 
-def _rot(xyarray, angle, x, y, /):
-    radians = np.radians(angle)
-    rotmatrix = np.array((
-        (np.cos(radians), -np.sin(radians)),
-        (np.sin(radians), np.cos(radians)),
-        ))
-
-    xyarray -= (x, y)
-    xyarray = xyarray @ rotmatrix
-    # TODO replace with @= when it becomes implemented.
-    xyarray += (x, y)
-    return xyarray
+def _mov(x, y):
+    return np.array([
+        [1, 0, x],
+        [0, 1, y],
+        [0, 0, 1],
+        ])
 
 
 @encapsulation.expose_class
 class Transform(object):
     """
-    Transformation: stores new origin, rotation, x and y scale.
+    Transformation: container for affine matrix
     """
 
     def __init__(self):
-        self.translate_x = 0
-        self.translate_y = 0
-        self.rotate_x = 0
-        self.rotate_y = 0
-        self.angle = 0
+        self._affine = np.identity(3)
 
     def transform_xyarray(self, xyarray: np.ndarray):
         """
@@ -45,19 +41,36 @@ class Transform(object):
         if len(xyarray) == 0:
             return xyarray
 
-        xyarray = _rot(xyarray, self.angle, self.rotate_x, self.rotate_y)
-        xyarray += (self.translate_x, self.translate_y)
+        homogeneous = np.hstack((
+            xyarray,
+            np.ones((xyarray.shape[0], 1)),
+            ))
+        transformed = np.dot(homogeneous, self._affine.T)
+        euclidean = transformed[:, :2] / transformed[:, 2].reshape(-1, 1)
 
-        return xyarray
+        return euclidean
 
     def transform_point(self, point: Point):
         """
         Apply transformation to point and return new transformed point
         """
-        xyarray = np.array([[point.x, point.y]])
-        transformed = self.transform_xyarray(xyarray)
-        return Point(transformed[0][0], transformed[0][1])
+        homogenous = np.array([point.x, point.y, 1])
+        transformed = np.dot(homogenous, self._affine.T)
+        return Point(
+            transformed[0] / transformed[2],
+            transformed[1] / transformed[2],
+            )
 
+    @encapsulation.exposable
+    def apply_transform(self, transform: Self):
+        """
+        Apply a transform to this transform
+        """
+        self._affine = transform._affine @ self._affine
+        return self
+
+    def __str__(self):
+        return self._affine.__str__()
 
     #def copy(self) -> Self:
     #    new_transform = new_without_init(self.__class__)
@@ -79,17 +92,16 @@ class Transform(object):
     #    #self.history.extend(other.history)
     #    return self
 
-    #@encapsulation.exposable
-    #def move(self, x: float, y: float) -> Self:
-    #    self.translate_x += x
-    #    self.translate_y += y
-    #    return self
-    #    #arr = np.array((x, y), np.float64)
-    #    #arr = self.transform_xyarray(arr)
-    #    #x = float(arr[0])
-    #    #y = float(arr[1])
-    #    #self.history.append((_move, x, y))
-    #    #return self
+    @encapsulation.exposable
+    def move(self, x: float, y: float) -> Self:
+        self._affine = _mov(x, y) @ self._affine
+        return self
+        #arr = np.array((x, y), np.float64)
+        #arr = self.transform_xyarray(arr)
+        #x = float(arr[0])
+        #y = float(arr[1])
+        #self.history.append((_move, x, y))
+        #return self
 
     #@encapsulation.exposable
     #def movex(self, x: float) -> Self:
@@ -106,14 +118,16 @@ class Transform(object):
     #    self.history.append((_scale, x, x if y is None else y))
     #    return self
 
-    #@encapsulation.exposable
-    #def rot(self, angle: float, x: float = 0, y: float = 0) -> Self:
-    #    arr = np.array((x, y), np.float64)
-    #    arr = self.transform_xyarray(arr)
-    #    x = float(arr[0])
-    #    y = float(arr[1])
-    #    self.history.append((_rot, angle, x, y))
-    #    return self
+    @encapsulation.exposable
+    def rotate(self, angle: float, x: float = 0, y: float = 0) -> Self:
+        to_origin = _mov(-x, -y)
+        rot = _rot(angle)
+        from_origin = _mov(x, y)
+
+        rotaround = from_origin @ rot @ to_origin
+        self._affine = rotaround @ self._affine
+
+        return self
 
     #@encapsulation.exposable
     #def hflip(self) -> Self:

@@ -112,7 +112,7 @@ class Angle():
     def __str__(self):
         return f'{self.degrees()}\xb0'
 
-    __repr__ = __str__
+    #__repr__ = __str__
 
     def __abs__(self):
         return type(self)(degrees=abs(self._degrees))
@@ -227,11 +227,9 @@ class Bearing(Angle):
         return (90 - self._degrees) % 360
 
     def as_point(self) -> Point:
-        #mathangle = np.radians(-self._degrees + 90)
         return Point(np.cos(self), np.sin(self))
 
     def __neg__(self):
-        #print(self, Semicircle, self.__class__)
         return type(self)(self + Semicircle)
 
 
@@ -293,7 +291,6 @@ class Turn(Angle):
         #print(incoming - outgoing)
 
         if abs(incoming - outgoing) < Delta:
-            print('yo')
             return Turn.Straight()
 
         if incoming > outgoing:

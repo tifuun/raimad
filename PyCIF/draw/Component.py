@@ -168,17 +168,23 @@ class Component(ABC, Markable):
         for subcomponent in self.subcomponents:
             for layer, polygons in subcomponent.get_polygons(include_layers).items():
                 for polygon in polygons:
-                    polygon._export_transform(self.transform)
+                    polygon.apply_transform(self.transform)
                     layers[layer].append(polygon)
 
         for subpolygon in self.subpolygons:
             polygon = subpolygon.get_polygon(include_layers)
             if not polygon:
                 continue
-            polygon._export_transform(self.transform)
+            polygon.apply_transform(self.transform)
             layers[subpolygon.layermap].append(polygon)
 
         return layers
+
+    def __str__(self):
+        return (
+            f'Component {type(self).__name__} '
+            f'with {str(self.transform)}'
+            )
 
     @abstractmethod
     def make(self, opts=None):
