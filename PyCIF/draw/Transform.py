@@ -4,8 +4,6 @@ from typing import Self, ClassVar, Tuple
 
 import numpy as np
 
-from PyCIF.draw.Point import Point
-from PyCIF.draw.angles import Bearing, Angle
 from PyCIF.helpers import encapsulation
 from PyCIF.helpers.hackery import new_without_init
 
@@ -50,16 +48,15 @@ class Transform(object):
 
         return euclidean
 
-    def transform_point(self, point: Point):
+    def transform_point(self, point):
         """
         Apply transformation to point and return new transformed point
         """
-        homogenous = np.array([point.x, point.y, 1])
-        transformed = np.dot(homogenous, self._affine.T)
-        return Point(
-            transformed[0] / transformed[2],
-            transformed[1] / transformed[2],
-            )
+        homogeneous = np.append(point, 1)
+        transformed = np.dot(homogeneous, self._affine.T)
+        cartesian = transformed[:2] / transformed[2]
+
+        return cartesian
 
     @encapsulation.exposable
     def apply_transform(self, transform: Self):

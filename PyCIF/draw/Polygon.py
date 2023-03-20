@@ -11,10 +11,6 @@ import numpy as np
 
 from PyCIF.draw.Transform import Transform
 from PyCIF.draw.Markable import Markable
-from PyCIF.draw.Point import Point
-from PyCIF.draw.PointRef import PointRef
-from PyCIF.draw.angles import Bearing
-
 
 class Polygon(ABC, Markable):
     """
@@ -27,7 +23,7 @@ class Polygon(ABC, Markable):
         """
         super().__init__()
 
-        self._add_mark('origin', Point(0, 0))
+        self._add_mark('origin', np.array([0, 0]))
 
     def __str__(self):
         return (

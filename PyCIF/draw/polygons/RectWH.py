@@ -4,12 +4,10 @@ width-height Rectangle
 
 import numpy as np
 
-from PyCIF.draw.Polygon import Polygon
-from PyCIF.draw.Point import Point
-from PyCIF.draw.PointRef import PointRef
+import PyCIF as pc
 
 
-class RectWH(Polygon):
+class RectWH(pc.Polygon):
 
     def __init__(self, width: float, height: float):
         super().__init__()
@@ -18,7 +16,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'top_left',
-            Point(
+            pc.point(
                 self.width * 0,
                 self.height * 1,
                 ),
@@ -31,7 +29,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'top_mid',
-            Point(
+            pc.point(
                 self.width * 0.5,
                 self.height * 1,
                 ),
@@ -44,7 +42,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'top_right',
-            Point(
+            pc.point(
                 self.width * 1,
                 self.height * 1,
                 ),
@@ -57,7 +55,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'mid_left',
-            Point(
+            pc.point(
                 self.width * 0,
                 self.height * 0.5,
                 ),
@@ -70,7 +68,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'mid',
-            Point(
+            pc.point(
                 self.width * 0.5,
                 self.height * 0.5,
                 ),
@@ -83,7 +81,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'mid_right',
-            Point(
+            pc.point(
                 self.width * 1,
                 self.height * 0.5,
                 ),
@@ -96,7 +94,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'bottom_left',
-            Point(
+            pc.point(
                 self.width * 0,
                 self.height * 0,
                 ),
@@ -109,7 +107,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'bottom_mid',
-            Point(
+            pc.point(
                 self.width * 0.5,
                 self.height * 0,
                 ),
@@ -122,7 +120,7 @@ class RectWH(Polygon):
 
         self._add_mark(
             'bottom_right',
-            Point(
+            pc.point(
                 self.width * 1,
                 self.height * 0,
                 ),

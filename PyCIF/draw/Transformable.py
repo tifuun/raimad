@@ -5,7 +5,6 @@ Transformable -- enacpsulates transform and exposes its methods
 from typing import Self
 
 from PyCIF.draw.Transform import Transform
-from PyCIF.draw.PointRef import PointRef
 from PyCIF.helpers import encapsulation
 
 

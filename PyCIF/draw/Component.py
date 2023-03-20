@@ -12,6 +12,7 @@ from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.PolygonGroup import PolygonGroup
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw import OptCategory
+from PyCIF.draw.Optspec import Optspec, Shadow
 from PyCIF.draw import LayerCategory
 from PyCIF.helpers.Dotdict import Dotdict
 
@@ -24,7 +25,6 @@ from PyCIF.helpers.Dotdict import Dotdict
 SubcomponentLayermapShorthand = None | str | dict
 SubpolygonLayermapShorthand = None | str
 
-Shadow = None
 
 
 class Component(ABC, Markable):
@@ -66,9 +66,11 @@ class Component(ABC, Markable):
         Apply new options,
         overwriting old options.
         """
-        if not set(opts.keys()).issubset(self.optspecs.keys()):
+        unexpected_opts = set(opts.keys()) - set(self.optspecs.keys())
+        if unexpected_opts:
             raise Exception(
-                "opts must be a subset of optspecs"
+                f"Component {self} received "
+                f"Unexpected options: {unexpected_opts}"
                 )
         self.opts = Dotdict({
             name: optspec.default
@@ -180,11 +182,11 @@ class Component(ABC, Markable):
 
         return layers
 
-    def __str__(self):
-        return (
-            f'Component {type(self).__name__} '
-            f'with {str(self.transform)}'
-            )
+    #def __str__(self):
+    #    #return (
+    #    #    f'Component {type(self).__name__} '
+    #    #    f'with {str(self.transform)}'
+    #    #    )
 
     @abstractmethod
     def make(self, opts=None):
@@ -284,28 +286,6 @@ class Component(ABC, Markable):
         # And also for general codestyle:
         #
 
-
-@dataclass
-class Optspec(object):
-    """
-    Specification of an option:
-    includes default value, description, shadow status
-    """
-    default: Any
-    desc: str = ''
-    category: OptCategory.OptCategory = field(
-        default_factory=lambda: OptCategory.Unspecified,
-        )
-    # Shadow must be kept last!
-    shadow: bool = False
-
-    def get_shadow(self):
-        """
-        Get shadow version of this optspec
-        """
-        return Optspec(self.default, self.desc, True)
-
-
 @dataclass
 class Layerspec(object):
     """
@@ -322,25 +302,6 @@ class Layerspec(object):
     # Index should be kept last
     index: int = -1
 
-
-def make_opts(parent_class, **kwargs):
-    """
-    Helper function to generate options and option descriptions
-    for a component class.
-    You must pass in the parent class
-    TODO add example
-    """
-    optspecs = Dotdict(parent_class.optspecs)
-    for name, spec in kwargs.items():
-        if spec is Shadow:
-            optspecs[name] = parent_class.optspecs[name].get_shadow()
-        else:
-            if isinstance(spec, dict):
-                optspecs[name] = Optspec(**spec)
-            else:
-                optspecs[name] = Optspec(*spec)
-
-    return optspecs
 
 
 def make_layers(parent_class, **kwargs):
