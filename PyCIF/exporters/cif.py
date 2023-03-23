@@ -22,8 +22,8 @@ def export(stream, component: Component):
     stream.write('(Nederland);\n')
 
     for layer_name, polys in component.get_polygons().items():
-        layer_index = component.layerspecs[layer_name].index
-        stream.write(f'L L{layer_index};\n')
+        layer_index = component.Layers[layer_name].index
+        stream.write(f'L L{layer_name};\n')
         for poly in polys:
             xyarray = poly.get_xyarray()
 
@@ -56,6 +56,5 @@ def create_parser_options(parser):
 
 def run_cli(args):
     component = args.component()
-    component.make()
     export(args.output_file, component)
 

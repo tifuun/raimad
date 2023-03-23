@@ -1,9 +1,23 @@
 # unused
 
-class Layer(list):
-    def __init__(self, fancy_name, color1, color2):
-        super().__init__()
-        self.fancy_name = fancy_name
-        self.color1 = color1
-        self.color2 = color2
+from dataclasses import dataclass, field
+
+from PyCIF.draw import LayerCategory
+
+@dataclass
+class Layer(object):
+    """
+    Specification of a layer:
+    index, name, fancy name, color1, color2
+    """
+    fancy_name: str = ''
+    #color1: str = ''
+    #color2: str = ''
+    category: LayerCategory.LayerCategory = field(
+        default_factory=lambda: LayerCategory.Unspecified,
+        )
+
+    # Index should be kept last
+    index: int = -1
+
 

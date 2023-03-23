@@ -23,7 +23,8 @@ from numpy import pi
 
 
 from PyCIF.draw.Polygon import Polygon
-from PyCIF.draw.Component import Component
+#from PyCIF.draw.Component import Component
+from PyCIF.draw.Component import ComponentMeta
 
 from PyCIF.helpers.draw import point_polar
 from PyCIF.helpers.draw import point
