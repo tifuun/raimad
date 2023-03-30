@@ -9,10 +9,9 @@ from copy import deepcopy
 
 import numpy as np
 
-from PyCIF.draw.Transform import Transform
-from PyCIF.draw.Markable import Markable
+import PyCIF as pc
 
-class Polygon(ABC, Markable):
+class Polygon(ABC, pc.Markable):
     """
     Polygon.
     Inheritrs from Transformable, so you can transform it.

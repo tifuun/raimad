@@ -2,6 +2,8 @@
 iter.py -- iteration-related helpers
 """
 
+from collections.abc import Iterable
+
 
 def overlap(n, iterable):
     """
@@ -57,4 +59,19 @@ couples = _make_alias('couples', nonoverlap, 2)
 triples = _make_alias('triples', nonoverlap, 3)
 quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
+
+def flatten(iterable):
+    """
+    Recursively flatten a nested iterable
+    """
+
+    if not isinstance(iterable, Iterable):
+        # This terminates the recursion
+        return [iterable]
+
+    return [
+        item
+        for sub in iterable
+        for item in flatten(sub)
+        ]
 

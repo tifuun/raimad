@@ -45,7 +45,7 @@ Manufacture = OptCategory(
     'geometric options that regard the manufacturing process.'
     )
 
-Dev_Debug = OptCategory(
+DevDebug = OptCategory(
     'Developer Debug',
     'Options used for debugging by the component developer.',
     )

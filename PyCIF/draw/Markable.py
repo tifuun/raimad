@@ -123,3 +123,30 @@ class Markable(Transformable):
 
         return self
 
+    def snap_below(self, to: Self):
+        self.align_marks(
+            'top_mid',
+            to,
+            'bottom_mid',
+            )
+
+        return self
+
+    def snap_above(self, to: Self):
+        self.align_marks(
+            'bottom_mid',
+            to,
+            'top_mid',
+            )
+        # TODO helpful error messages if marks are missing
+        # Or maybe protocols somehow??
+
+        return self
+
+    def align_to(self, to: Self, mark_name='mid'):
+        self.align_marks(
+            mark_name,
+            to,
+            mark_name,
+            )
+

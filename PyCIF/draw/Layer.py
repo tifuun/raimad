@@ -20,4 +20,15 @@ class Layer(object):
     # Index should be kept last
     index: int = -1
 
+    @classmethod
+    def Foreground(cls, fancy_name: str = ''):
+        return cls(fancy_name, LayerCategory.Foreground)
+
+    @classmethod
+    def Background(cls, fancy_name: str = ''):
+        return cls(fancy_name, LayerCategory.Background)
+
+# TODO layers are a mess
+# Foreground/background is dumb,
+# index is unused??
 

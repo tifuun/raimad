@@ -90,7 +90,7 @@ class Transform(object):
     #    return self
 
     @encapsulation.exposable
-    def move(self, x: float, y: float) -> Self:
+    def move(self, x: float = 0, y: float = 0) -> Self:
         self._affine = _mov(x, y) @ self._affine
         return self
         #arr = np.array((x, y), np.float64)

@@ -2,10 +2,6 @@ from typing import Any
 from dataclasses import dataclass, field
 
 from PyCIF.draw import OptCategory
-from PyCIF.helpers.Dotdict import Dotdict
-
-
-Shadow = None
 
 @dataclass
 class Option(object):
@@ -21,9 +17,32 @@ class Option(object):
     # Shadow must be kept last!
     shadow: bool = False
 
+    Shadow = None
+
     def get_shadow(self):
         """
         Get shadow version of this optspec
         """
         return type(self)(self.default, self.desc, True)
+
+    @classmethod
+    def Geometric(cls, default: Any, desc: str = ''):
+        return cls(default, desc, OptCategory.Geometric)
+
+    @classmethod
+    def Functional(cls, default: Any, desc: str = ''):
+        return cls(default, desc, OptCategory.Functional)
+
+    @classmethod
+    def Environmental(cls, default: Any, desc: str = ''):
+        return cls(default, desc, OptCategory.Environmental)
+
+    @classmethod
+    def Manufacture(cls, default: Any, desc: str = ''):
+        return cls(default, desc, OptCategory.Manufacture)
+
+    @classmethod
+    def DevDebug(cls, default: Any, desc: str = ''):
+        return cls(default, desc, OptCategory.DevDebug)
+
 

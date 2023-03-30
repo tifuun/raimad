@@ -2,6 +2,8 @@
 width-height Rectangle
 """
 
+from typing import Self
+
 import numpy as np
 
 import PyCIF as pc
@@ -141,5 +143,27 @@ class RectWH(pc.Polygon):
                 ),
             dtype=np.float64,
             )
+
+    def snap_below(self, to: Self):
+        self.align_marks(
+            'top_mid',
+            to,
+            'bottom_mid',
+            )
+
+        return self
+
+    def snap_above(self, to: Self):
+        self.align_marks(
+            'bottom_mid',
+            to,
+            'top_mid',
+            )
+        # TODO defines these for all Markables?
+        # Also things like align
+        # Make it duck typing instead of inheritance,
+        # as long as needed marks are defined.
+
+        return self
 
 
