@@ -388,12 +388,15 @@ def parse_subcomponent_layermap_shorthand(parent_layers, child_layers, layermap_
             # Case One: parent and child the same number of layers
             layermap = dict(zip(child_layers, parent_layers))
 
-        elif len(child_layers) == len(parent_layers) == 1:
-            # Case Two: parent and child both have one layer
-            # (not necessarily same name)
-            layermap = {list(child_layers)[0]: list(parent_layers)[0]}
-            # (the list() cast is in here just in case someone passes
-            # something like a dict_keys object into this function
+        elif set(child_layers).issubset(set(parent_layers)):
+            layermap = dict(zip(child_layers, child_layers))
+
+        #elif len(child_layers) == len(parent_layers) == 1:
+        #    # Case Two: parent and child both have one layer
+        #    # (not necessarily same name)
+        #    layermap = {list(child_layers)[0]: list(parent_layers)[0]}
+        #    # (the list() cast is in here just in case someone passes
+        #    # something like a dict_keys object into this function
         else:
             raise Exception(
                 "Could not parse None layermap shoarthand"

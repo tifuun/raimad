@@ -10,7 +10,7 @@ Many convenience functions from numpy are also made available
 (sin, cos, degrees, etc.)
 """
 
-from numpy import degrees
+from numpy import radians as degrees
 from numpy import sin
 from numpy import cos
 from numpy import tan
@@ -34,10 +34,15 @@ from PyCIF.draw.Layer import Layer
 from PyCIF.draw.Component import Component
 from PyCIF.draw.Partial import Partial
 
+from PyCIF import typing
+
 from PyCIF.helpers.draw import point_polar
 from PyCIF.helpers.draw import point
 from PyCIF.helpers.draw import angle_between
 from PyCIF.helpers.draw import distance_between
+from PyCIF.helpers.draw import midpoint
+from PyCIF.helpers.draw import bounding_box_cartesian
+from PyCIF.helpers.draw import bounding_box_size
 
 from PyCIF.helpers.angles import fullcircle
 from PyCIF.helpers.angles import semicircle
@@ -53,4 +58,5 @@ from PyCIF.draw.polygons.Circle import Circle
 from PyCIF.draw.polygons.RectWire import RectWire
 from PyCIF.draw.polygons.RectWH import RectWH
 
+from PyCIF import viz as viz
 

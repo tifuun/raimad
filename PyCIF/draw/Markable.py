@@ -36,6 +36,8 @@ class Markable(Transformable):
         self._marks[name] = point
         self._mark_docstrings[name] = docstring
 
+        return point
+
     def _get_mark(self, name):
         """
         Return mark IN INTERNAL COORDINATES
