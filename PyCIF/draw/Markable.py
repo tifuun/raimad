@@ -7,6 +7,56 @@ from typing import Self
 from PyCIF.draw.Transformable import Transformable
 from PyCIF.draw.Transform import Transform
 
+#@encapsulation.expose_encapsulated(Transform, 'transformable')
+#class Mark():
+#    """
+#    """
+#    def __init__(self, transformable):
+#        self.transformable = transformable
+#
+#    def __get__(self, obj: MarkContainer, objtype=None):
+#        obj._markable.get_mark(self.name)
+#
+#    def align(self, target_point):
+#        obj._markable.get_mark(self.name)
+#
+#
+#
+#
+#class MarkContainer(object):
+#    """
+#    """
+#    def __init__(self, markable, transform):
+#        self._markable = markable
+#        self._transform = transform
+#        self._marks = {}
+#
+#    def __getattr__(self, name):
+#        if name not in self._marks.keys():
+#            raise Exception("No such mark.")
+#
+#        point = self._marks[name]
+#        return PointRef(self._markable, point.copy().apply_transform(self._transform))
+#
+#    def __setattr__(self, name, value):
+#        if name.startswith('_'):
+#            return super().__setattr__(name, value)
+#
+#        if not isinstance(value, Point):
+#            raise Exception("Can only add Points to MarkContainer")
+#
+#        self._marks[name] = value
+#
+#    def items(self):
+#        return self._marks.items()
+#
+#    def keys(self):
+#        return self._marks.keys()
+#
+#    def values(self):
+#        return self._marks.values()
+
+
 class Markable(Transformable):
     _marks: dict
     _mark_docstrings: dict

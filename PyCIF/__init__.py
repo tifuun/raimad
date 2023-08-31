@@ -26,6 +26,7 @@ from addict import Dict
 
 from PyCIF.draw.Transform import Transform
 from PyCIF.draw.Markable import Markable
+from PyCIF.draw.BBox import BBox
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.PolygonGroup import PolygonGroup
 #from PyCIF.draw.Component import Component

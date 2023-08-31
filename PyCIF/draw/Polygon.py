@@ -21,6 +21,8 @@ class Polygon(ABC, pc.Markable):
         """
         """
         super().__init__()
+        self._xyarray = None
+        self._bbox = None
 
         self._add_mark('origin', np.array([0, 0]))
 
@@ -51,9 +53,20 @@ class Polygon(ABC, pc.Markable):
         This method simply calls `_get_xyarray()` and applies
         the transformation.
         """
-        xyarray = self._get_xyarray()
-        transformed = self.transform.transform_xyarray(xyarray)
-        return transformed
+        # TODO caching breaks everything when bbox is used
+        if self._xyarray is None or 1:
+            self._xyarray = self.transform.transform_xyarray(
+                self._get_xyarray()
+                )
+        return self._xyarray
+
+    def get_bbox(self):
+        """
+        TODO TODO we need a proper system for bboxes
+        """
+        if self._bbox is None or 1:
+            self._bbox = pc.BBox(self.get_xyarray())
+        return self._bbox
 
     def copy(self):
         """
