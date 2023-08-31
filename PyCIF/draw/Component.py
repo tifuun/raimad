@@ -25,6 +25,7 @@ def update_options(Options: dict, base: type):
 
         if name in base.Options.keys():
             if opt is not pc.Option.Shadow:
+                # TODO assert is acceptible here?
                 assert False, "Redefining option."
             new_options[name] = base.Options[name].get_shadow()
             continue
@@ -78,6 +79,13 @@ class ComponentMeta(type):
 
         assert '_make' in namespace.keys()
 
+        # find all base classes that are components
+        # (there should only be one!)
+        # components allow inheriting from other,
+        # non-component classes to allow
+        # mixins as a way of splitting a huge class
+        # across multiple files, for example
+
         component_bases = [
             base for base in bases
             if isinstance(type(base), cls)
@@ -91,7 +99,8 @@ class ComponentMeta(type):
                 pass
 
             case 1:
-                # Interface
+                # Interface.
+                # Inherit options from previous component.
                 namespace['Options'] = update_options(
                     namespace['Options'],
                     component_bases[0],
@@ -104,7 +113,7 @@ class ComponentMeta(type):
 
             case _:
                 raise Exception(
-                    "Multiple inheritance unspported for components"
+                    "An interface may derive from only one component class"
                     )
 
         new_component = super().__new__(cls, name, bases, namespace)
@@ -123,8 +132,8 @@ class Component(pc.Markable, metaclass=ComponentMeta):
 
     def __init__(self, opts=None, transform=None):
         """
-        args and kwargs are interpreted the same way as Dotdict,
-        so can be used to set parameters during creation.
+        opts: options
+        transform: unused
         """
         super().__init__()
         self.subcomponents = []

@@ -13,6 +13,15 @@ def point_polar(angle: float, magnitude: float = 1):
         np.sin(angle),
         ]) * magnitude
 
+def to_polar(p1: pc.typing.Point, p2: pc.typing.Point | None = None):
+    if p2 is not None:
+        return to_polar(p2 - p1)
+
+    return (
+        np.arctan2(p1[1], p1[0]),
+        np.linalg.norm(p1)
+        )
+
 def point(x: float, y: float):
     return np.array([x, y], dtype=np.float32)
 

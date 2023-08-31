@@ -6,13 +6,13 @@ from PyCIF.draw.Transformable import Transformable
 
 
 class PolygonGroup(Transformable):
-    def __init__(self, *args, transform=None, bbox=None):
-        super().__init__(transform=transform, bbox=bbox)
-        self.polygons = args
+    def __init__(self, *polygons):
+        super().__init__()
+        self.polygons = polygons
 
-        if bbox is None:
-            for poly in args:
-                self._bbox.add_xyarray(poly.get_xyarray())
+        #if bbox is None:
+        #    for poly in polygons:
+        #        self._bbox.add_xyarray(poly.get_xyarray())
 
     def get_polygons(self):
         return [

@@ -100,6 +100,16 @@ class Transform(object):
         #self.history.append((_move, x, y))
         #return self
 
+    @encapsulation.exposable
+    def movex(self, x: float = 0) -> Self:
+        self._affine = _mov(x, 0) @ self._affine
+        return self
+
+    @encapsulation.exposable
+    def movey(self, y: float = 0) -> Self:
+        self._affine = _mov(0, y) @ self._affine
+        return self
+
     #@encapsulation.exposable
     #def movex(self, x: float) -> Self:
     #    self.history.append((_move, x, 0))
