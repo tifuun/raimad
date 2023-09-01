@@ -8,9 +8,24 @@ import numpy as np
 import PyCIF as pc
 
 class Point(object):
-    def __init__(self, x: float = 0, y: float = 0):
-        self.x = x
-        self.y = y
+    def __init__(self, x: float = 0, y: float = 0, arg: float | None = None, mag: float | None = None):
+        """
+        Create a point from (x, y)
+        with short syntax: pc.Point(10, 20)
+        """
+        if arg is not None:
+            self.x = np.cos(arg) * mag
+            self.y = np.sin(arg) * mag
+        else:
+            self.x = x
+            self.y = y
+
+    # TODO better overloading framework. Should support:
+    # pc.Point()  # create an origin
+    # pc.Point(10, 10)  # x, y
+    # pc.Point(x=10, y=10)  # x, y
+    # pc.Point(arg=pc.degrees(45), mag=10)  # polar
+    # pc.Point(arg=pc.degrees(45))  # polar, mag is 1
 
     def __iter__(self):
         """
@@ -36,6 +51,14 @@ class Point(object):
             self.x - other[0],
             self.y - other[1],
             )
+
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        # TODO neg creates a copy, but pos doesnt. What do?
+        # Should makes points immovable?
+        return self * -1
 
     def __truediv__(self, other: Self | int | float):
         if isinstance(other, type(self)):
@@ -79,6 +102,33 @@ class Point(object):
 
     def __array__(self):
         return np.array((self.x, self.y))
+
+    #@classmethod
+    #def Polar(cls, arg: float, mag: float = 1):
+    #    return cls(
+    #        np.cos(angle) * magnitude,
+    #        np.sin(angle) * magnitude
+    #        )
+
+    @property
+    def arg(self):
+        return np.arctan2(self.y, self.x)
+
+    @property
+    def mag(self):
+        return np.linalg.norm(self)
+
+    def distance_to(self, other: Self):
+        """
+        Also see pc.Point.distance_from and pc.distance_between
+        """
+        return np.linalg.norm(other - self)
+
+    def distance_from(self, other: Self):
+        """
+        Also see pc.Point.distance_to and pc.distance_between
+        """
+        return np.linalg.norm(self - other)
 
     #def apply_transform(self, transform: pc.Transform):
     #    # TODO forms of this are copy-pasted in multiple places.

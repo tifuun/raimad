@@ -23,6 +23,8 @@ from numpy import pi
 
 from addict import Dict
 
+from PyCIF.helpers.overload import kwoverload
+
 from PyCIF.draw.Transform import Transform
 from PyCIF.draw.Point import Point
 from PyCIF.draw.Markable import Markable
@@ -38,8 +40,6 @@ from PyCIF.draw.Partial import Partial
 from PyCIF import typing
 
 from PyCIF.helpers.draw import to_polar
-from PyCIF.helpers.draw import point_polar
-from PyCIF.helpers.draw import point
 from PyCIF.helpers.draw import angle_between
 from PyCIF.helpers.draw import distance_between
 from PyCIF.helpers.draw import midpoint
@@ -51,7 +51,6 @@ from PyCIF.helpers.angles import angspace
 from PyCIF.helpers.angles import Orientation
 
 from PyCIF.helpers import iter  # TODO good practice? (iter is built-in name)
-from PyCIF.helpers.overload import kwoverload
 
 from PyCIF.draw.polygons.Arc import Arc
 from PyCIF.draw.polygons.Circle import Circle

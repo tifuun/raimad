@@ -440,7 +440,7 @@ def construct_bend(bend_component, bend_radius, before, point, after):
 
     point_turn_center = (
         point +
-        pc.point_polar(angle_turn_center, offset_turn_center)
+        pc.Point(arg=angle_turn_center, mag=offset_turn_center)
         )
 
     bend = bend_component(opts=dict(
@@ -554,9 +554,9 @@ class LegBuilder:
 
         bridge_coords = (
             + self.leg_start.to
-            + pc.point_polar(
-                self.leg_angle,
-                distance + scramble_distance
+            + pc.Point(
+                arg=self.leg_angle,
+                mag=distance + scramble_distance
                 )
             )
 

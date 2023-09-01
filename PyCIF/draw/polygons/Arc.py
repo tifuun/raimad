@@ -108,13 +108,13 @@ class Arc(pc.Polygon):
 
         self._add_mark(
             'start_mid',
-            pc.point_polar(self.angle_start) * self.radial_center,
+            pc.Point(arg=self.angle_start, mag=self.radial_center),
             'Midway between the two radii, at the start of the arc'
             )
 
         self._add_mark(
             'end_mid',
-            pc.point_polar(self.angle_end) * self.radial_center,
+            pc.Point(arg=self.angle_end, mag=self.radial_center),
             'Midway between the two radii, at the end of the arc'
             )
 
@@ -130,7 +130,7 @@ class Arc(pc.Polygon):
             )
 
         return np.array([
-            pc.point_polar(angle) * radius
+            pc.Point(arg=angle, mag=radius)
             for radius, angles in [
                 [self.radius_inner, angspace],
                 [self.radius_outter, reversed(angspace)],
