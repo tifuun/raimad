@@ -59,14 +59,15 @@ class BBox(object):
         bounding box accordingly.
         """
         for point in xyarray:
+            # TODO simplify with ELIFs?
             if point[0] > self.max_x:
                 self.max_x = point[0]
-            elif point[0] < self.min_x:
+            if point[0] < self.min_x:
                 self.min_x = point[0]
 
             if point[1] > self.max_y:
                 self.max_y = point[1]
-            elif point[1] < self.min_y:
+            if point[1] < self.min_y:
                 self.min_y = point[1]
 
     @property

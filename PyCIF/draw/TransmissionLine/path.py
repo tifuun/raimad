@@ -254,8 +254,8 @@ def resolve_elbow(_from: pc.typing.Point, elbow: ElbowTo):
             ]
 
     mid = pc.midpoint(_from, elbow.to)
-    p1 = pc.point(mid[0], _from[1])
-    p2 = pc.point(mid[0], elbow.to[1])
+    p1 = pc.Point(mid[0], _from[1])
+    p2 = pc.Point(mid[0], elbow.to[1])
     return [
         StraightTo(p1),
         StraightTo(p2),
@@ -401,7 +401,7 @@ def construct_bend(bend_component, bend_radius, before, point, after):
     # supplement of the turn angle
     corner_angle = pc.semicircle - abs(turn)
 
-    if abs(turn) < 0.01:  # TODO standardize epsilon value
+    if abs(turn % pc.fullcircle) < 0.01:  # TODO standardize epsilon value
         # Straight turn
         log.debug("Straight.")
         return None
@@ -652,7 +652,7 @@ def get_path_bounds(path):
     """
     Return [x1, y1, x2, y2] bounding box of path
     """
-    return pc.bounding_box_cartesian([
+    return pc.BBox([
         conn.to for conn in path
         if isinstance(conn.to, np.ndarray)
         ])

@@ -14,22 +14,22 @@ class RectWire(pc.Polygon):
 
         angle = pc.angle_between(p1, p2)
 
-        self.v1 = p1 + pc.point_polar(
+        self.v1 = p1 + pc.Point_polar(
             angle + 90,
             thickness / 2,
             )
 
-        self.v2 = p1 + pc.point_polar(
+        self.v2 = p1 + pc.Point_polar(
             angle - 90,
             thickness / 2,
             )
 
-        self.v3 = p2 + pc.point_polar(
+        self.v3 = p2 + pc.Point_polar(
             angle - 90,
             thickness / 2,
             )
 
-        self.v4 = p2 + pc.point_polar(
+        self.v4 = p2 + pc.Point_polar(
             angle + 90,
             thickness / 2,
             )

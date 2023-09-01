@@ -77,7 +77,7 @@ class SVG:
         self.shapes.append(self.Line(x1, y1, x2, y2))
 
     def autofit(self):
-        x1, y1, x2, y2 = pc.bounding_box_cartesian(self.points)
+        x1, y1, x2, y2 = pc.BBox(self.points)
         return x1 + x2, y1 + y2
         # TODO more jank here
         #return pc.bounding_box_size(
@@ -92,7 +92,7 @@ class SVG:
                 "Collage only works with automatic canvas size"
                 )
 
-        x1, y1, x2, y2 = pc.bounding_box_cartesian(self.points)
+        x1, y1, x2, y2 = pc.BBox(self.points)
         self.offset_x = x1 + x2
 
     def done(self):

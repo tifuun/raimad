@@ -18,7 +18,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'top_left',
-            pc.point(
+            pc.Point(
                 self.width * 0,
                 self.height * 1,
                 ),
@@ -31,7 +31,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'top_mid',
-            pc.point(
+            pc.Point(
                 self.width * 0.5,
                 self.height * 1,
                 ),
@@ -44,7 +44,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'top_right',
-            pc.point(
+            pc.Point(
                 self.width * 1,
                 self.height * 1,
                 ),
@@ -57,7 +57,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'mid_left',
-            pc.point(
+            pc.Point(
                 self.width * 0,
                 self.height * 0.5,
                 ),
@@ -70,7 +70,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'mid',
-            pc.point(
+            pc.Point(
                 self.width * 0.5,
                 self.height * 0.5,
                 ),
@@ -83,7 +83,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'mid_right',
-            pc.point(
+            pc.Point(
                 self.width * 1,
                 self.height * 0.5,
                 ),
@@ -96,7 +96,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'bottom_left',
-            pc.point(
+            pc.Point(
                 self.width * 0,
                 self.height * 0,
                 ),
@@ -109,7 +109,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'bottom_mid',
-            pc.point(
+            pc.Point(
                 self.width * 0.5,
                 self.height * 0,
                 ),
@@ -122,7 +122,7 @@ class RectWH(pc.Polygon):
 
         self._add_mark(
             'bottom_right',
-            pc.point(
+            pc.Point(
                 self.width * 1,
                 self.height * 0,
                 ),

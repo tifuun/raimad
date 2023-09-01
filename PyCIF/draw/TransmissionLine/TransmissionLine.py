@@ -118,7 +118,7 @@ def waypoints_to_points(waypoints: WaypointsType):
 
         else:
             # TODO proper point type, this is not obvious
-            points.append(pc.point(*waypoint))
+            points.append(pc.Point(*waypoint))
 
     return points
 
@@ -210,7 +210,7 @@ def make_bridges(
 
             leg_bridges.append(bridge)
 
-            current_point = current_point + pc.point_polar(leg_angle, step)
+            current_point = current_point + pc.Point_polar(leg_angle, step)
 
         # Add one last bridge at the end of the leg
         # (right by the turn)
@@ -345,7 +345,7 @@ def make_bend(bend_radius, bend_component, before, point, after):
 
     point_turn_center = (
         point +
-        pc.point_polar(angle_turn_center, offset_turn_center)
+        pc.Point_polar(angle_turn_center, offset_turn_center)
         )
 
     bend = bend_component(opts=dict(

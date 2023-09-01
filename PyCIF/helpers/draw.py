@@ -44,30 +44,6 @@ def midpoint(p1, p2):
     """
     return (p1 + p2) / 2
 
-def bounding_box_cartesian(points):
-    """
-    Return [x1, y1, x2, y2] bounding box
-    for a collection of points
-    (Cartesian coordinates, Y increases upwards)
-    """
-    x1 = np.inf
-    y1 = np.inf
-    x2 = -np.inf
-    y2 = -np.inf
-
-    for x, y in points:
-        if x < x1:
-            x1 = x
-        elif x > x2:
-            x2 = x
-        if y < y1:
-            y1 = y
-        elif y > y2:
-            y2 = y
-
-    return [x1, y1, x2, y2]
-
-def bounding_box_size(bbox):
     return [bbox[2] - bbox[0], bbox[3] - bbox[1]]
 
 

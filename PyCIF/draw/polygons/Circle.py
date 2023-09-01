@@ -21,7 +21,7 @@ class Circle(pc.Polygon):
         points = np.linspace(0, 2 * np.pi, points)
 
         return np.array([
-            pc.point_polar(angle, self.radius)
+            pc.Point_polar(angle, self.radius)
             for angle in points
             ])
 

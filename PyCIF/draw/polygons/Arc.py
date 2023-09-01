@@ -102,7 +102,7 @@ class Arc(pc.Polygon):
     def _set_marks(self):
         self._add_mark(
             'center',
-            pc.point(0, 0),
+            pc.Point(0, 0),
             'Center of the arc',
             )
 

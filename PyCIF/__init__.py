@@ -23,8 +23,8 @@ from numpy import pi
 
 from addict import Dict
 
-
 from PyCIF.draw.Transform import Transform
+from PyCIF.draw.Point import Point
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw.BBox import BBox
 from PyCIF.draw.Polygon import Polygon
@@ -43,8 +43,6 @@ from PyCIF.helpers.draw import point
 from PyCIF.helpers.draw import angle_between
 from PyCIF.helpers.draw import distance_between
 from PyCIF.helpers.draw import midpoint
-from PyCIF.helpers.draw import bounding_box_cartesian
-from PyCIF.helpers.draw import bounding_box_size
 
 from PyCIF.helpers.angles import fullcircle
 from PyCIF.helpers.angles import semicircle
