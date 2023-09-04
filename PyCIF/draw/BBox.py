@@ -22,8 +22,15 @@ class BBox(object):
             self.add_xyarray(xyarray)
             assert self.is_valid()
 
+    def as_list(self):
+        return [self.min_x, self.min_y, self.max_x, self.max_y]
+
     def __array__(self):
-        return np.array([self.min_x, self.min_y, self.max_x, self.max_y])
+        return np.array(self.as_list())
+
+    def __iter__(self):
+        return iter(self.as_list())
+
 
     def is_valid(self):
         return (
@@ -59,16 +66,19 @@ class BBox(object):
         bounding box accordingly.
         """
         for point in xyarray:
-            # TODO simplify with ELIFs?
-            if point[0] > self.max_x:
-                self.max_x = point[0]
-            if point[0] < self.min_x:
-                self.min_x = point[0]
+            self.add_point(point)
 
-            if point[1] > self.max_y:
-                self.max_y = point[1]
-            if point[1] < self.min_y:
-                self.min_y = point[1]
+    def add_point(self, point):
+        # TODO simplify with ELIFs?
+        if point[0] > self.max_x:
+            self.max_x = point[0]
+        if point[0] < self.min_x:
+            self.min_x = point[0]
+
+        if point[1] > self.max_y:
+            self.max_y = point[1]
+        if point[1] < self.min_y:
+            self.min_y = point[1]
 
     @property
     def width(self):

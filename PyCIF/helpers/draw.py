@@ -34,4 +34,23 @@ def midpoint(p1, p2):
 
     return [bbox[2] - bbox[0], bbox[3] - bbox[1]]
 
+def colinear(*points):
+    for prev, point, next_ in pc.iter.triples(points):
+        if (
+                pc.angle_between(prev, point)
+                !=
+                pc.angle_between(point, next_)
+                ):
+            return False
+    # TODO not optimal
+    # TODO what if points in wrong order?
+    # Definition of colinear?
+    return True
+
+
+
+
+def non_colinear(*points):
+    pass
+
 

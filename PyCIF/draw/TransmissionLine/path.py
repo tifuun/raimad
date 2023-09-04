@@ -131,7 +131,7 @@ def resolve_path(
     straights = []
 
     # Step 1: resolve starting point
-    path[0] = resolve_startat(path[0])
+    path = resolve_startat(path)
     log_path(path, "Stage 1: Resolve startat")
 
     # Step 2: resolve components
@@ -218,7 +218,12 @@ def resolve_components(path):
 
     return newpath
 
-def resolve_startat(startat):
+def resolve_startat(path):
+    path = copy(path)
+    path[0] = _resolve_startat(path[0])
+    return path
+
+def _resolve_startat(startat):
     """
     Resolve a StartAt that wraps a markable to a startat that
     wraps a raw point
@@ -279,6 +284,109 @@ def resolve_thru(connection):
     connection2 = connection.to.how(connection.to.markable.get_mark('tl_exit'))
 
     return [connection1, connection2]
+
+def construct_bends_2(path, bend_radius):
+    newpath = []
+
+    newpath.append(path[0])
+
+    for conn_before, conn, conn_after in pc.iter.triplets(path):
+        angle_incoming = pc.angle_between(conn_before.to, conn.to) % pc.fullcircle
+        angle_outgoing = pc.angle_between(conn.to, conn_after.to) % pc.fullcircle
+
+        turn = angle_outgoing - angle_incoming
+
+        if abs(turn % pc.fullcircle) < 0.01:  # TODO standardize epsilon value
+            newpath.append(conn)
+            continue
+
+        newpath.append(
+            StraightTo(
+                conn.to + pc.Point(arg=angle_incoming, mag=-bend_radius)
+                )
+            )
+
+        newpath.append(
+            JumpTo(
+                conn.to + pc.Point(arg=angle_outgoing, mag=bend_radius)
+                )
+            )
+
+    newpath.append(conn_after)
+    return newpath
+
+def construct_bridges_2(path, spacing, scramble, bridge_width):
+    newpath = []
+
+    for conn, next_ in pc.iter.duplets(path):
+        if not isinstance(next_, StraightTo):
+            continue
+
+        leg_distance = pc.distance_between(conn.to, next_.to)
+        leg_angle = pc.angle_between(conn.to, next_.to)
+        # TODO minimum leg length check)
+
+        distances = np.arange(spacing, leg_distance - spacing, spacing)
+
+        newpath.append(conn)
+        newpath.append(
+            JumpTo(
+                conn.to + pc.Point(arg=leg_angle, mag=bridge_width)
+                )
+            )
+
+        for distance in distances:
+            distance += bridge_rng.uniform(-1, 1) * scramble
+
+            newpath.append(
+                StraightTo(
+                    conn.to + pc.Point(
+                        arg=leg_angle,
+                        mag=(distance - bridge_width / 2)
+                        )
+                    )
+                )
+            newpath.append(
+                JumpTo(
+                    conn.to + pc.Point(
+                        arg=leg_angle,
+                        mag=(distance + bridge_width / 2)
+                        )
+                    )
+                )
+
+        newpath.append(
+            StraightTo(
+                next_.to + pc.Point(
+                    arg=leg_angle,
+                    mag=-bridge_width
+                    )
+                )
+            )
+        newpath.append(
+            JumpTo(
+                next_.to
+                )
+            )
+
+    # TODO split up and refactor this CHONKER of a function
+    return newpath
+
+
+
+def reduce_straights(path):
+    newpath = []
+    newpath.append(path[0])
+
+    for prev, conn, next_ in pc.iter.triplets(path):
+        if isinstance(conn, StraightTo):
+            if isinstance(next_, StraightTo):
+                if pc.colinear(prev.to, conn.to, next_.to):
+                    continue
+        newpath.append(conn)
+
+    newpath.append(next_)
+    return newpath
 
 def construct_bends(path, bend_component, bend_radius):
     """
@@ -659,10 +767,31 @@ def get_path_bounds(path):
 
 def _render_path_as_svg(svg, path):
     for conn, next_conn in pc.iter.duplets(path):
-        if isinstance(conn.to, np.ndarray):
-            svg.circle(*conn.to, name=repr(conn))
-            if isinstance(next_conn.to, np.ndarray):
-                svg.line(*conn.to, *next_conn.to)
+
+        if isinstance(conn.to, pc.Point):
+            #svg.circle(*conn.to, name=repr(conn))
+            svg.circle(*conn.to)
+
+            if isinstance(next_conn.to, pc.Point):
+
+                if isinstance(next_conn, StraightTo):
+                    line_style = dict(
+                        color='#00f',
+                        )
+                elif isinstance(next_conn, JumpTo):
+                    line_style = dict(
+                        color='#888',
+                        )
+                elif isinstance(next_conn, ElbowTo):
+                    line_style = dict(
+                        color='#008',
+                        dasharray=True,
+                        )
+                else:
+                    line_style = dict()
+
+                svg.line(*conn.to, *next_conn.to, **line_style)
+
     svg.circle(*next_conn.to)
 
 def render_path_as_svg(path, stream=None):
@@ -675,13 +804,25 @@ def render_path_as_svg(path, stream=None):
 
     return stream or svg.stream
 
-def render_paths_as_svg(paths, stream=None):
-    svg = pc.viz.SVG(stream=stream)
+def render_paths_as_svg(paths):
+    svgs = []
     for path in paths:
+        svg = pc.viz.SVG()
         _render_path_as_svg(svg, path)
-        svg.collage_E()
-    svg.done()
+        svg.make_frame()
+        svgs.append(svg)
 
+    finalsvg = svgs[0]
 
-    return stream or svg.stream
+    for svg in svgs[1:]:
+        finalsvg.collage_E(svg)
+    #svg = pc.viz.SVG(stream=stream)
+    #for path in paths:
+    #    _render_path_as_svg(svg, path)
+    #    svg.collage_E()
+    #svg.done()
+
+    finalsvg.done()
+
+    return svgs[0].stream
 

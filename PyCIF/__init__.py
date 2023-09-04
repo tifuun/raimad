@@ -39,18 +39,19 @@ from PyCIF.draw.Partial import Partial
 
 from PyCIF import typing
 
+from PyCIF.helpers import iter  # TODO good practice? (iter is built-in name)
+
 from PyCIF.helpers.draw import to_polar
 from PyCIF.helpers.draw import angle_between
 from PyCIF.helpers.draw import distance_between
 from PyCIF.helpers.draw import midpoint
+from PyCIF.helpers.draw import colinear
 
 from PyCIF.helpers.angles import fullcircle
 from PyCIF.helpers.angles import semicircle
 from PyCIF.helpers.angles import quartercircle
 from PyCIF.helpers.angles import angspace
 from PyCIF.helpers.angles import Orientation
-
-from PyCIF.helpers import iter  # TODO good practice? (iter is built-in name)
 
 from PyCIF.draw.polygons.Arc import Arc
 from PyCIF.draw.polygons.Circle import Circle
