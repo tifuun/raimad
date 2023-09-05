@@ -7,6 +7,9 @@ __pycache__
 build
 dist
 
+# Rope (Python code refactoring tool)
+.clirope
+
 # VIM files
 *.sw*
 *.vim

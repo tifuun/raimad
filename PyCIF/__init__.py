@@ -51,7 +51,11 @@ from PyCIF.helpers.angles import fullcircle
 from PyCIF.helpers.angles import semicircle
 from PyCIF.helpers.angles import quartercircle
 from PyCIF.helpers.angles import angspace
+from PyCIF.helpers.angles import classify_turn
 from PyCIF.helpers.angles import Orientation
+from PyCIF.helpers.angles import TurnDirection
+
+from PyCIF.draw import TransmissionLine as tl
 
 from PyCIF.draw.polygons.Arc import Arc
 from PyCIF.draw.polygons.Circle import Circle
@@ -61,6 +65,5 @@ from PyCIF.draw.polygons.CustomPolygon import CustomPolygon
 
 from PyCIF import viz as viz
 
-from PyCIF.draw.TransmissionLine import path
 #from PyCIF.draw.PolygonGroup import PolygonGroup
 

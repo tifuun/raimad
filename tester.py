@@ -355,19 +355,35 @@ straight_compo=pc.Partial(
     )
 
 path0 = [
-    pc.path.StartAt(pc.Point(0, 40)),
-    pc.path.ElbowTo(pc.Point(50, 80)),
-    pc.path.StraightTo(pc.Point(100, 40)),
-    pc.path.StraightTo(pc.Point(150, 00)),
-    pc.path.ElbowTo(pc.Point(200, 40)),
+    pc.tl.StartAt(pc.Point(0, 40)),
+    pc.tl.ElbowTo(pc.Point(50, 80)),
+    pc.tl.JumpTo(pc.Point(100, 40)),
+    pc.tl.StraightTo(pc.Point(150, 00)),
+    pc.tl.ElbowTo(pc.Point(200, 40)),
     ]
 
+from pprint import pprint
 
-path1 = pc.path.resolve_startat(path0)
-path2 = pc.path.resolve_elbows(path1)
-path3 = pc.path.reduce_straights(path2)
-path4 = pc.path.construct_bends_2(path3, bend_radius=10)
-path5 = pc.path.construct_bridges_2(path4, 20, 3, 5)
+pprint('====== step 0 ======')
+pprint(path0)
+path1 = pc.tl.resolve_elbows(path0)
+pprint('====== step 1 ======')
+pprint(path1)
+path2 = pc.tl.reduce_straights(path1)
+pprint('====== step 2 ======')
+pprint(path2)
+path3, bendspecs = pc.tl.construct_bends(path2, bend_radius=10)
+pprint('====== step 3 ======')
+pprint(path3)
+path4, bridgespecs = pc.tl.construct_bridges(path3, 20, 3, 5)
+pprint('====== step 4 ======')
+pprint(path4)
+
+path5 = path4
+
+bends = pc.tl.make_bend_components(bendspecs, bend_compo)
+bridges = pc.tl.make_bridge_components(bridgespecs, bridge_compo)
+straights = pc.tl.make_straight_components(path5, straight_compo)
 
 #path0, bends, bridges, straights = pc.path.resolve_path(
 #    path0,
@@ -379,8 +395,27 @@ path5 = pc.path.construct_bridges_2(path4, 20, 3, 5)
 #    straight_compo=straight_compo,
 #    )
 
-svg = pc.path.render_paths_as_svg([path1, path2, path3, path4, path5]).getvalue()
+svg = pc.tl.render_paths_as_svg([path1, path2, path3, path4, path5]).getvalue()
 
 with open('./test0.svg', 'w') as f:
     f.write(svg)
+
+class TestCompo(pc.Component):
+    Layers = CPWLayers
+
+    def _make(self, o):
+
+        for bend in bends:
+            self.add_subcomponent(bend)
+
+        for bridge in bridges:
+            self.add_subcomponent(bridge)
+
+        for straight in straights:
+            self.add_subcomponent(straight)
+
+compo = TestCompo()
+
+with open('./test.cif', 'w') as f:
+    export_cif(f, compo)
 
