@@ -27,6 +27,9 @@ class Point(object):
     # pc.Point(arg=pc.degrees(45), mag=10)  # polar
     # pc.Point(arg=pc.degrees(45))  # polar, mag is 1
 
+    def __repr__(self):
+        return f"Point({self.x:.3f}, {self.y:.3f})"
+
     def __iter__(self):
         """
         Iterator method allows unpacking

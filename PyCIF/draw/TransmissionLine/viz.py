@@ -1,6 +1,9 @@
 import PyCIF as pc
 from PyCIF.draw import TransmissionLine as tl
 
+def format_path(path):
+    return '\n'.join([repr(conn) for conn in path])
+
 def _render_path_as_svg(svg, path):
     for conn, next_conn in pc.iter.duplets(path):
 
