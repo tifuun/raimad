@@ -13,21 +13,26 @@ logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 class BendSpec:
     angle_start: float
     angle_end: float
+    radius: float
     orientation: pc.Orientation
     point_enter: pc.Point
     point_exit: pc.Point
     point_center: pc.Point
-    # TODO radius
 
-def construct_bends(path, bend_radius):
+def construct_bends(path, radius, striped=False):
     newpath = []
     bendspecs = []
 
     newpath.append(path[0])
 
+    default_radius = radius
+
     for before, conn, after in pc.iter.triplets(path):
+
+        radius = conn.radius or (radius if striped else default_radius)
+
         bendspec = construct_bend(
-            before.to, conn.to, after.to, bend_radius)
+            before.to, conn.to, after.to, radius)
 
         if bendspec is None:
             newpath.append(conn)
@@ -48,7 +53,7 @@ def construct_bends(path, bend_radius):
     newpath.append(after)
     return newpath, bendspecs
 
-def construct_bend(before, point, after, bend_radius):
+def construct_bend(before, point, after, radius):
     angle_incoming = pc.angle_between(before, point) % pc.fullcircle
     angle_outgoing = pc.angle_between(point, after) % pc.fullcircle
 
@@ -102,7 +107,7 @@ def construct_bend(before, point, after, bend_radius):
             assert False
             #f'Invalid turn `{turn}` ocurred in TransmissionLine'
 
-    offset_turn_center = bend_radius / pc.sin(corner_angle / 2)
+    offset_turn_center = radius / pc.sin(corner_angle / 2)
 
     point_turn_center = (
         point +
@@ -111,17 +116,18 @@ def construct_bend(before, point, after, bend_radius):
 
     point_enter = (
         point_turn_center +
-        pc.Point(arg=angle_turn_start, mag=bend_radius)
+        pc.Point(arg=angle_turn_start, mag=radius)
         )
 
     point_exit = (
         point_turn_center +
-        pc.Point(arg=angle_turn_end, mag=bend_radius)
+        pc.Point(arg=angle_turn_end, mag=radius)
         )
 
     return BendSpec(
         angle_start=angle_turn_start,
         angle_end=angle_turn_end,
+        radius=radius,
         orientation=orientation,
         point_enter=point_enter,
         point_exit=point_exit,
@@ -133,6 +139,7 @@ def make_bend_component(spec: BendSpec, Compo: pc.typing.ComponentClass):
         angle_start=spec.angle_start,
         angle_end=spec.angle_end,
         orientation=spec.orientation,
+        bend_radius=spec.radius,
         )).align_mark_to_point('center', spec.point_center)
 
 def make_bend_components(

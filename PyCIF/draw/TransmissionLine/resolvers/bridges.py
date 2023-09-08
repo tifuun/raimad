@@ -22,13 +22,22 @@ class BridgeSpec:
     start: pc.Point
     angle: float
     width: float
-    # TODO bridge width??
 
-def construct_bridges(path, spacing, scramble, bridge_width):
+def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
     newpath = []
     specs = []
 
+    default_spacing = spacing
+    default_scramble = scramble
+    default_bridge_width = bridge_width
+    
+
     for conn, after in pc.iter.duplets(path):
+
+        spacing = conn.bridge_spacing or (spacing if striped else default_spacing)
+        scramble = conn.bridge_scramble or (scramble if striped else default_scramble)
+        bridge_width = conn.bridge_width or (bridge_width if striped else default_bridge_width)
+
         if not isinstance(after, tl.StraightTo):
             continue
 
@@ -36,7 +45,11 @@ def construct_bridges(path, spacing, scramble, bridge_width):
         leg_angle = pc.angle_between(conn.to, after.to)
         # TODO minimum leg length check)
 
-        distances = np.arange(spacing, leg_distance - spacing, spacing)
+        distances = np.arange(
+            spacing,
+            leg_distance - spacing,
+            spacing
+            )
 
         newpath.append(conn)
         newpath.append(

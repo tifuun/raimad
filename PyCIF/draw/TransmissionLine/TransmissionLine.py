@@ -14,17 +14,25 @@ class TransmissionLine:
     straights_: Sequence[pc.Component]
 
     bend_radius: float  # at start of connection
-    bridges: bool
     bridge_spacing: float
     bridge_scramble: float
     bridge_width: float
+    bridges: bool
 
-    def __init__(self, path):
-        self.bend_radius=10
-        self.bridges=True
-        self.bridge_spacing=10
-        self.bridge_scramble=4
-        self.bridge_width=4
+    def __init__(
+            self,
+            path,
+            bend_radius: float,  # at start of connection
+            bridge_spacing: float,
+            bridge_scramble: float,
+            bridge_width: float,
+            bridges: bool = True,
+            ):
+        self.bend_radius = bend_radius
+        self.bridge_spacing = bridge_spacing
+        self.bridge_scramble = bridge_scramble
+        self.bridge_width = bridge_width
+        self.bridges = bridges
 
         log.debug('====== Original path ======')
         log.debug(pc.tl.format_path(path))
@@ -39,7 +47,7 @@ class TransmissionLine:
 
         path3, self._bendspecs = pc.tl.construct_bends(
             path2,
-            bend_radius=self.bend_radius,
+            radius=self.bend_radius,
             )
         log.debug('====== Step 3: construct bends ======')
         log.debug(pc.tl.format_path(path3))

@@ -354,36 +354,23 @@ straight_compo=pc.Partial(
         ),
     )
 
-path0 = [
-    pc.tl.StartAt(pc.Point(0, 40)),
-    pc.tl.ElbowTo(pc.Point(50, 80)),
-    pc.tl.JumpTo(pc.Point(100, 40)),
-    pc.tl.StraightTo(pc.Point(150, 00)),
-    pc.tl.ElbowTo(pc.Point(200, 40)),
-    ]
+tl = pc.tl.TransmissionLine(
+    [
+        pc.tl.StartAt(pc.Point(0, 40)),
+        pc.tl.ElbowTo(pc.Point(50, 80)),
+        pc.tl.JumpTo(pc.Point(100, 40)),
+        pc.tl.StraightTo(pc.Point(150, 00)),
+        pc.tl.ElbowTo(pc.Point(300, 80), radius=30),
+        ],
+    bend_radius=10,
+    bridge_spacing=20,
+    bridge_scramble=5,
+    bridge_width=3,
+    )
 
-from pprint import pprint
-
-pprint('====== step 0 ======')
-pprint(path0)
-path1 = pc.tl.resolve_elbows(path0)
-pprint('====== step 1 ======')
-pprint(path1)
-path2 = pc.tl.reduce_straights(path1)
-pprint('====== step 2 ======')
-pprint(path2)
-path3, bendspecs = pc.tl.construct_bends(path2, bend_radius=10)
-pprint('====== step 3 ======')
-pprint(path3)
-path4, bridgespecs = pc.tl.construct_bridges(path3, 20, 3, 5)
-pprint('====== step 4 ======')
-pprint(path4)
-
-path5 = path4
-
-bends = pc.tl.make_bend_components(bendspecs, bend_compo)
-bridges = pc.tl.make_bridge_components(bridgespecs, bridge_compo)
-straights = pc.tl.make_straight_components(path5, straight_compo)
+tl.make_bends(bend_compo)
+tl.make_bridges(bridge_compo)
+tl.make_straights(straight_compo)
 
 #path0, bends, bridges, straights = pc.path.resolve_path(
 #    path0,
@@ -395,23 +382,23 @@ straights = pc.tl.make_straight_components(path5, straight_compo)
 #    straight_compo=straight_compo,
 #    )
 
-svg = pc.tl.render_paths_as_svg([path1, path2, path3, path4, path5]).getvalue()
+#svg = pc.tl.render_paths_as_svg([path1, path2, path3, path4, path5]).getvalue()
 
-with open('./test0.svg', 'w') as f:
-    f.write(svg)
+#with open('./test0.svg', 'w') as f:
+#    f.write(svg)
 
 class TestCompo(pc.Component):
     Layers = CPWLayers
 
     def _make(self, o):
 
-        for bend in bends:
+        for bend in tl.bends_:
             self.add_subcomponent(bend)
 
-        for bridge in bridges:
+        for bridge in tl.bridges_:
             self.add_subcomponent(bridge)
 
-        for straight in straights:
+        for straight in tl.straights_:
             self.add_subcomponent(straight)
 
 compo = TestCompo()

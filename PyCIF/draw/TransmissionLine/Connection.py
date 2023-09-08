@@ -1,3 +1,5 @@
+from typing import Self, ClassVar
+
 import PyCIF as pc
 
 # Might be able to include other things in the future
@@ -11,63 +13,75 @@ class Connection:
     Abstract base for connection type
     """
     to: ConnectionTarget
-    turn_radius: float | None  # at start of connection
+    radius: float | None  # at start of connection
     bridges: bool | None
     bridge_spacing: float | None
     bridge_scramble: float | None
     bridge_width: float | None
 
+    pretty_name: ClassVar[str] = 'Connect to'
+
     def __init__(
             self,
             to: ConnectionTarget,
+            radius: float | None = None,
             bridges: bool | None = None,
             bridge_spacing: float | None = None,
             bridge_scramble: float | None = None,
             bridge_width: float | None = None,
+            clone_from: Self | None = None,
             ):
         if type(self) is Connection:
             raise Exception("Cannot create abstract Connection")
 
+        if clone_from is not None:
+            to = to or clone_from.to
+            radius = radius or clone_from.radius
+            bridges = bridges or clone_from.bridges
+            bridge_spacing = bridge_spacing or clone_from.bridge_spacing
+            bridge_scramble = bridge_scramble or clone_from.bridge_scramble
+            bridge_width = bridge_width or clone_from.bridge_width
+
         self.to = to
+        self.radius = radius
         self.bridges = bridges
         self.bridge_spacing = bridge_spacing
         self.bridge_scramble = bridge_scramble
         self.bridge_width = bridge_width
 
+    def __repr__(self):
+        return f'{self.pretty_name} {self.to}: r={self.radius}'
+
 class StartAt(Connection):
     """
     Start at point or markable
     """
-    def __repr__(self):
-        return f"Start at    {self.to}"
+    pretty_name: ClassVar[str] = 'Start at'
+
 
 class JumpTo(Connection):
     """
     Indicates no connection to next point
     """
-    def __repr__(self):
-        return f"Jump to     {self.to}"
+    pretty_name: ClassVar[str] = 'Jump to'
 
 class StraightTo(Connection):
     """
     Direction connection between points with one straight line segment
     """
-    def __repr__(self):
-        return f"Straight to {self.to}"
+    pretty_name: ClassVar[str] = 'Straight to'
 
 class ElbowTo(Connection):
     """
     Elbow connection (90 degree) between two points
     """
-    def __repr__(self):
-        return f"Elbow to    {self.to}"
+    pretty_name: ClassVar[str] = 'Elbow to'
 
 class MeanderTo(Connection):
     """
     Meander between two points
     """
-    def __repr__(self):
-        return f"Meander to  {self.to}"
+    pretty_name: ClassVar[str] = 'Meander to'
 
     def __init__(*args, **kwargs):
         raise NotImplementedError
@@ -109,7 +123,7 @@ class MeanderTo(Connection):
 #
 #    to: ConnectionTarget
 #    line: Line
-#    turn_radius: float  # at start of connection
+#    radius: float  # at start of connection
 #    bridges: bool
 #    bridge_spacing: float
 #    bridge_scramble: float
@@ -118,7 +132,7 @@ class MeanderTo(Connection):
 #
 #def StartAt(
 #        to: ConnectionTarget,
-#        turn_radius: float = 10,
+#        radius: float = 10,
 #        bridges: bool = True,
 #        bridge_spacing: float = 10,
 #        bridge_scramble: float = 4,
@@ -127,7 +141,7 @@ class MeanderTo(Connection):
 #    return Connection(
 #        to,
 #        Connection.Line.StartAt,
-#        turn_radius,
+#        radius,
 #        bridges,
 #        bridge_spacing,
 #        bridge_scramble,
@@ -136,7 +150,7 @@ class MeanderTo(Connection):
 #
 #def StraightTo(
 #        to: ConnectionTarget,
-#        turn_radius: float = 10,
+#        radius: float = 10,
 #        bridges: bool = True,
 #        bridge_spacing: float = 10,
 #        bridge_scramble: float = 4,
@@ -145,7 +159,7 @@ class MeanderTo(Connection):
 #    return Connection(
 #        to,
 #        Connection.Line.StraightTo,
-#        turn_radius,
+#        radius,
 #        bridges,
 #        bridge_spacing,
 #        bridge_scramble,
@@ -154,7 +168,7 @@ class MeanderTo(Connection):
 #
 #def JumpTo(
 #        to: ConnectionTarget,
-#        turn_radius: float = 10,
+#        radius: float = 10,
 #        bridges: bool = True,
 #        bridge_spacing: float = 10,
 #        bridge_scramble: float = 4,
@@ -163,7 +177,7 @@ class MeanderTo(Connection):
 #    return Connection(
 #        to,
 #        Connection.Line.JumpTo,
-#        turn_radius,
+#        radius,
 #        bridges,
 #        bridge_spacing,
 #        bridge_scramble,
@@ -172,7 +186,7 @@ class MeanderTo(Connection):
 #
 #def ElbowTo(
 #        to: ConnectionTarget,
-#        turn_radius: float = 10,
+#        radius: float = 10,
 #        bridges: bool = True,
 #        bridge_spacing: float = 10,
 #        bridge_scramble: float = 4,
@@ -181,7 +195,7 @@ class MeanderTo(Connection):
 #    return Connection(
 #        to,
 #        Connection.Line.ElbowTo,
-#        turn_radius,
+#        radius,
 #        bridges,
 #        bridge_spacing,
 #        bridge_scramble,
@@ -190,7 +204,7 @@ class MeanderTo(Connection):
 #
 #def MeanderTo(
 #        to: ConnectionTarget,
-#        turn_radius: float = 10,
+#        radius: float = 10,
 #        bridges: bool = True,
 #        bridge_spacing: float = 10,
 #        bridge_scramble: float = 4,
@@ -200,7 +214,7 @@ class MeanderTo(Connection):
 #    return Connection(
 #        to,
 #        Connection.Line.MeanderTo,
-#        turn_radius,
+#        radius,
 #        bridges,
 #        bridge_spacing,
 #        bridge_scramble,
