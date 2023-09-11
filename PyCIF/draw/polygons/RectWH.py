@@ -11,10 +11,19 @@ import PyCIF as pc
 
 class RectWH(pc.Polygon):
 
+    class Marks(pc.Polygon.Marks):
+        center = pc.Mark('Center of the rectangle TESTING TESTING')
+
     def __init__(self, width: float, height: float):
         super().__init__()
         self.width = width
         self.height = height
+
+        #self._marks2.wtf = pc.Point(0, 0)
+        self.marks.center = pc.Point(
+            self.width * 1,
+            self.height * 0.5,
+            )
 
         self._add_mark(
             'top_left',

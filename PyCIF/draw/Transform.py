@@ -4,8 +4,10 @@ from typing import Self, ClassVar, Tuple
 
 import numpy as np
 
-from PyCIF.helpers import encapsulation
-from PyCIF.helpers.hackery import new_without_init
+import PyCIF as pc
+
+#from PyCIF.helpers import encapsulation
+#from PyCIF.helpers.hackery import new_without_init
 
 
 def _rot(angle):
@@ -22,8 +24,15 @@ def _mov(x, y):
         [0, 0, 1],
         ])
 
+def _scale(x, y):
+    return np.array([
+        [x, 0, 0],
+        [0, y, 0],
+        [0, 0, 1],
+        ])
 
-@encapsulation.expose_class
+
+#@encapsulation.expose_class
 class Transform(object):
     """
     Transformation: container for affine matrix
@@ -56,9 +65,9 @@ class Transform(object):
         transformed = np.dot(homogeneous, self._affine.T)
         cartesian = transformed[:2] / transformed[2]
 
-        return cartesian
+        return type(point)(*cartesian)
 
-    @encapsulation.exposable
+    #@encapsulation.exposable
     def apply_transform(self, transform: Self):
         """
         Apply a transform to this transform
@@ -81,7 +90,7 @@ class Transform(object):
     #def __str__(self):
     #    return '[\n%s]\b]' % ''.join([f'\t{action}\n' for action in self.history])
 
-    #@encapsulation.exposable
+    ##@encapsulation.exposable
     #def apply_transform(self, other: Self) -> Self:
     #    """
     #    Apply another Transform to this Transform.
@@ -89,8 +98,14 @@ class Transform(object):
     #    #self.history.extend(other.history)
     #    return self
 
-    @encapsulation.exposable
-    def move(self, x: float = 0, y: float = 0) -> Self:
+    #@encapsulation.exposable
+    # TODO typing.point
+    # types defined in own files
+    # then mergen in pc.typing
+    # or just PointType, ComponentClassType, etc
+    def move(self, x: float | pc.Point = 0, y: float = 0) -> Self:
+        if isinstance(x, pc.Point):
+            x, y = x
         self._affine = _mov(x, y) @ self._affine
         return self
         #arr = np.array((x, y), np.float64)
@@ -100,33 +115,38 @@ class Transform(object):
         #self.history.append((_move, x, y))
         #return self
 
-    @encapsulation.exposable
+    #@encapsulation.exposable
     def movex(self, x: float = 0) -> Self:
         self._affine = _mov(x, 0) @ self._affine
         return self
 
-    @encapsulation.exposable
+    #@encapsulation.exposable
     def movey(self, y: float = 0) -> Self:
         self._affine = _mov(0, y) @ self._affine
         return self
 
-    #@encapsulation.exposable
+    ##@encapsulation.exposable
     #def movex(self, x: float) -> Self:
     #    self.history.append((_move, x, 0))
     #    return self
 
-    #@encapsulation.exposable
+    ##@encapsulation.exposable
     #def movey(self, y: float) -> Self:
     #    self.history.append((_move, 0, y))
     #    return self
 
     #@encapsulation.exposable
-    #def scale(self, x: float, y: float | None = None) -> Self:
-    #    self.history.append((_scale, x, x if y is None else y))
-    #    return self
+    def scale(self, x: float | pc.Point, y: float | None = None) -> Self:
+        if isinstance(x, pc.Point):
+            x, y = x
+        self._affine = _scale(x, y or x) @ self._affine
+        return self
 
-    @encapsulation.exposable
-    def rotate(self, angle: float, x: float = 0, y: float = 0) -> Self:
+    #@encapsulation.exposable
+    def rotate(self, angle: float, x: float | pc.Point = 0, y: float = 0) -> Self:
+        if isinstance(x, pc.Point):
+            x, y = x
+
         to_origin = _mov(-x, -y)
         rot = _rot(angle)
         from_origin = _mov(x, y)
@@ -137,17 +157,17 @@ class Transform(object):
         return self
 
     #@encapsulation.exposable
-    #def hflip(self) -> Self:
-    #    self.history.append((_scale, 1, -1))
-    #    return self
+    def hflip(self) -> Self:
+        self._affine = _scale(1, -1) @ self._affine
+        return self
 
     #@encapsulation.exposable
-    #def vflip(self) -> Self:
-    #    self.history.append((_scale, -1, 1))
-    #    return self
+    def vflip(self) -> Self:
+        self._affine = _scale(-1, 1) @ self._affine
+        return self
 
     #@encapsulation.exposable
-    #def flip(self) -> Self:
-    #    self.history.append((_scale, -1, -1))
-    #    return self
+    def flip(self) -> Self:
+        self._affine = _scale(-1, -1) @ self._affine
+        return self
 

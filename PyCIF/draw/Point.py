@@ -7,7 +7,10 @@ import numpy as np
 
 import PyCIF as pc
 
-class Point(object):
+class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
+    x: float
+    y: float
+
     def __init__(self, x: float = 0, y: float = 0, arg: float | None = None, mag: float | None = None):
         """
         Create a point from (x, y)
@@ -88,20 +91,20 @@ class Point(object):
 
         raise Exception("Points consist of only two coordinates")
 
-    def __setitem__(self, index, value):
-        if index == 0:
-            self.x = value
+    #def __setitem__(self, index, value):
+    #    if index == 0:
+    #        self.x = value
 
-        elif index == 1:
-            self.y == value
+    #    elif index == 1:
+    #        self.y == value
 
-        else:
-            raise Exception("Points consist of only two coordinates")
+    #    else:
+    #        raise Exception("Points consist of only two coordinates")
 
-    def move(self, x, y):
-        self.x += x
-        self.y += y
-        return self
+    #def move(self, x, y):
+    #    self.x += x
+    #    self.y += y
+    #    return self
 
     def __array__(self):
         return np.array((self.x, self.y))

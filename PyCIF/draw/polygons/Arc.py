@@ -3,7 +3,6 @@ Arc polygon
 """
 
 from typing import ClassVar
-from enum import Enum
 
 import numpy as np
 
@@ -13,6 +12,15 @@ class Arc(pc.Polygon):
     radius_inner: ClassVar[float]
     radius_outter: ClassVar[float]
     angle: ClassVar[float]
+
+    class Marks(pc.Polygon.Marks):
+        center = pc.Mark('Center of the arc')
+        start_mid = pc.Mark(
+            'Midway between the two radii, at the start of the arc'
+            )
+        end_mid = pc.Mark(
+            'Midway between the two radii, at the end of the arc'
+            )
 
     @pc.kwoverload
     def __init__(
@@ -98,8 +106,19 @@ class Arc(pc.Polygon):
 
         self._set_marks()
 
-
     def _set_marks(self):
+        self.marks.center = pc.Point(0, 0)
+
+        self.marks.start_mid = pc.Point(
+            arg=self.angle_start,
+            mag=self.radial_center
+            )
+
+        self.marks.end_mid = pc.Point(
+            arg=self.angle_end,
+            mag=self.radial_center
+            )
+
         self._add_mark(
             'center',
             pc.Point(0, 0),

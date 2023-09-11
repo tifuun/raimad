@@ -297,112 +297,101 @@
 
 
 
+#import PyCIF as pc
+#from pc_DeshimaPort.CPW import CPWBend, CPWBridge, CPWStraight, CPWLayers
+#
+#from PyCIF.exporters.cif import export as export_cif
+#
+#class TestCompo(pc.Component):
+#    Layers = CPWLayers
+#
+#    def _make(self, o):
+#        
+#        tl = pc.tl.TransmissionLine(
+#            [
+#                pc.tl.StartAt(pc.Point(0, 40)),
+#                pc.tl.ElbowTo(pc.Point(50, 80)),
+#                pc.tl.JumpTo(pc.Point(100, 40)),
+#                pc.tl.StraightTo(pc.Point(150, 00)),
+#                pc.tl.ElbowTo(pc.Point(300, 80), radius=30),
+#                ],
+#            bend_radius=10,
+#            bridge_spacing=20,
+#            bridge_scramble=5,
+#            bridge_width=3,
+#            )
+#
+#        tl.make_bends(CPWBend)
+#        tl.make_straights(CPWStraight)
+#        tl.make_bridges(
+#            bridge_compo=pc.Partial(
+#                CPWBridge,
+#                pc.Dict(
+#                    insl_length=7,
+#                    insl_width=5,
+#                    length=12,
+#                    )
+#                )
+#            )
+#
+#        for bend in tl.bends_:
+#            self.add_subcomponent(bend)
+#
+#        for bridge in tl.bridges_:
+#            self.add_subcomponent(bridge)
+#
+#        for straight in tl.straights_:
+#            self.add_subcomponent(straight)
+#
+#compo = TestCompo()
+#
+#with open('./test.cif', 'w') as f:
+#    export_cif(f, compo)
+
+########################################
+########################################
+
 import PyCIF as pc
-from pc_DeshimaPort.CPW import CPWBend, CPWBridge, CPWLayers, CPWStraight
 
-from PyCIF.exporters.cif import export as export_cif
-
-class MyComponent(pc.Component):
+class MyCompo(pc.Component):
     Layers = pc.Dict(
-        root=pc.Layer()
-        )
-
-    Options = pc.Dict(
-        radius=pc.Option.Geometric(2)
+        l1=pc.Layer(),
+        l2=pc.Layer(),
+        l3=pc.Layer()
         )
 
     def _make(self, opts):
-        self.add_subpolygon(
-            pc.Circle(opts.radius)
-            )
-        self._add_mark('tl_enter',
-            pc.Point(
-                arg=pc.degrees(180),
-                mag=opts.radius,
-                ),
-            )
-        self._add_mark('tl_exit',
-            pc.Point(
-                arg=pc.degrees(0),
-                mag=opts.radius,
-                ),
+        arc1 = pc.Arc(
+            angle_start=pc.degrees(45),
+            angle_end=pc.degrees(90),
+            radius_inner=10,
+            radius_outter=20
             )
 
-compo1 = MyComponent(opts=pc.Dict(radius=10)).move(-40, -40)
-compo2 = MyComponent(opts=pc.Dict(radius=5)).move(100, 100)
-compo3 = MyComponent(opts=pc.Dict(radius=10)).move(200, 140)
+        # TODO rotate around mark
 
+        arc2 = arc1.copy().scale(0.3)
+        arc2.marks.center.to(arc1.marks.center)
 
-bend_compo = pc.Partial(
-    CPWBend,
-    pc.Dict(
-        radius=10,
-        ),
-    )
+        arc3 = arc1.copy().scale(0.9)
+        arc3.marks.center.rotate(pc.degrees(45))
+        arc3.marks.start_mid.to(arc1.marks.end_mid)
 
-bridge_compo=pc.Partial(
-    CPWBridge,
-    pc.Dict(
-        length=10,
-        insl_length=7
-        ),
-    )
+        self.add_subpolygon(arc1, 'l1')
+        self.add_subpolygon(arc2, 'l2')
+        self.add_subpolygon(arc3, 'l3')
 
-straight_compo=pc.Partial(
-    CPWStraight,
-    pc.Dict(
-        ),
-    )
-
-tl = pc.tl.TransmissionLine(
-    [
-        pc.tl.StartAt(pc.Point(0, 40)),
-        pc.tl.ElbowTo(pc.Point(50, 80)),
-        pc.tl.JumpTo(pc.Point(100, 40)),
-        pc.tl.StraightTo(pc.Point(150, 00)),
-        pc.tl.ElbowTo(pc.Point(300, 80), radius=30),
-        ],
-    bend_radius=10,
-    bridge_spacing=20,
-    bridge_scramble=5,
-    bridge_width=3,
-    )
-
-tl.make_bends(bend_compo)
-tl.make_bridges(bridge_compo)
-tl.make_straights(straight_compo)
-
-#path0, bends, bridges, straights = pc.path.resolve_path(
-#    path0,
-#    bend_compo=bend_compo,
-#    bend_radius=10,
-#    beidge_compo=bridge_compo,
-#    bridge_spacing=30,
-#    bridge_scramble=10,
-#    straight_compo=straight_compo,
-#    )
-
-#svg = pc.tl.render_paths_as_svg([path1, path2, path3, path4, path5]).getvalue()
-
-#with open('./test0.svg', 'w') as f:
-#    f.write(svg)
-
-class TestCompo(pc.Component):
-    Layers = CPWLayers
-
-    def _make(self, o):
-
-        for bend in tl.bends_:
-            self.add_subcomponent(bend)
-
-        for bridge in tl.bridges_:
-            self.add_subcomponent(bridge)
-
-        for straight in tl.straights_:
-            self.add_subcomponent(straight)
-
-compo = TestCompo()
+compo = MyCompo()
 
 with open('./test.cif', 'w') as f:
-    export_cif(f, compo)
+    pc.export_cif(f, compo)
+
+#import PyCIF as pc
+#from pc_DeshimaDemo import DeshimaDemo
+#from PyCIF.exporters.cif import export as export_cif
+#
+#compo = DeshimaDemo()
+#
+#with open('./test.cif', 'w') as f:
+#    export_cif(f, compo)
 

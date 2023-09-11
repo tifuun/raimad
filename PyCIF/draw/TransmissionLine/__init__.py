@@ -30,6 +30,9 @@ from .viz import format_path
 from .TransmissionLine import TransmissionLine
 
 import PyCIF as pc
+
+# TODO TODO FIXME TODO move the below out FIXME FIXME TODO
+
 BendOpts = pc.Dict(
     bend_radius=pc.Option.Geometric(
         10,

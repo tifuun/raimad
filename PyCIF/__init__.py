@@ -24,9 +24,12 @@ from numpy import pi
 from addict import Dict
 
 from PyCIF.helpers.overload import kwoverload
+from PyCIF.helpers.slots import SlotsFromAnnotationsMeta
 
-from PyCIF.draw.Transform import Transform
 from PyCIF.draw.Point import Point
+from PyCIF.draw.Transform import Transform
+from PyCIF.draw.Transformable import Transformable
+from PyCIF.draw.Markable import Mark
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw.BBox import BBox
 from PyCIF.draw.Polygon import Polygon
@@ -64,6 +67,8 @@ from PyCIF.draw.polygons.RectWH import RectWH
 from PyCIF.draw.polygons.CustomPolygon import CustomPolygon
 
 from PyCIF import viz as viz
+
+from PyCIF.exporters.cif import export as export_cif
 
 #from PyCIF.draw.PolygonGroup import PolygonGroup
 
