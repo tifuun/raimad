@@ -8,160 +8,24 @@ from typing import Self, Annotated, Tuple
 
 import PyCIF as pc
 
-
-#@encapsulation.expose_encapsulated(Transform, 'transformable')
-#class Mark():
-#    """
-#    """
-#    def __init__(self, transformable):
-#        self.transformable = transformable
-#
-#    def __get__(self, obj: MarkContainer, objtype=None):
-#        obj._markable.get_mark(self.name)
-#
-#    def align(self, target_point):
-#        obj._markable.get_mark(self.name)
-#
-#
-#
-#
-#class MarkContainer(object):
-#    """
-#    """
-#    def __init__(self, markable, transform):
-#        self._markable = markable
-#        self._transform = transform
-#        self._marks = {}
-#
-#    def __getattr__(self, name):
-#        if name not in self._marks.keys():
-#            raise Exception("No such mark.")
-#
-#        point = self._marks[name]
-#        return PointRef(self._markable, point.copy().apply_transform(self._transform))
-#
-#    def __setattr__(self, name, value):
-#        if name.startswith('_'):
-#            return super().__setattr__(name, value)
-#
-#        if not isinstance(value, Point):
-#            raise Exception("Can only add Points to MarkContainer")
-#
-#        self._marks[name] = value
-#
-#    def items(self):
-#        return self._marks.items()
-#
-#    def keys(self):
-#        return self._marks.keys()
-#
-#    def values(self):
-#        return self._marks.values()
-
-#def Mark(comment: str):
-#    return Annotated[pc.Point, comment]
-
-class BoundPoint(pc.Point):
-    _transformable: pc.Transformable
-
-    def __init__(self, point: pc.Point, transformable: pc.Transformable):
-        self.x, self.y = transformable.transform.transform_point(point)
-        self._transformable = transformable
-
-    def to(self, point: pc.Point):
-        self._transformable.move(*(point - self))
-
-    def rotate(self, angle: float):
-        self._transformable.rotate(angle, self)
-
-    #TODO chaining won't work, b/c x and y don't get re-calculated.
-    # Would it be better to have x and y as properties?
-    #
-    # but have X and Y as properties?
-
-    #def move(self, x: float | pc.Point = 0, y: float = 0) -> Self:
-    #    self._transformable.move(x, y)
-    #    return self
-
-    #def movex(self, x: float = 0) -> Self:
-    #    self._transformable.movex(x)
-    #    return self
-
-    #def movey(self, y: float = 0) -> Self:
-    #    self._transformable.movey(y)
-    #    return self
-
-    #def scale(self, x: float | pc.Point, y: float | None = None) -> Self:
-    #    self._transformable.scale(x, y)
-    #    return self
-
-    #def rotate(self, angle: float, x: float | pc.Point = 0, y: float = 0) -> Self:
-    #    self._transformable.rotate(angle, x, y)
-    #    return self
-
-    #def hflip(self) -> Self:
-    #    self._transformable.hflip()
-    #    return self
-
-    #def vflip(self) -> Self:
-    #    self._transformable.vflip()
-    #    return self
-
-    #def flip(self) -> Self:
-    #    self._transformable.flip()
-    #    return self
-
-
-
 class Mark(metaclass=pc.SlotsFromAnnotationsMeta):
     # TODO static access
     _point: pc.Point | None
+    #_boundpoint: pc.Point | None
     description: str
 
     def __init__(self, description: str):
         self.description = description
         self._point = None
+        #self._boundpoint = None
 
     def __get__(self, obj, cls=None):
         #return self._boundpoint
-        return BoundPoint(self._point, obj._transformable)
+        return pc.BoundRelativePoint(self._point, obj._transformable)
     
     def __set__(self, obj, value):
-        #self._boundpoint = BoundPoint(value, obj._transformable)
+        #self._boundpoint = pc.BoundPoint(value, obj._transformable)
         self._point = value
-
-
-#class Mark(pc.Point):
-#    _transformable: pc.Transformable
-#
-#    def __init__(self, x: float, y: float, transformable: pc.Transformable):
-#        super().__init__(x, y)
-#        self._transformable = transformable
-#        #self.wtf = 'wtf'
-#
-#    #def __get__(self, instance, cls):
-#    #    if not instance:
-#    #        raise Exception("wtf")
-#
-#    #    return instance._transformable.transform.transform_point(self)
-#    #
-#    #def __set__(self, instance, point):
-#    #    if not instance:
-#    #        raise Exception("wtf")
-#
-#    #    self.x = point.x
-#    #    self.y = point.y
-#
-#    def __class_getitem__(cls, comment: str):
-#        return Annotated[pc.Point, comment]
-#
-#    def move(self, x: float = 0, y: float = 0) -> Self:
-#        self._transformable.move(x, y)
-#        return self
-#
-#    def to(self, point: pc.Point) -> Self:
-#        self._transformable.move(*(point - self))
-#        return self
 
 # TODO
 # This will eventually be very useful:
@@ -180,41 +44,13 @@ class Markable(pc.Transformable):
         def __init__(self, transformable):
             self._transformable = transformable
 
+        def copy(self, new_transformable: pc.Transformable):
+            new = type(self)(new_transformable)
+            for attr in self.__slots__:
+                if attr.startwith('_'): continue
+
+
     marks: Marks
-
-    #class Marks(metaclass=pc.SlotsFromAnnotationsMeta):
-
-    #    _transform: pc.Transform
-    #    origin: Mark['Origin of the coordinate system of this Markable']
-
-    #    def __iter__(self):
-    #        return iter(set(self.__slots__) - {'_transform'})
-
-    #    def __contains__(self, val):
-    #        # TODO separate container to avoid doing all this?
-    #        return val in (set(self.__slots__) - {'_transform'})
-
-    #    def __init__(self, transform):
-    #        #self._transform = transform
-    #        for name in self:
-    #            # TODO uninitialised mark!
-    #            setattr(self, name, Mark(0, 0, transform))
-
-    #    #def __getattribute__(self, name):
-    #    #    # TODO better with setattribute and descriptor?
-    #    #    # or with separate add_mark function?
-    #    #    if name.startswith('_') or name not in self:
-    #    #        return super().__getattribute__(name)
-
-    #    #    else:
-    #    #        return self._transform.transform_point(
-    #    #            super().__getattribute__(name)
-    #    #            )
-
-    #    # TODO warn user if accidentally make class
-    #    # variable instead of annotation!
-
-    #marks: Marks
 
     def __init__(self):
         super().__init__()

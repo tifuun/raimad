@@ -65,7 +65,8 @@ class Transform(object):
         transformed = np.dot(homogeneous, self._affine.T)
         cartesian = transformed[:2] / transformed[2]
 
-        return type(point)(*cartesian)
+        return np.array(cartesian)
+        #return type(point)(*cartesian)
 
     #@encapsulation.exposable
     def apply_transform(self, transform: Self):

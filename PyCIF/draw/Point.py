@@ -8,8 +8,16 @@ import numpy as np
 import PyCIF as pc
 
 class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
-    x: float
-    y: float
+    _x: float
+    _y: float
+
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
 
     def __init__(self, x: float = 0, y: float = 0, arg: float | None = None, mag: float | None = None):
         """
@@ -17,11 +25,11 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         with short syntax: pc.Point(10, 20)
         """
         if arg is not None:
-            self.x = np.cos(arg) * mag
-            self.y = np.sin(arg) * mag
+            self._x = np.cos(arg) * mag
+            self._y = np.sin(arg) * mag
         else:
-            self.x = x
-            self.y = y
+            self._x = x
+            self._y = y
 
     # TODO better overloading framework. Should support:
     # pc.Point()  # create an origin

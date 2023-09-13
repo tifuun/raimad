@@ -357,7 +357,9 @@ class MyCompo(pc.Component):
     Layers = pc.Dict(
         l1=pc.Layer(),
         l2=pc.Layer(),
-        l3=pc.Layer()
+        l3=pc.Layer(),
+        l4=pc.Layer(),
+        l5=pc.Layer()
         )
 
     def _make(self, opts):
@@ -377,9 +379,37 @@ class MyCompo(pc.Component):
         arc3.marks.center.rotate(pc.degrees(45))
         arc3.marks.start_mid.to(arc1.marks.end_mid)
 
+        #arc1.bbox
+
+        box1 = pc.RectWH(arc1.bbox.width, arc1.bbox.height)
+        box1.bbox.top_left.to(arc1.bbox.top_left)
+
+        box2 = pc.RectWH(arc2.bbox.width, arc2.bbox.height)
+        box2.bbox.top_left.to(arc2.bbox.top_left)
+
+        box3 = pc.RectWH(arc3.bbox.width, arc3.bbox.height)
+        box3.bbox.top_left.to(arc3.bbox.top_left)
+
+        for arc in (arc1, arc2, arc3):
+            c1 = pc.Circle(0.1)
+            c1.marks.origin.to(arc.bbox.top_left)
+            self.add_subpolygon(c1, 'l1')
+            c1 = pc.Circle(0.1)
+            c1.marks.origin.to(arc.bbox.top_right)
+            self.add_subpolygon(c1, 'l1')
+            c1 = pc.Circle(0.1)
+            c1.marks.origin.to(arc.bbox.bot_left)
+            self.add_subpolygon(c1, 'l1')
+            c1 = pc.Circle(0.1)
+            c1.marks.origin.to(arc.bbox.bot_right)
+            self.add_subpolygon(c1, 'l1')
+
         self.add_subpolygon(arc1, 'l1')
         self.add_subpolygon(arc2, 'l2')
         self.add_subpolygon(arc3, 'l3')
+        self.add_subpolygon(box1, 'l4')
+        self.add_subpolygon(box2, 'l5')
+        self.add_subpolygon(box3, 'l1')
 
 compo = MyCompo()
 
