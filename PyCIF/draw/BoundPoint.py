@@ -5,8 +5,8 @@ import PyCIF as pc
 class BoundPoint(pc.Point):
     _transformable: pc.Transformable
 
-    def __init__(self, point: pc.Point, transformable: pc.Transformable):
-        super().__init__(*point)
+    def __init__(self, x: float, y: float, transformable: pc.Transformable):
+        super().__init__(x, y)
         #self.x, self.y = transformable.transform.transform_point(point)
         self._transformable = transformable
 

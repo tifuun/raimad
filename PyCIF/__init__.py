@@ -11,6 +11,7 @@ Many convenience functions from numpy are also made available
 """
 
 from numpy import radians as degrees
+from numpy import degrees as radians
 from numpy import sin
 from numpy import cos
 from numpy import tan
@@ -23,6 +24,7 @@ from numpy import pi
 
 from addict import Dict
 
+from PyCIF.logging import get_logger
 from PyCIF.helpers.overload import kwoverload
 from PyCIF.helpers.slots import SlotsFromAnnotationsMeta
 

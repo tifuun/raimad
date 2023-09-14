@@ -2,6 +2,7 @@
 Point -- storage for x, y coordinate pair
 """
 from typing import Self
+from copy import copy
 
 import numpy as np
 
@@ -52,28 +53,28 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         """
         Allow adding CoordPairs together
         """
-        return Point(
-            self.x + other[0],
-            self.y + other[1],
-            )
+        new = self.copy()
+        new._x -= other[0]
+        new._y -= other[1]
+        return new
 
     def __sub__(self, other):
         """
         Allow subtractin CoordPairs
         """
-        return Point(
-            self.x - other[0],
-            self.y - other[1],
-            )
+        new = self.copy()
+        new._x -= other[0]
+        new._y -= other[1]
+        return new
 
     def __rsub__(self, other):
         """
         Allow subtractin CoordPairs
         """
-        return Point(
-            other[0] - self.x,
-            other[1] - self.y,
-            )
+        new = self.copy()
+        new._x = other[0] - self._x
+        new._y = other[1] = self._y
+        return new
 
     def __pos__(self):
         return self
@@ -162,8 +163,7 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
     #            np.array([self.x, self.y, 1]))
     #    return self
 
-    #def copy(self):
-    #    # TODO use python standard copy?
-    #    new_point = Point(self.x, self.y)
-    #    return new_point
+    def copy(self):
+        # TODO???
+        return copy(self)
 

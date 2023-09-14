@@ -37,6 +37,30 @@ def _around(matrix, x, y):
 
     return from_origin @ matrix @ to_origin
 
+def get_translation(matrix):
+    """
+    Given an affine matrix, return the corresponding translation.
+    Written by ChatGPT
+    """
+    return matrix[:2, 2]
+
+def get_scale_shear(matrix):
+    """
+    Given an affine matrix, return the corresponding scale and shear.
+    Written by ChatGPT
+    """
+    scale_x = np.linalg.norm(matrix[:, 0])
+    scale_y = np.linalg.norm(matrix[:, 1])
+    shear = np.dot(matrix[:, 0], matrix[:, 1]) / (scale_x * scale_y)
+    return scale_x, scale_y, shear
+
+def get_rotation(matrix):
+    """
+    Given an affine matrix, return the corresponding rotation
+    Written by ChatGPT
+    """
+    return np.arctan2(matrix[1, 0], matrix[0, 0])
+
 
 #@encapsulation.expose_class
 class Transform(object):
@@ -85,8 +109,25 @@ class Transform(object):
         self._affine = transform._affine @ self._affine
         return self
 
-    def __str__(self):
-        return self._affine.__str__()
+    def __repr__(self):
+        move_x, move_y = get_translation(self._affine)
+        scale_x, scale_y, shear = get_scale_shear(self._affine)
+        rotation = get_rotation(self._affine)
+        return ''.join((
+            "[Transform ",
+            f"➚ ({move_x:+.2f}, {move_y:+.2f}) "
+                if np.linalg.norm((move_x, move_y)) > 0.001 else '',  # TODO epsilon
+            f"⭯ {pc.radians(rotation):.2f}) "
+                if rotation > 0.01 else '',
+            f"▱ {shear:.2f} "
+                if shear > 0.01 else '',
+            f"◱ ({scale_x:.2f}, {scale_y:.2f})"
+                if 1 - np.linalg.norm((scale_x, scale_y)) > 0.001 else '',
+            "]",
+            ))
+
+
+        #return self._affine.__str__()
 
     #def copy(self) -> Self:
     #    new_transform = new_without_init(self.__class__)

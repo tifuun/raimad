@@ -21,7 +21,7 @@ class Mark(metaclass=pc.SlotsFromAnnotationsMeta):
 
     def __get__(self, obj, cls=None):
         #return self._boundpoint
-        return pc.BoundRelativePoint(self._point, obj._transformable)
+        return pc.BoundRelativePoint(*self._point, obj._transformable)
     
     def __set__(self, obj, value):
         #self._boundpoint = pc.BoundPoint(value, obj._transformable)

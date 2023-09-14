@@ -272,10 +272,10 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
 
     def _get_xyarray(self):
         xyarray = []
-        for layer in self.get_polygons().items:
+        for layer in self.get_polygons().values():
             for poly in layer:
                 # TODO slow
-                xyarray += poly.get_xyarray()
+                xyarray.extend(poly.get_xyarray())
         return np.array(xyarray)
 
 

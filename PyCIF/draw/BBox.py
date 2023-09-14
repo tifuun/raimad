@@ -113,12 +113,11 @@ class BBox(object):
         """
         x = self.min_x + self.width * x_ratio
         y = self.min_y + self.height * y_ratio
-        point = pc.Point(x, y)
 
         if self.bind_to is None:
-            return point
+            return pc.Point(x, y)
         else:
-            return pc.BoundPoint(point, self.bind_to)
+            return pc.BoundPoint(x, y, self.bind_to)
 
     @property
     def mid(self):
