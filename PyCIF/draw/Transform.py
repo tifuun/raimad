@@ -45,6 +45,9 @@ class Transform(object):
     """
 
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self._affine = np.identity(3)
 
     def transform_xyarray(self, xyarray: np.ndarray):

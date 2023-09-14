@@ -36,7 +36,7 @@ from PyCIF.draw.BoundPoint import BoundRelativePoint
 from PyCIF.draw.Markable import Mark
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw.Polygon import Polygon
-from PyCIF.draw.PolygonGroup import PolygonGroup
+from PyCIF.draw.Group import Group
 #from PyCIF.draw.Component import Component
 from PyCIF.draw.Option import Option
 from PyCIF.draw.Layer import Layer

@@ -214,7 +214,7 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
 
     def add_subpolygons(
             self,
-            polys: List[pc.Polygon | pc.PolygonGroup] | pc.Polygon | pc.PolygonGroup,
+            polys: List[pc.Polygon | pc.Group] | pc.Polygon | pc.Group,
             layermap: SubpolygonLayermapShorthand = None,
             ):
         """
@@ -223,7 +223,7 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
         if isinstance(polys, pc.Polygon):
             self.add_subpolygon(polys, layermap)
 
-        elif isinstance(polys, pc.PolygonGroup):
+        elif isinstance(polys, pc.Group):
             for polygon in polys.get_polygons():
                 self.add_subpolygon(polygon, layermap)
 
