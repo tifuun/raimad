@@ -12,9 +12,11 @@ class BoundPoint(pc.Point):
 
     def to(self, point: pc.Point):
         self._transformable.move(*(point - self))
+        return self._transformable
 
     def rotate(self, angle: float):
         self._transformable.rotate(angle, self)
+        return self._transformable
 
     def scale(
             self,
@@ -23,6 +25,7 @@ class BoundPoint(pc.Point):
             ) -> Self:
 
         self._transformable.scale(x, y, self.x, self.y)
+        return self._transformable
 
 class BoundRelativePoint(BoundPoint):
     _transformable: pc.Transformable

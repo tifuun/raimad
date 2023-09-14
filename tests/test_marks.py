@@ -128,3 +128,29 @@ class TestMarks(unittest.TestCase):
         self.assertEqual(compo.marks.right, pc.Point(6, 6))
         self.assertEqual(compo.marks.down, pc.Point(6, 4))
 
+    def test_poly_snap(self):
+
+        poly1 = pc.RectWH(1, 1).bbox.mid.to(pc.Point(0, 0))
+        poly2 = poly1.copy()
+        poly3 = poly1.copy()
+
+        poly2.snap_above(poly1)
+        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
+        self.assertEqual(poly2.bbox.mid, pc.Point(0, 1))
+
+        poly2.snap_left(poly1)
+        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
+        self.assertEqual(poly2.bbox.mid, pc.Point(-1, 0))
+
+        poly2.snap_right(poly1)
+        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
+        self.assertEqual(poly2.bbox.mid, pc.Point(1, 0))
+
+        poly2.snap_below(poly1)
+        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
+        self.assertEqual(poly2.bbox.mid, pc.Point(0, -1))
+
+        poly3.snap_below(poly2)
+        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
+        self.assertEqual(poly2.bbox.mid, pc.Point(0, -1))
+        self.assertEqual(poly3.bbox.mid, pc.Point(0, -2))

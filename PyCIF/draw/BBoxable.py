@@ -55,33 +55,21 @@ class BBoxable():
     def bbox(self):
         return pc.BBox(self._get_xyarray(), self)
 
-    #def snap_below(self, to: Self):
-    #    self.align_marks(
-    #        'top_mid',
-    #        to,
-    #        'bottom_mid',
-    #        )
+    def snap_below(self, other: Self):
+        self.bbox.top_mid.to(other.bbox.bot_mid)
+        return self
 
-    #    return self
+    def snap_above(self, other: Self):
+        self.bbox.bot_mid.to(other.bbox.top_mid)
+        return self
 
-    #def snap_above(self, to: Self):
-    #    self.align_marks(
-    #        'bottom_mid',
-    #        to,
-    #        'top_mid',
-    #        )
-    #    # TODO helpful error messages if marks are missing
-    #    # Or maybe protocols somehow??
+    def snap_right(self, other: Self):
+        self.bbox.mid_left.to(other.bbox.mid_right)
+        return self
 
-    #    return self
-
-    #def align_to(self, to: Self, mark_name='mid'):
-    #    self.align_marks(
-    #        mark_name,
-    #        to,
-    #        mark_name,
-    #        )
-
+    def snap_left(self, other: Self):
+        self.bbox.mid_right.to(other.bbox.mid_left)
+        return self
 
 #"""
 #Alignable -- encapsulates transform and bbox
