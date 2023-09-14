@@ -2,6 +2,22 @@ import unittest
 
 import PyCIF as pc
 
+class ThreeMarkCompo(pc.Component):
+    Layers = pc.Dict(
+        l1=pc.Layer()
+        )
+
+    class Marks(pc.Component.Marks):
+        center = pc.Mark('Test mark at the origin')
+        right = pc.Mark('Test mark to the right')
+        down = pc.Mark('Test mark below the origin')
+
+    def _make(self, opts):
+        self.marks.center = pc.Point(0, 0)
+        self.marks.right = pc.Point(1, 0)
+        self.marks.down = pc.Point(0, -1)
+
+
 class TestMarks(unittest.TestCase):
     def test_marks(self):
         
@@ -39,5 +55,76 @@ class TestMarks(unittest.TestCase):
         with open('./test.cif', 'w') as f:
             pc.export_cif(f, compo)
 
+    def test_mark_compo_transform(self):
 
+        compo = ThreeMarkCompo()
+
+        self.assertEqual(compo.marks.center, pc.Point(0, 0))
+        self.assertEqual(compo.marks.right, pc.Point(1, 0))
+        self.assertEqual(compo.marks.down, pc.Point(0, -1))
+
+        compo.move(5, 5)
+        self.assertEqual(compo.marks.center, pc.Point(5, 5))
+        self.assertEqual(compo.marks.right, pc.Point(6, 5))
+        self.assertEqual(compo.marks.down, pc.Point(5, 4))
+
+        compo.marks.center.rotate(pc.degrees(90))
+        self.assertEqual(compo.marks.center, pc.Point(5, 5))
+        self.assertEqual(compo.marks.right, pc.Point(5, 6))
+        self.assertEqual(compo.marks.down, pc.Point(6, 5))
+
+        compo.marks.right.scale(2)
+        self.assertEqual(compo.marks.center, pc.Point(5, 4))
+        self.assertEqual(compo.marks.right, pc.Point(5, 6))
+        self.assertEqual(compo.marks.down, pc.Point(7, 4))
+
+        compo.marks.right.scale(0.5)
+        self.assertEqual(compo.marks.center, pc.Point(5, 5))
+        self.assertEqual(compo.marks.right, pc.Point(5, 6))
+        self.assertEqual(compo.marks.down, pc.Point(6, 5))
+
+        compo.marks.center.rotate(pc.degrees(-90))
+        self.assertEqual(compo.marks.center, pc.Point(5, 5))
+        self.assertEqual(compo.marks.right, pc.Point(6, 5))
+        self.assertEqual(compo.marks.down, pc.Point(5, 4))
+
+        compo.move(-5, -5)
+        self.assertEqual(compo.marks.center, pc.Point(0, 0))
+        self.assertEqual(compo.marks.right, pc.Point(1, 0))
+        self.assertEqual(compo.marks.down, pc.Point(0, -1))
+
+    def test_compo_transform_chaining(self):
+
+        compo = ThreeMarkCompo()
+
+        self.assertEqual(compo.marks.origin, pc.Point(0, 0))
+
+        self.assertEqual(compo.marks.center, pc.Point(0, 0))
+        self.assertEqual(compo.marks.right, pc.Point(1, 0))
+        self.assertEqual(compo.marks.down, pc.Point(0, -1))
+
+        compo.move(5, 5).move(-5, -5)
+
+        self.assertEqual(compo.marks.center, pc.Point(0, 0))
+        self.assertEqual(compo.marks.right, pc.Point(1, 0))
+        self.assertEqual(compo.marks.down, pc.Point(0, -1))
+
+        compo.scale(10).scale(0.2)
+
+        self.assertEqual(compo.marks.center, pc.Point(0, 0))
+        self.assertEqual(compo.marks.right, pc.Point(2, 0))
+        self.assertEqual(compo.marks.down, pc.Point(0, -2))
+
+        (
+            compo
+            .scale(0.5)
+            .rotate(pc.degrees(45))
+            .scale(2 ** (1 / 2))
+            .move(5, 0)
+            .move(0, 5)
+            )
+
+        self.assertEqual(compo.marks.center, pc.Point(5, 5))
+        self.assertEqual(compo.marks.right, pc.Point(6, 6))
+        self.assertEqual(compo.marks.down, pc.Point(6, 4))
 

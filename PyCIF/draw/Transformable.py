@@ -27,8 +27,15 @@ class Transformable(object):
         self.transform.movey(y)
         return self
 
-    def scale(self, x: float | pc.Point, y: float | None = None) -> Self:
-        self.transform.scale(x, y)
+    def scale(
+            self,
+            x: float | pc.Point,  # TODO typing.point
+            y: float | None = None,
+            cx: float = 0,
+            cy: float = 0,
+            ) -> Self:
+
+        self.transform.scale(x, y, cx, cy)
         return self
 
     def rotate(self, angle: float, x: float | pc.Point = 0, y: float = 0) -> Self:

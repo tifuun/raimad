@@ -1,3 +1,5 @@
+from typing import Self
+
 import PyCIF as pc
 
 class BoundPoint(pc.Point):
@@ -13,6 +15,14 @@ class BoundPoint(pc.Point):
 
     def rotate(self, angle: float):
         self._transformable.rotate(angle, self)
+
+    def scale(
+            self,
+            x: float | pc.Point,  # TODO typing.point
+            y: float | None = None,
+            ) -> Self:
+
+        self._transformable.scale(x, y, self.x, self.y)
 
 class BoundRelativePoint(BoundPoint):
     _transformable: pc.Transformable
@@ -31,11 +41,6 @@ class BoundRelativePoint(BoundPoint):
             )
         return y
 
-    def to(self, point: pc.Point):
-        self._transformable.move(*(point - self))
-
-    def rotate(self, angle: float):
-        self._transformable.rotate(angle, self)
 
 
 #class BoundPoint(pc.Point):

@@ -1,12 +1,15 @@
 from typing import Self
+
 import numpy as np
 import PyCIF as pc
 
 class BBoxable():
     #_bbox: pc.BBox
     _xyarray: np.ndarray
+    # TODO this is only here for caching,
+    # which is currently broken.
+    # DO NOT USE THIS FIELD
 
-    #@abstractmethod
     def _get_xyarray(self):
         """
         Get array of x,y coordinate pairs in internal coordinates
@@ -14,6 +17,12 @@ class BBoxable():
 
         Polygons should override this method with one that actually
         generates their representation as an xyarray in internal coordinates.
+
+        Yes, I know about `abc`, but that uses metaclasses
+        which would make the highly cursed logic of Component
+        even more cursed (ComponentMeta would need to iunherit from ABCMeta),
+        and this is not worth it my opinion for a pretty exception
+        that nobody will see anyway.
         """
         raise NotImplementedError()
 
@@ -34,10 +43,6 @@ class BBoxable():
                 self._get_xyarray()
                 )
         return self._xyarray
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        #self._bbox = pc.BBox()
 
     # FIXME huge mess
 

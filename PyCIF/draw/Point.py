@@ -124,6 +124,9 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
     #        np.sin(angle) * magnitude
     #        )
 
+    def __eq__(self, other):
+        return self.distance_to(other) < 0.001  # TODO delta
+
     @property
     def arg(self):
         return np.arctan2(self.y, self.x)

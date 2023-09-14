@@ -6,6 +6,9 @@ from typing import Any, Type, Self, List
 from dataclasses import dataclass, field
 import inspect
 import logging
+from copy import deepcopy
+
+import numpy as np
 
 import PyCIF as pc
 
@@ -120,7 +123,7 @@ class ComponentMeta(type):
         return new_component
 
 
-class Component(pc.Markable, metaclass=ComponentMeta):
+class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
     """
     Class for base component
     """
@@ -159,6 +162,10 @@ class Component(pc.Markable, metaclass=ComponentMeta):
             in self.Options.items()
             })
         self.opts.update(opts)
+
+    def copy(self):
+        # TODO think about this
+        return deepcopy(self)
 
     def add_subcomponent(
             self,
@@ -262,6 +269,15 @@ class Component(pc.Markable, metaclass=ComponentMeta):
             layers[subpolygon.layermap].append(polygon)
 
         return layers
+
+    def _get_xyarray(self):
+        xyarray = []
+        for layer in self.get_polygons().items:
+            for poly in layer:
+                # TODO slow
+                xyarray += poly.get_xyarray()
+        return np.array(xyarray)
+
 
     #def __str__(self):
     #    #return (

@@ -31,6 +31,12 @@ def _scale(x, y):
         [0, 0, 1],
         ])
 
+def _around(matrix, x, y):
+    to_origin = _mov(-x, -y)
+    from_origin = _mov(x, y)
+
+    return from_origin @ matrix @ to_origin
+
 
 #@encapsulation.expose_class
 class Transform(object):
@@ -137,10 +143,21 @@ class Transform(object):
     #    return self
 
     #@encapsulation.exposable
-    def scale(self, x: float | pc.Point, y: float | None = None) -> Self:
+    def scale(
+            self,
+            x: float | pc.Point,  # TODO typing.point
+            y: float | None = None,
+            cx: float = 0,
+            cy: float = 0,
+            ) -> Self:
+
         if isinstance(x, pc.Point):
             x, y = x
-        self._affine = _scale(x, y or x) @ self._affine
+
+        elif y is None:
+            y = x
+
+        self._affine = _around(_scale(x, y), cx, cy) @ self._affine
         return self
 
     #@encapsulation.exposable
@@ -148,12 +165,13 @@ class Transform(object):
         if isinstance(x, pc.Point):
             x, y = x
 
-        to_origin = _mov(-x, -y)
-        rot = _rot(angle)
-        from_origin = _mov(x, y)
+        #to_origin = _mov(-x, -y)
+        #rot = _rot(angle)
+        #from_origin = _mov(x, y)
 
-        rotaround = from_origin @ rot @ to_origin
-        self._affine = rotaround @ self._affine
+        #rotaround = from_origin @ rot @ to_origin
+        #self._affine = rotaround @ self._affine
+        self._affine = _around(_rot(angle), x, y) @ self._affine
 
         return self
 
