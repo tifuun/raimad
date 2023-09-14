@@ -42,10 +42,11 @@ class Markable(pc.Transformable):
         def __init__(self, transformable):
             self._transformable = transformable
 
-        def copy(self, new_transformable: pc.Transformable):
-            new = type(self)(new_transformable)
-            for attr in self.__slots__:
-                if attr.startwith('_'): continue
+        #def _copy(self, new_transformable: pc.Transformable):
+        #    new = type(self)(new_transformable)
+        #    for attr in self.__slots__:
+        #        if attr.startwith('_'): continue
+        #    return new
 
     marks: Marks
 

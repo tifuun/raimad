@@ -66,6 +66,15 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
             self.y - other[1],
             )
 
+    def __rsub__(self, other):
+        """
+        Allow subtractin CoordPairs
+        """
+        return Point(
+            other[0] - self.x,
+            other[1] - self.y,
+            )
+
     def __pos__(self):
         return self
 

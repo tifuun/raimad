@@ -154,3 +154,61 @@ class TestMarks(unittest.TestCase):
         self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
         self.assertEqual(poly2.bbox.mid, pc.Point(0, -1))
         self.assertEqual(poly3.bbox.mid, pc.Point(0, -2))
+
+    def test_bbox_pad(self):
+
+        poly1 = pc.RectWH(2, 2)
+        poly1.bbox.mid.to((0, 0))
+        bbox = poly1.bbox
+
+        self.assertEqual(bbox.left,   -1)
+        self.assertEqual(bbox.right,   1)
+        self.assertEqual(bbox.top,     1)
+        self.assertEqual(bbox.bottom, -1)
+
+        # No args: simple copy
+        bbox2 = bbox.pad()
+        self.assertEqual(bbox2.left,   -1)
+        self.assertEqual(bbox2.right,   1)
+        self.assertEqual(bbox2.top,     1)
+        self.assertEqual(bbox2.bottom, -1)
+
+        # One arg: same pad everywhere
+        bbox2 = bbox.pad(1)
+        self.assertEqual(bbox2.left,   -2)
+        self.assertEqual(bbox2.right,   2)
+        self.assertEqual(bbox2.top,     2)
+        self.assertEqual(bbox2.bottom, -2)
+
+        # two args: pad horizontally and vertically
+        bbox2 = bbox.pad(5, 10)
+        self.assertEqual(bbox2.left,   -6)
+        self.assertEqual(bbox2.right,   6)
+        self.assertEqual(bbox2.top,     11)
+        self.assertEqual(bbox2.bottom, -11)
+
+        # explicit pad for all sides
+        bbox2 = bbox.pad(
+            left=5,
+            top=7,
+            right=0,
+            bottom=4
+            )
+        self.assertEqual(bbox2.left,   -6)
+        self.assertEqual(bbox2.right,   1)
+        self.assertEqual(bbox2.top,     8)
+        self.assertEqual(bbox2.bottom, -5)
+
+        # Base padding + specific on sides
+        bbox2 = bbox.pad(
+            2,
+            left=5,
+            top=7,
+            right=0,
+            bottom=4
+            )
+        self.assertEqual(bbox2.left,   -8)
+        self.assertEqual(bbox2.right,   3)
+        self.assertEqual(bbox2.top,     10)
+        self.assertEqual(bbox2.bottom, -7)
+

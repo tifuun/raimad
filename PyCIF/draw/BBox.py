@@ -42,15 +42,15 @@ class BBox(object):
             self.min_y != float('inf')
             )
 
-    #def copy(self):
-    #    # TODO read up on how to properly do copies
-    #    # in Python
-    #    new_bbox = BBox()
-    #    new_bbox.max_x = self.max_x
-    #    new_bbox.max_y = self.max_y
-    #    new_bbox.min_x = self.min_x
-    #    new_bbox.min_y = self.min_y
-    #    return new_bbox
+    def copy(self):
+        # TODO read up on how to properly do copies
+        # in Python
+        new_bbox = BBox()
+        new_bbox.max_x = self.max_x
+        new_bbox.max_y = self.max_y
+        new_bbox.min_x = self.min_x
+        new_bbox.min_y = self.min_y
+        return new_bbox
 
     def add_xyarray(self, xyarray):
         """
@@ -164,4 +164,28 @@ class BBox(object):
     def bot_right(self):
         assert self.is_valid()
         return self.interpolate(1, not MATHEMATIC_Y_AXIS)
+
+    def pad(
+            self,
+            x: float = 0,
+            y: float | None = None,
+            /,
+            *,
+            left: float = 0,
+            top: float = 0,
+            right: float = 0,
+            bottom: float = 0,
+            ):
+
+        y = y or x
+        
+        new = self.copy()
+        new.min_x -= left + x
+        new.max_x += right + x
+        new.min_y -= bottom + y
+        new.max_y += top + y
+
+        return new
+
+
 
