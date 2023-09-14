@@ -119,24 +119,6 @@ class Arc(pc.Polygon):
             mag=self.radial_center
             )
 
-        self._add_mark(
-            'center',
-            pc.Point(0, 0),
-            'Center of the arc',
-            )
-
-        self._add_mark(
-            'start_mid',
-            pc.Point(arg=self.angle_start, mag=self.radial_center),
-            'Midway between the two radii, at the start of the arc'
-            )
-
-        self._add_mark(
-            'end_mid',
-            pc.Point(arg=self.angle_end, mag=self.radial_center),
-            'Midway between the two radii, at the end of the arc'
-            )
-
     def _get_xyarray(self):
 
         if self.angle_start == self.angle_end:

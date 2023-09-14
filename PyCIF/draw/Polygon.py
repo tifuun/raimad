@@ -24,8 +24,6 @@ class Polygon(pc.Markable, pc.BBoxable):
         self._xyarray = None
         #self._bbox = None
 
-        self._add_mark('origin', np.array([0, 0]))
-
     def __str__(self):
         return (
             f'Polygon {type(self).__name__} '
