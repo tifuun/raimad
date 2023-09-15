@@ -10,6 +10,48 @@ class BoundPoint(pc.Point):
         #self.x, self.y = transformable.transform.transform_point(point)
         self._transformable = transformable
 
+    def __add__(self, other):
+        """
+        Allow adding CoordPairs together
+        """
+        new = self.copy()
+        x = self.x + other[0]
+        y = self.y + other[1]
+        x, y = self._transformable.transform.copy().inverse().transform_point((x, y))
+        new._x = x
+        new._y = y
+        #new._x -= other[0]
+        #new._y -= other[1]
+        return new
+
+    def __sub__(self, other):
+        """
+        Allow subtractin CoordPairs
+        """
+        new = self.copy()
+        x = self.x - other[0]
+        y = self.y - other[1]
+        x, y = self._transformable.transform.copy().inverse().transform_point((x, y))
+        new._x = x
+        new._y = y
+        #new._x -= other[0]
+        #new._y -= other[1]
+        return new
+
+    def __rsub__(self, other):
+        """
+        Allow subtractin CoordPairs
+        """
+        new = self.copy()
+        x = other[0] - self.x
+        y = other[1] - self.y
+        x, y = self._transformable.transform.copy().inverse().transform_point((x, y))
+        new._x = x
+        new._y = y
+        #new._x = other[0] - self._x
+        #new._y = other[1] - self._y
+        return new
+
     def to(self, point: pc.Point):
         self._transformable.move(*(point - self))
         return self._transformable
@@ -26,6 +68,18 @@ class BoundPoint(pc.Point):
 
         self._transformable.scale(x, y, self.x, self.y)
         return self._transformable
+
+    def hflip(self) -> Self:
+        self._transformable.hflip(self.y)
+        return self
+
+    def vflip(self) -> Self:
+        self._transformable.vflip(self.x)
+        return self
+
+    def flip(self) -> Self:
+        self._transformable.flip(self.x, self.y)
+        return self
 
 class BoundRelativePoint(BoundPoint):
     _transformable: pc.Transformable

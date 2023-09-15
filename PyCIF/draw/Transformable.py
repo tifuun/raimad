@@ -42,16 +42,16 @@ class Transformable(object):
         self.transform.rotate(angle, x, y)
         return self
 
-    def hflip(self) -> Self:
-        self.transform.hflip()
+    def hflip(self, y: float = 0) -> Self:
+        self.transform.hflip(y)
         return self
 
-    def vflip(self) -> Self:
-        self.transform.vflip()
+    def vflip(self, x: float = 0) -> Self:
+        self.transform.vflip(x)
         return self
 
-    def flip(self) -> Self:
-        self.transform.flip()
+    def flip(self, x: float = 0, y: float = 0) -> Self:
+        self.transform.flip(x, y)
         return self
 
     def apply_transform(self, transform: Self):

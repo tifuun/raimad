@@ -117,7 +117,10 @@ class BBox(object):
         if self.bind_to is None:
             return pc.Point(x, y)
         else:
-            return pc.BoundPoint(x, y, self.bind_to)
+            # TODO the below line is copypasted multiple times, move to separate function
+            # TODO Pure BoundPoint is useless now, only BoundRelativePoint
+            x, y = self.bind_to.transform.copy().inverse().transform_point((x, y))
+            return pc.BoundRelativePoint(x, y, self.bind_to)
 
     @property
     def mid(self):

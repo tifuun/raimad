@@ -212,3 +212,17 @@ class TestMarks(unittest.TestCase):
         self.assertEqual(bbox2.top,     10)
         self.assertEqual(bbox2.bottom, -7)
 
+    def test_compo_flip(self):
+        
+        compo = ThreeMarkCompo()
+        self.assertEqual(compo.marks.down, (0, -1))
+
+        compo.marks.center.hflip()
+        self.assertEqual(compo.marks.down, (0, 1))
+
+        compo.marks.center.hflip()
+        self.assertEqual(compo.marks.down, (0, -1))
+
+        (compo.marks.center + (0, 1)).hflip()
+        self.assertEqual(compo.marks.down, (0, 3))  # TODO correct?
+

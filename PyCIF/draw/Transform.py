@@ -1,6 +1,7 @@
 import inspect
 from dataclasses import dataclass
 from typing import Self, ClassVar, Tuple
+from copy import deepcopy
 
 import numpy as np
 
@@ -109,6 +110,13 @@ class Transform(object):
         self._affine = transform._affine @ self._affine
         return self
 
+    #def _apply_transform(self, transform: Self):
+    #    """
+    #    Apply a transform to this transform
+    #    """
+    #    self._affine = transform._affine @ self._affine
+    #    return self
+
     def __repr__(self):
         move_x, move_y = get_translation(self._affine)
         scale_x, scale_y, shear = get_scale_shear(self._affine)
@@ -129,12 +137,8 @@ class Transform(object):
 
         #return self._affine.__str__()
 
-    #def copy(self) -> Self:
-    #    new_transform = new_without_init(self.__class__)
-    #    new_transform.translate_x = self.translate_x
-    #    new_transform.translate_y = self.translate_y
-    #    new_transform.angle = self.angle
-    #    return new_transform
+    def copy(self) -> Self:
+        return deepcopy(self)
 
     #__copy__ = copy
 
@@ -219,18 +223,19 @@ class Transform(object):
 
         return self
 
-    #@encapsulation.exposable
-    def hflip(self) -> Self:
-        self._affine = _scale(1, -1) @ self._affine
+    def hflip(self, y: float = 0) -> Self:
+        self._affine = _around(_scale(1, -1), 0, y) @ self._affine
         return self
 
-    #@encapsulation.exposable
-    def vflip(self) -> Self:
-        self._affine = _scale(-1, 1) @ self._affine
+    def vflip(self, x: float = 0) -> Self:
+        self._affine = _around(_scale(-1, 1), x, 0) @ self._affine
         return self
 
-    #@encapsulation.exposable
-    def flip(self) -> Self:
-        self._affine = _scale(-1, -1) @ self._affine
+    def flip(self, x: float = 0, y: float = 0) -> Self:
+        self._affine = _around(_scale(-1, -1), x, y) @ self._affine
+        return self
+
+    def inverse(self):
+        self._affine = np.linalg.inv(self._affine)
         return self
 

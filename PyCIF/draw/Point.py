@@ -73,7 +73,7 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         """
         new = self.copy()
         new._x = other[0] - self._x
-        new._y = other[1] = self._y
+        new._y = other[1] - self._y
         return new
 
     def __pos__(self):
