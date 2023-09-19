@@ -20,7 +20,7 @@ class BBoxable():
 
         Yes, I know about `abc`, but that uses metaclasses
         which would make the highly cursed logic of Component
-        even more cursed (ComponentMeta would need to iunherit from ABCMeta),
+        even more cursed (ComponentMeta would need to inherit from ABCMeta),
         and this is not worth it my opinion for a pretty exception
         that nobody will see anyway.
         """

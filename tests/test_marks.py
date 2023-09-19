@@ -22,96 +22,6 @@ class ThreeMarkCompo(pc.Component):
         self.marks.right = pc.Point(1, 0)
         self.marks.down = pc.Point(0, -1)
 
-class NestedCompoA(pc.Component):
-    """
-    A component consisting of one layer containing a 1x16 rectangle
-    with marks at (0, 0) and (0, 16)
-    """
-    Layers = pc.Dict(
-        l1=pc.Layer()
-        )
-
-    class Marks(pc.Component.Marks):
-        start = pc.Mark('Start of the rectangle')
-        end = pc.Mark('End of the rectangle')
-
-    def _make(self, opts):
-        self.marks.start = pc.Point(0, 0)
-        self.marks.end = pc.Point(0, 16)
-        self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2))
-
-class NestedCompoB(pc.Component):
-    """
-    A component that includes NestedCompoA
-    """
-    Layers = pc.Dict(
-        l1=pc.Layer(),
-        l2=pc.Layer()
-        )
-
-    class Marks(pc.Component.Marks):
-        start = pc.Mark('Start of the rectangle')
-        end = pc.Mark('End of the rectangle')
-        child_start = pc.Mark('Start of the child rectangle')
-        child_end = pc.Mark('End of the child rectangle')
-
-    def _make(self, opts):
-        self.marks.start = pc.Point(0, 0)
-        self.marks.end = pc.Point(0, 16)
-        self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
-
-        child = NestedCompoA()
-        child.marks.start.to(self.marks.end)
-        child.marks.start.rotate(-pc.degrees(90))
-        child.marks.start.scale(1 / 2)
-        self.add_subcomponent(
-            child,
-            pc.Dict(
-                l1='l2'
-                )
-            )
-
-        self.marks.child_start = child.marks.start
-        self.marks.child_end = child.marks.end
-
-class NestedCompoC(pc.Component):
-    """
-    A component that includes NestedCompoB
-    """
-    Layers = pc.Dict(
-        l1=pc.Layer(),
-        l2=pc.Layer(),
-        l3=pc.Layer()
-        )
-
-    class Marks(pc.Component.Marks):
-        start = pc.Mark('Start of the rectangle')
-        end = pc.Mark('End of the rectangle')
-        child_start = pc.Mark('Start of the child rectangle')
-        child_end = pc.Mark('End of the child rectangle')
-        grandchild_start = pc.Mark('Start of the granchild rectangle')
-        grandchild_end = pc.Mark('End of the grandchild rectangle')
-
-    def _make(self, opts):
-        self.marks.start = pc.Point(0, 0)
-        self.marks.end = pc.Point(0, 16)
-        self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
-        child = NestedCompoB()
-        child.marks.start.to(self.marks.end)
-        child.marks.start.rotate(-pc.degrees(90))
-        child.marks.start.scale(1 / 2)
-        self.add_subcomponent(
-            child,
-            pc.Dict(
-                l1='l2',
-                l2='l3',
-                )
-            )
-        self.marks.child_start = child.marks.start
-        self.marks.child_end = child.marks.end
-        self.marks.grandchild_start = child.marks.child_start
-        self.marks.grandchild_end = child.marks.child_end
-
 class TestMarks(unittest.TestCase):
     def test_marks(self):
         
@@ -146,8 +56,23 @@ class TestMarks(unittest.TestCase):
 
         compo = MyCompo()
 
-        with open('./test.cif', 'w') as f:
-            pc.export_cif(f, compo)
+        #with open('./test.cif', 'w') as f:
+        #    pc.export_cif(f, compo)
+
+    def test_poly_bbox_transform(self):
+        poly = pc.RectWH(1, 1)
+
+        poly.bbox.mid.to((0, 0))
+        self.assertEqual(poly.bbox.mid, (0, 0))
+
+        poly.bbox.mid.to((0, 0))
+        self.assertEqual(poly.bbox.mid, (0, 0))
+
+        poly.bbox.mid.to((5, 6))
+        self.assertEqual(poly.bbox.mid, (5, 6))
+
+        poly.bbox.mid.to((0, 0))
+        self.assertEqual(poly.bbox.mid, (0, 0))
 
     def test_mark_compo_transform(self):
 
@@ -229,25 +154,25 @@ class TestMarks(unittest.TestCase):
         poly3 = poly1.copy()
 
         poly2.snap_above(poly1)
-        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
-        self.assertEqual(poly2.bbox.mid, pc.Point(0, 1))
+        self.assertEqual(poly1.bbox.mid, (0, 0))
+        self.assertEqual(poly2.bbox.mid, (0, 1))
 
         poly2.snap_left(poly1)
-        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
-        self.assertEqual(poly2.bbox.mid, pc.Point(-1, 0))
+        self.assertEqual(poly1.bbox.mid, (0, 0))
+        self.assertEqual(poly2.bbox.mid, (-1, 0))
 
         poly2.snap_right(poly1)
-        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
-        self.assertEqual(poly2.bbox.mid, pc.Point(1, 0))
+        self.assertEqual(poly1.bbox.mid, (0, 0))
+        self.assertEqual(poly2.bbox.mid, (1, 0))
 
         poly2.snap_below(poly1)
-        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
-        self.assertEqual(poly2.bbox.mid, pc.Point(0, -1))
+        self.assertEqual(poly1.bbox.mid, (0, 0))
+        self.assertEqual(poly2.bbox.mid, (0, -1))
 
         poly3.snap_below(poly2)
-        self.assertEqual(poly1.bbox.mid, pc.Point(0, 0))
-        self.assertEqual(poly2.bbox.mid, pc.Point(0, -1))
-        self.assertEqual(poly3.bbox.mid, pc.Point(0, -2))
+        self.assertEqual(poly1.bbox.mid, (0, 0))
+        self.assertEqual(poly2.bbox.mid, (0, -1))
+        self.assertEqual(poly3.bbox.mid, (0, -2))
 
     def test_bbox_pad(self):
 
@@ -320,7 +245,173 @@ class TestMarks(unittest.TestCase):
         (compo.marks.center + (0, 1)).hflip()
         self.assertEqual(compo.marks.down, (0, 3))  # TODO correct?
 
-    def test_nested_compo_transform_1(self):
+    def test_subpolygon_transform(self):
+
+        class MyCompo(pc.Component):
+            Layers = pc.Dict(
+                root=pc.Layer(),
+                )
+
+            def _make(self, opts):
+                rect = pc.RectWH(10, 10)
+                rect.bbox.mid.to((0, 0))
+                self.add_subpolygon(rect)
+
+        compo = MyCompo()
+        layers = compo.get_polygons()
+        self.assertEqual(len(layers), 1)
+        layer = layers['root']
+        self.assertEqual(len(layer), 1)
+        poly = layer[0]
+        self.assertEqual(poly.bbox.mid, (0, 0))
+
+        compo = MyCompo().bbox.mid.to((5, 5))
+        layers = compo.get_polygons()
+        self.assertEqual(len(layers), 1)
+        layer = layers['root']
+        self.assertEqual(len(layer), 1)
+        poly = layer[0]
+        self.assertEqual(poly.bbox.mid, (5, 5))
+
+    def test_subcomponent_transform_simple(self):
+
+        class Inner(pc.Component):
+            Layers = pc.Dict(
+                root=pc.Layer()
+                )
+
+            def _make(self, opts):
+                rect = pc.RectWH(1, 1)
+                rect.bbox.mid.to((0, 0))
+                rect.move(5, 5)
+                self.add_subpolygon(rect)
+
+        class Outter(pc.Component):
+            Layers = pc.Dict(
+                root=pc.Layer()
+                )
+
+            def _make(self, opts):
+                inner = Inner()
+                self.add_subcomponent(inner)
+
+        compo = Outter()
+        self.assertEquals(compo.bbox.mid, (5, 5))
+        poly = compo.get_polygons()['root'][0]
+        self.assertEqual(poly.bbox.mid, (5, 5))
+
+        compo.bbox.mid.to((5, 5))
+        self.assertEquals(compo.bbox.mid, (5, 5))
+        poly = compo.get_polygons()['root'][0]
+        self.assertEqual(poly.bbox.mid, (5, 5))
+
+        compo.move(5, 0)
+        self.assertEquals(compo.bbox.mid, (10, 5))
+        poly = compo.get_polygons()['root'][0]
+        self.assertEqual(poly.bbox.mid, (10, 5))
+
+    def test_subcomponent_transform(self):
+
+        # TODO TODO FIXME TODO
+        # Boundpoints work in extremely stupid way rn,
+        # that causes really spicy unexpected behavior.
+        # For example, using marks from inside _make
+        # , as this test does, causes shit to go all over the place,
+        # because th point returned by the mark is *meant* to
+        # be in local coords, but in reality,
+        # it's a boundpoint to the current componentn
+        return True
+
+        class NestedCompoA(pc.Component):
+            """
+            A component consisting of one layer containing a 1x16 rectangle
+            with marks at (0, 0) and (0, 16)
+            """
+            Layers = pc.Dict(
+                l1=pc.Layer()
+                )
+
+            class Marks(pc.Component.Marks):
+                start = pc.Mark('Start of the rectangle')
+                end = pc.Mark('End of the rectangle')
+
+            def _make(self, opts):
+                self.marks.start = pc.Point(0, 0)
+                self.marks.end = pc.Point(0, 16)
+                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2))
+
+        class NestedCompoB(pc.Component):
+            """
+            A component that includes NestedCompoA
+            """
+            Layers = pc.Dict(
+                l1=pc.Layer(),
+                l2=pc.Layer()
+                )
+
+            class Marks(pc.Component.Marks):
+                start = pc.Mark('Start of the rectangle')
+                end = pc.Mark('End of the rectangle')
+                child_start = pc.Mark('Start of the child rectangle')
+                child_end = pc.Mark('End of the child rectangle')
+
+            def _make(self, opts):
+                self.marks.start = pc.Point(0, 0)
+                self.marks.end = pc.Point(0, 16)
+                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
+
+                child = NestedCompoA()
+                child.marks.start.to(self.marks.end)
+                child.marks.start.rotate(-pc.degrees(90))
+                child.marks.start.scale(1 / 2)
+                self.add_subcomponent(
+                    child,
+                    pc.Dict(
+                        l1='l2'
+                        )
+                    )
+
+                self.marks.child_start = child.marks.start
+                self.marks.child_end = child.marks.end
+
+        class NestedCompoC(pc.Component):
+            """
+            A component that includes NestedCompoB
+            """
+            Layers = pc.Dict(
+                l1=pc.Layer(),
+                l2=pc.Layer(),
+                l3=pc.Layer()
+                )
+
+            class Marks(pc.Component.Marks):
+                start = pc.Mark('Start of the rectangle')
+                end = pc.Mark('End of the rectangle')
+                child_start = pc.Mark('Start of the child rectangle')
+                child_end = pc.Mark('End of the child rectangle')
+                grandchild_start = pc.Mark('Start of the granchild rectangle')
+                grandchild_end = pc.Mark('End of the grandchild rectangle')
+
+            def _make(self, opts):
+                self.marks.start = pc.Point(0, 0)
+                self.marks.end = pc.Point(0, 16)
+                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
+                child = NestedCompoB()
+                child.marks.start.to(self.marks.end)
+                child.marks.start.rotate(-pc.degrees(90))
+                child.marks.start.scale(1 / 2)
+                self.add_subcomponent(
+                    child,
+                    pc.Dict(
+                        l1='l2',
+                        l2='l3',
+                        )
+                    )
+                self.marks.child_start = child.marks.start
+                self.marks.child_end = child.marks.end
+                self.marks.grandchild_start = child.marks.child_start
+                self.marks.grandchild_end = child.marks.child_end
+
 
         class MyCompo(pc.Component):
             Layers = pc.Dict(
@@ -351,8 +442,8 @@ class TestMarks(unittest.TestCase):
         # If you're trying to figure out what's going on with
         # this test, taking a look at the component that's
         # being generated might help:
-        #with open('../test.cif', 'w') as f:
-        #    pc.export_cif(f, compo)
+        with open('../test.cif', 'w') as f:
+            pc.export_cif(f, compo)
 
         expected_polys_l1 = [
             p1 := np.array([
@@ -407,10 +498,49 @@ class TestMarks(unittest.TestCase):
                 else:
                     self.assertTrue(False)
 
+    def test_tl_simple(self):
+
+        length = 100
+        bridge_spacing = 10
+        bridge_width = 2
+        start = pc.Point(10, 10)
+        stop = start + (length, 0)
+
+        path0 = [
+            pc.tl.StartAt(start),
+            pc.tl.StraightTo(stop),
+            ]
+
+        # No elbows, should be equal
+        path1 = pc.tl.resolve_elbows(path0)
+        self.assertEqual(path0, path1)
         
+        # No duplicate straights, should be equal
+        path2 = pc.tl.reduce_straights(path1)
+        self.assertEqual(path1, path2)
+        
+        # No bends
+        path3, bendspecs = pc.tl.construct_bends(path2, radius=10)
+        self.assertEqual(path2, path3)
+        self.assertFalse(bendspecs)
 
+        # Set bridge spacing to once every 10 px,
+        # should be 100 / 10 = 10
+        path4, bridgespecs = pc.tl.construct_bridges(
+            path3,
+            spacing=bridge_spacing,
+            scramble=0,
+            bridge_width=bridge_width
+            )
+        #log.debug(pc.tl.format_path(path4))
+        #self.assertEqual(path3, path4)
+        self.assertEqual(len(bridgespecs), length / bridge_spacing)
 
-
+        # TODO this just tests that all bridges are
+        # somewhere on the line segment between the two points.
+        # Is this what we want?
+        for bridge in bridgespecs:
+            self.assertTrue(bridge.start.x in range(start.x, stop.x))
 
     #def test_nested_compo_transform_2(self):
 

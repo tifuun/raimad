@@ -54,8 +54,8 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         Allow adding CoordPairs together
         """
         new = self.copy()
-        new._x -= other[0]
-        new._y -= other[1]
+        new._x += other[0]
+        new._y += other[1]
         return new
 
     def __sub__(self, other):

@@ -265,7 +265,7 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
             polygon = subpolygon.get_polygon(include_layers)
             if not polygon:
                 continue
-            #polygon.apply_transform(self.transform)
+            polygon.apply_transform(self.transform)
             # TODO why is that line not needed???
             layers[subpolygon.layermap].append(polygon)
 
@@ -275,8 +275,6 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
         """
         wtf
         """
-        return 0
-
         if include_layers is None:
             include_layers = self.Layers.keys()
         else:
@@ -325,6 +323,7 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
         Note that make() should work with all default parameters.
         This will actually be used for making the preview image.
         """
+        raise NotImplementedError
 
     @classmethod
     def parent(cls):

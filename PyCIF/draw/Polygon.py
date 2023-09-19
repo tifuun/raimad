@@ -30,14 +30,6 @@ class Polygon(pc.Markable, pc.BBoxable):
             f'with {str(self.transform)}'
             )
 
-    def get_bbox(self):
-        """
-        TODO TODO we need a proper system for bboxes
-        """
-        if self._bbox is None or 1:
-            self._bbox = pc.BBox(self.get_xyarray())
-        return self._bbox
-
     def copy(self):
         """
         Return a copy of this polygon

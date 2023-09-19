@@ -34,9 +34,18 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
 
     for conn, after in pc.iter.duplets(path):
 
-        spacing = conn.bridge_spacing or (spacing if striped else default_spacing)
-        scramble = conn.bridge_scramble or (scramble if striped else default_scramble)
-        bridge_width = conn.bridge_width or (bridge_width if striped else default_bridge_width)
+        spacing = (
+            conn.bridge_spacing or
+            (spacing if striped else default_spacing)
+            )
+        scramble = (
+            conn.bridge_scramble or
+            (scramble if striped else default_scramble)
+            )
+        bridge_width = (
+            conn.bridge_width or
+            (bridge_width if striped else default_bridge_width)
+            )
 
         if not isinstance(after, tl.StraightTo):
             continue

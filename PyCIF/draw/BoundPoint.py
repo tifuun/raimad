@@ -62,8 +62,8 @@ class BoundPoint(pc.Point):
         #px, py = self._transformable.transform.copy().inverse().transform_point(point)
         # TODO wtf is going on here?
         px, py = point
-        x = px - self._x
-        y = py - self._y
+        x = px - self.x
+        y = py - self.y
         #self._transformable.move(vec.x, vec.y)
         log.debug('Move %s: %s, %s', self._transformable, point, self)
         self._transformable.move(x, y)
