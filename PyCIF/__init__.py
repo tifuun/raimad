@@ -56,8 +56,10 @@ from PyCIF.helpers.draw import midpoint
 from PyCIF.helpers.draw import colinear
 
 from PyCIF.helpers.angles import fullcircle
-from PyCIF.helpers.angles import semicircle
+from PyCIF.helpers.angles import halfcircle
 from PyCIF.helpers.angles import quartercircle
+from PyCIF.helpers.angles import semicircle
+from PyCIF.helpers.angles import demisemicircle
 from PyCIF.helpers.angles import angspace
 from PyCIF.helpers.angles import classify_turn
 from PyCIF.helpers.angles import Orientation

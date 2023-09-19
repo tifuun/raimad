@@ -7,8 +7,12 @@ from enum import Enum
 import numpy as np
 
 fullcircle = np.pi * 2
-semicircle = np.pi
+halfcircle = np.pi
 quartercircle = np.pi / 2
+
+# British variants
+semicircle = np.pi
+demisemicircle = np.pi / 2
 
 class Orientation(Enum):
     Clockwise = -1

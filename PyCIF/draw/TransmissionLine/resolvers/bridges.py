@@ -120,8 +120,8 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
 def make_bridge_component(spec: BridgeSpec, Compo: pc.typing.ComponentClass):
     return (
         Compo(opts=dict(width=spec.width))
-        .align_mark_to_point('tl_enter', spec.start)
-        .rotate_around_mark('tl_enter', spec.angle)
+        .marks.tl_enter.to(spec.start)
+        .marks.tl_enter.rotate(spec.angle)
         )
 
 def make_bridge_components(

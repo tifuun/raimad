@@ -7,6 +7,10 @@ def reduce_straights(path):
     newpath = []
     newpath.append(path[0])
 
+    if len(path) < 3:
+        newpath.append(path[1])
+        return newpath
+
     for before, conn, after in pc.iter.triplets(path):
         if isinstance(conn, tl.StraightTo):
             if isinstance(after, tl.StraightTo):

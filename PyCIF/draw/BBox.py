@@ -11,17 +11,17 @@ MATHEMATIC_Y_AXIS = True
 
 
 class BBox(object):
-    def __init__(self, xyarray=None, bind_to: pc.Transformable | None = None):
+    def __init__(self, xyarray=None, transformable: pc.Transformable | None = None):
         self.max_x = float('-inf')
         self.max_y = float('-inf')
         self.min_x = float('inf')
         self.min_y = float('inf')
-        self.bind_to = bind_to
-
-        if bind_to is not None:
-            xyarray = bind_to.transform.transform_xyarray(xyarray)
+        self._transformable = transformable
 
         if xyarray is not None:
+            if transformable is not None:
+                xyarray = transformable.transform.transform_xyarray(xyarray)
+
             self.add_xyarray(xyarray)
             assert self.is_valid()
 
@@ -114,13 +114,16 @@ class BBox(object):
         x = self.min_x + self.width * x_ratio
         y = self.min_y + self.height * y_ratio
 
-        if self.bind_to is None:
+        if self._transformable is None:
             return pc.Point(x, y)
         else:
             # TODO the below line is copypasted multiple times, move to separate function
             # TODO Pure BoundPoint is useless now, only BoundRelativePoint
-            x, y = self.bind_to.transform.copy().inverse().transform_point((x, y))
-            return pc.BoundRelativePoint(x, y, self.bind_to)
+            x_intern, y_intern = self._transformable.transform.copy().inverse().transform_point((x, y))
+            new = pc.BoundRelativePoint(x_intern, y_intern, self._transformable)
+
+            assert new == (x, y)
+            return new
 
     @property
     def mid(self):

@@ -170,27 +170,14 @@ class Transform(object):
         #self.history.append((_move, x, y))
         #return self
 
-    #@encapsulation.exposable
     def movex(self, x: float = 0) -> Self:
         self._affine = _mov(x, 0) @ self._affine
         return self
 
-    #@encapsulation.exposable
     def movey(self, y: float = 0) -> Self:
         self._affine = _mov(0, y) @ self._affine
         return self
 
-    ##@encapsulation.exposable
-    #def movex(self, x: float) -> Self:
-    #    self.history.append((_move, x, 0))
-    #    return self
-
-    ##@encapsulation.exposable
-    #def movey(self, y: float) -> Self:
-    #    self.history.append((_move, 0, y))
-    #    return self
-
-    #@encapsulation.exposable
     def scale(
             self,
             x: float | pc.Point,  # TODO typing.point
@@ -208,17 +195,10 @@ class Transform(object):
         self._affine = _around(_scale(x, y), cx, cy) @ self._affine
         return self
 
-    #@encapsulation.exposable
     def rotate(self, angle: float, x: float | pc.Point = 0, y: float = 0) -> Self:
         if isinstance(x, pc.Point):
             x, y = x
 
-        #to_origin = _mov(-x, -y)
-        #rot = _rot(angle)
-        #from_origin = _mov(x, y)
-
-        #rotaround = from_origin @ rot @ to_origin
-        #self._affine = rotaround @ self._affine
         self._affine = _around(_rot(angle), x, y) @ self._affine
 
         return self

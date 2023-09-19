@@ -167,3 +167,6 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         # TODO???
         return copy(self)
 
+    def canonical(self):
+        return self.copy()
+

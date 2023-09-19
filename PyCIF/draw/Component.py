@@ -265,14 +265,41 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
             polygon = subpolygon.get_polygon(include_layers)
             if not polygon:
                 continue
-            polygon.apply_transform(self.transform)
+            #polygon.apply_transform(self.transform)
+            # TODO why is that line not needed???
+            layers[subpolygon.layermap].append(polygon)
+
+        return layers
+
+    def _get_polygons(self, include_layers=None):
+        """
+        wtf
+        """
+        return 0
+
+        if include_layers is None:
+            include_layers = self.Layers.keys()
+        else:
+            assert set(include_layers).issubset(self.Layers.keys())
+
+        layers = {layer: [] for layer in include_layers}
+
+        for subcomponent in self.subcomponents:
+            for layer, polygons in subcomponent.get_polygons(include_layers).items():
+                for polygon in polygons:
+                    layers[layer].append(polygon)
+
+        for subpolygon in self.subpolygons:
+            polygon = subpolygon.get_polygon(include_layers)
+            if not polygon:
+                continue
             layers[subpolygon.layermap].append(polygon)
 
         return layers
 
     def _get_xyarray(self):
         xyarray = []
-        for layer in self.get_polygons().values():
+        for layer in self._get_polygons().values():
             for poly in layer:
                 # TODO slow
                 xyarray.extend(poly.get_xyarray())

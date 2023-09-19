@@ -25,6 +25,10 @@ def construct_bends(path, radius, striped=False):
 
     newpath.append(path[0])
 
+    if len(path) < 3:
+        newpath.append(path[1])
+        return newpath, []
+
     default_radius = radius
 
     for before, conn, after in pc.iter.triplets(path):
@@ -140,7 +144,8 @@ def make_bend_component(spec: BendSpec, Compo: pc.typing.ComponentClass):
         angle_end=spec.angle_end,
         orientation=spec.orientation,
         bend_radius=spec.radius,
-        )).align_mark_to_point('center', spec.point_center)
+        )).marks.center.to(spec.point_center)
+        #)).align_mark_to_point('center', spec.point_center)
 
 def make_bend_components(
         specs: Iterable[BendSpec],

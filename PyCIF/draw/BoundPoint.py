@@ -2,6 +2,8 @@ from typing import Self
 
 import PyCIF as pc
 
+log = pc.get_logger(__name__)
+
 class BoundPoint(pc.Point):
     _transformable: pc.Transformable
 
@@ -9,6 +11,9 @@ class BoundPoint(pc.Point):
         super().__init__(x, y)
         #self.x, self.y = transformable.transform.transform_point(point)
         self._transformable = transformable
+
+    def canonical(self):
+        return pc.Point(*self)
 
     def __add__(self, other):
         """
@@ -53,7 +58,15 @@ class BoundPoint(pc.Point):
         return new
 
     def to(self, point: pc.Point):
-        self._transformable.move(*(point - self))
+        #vec = point - self
+        #px, py = self._transformable.transform.copy().inverse().transform_point(point)
+        # TODO wtf is going on here?
+        px, py = point
+        x = px - self._x
+        y = py - self._y
+        #self._transformable.move(vec.x, vec.y)
+        log.debug('Move %s: %s, %s', self._transformable, point, self)
+        self._transformable.move(x, y)
         return self._transformable
 
     def rotate(self, angle: float):
@@ -82,8 +95,6 @@ class BoundPoint(pc.Point):
         return self
 
 class BoundRelativePoint(BoundPoint):
-    _transformable: pc.Transformable
-
     @property
     def x(self):
         x, y = self._transformable.transform.transform_point(

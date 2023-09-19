@@ -25,7 +25,7 @@ class Mark(metaclass=pc.SlotsFromAnnotationsMeta):
     
     def __set__(self, obj, value):
         #self._boundpoint = pc.BoundPoint(value, obj._transformable)
-        self._point = value
+        self._point = value.canonical()
 
 # TODO
 # This will eventually be very useful:

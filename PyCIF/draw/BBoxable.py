@@ -38,11 +38,14 @@ class BBoxable():
         the transformation.
         """
         # TODO caching breaks everything when bbox is used
-        if self._xyarray is None or 1:
-            self._xyarray = self.transform.transform_xyarray(
-                self._get_xyarray()
-                )
-        return self._xyarray
+        #if self._xyarray is None or 1:
+        #    self._xyarray = self.transform.transform_xyarray(
+        #        self._get_xyarray()
+        #        )
+        #return self._xyarray
+        return self.transform.transform_xyarray(
+            self._get_xyarray()
+            )
 
     # FIXME huge mess
 
