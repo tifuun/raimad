@@ -312,16 +312,6 @@ class TestMarks(unittest.TestCase):
 
     def test_subcomponent_transform(self):
 
-        # TODO TODO FIXME TODO
-        # Boundpoints work in extremely stupid way rn,
-        # that causes really spicy unexpected behavior.
-        # For example, using marks from inside _make
-        # , as this test does, causes shit to go all over the place,
-        # because th point returned by the mark is *meant* to
-        # be in local coords, but in reality,
-        # it's a boundpoint to the current componentn
-        return True
-
         class NestedCompoA(pc.Component):
             """
             A component consisting of one layer containing a 1x16 rectangle

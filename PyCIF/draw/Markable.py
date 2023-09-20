@@ -11,7 +11,7 @@ import PyCIF as pc
 class Mark(metaclass=pc.SlotsFromAnnotationsMeta):
     # TODO static access
     _point: pc.Point | None
-    #_boundpoint: pc.Point | None
+    #_boundpoint: pc.BoundPoint | None
     description: str
 
     def __init__(self, description: str):
@@ -21,11 +21,12 @@ class Mark(metaclass=pc.SlotsFromAnnotationsMeta):
 
     def __get__(self, obj, cls=None):
         #return self._boundpoint
-        return pc.BoundRelativePoint(*self._point, obj._transformable)
+        x, y = obj._transformable.transform.transform_point(self._point)
+        return pc.BoundPoint(x, y, obj._transformable)
     
     def __set__(self, obj, value):
-        #self._boundpoint = pc.BoundPoint(value, obj._transformable)
-        self._point = value.canonical()
+        #self._boundpoint = pc.BoundPoint(*value, obj._transformable)
+        self._point = value
 
 # TODO
 # This will eventually be very useful:

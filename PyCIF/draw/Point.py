@@ -9,16 +9,8 @@ import numpy as np
 import PyCIF as pc
 
 class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
-    _x: float
-    _y: float
-
-    @property
-    def x(self):
-        return self._x
-
-    @property
-    def y(self):
-        return self._y
+    x: float
+    y: float
 
     def __init__(self, x: float = 0, y: float = 0, arg: float | None = None, mag: float | None = None):
         """
@@ -26,11 +18,11 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         with short syntax: pc.Point(10, 20)
         """
         if arg is not None:
-            self._x = np.cos(arg) * mag
-            self._y = np.sin(arg) * mag
+            self.x = np.cos(arg) * mag
+            self.y = np.sin(arg) * mag
         else:
-            self._x = x
-            self._y = y
+            self.x = x
+            self.y = y
 
     # TODO better overloading framework. Should support:
     # pc.Point()  # create an origin
@@ -54,8 +46,8 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         Allow adding CoordPairs together
         """
         new = self.copy()
-        new._x += other[0]
-        new._y += other[1]
+        new.x += other[0]
+        new.y += other[1]
         return new
 
     def __sub__(self, other):
@@ -63,8 +55,8 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         Allow subtractin CoordPairs
         """
         new = self.copy()
-        new._x -= other[0]
-        new._y -= other[1]
+        new.x -= other[0]
+        new.y -= other[1]
         return new
 
     def __rsub__(self, other):
@@ -72,8 +64,8 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
         Allow subtractin CoordPairs
         """
         new = self.copy()
-        new._x = other[0] - self._x
-        new._y = other[1] - self._y
+        new.x = other[0] - self.x
+        new.y = other[1] - self.y
         return new
 
     def __pos__(self):

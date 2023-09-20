@@ -266,7 +266,6 @@ class Component(pc.Markable, pc.BBoxable, metaclass=ComponentMeta):
             if not polygon:
                 continue
             polygon.apply_transform(self.transform)
-            # TODO why is that line not needed???
             layers[subpolygon.layermap].append(polygon)
 
         return layers

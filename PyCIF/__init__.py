@@ -34,7 +34,6 @@ from PyCIF.draw.Transformable import Transformable
 from PyCIF.draw.BBox import BBox
 from PyCIF.draw.BBoxable import BBoxable
 from PyCIF.draw.BoundPoint import BoundPoint
-from PyCIF.draw.BoundPoint import BoundRelativePoint
 from PyCIF.draw.Markable import Mark
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw.Polygon import Polygon

@@ -117,13 +117,14 @@ class BBox(object):
         if self._transformable is None:
             return pc.Point(x, y)
         else:
+            return pc.BoundPoint(x, y, self._transformable)
             # TODO the below line is copypasted multiple times, move to separate function
             # TODO Pure BoundPoint is useless now, only BoundRelativePoint
-            x_intern, y_intern = self._transformable.transform.copy().inverse().transform_point((x, y))
-            new = pc.BoundRelativePoint(x_intern, y_intern, self._transformable)
+            #x_intern, y_intern = self._transformable.transform.copy().inverse().transform_point((x, y))
+            #new = pc.BoundRelativePoint(x_intern, y_intern, self._transformable)
 
-            assert new == (x, y)
-            return new
+            #assert new == (x, y)
+            #return new
 
     @property
     def mid(self):
