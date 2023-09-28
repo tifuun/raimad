@@ -2,8 +2,6 @@
 Arc polygon
 """
 
-from typing import ClassVar
-
 import numpy as np
 
 import PyCIF as pc

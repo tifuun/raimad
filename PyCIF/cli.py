@@ -1,4 +1,6 @@
 """
+cli.py: Command-line interface to PyCIF.
+
 cli.py -- defines cli(),
 a function for handling command line invocation
 for things like exporting designs,
@@ -62,9 +64,7 @@ def cli():
 
 
 def _add_export_action(subparsers):
-    """
-    Setup parsers for 'export' action
-    """
+    """Setup parsers for 'export' action."""
     parser_export = subparsers.add_parser(
         'export',
         )
@@ -82,6 +82,7 @@ def _add_export_action(subparsers):
 def _add_exporter_parser(subparsers, exporter):
     """
     Add a parser for a given exporter.
+
     This generates a new parser based on the parser's
     module name and docstring,
     then calls the module's add_parser() method
@@ -97,9 +98,7 @@ def _add_exporter_parser(subparsers, exporter):
 
 
 def _add_modulebrowser_action(subparsers):
-    """
-    Setup parsers for 'export' action
-    """
+    """Setup parsers for 'export' action."""
     parser_mb = subparsers.add_parser(
         'browser',
         )
@@ -140,5 +139,4 @@ def _add_modulebrowser_action(subparsers):
         help='Module browser directory',
         default='./module_browser',
         )
-
 

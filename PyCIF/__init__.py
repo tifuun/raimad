@@ -1,4 +1,6 @@
 """
+PyCIF: CAD platform for hierarchical design of on-chip imaging devices.
+
 __init__.py file of PyCIF
 Right now, it is used for namespace flattening
 (e.g. exposing deeply-nested objects, such as
@@ -34,11 +36,10 @@ from PyCIF.draw.Transformable import Transformable
 from PyCIF.draw.BBox import BBox
 from PyCIF.draw.BBoxable import BBoxable
 from PyCIF.draw.BoundPoint import BoundPoint
-from PyCIF.draw.Markable import Mark
+from PyCIF.draw.Mark import Mark
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.Group import Group
-#from PyCIF.draw.Component import Component
 from PyCIF.draw import Option
 from PyCIF.draw.Layer import Layer
 from PyCIF.draw.Component import Component
@@ -75,6 +76,4 @@ from PyCIF.draw.polygons.CustomPolygon import CustomPolygon
 from PyCIF import viz as viz
 
 from PyCIF.exporters.cif import export as export_cif
-
-#from PyCIF.draw.PolygonGroup import PolygonGroup
 

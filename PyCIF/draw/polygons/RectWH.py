@@ -2,8 +2,6 @@
 width-height Rectangle
 """
 
-from typing import Self
-
 import numpy as np
 
 import PyCIF as pc

@@ -37,7 +37,6 @@ class SVG:
             self.cy += y
             return self
 
-
     @dataclass
     class Line:
         x1: float
@@ -77,7 +76,6 @@ class SVG:
             self.y1 += y
             self.y2 += y
             return self
-
 
     @dataclass
     class Rect:

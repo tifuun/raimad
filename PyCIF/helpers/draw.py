@@ -32,8 +32,6 @@ def midpoint(p1, p2):
     """
     return (p1 + p2) / 2
 
-    return [bbox[2] - bbox[0], bbox[3] - bbox[1]]
-
 def colinear(*points):
     for prev, point, next_ in pc.iter.triples(points):
         if (
@@ -46,11 +44,4 @@ def colinear(*points):
     # TODO what if points in wrong order?
     # Definition of colinear?
     return True
-
-
-
-
-def non_colinear(*points):
-    pass
-
 

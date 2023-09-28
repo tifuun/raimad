@@ -1,6 +1,5 @@
-"""
-Point -- storage for x, y coordinate pair
-"""
+"""Point.py: contains Point class."""
+
 from typing import Self
 from copy import copy
 
@@ -9,13 +8,23 @@ import numpy as np
 import PyCIF as pc
 
 class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
+    """Point: Storage for XY coordinate pairs."""
+
     x: float
     y: float
 
-    def __init__(self, x: float = 0, y: float = 0, arg: float | None = None, mag: float | None = None):
+    def __init__(
+            self,
+            x: float = 0,
+            y: float = 0,
+            arg: float | None = None,
+            mag: float | None = None
+            ):
         """
-        Create a point from (x, y)
-        with short syntax: pc.Point(10, 20)
+        Create a point from (x, y) or (argument, magnitude).
+
+        So, ethier Point(x, y)
+        or Point(arg=theta, mag=r)
         """
         if arg is not None:
             self.x = np.cos(arg) * mag
@@ -31,52 +40,56 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
     # pc.Point(arg=pc.degrees(45), mag=10)  # polar
     # pc.Point(arg=pc.degrees(45))  # polar, mag is 1
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Get representation of point in cartesian coordinate system."""
         return f"Point({self.x:.3f}, {self.y:.3f})"
 
-    def __iter__(self):
+    def __iter__(self) -> iter:
         """
-        Iterator method allows unpacking
-        a CoordPair into [x, y]
+        Get [x, y] as iter object.
+
+        This is mainly useful for unpacking a point or converting it
+        to lists / arrays.
         """
         return iter((self.x, self.y))
 
-    def __add__(self, other):
-        """
-        Allow adding CoordPairs together
-        """
+    def __add__(self, other) -> Self:
+        """Allow adding Points together."""
         new = self.copy()
         new.x += other[0]
         new.y += other[1]
         return new
 
-    def __sub__(self, other):
-        """
-        Allow subtractin CoordPairs
-        """
+    def __sub__(self, other) -> Self:
+        """Allow subtracting Points."""
         new = self.copy()
         new.x -= other[0]
         new.y -= other[1]
         return new
 
-    def __rsub__(self, other):
-        """
-        Allow subtractin CoordPairs
-        """
+    def __rsub__(self, other) -> Self:
+        """Allow subtracting Points."""
         new = self.copy()
         new.x = other[0] - self.x
         new.y = other[1] - self.y
         return new
 
-    def __pos__(self):
+    def __pos__(self) -> Self:
+        """Allow prefixing points with `+`. Does nothing."""
         return self
 
-    def __neg__(self):
+    def __neg__(self) -> Self:
+        """
+        Allow prefixing points with `-`.
+
+        Creates a copy of self with inverted X and Y.
+        """
         # TODO neg creates a copy, but pos doesnt. What do?
         # Should makes points immovable?
         return self * -1
 
-    def __truediv__(self, other: Self | int | float):
+    def __truediv__(self, other: Self | int | float) -> Self:
+        """Allow diving point by scalar or another point."""
         if isinstance(other, type(self)):
             return Point(
                 self.x / other[0],
@@ -91,8 +104,8 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
 
         raise Exception("idk wtf to do with this")
 
-
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> float:
+        """Allow getting X and Y through indexing."""
         if index == 0:
             return self.x
 
@@ -101,64 +114,62 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
 
         raise Exception("Points consist of only two coordinates")
 
-    #def __setitem__(self, index, value):
-    #    if index == 0:
-    #        self.x = value
-
-    #    elif index == 1:
-    #        self.y == value
-
-    #    else:
-    #        raise Exception("Points consist of only two coordinates")
-
-    #def move(self, x, y):
-    #    self.x += x
-    #    self.y += y
-    #    return self
-
-    def __array__(self):
+    def __array__(self) -> np.ndarray:
+        """Cast self to array."""
         return np.array((self.x, self.y))
 
-    #@classmethod
-    #def Polar(cls, arg: float, mag: float = 1):
-    #    return cls(
-    #        np.cos(angle) * magnitude,
-    #        np.sin(angle) * magnitude
-    #        )
-
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
+        """Check if two Point objects have the same coordinates."""
         return self.distance_to(other) < 0.001  # TODO delta
 
     @property
     def arg(self):
+        """Get argument."""
         return np.arctan2(self.y, self.x)
 
     @property
     def mag(self):
+        """Get magnitude (modulo)."""
         return np.linalg.norm(self)
 
-    def distance_to(self, other: Self):
+    # TODO typing this accepts not only Self but also arrays, etc.
+    def distance_to(self, other: Self) -> float:
         """
-        Also see pc.Point.distance_from and pc.distance_between
+        Calculate distance to other point using Pythagoras' theorem.
+
+        Parameters
+        ----------
+        other: Self
+            Point to calculate distance to.
+
+        See Also
+        --------
+        Point.distance_from
+        pc.distance_between
         """
         return np.linalg.norm(other - self)
 
-    def distance_from(self, other: Self):
+    def distance_from(self, other: Self) -> float:
         """
-        Also see pc.Point.distance_to and pc.distance_between
+        Calculate distance from other point using Pythagoras' theorem.
+
+        Parameters
+        ----------
+        other: Self
+            Point to calculate distance from.
+
+        See Also
+        --------
+        Point.distance_to
+        pc.distance_between
         """
         return np.linalg.norm(self - other)
-
-    #def apply_transform(self, transform: pc.Transform):
-    #    # TODO forms of this are copy-pasted in multiple places.
-    #    self.x, self.y, _ = transform.get_matrix().dot(
-    #            np.array([self.x, self.y, 1]))
-    #    return self
 
     def copy(self):
         # TODO???
         return copy(self)
 
     def canonical(self):
+        # TODO???
         return self.copy()
 

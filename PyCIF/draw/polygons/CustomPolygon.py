@@ -2,8 +2,6 @@
 Custom polygon built from a set of points
 """
 
-from typing import Self
-
 import numpy as np
 
 import PyCIF as pc

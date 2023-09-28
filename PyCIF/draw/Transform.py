@@ -1,15 +1,9 @@
-import inspect
-from dataclasses import dataclass
-from typing import Self, ClassVar, Tuple
+from typing import Self
 from copy import deepcopy
 
 import numpy as np
 
 import PyCIF as pc
-
-#from PyCIF.helpers import encapsulation
-#from PyCIF.helpers.hackery import new_without_init
-
 
 def _rot(angle):
     return np.array([
@@ -63,7 +57,6 @@ def get_rotation(matrix):
     return np.arctan2(matrix[1, 0], matrix[0, 0])
 
 
-#@encapsulation.expose_class
 class Transform(object):
     """
     Transformation: container for affine matrix
@@ -100,22 +93,13 @@ class Transform(object):
         cartesian = transformed[:2] / transformed[2]
 
         return np.array(cartesian)
-        #return type(point)(*cartesian)
 
-    #@encapsulation.exposable
     def apply_transform(self, transform: Self):
         """
         Apply a transform to this transform
         """
         self._affine = transform._affine @ self._affine
         return self
-
-    #def _apply_transform(self, transform: Self):
-    #    """
-    #    Apply a transform to this transform
-    #    """
-    #    self._affine = transform._affine @ self._affine
-    #    return self
 
     def __repr__(self):
         move_x, move_y = get_translation(self._affine)
@@ -133,37 +117,20 @@ class Transform(object):
 
         return ''.join((
             "<Transform ",
-            f"➚ ({move_x:+.2f}, {move_y:+.2f}) "
+            f"Move ({move_x:+.2f}, {move_y:+.2f}) "
                 if does_translate else '',
-            f"⭯ {pc.radians(rotation):.2f}) "
+            f"Rotate {pc.radians(rotation):.2f}) "
                 if does_rotate else '',
-            f"▱ {shear:.2f} "
+            f"Shear {shear:.2f} "
                 if does_shear else '',
-            f"◱ ({scale_x:.2f}, {scale_y:.2f})"
+            f"Scale ({scale_x:.2f}, {scale_y:.2f})"
                 if does_scale else '',
             ">",
             ))
 
-
-        #return self._affine.__str__()
-
     def copy(self) -> Self:
         return deepcopy(self)
 
-    #__copy__ = copy
-
-    #def __str__(self):
-    #    return '[\n%s]\b]' % ''.join([f'\t{action}\n' for action in self.history])
-
-    ##@encapsulation.exposable
-    #def apply_transform(self, other: Self) -> Self:
-    #    """
-    #    Apply another Transform to this Transform.
-    #    """
-    #    #self.history.extend(other.history)
-    #    return self
-
-    #@encapsulation.exposable
     # TODO typing.point
     # types defined in own files
     # then mergen in pc.typing
@@ -173,12 +140,6 @@ class Transform(object):
             x, y = x
         self._affine = _mov(x, y) @ self._affine
         return self
-        #arr = np.array((x, y), np.float64)
-        #arr = self.transform_xyarray(arr)
-        #x = float(arr[0])
-        #y = float(arr[1])
-        #self.history.append((_move, x, y))
-        #return self
 
     def movex(self, x: float = 0) -> Self:
         self._affine = _mov(x, 0) @ self._affine

@@ -1,11 +1,7 @@
-"""
-Class for base component
-"""
+"""Component.py: contains Component class, relevant helpers, and Exceptions."""
 
 from typing import Any, Type, Self, List, ClassVar, Mapping
-from dataclasses import dataclass, field
 import inspect
-import logging
 from copy import deepcopy
 
 import numpy as np
@@ -25,22 +21,87 @@ SubpolygonLayerShorthand = None | str
 
 class Component(pc.Markable, pc.BBoxable):
     """
-    Class for base component
+    Components: the building blocks of all PyCIF designs.
+
+    A Component class consists of:
+        - Layers
+        - Options
+        - Marks
+        - the _make function
+
+    Layers define the lithographic layers that a component class
+    places its geometry on.
+
+    Options are customization parameters that users of the component
+    may wish to change.
+
+    Marks are named points in the component,
+    which may be of interest to its users.
+
+    The _make() function contains instructions on how
+    to create the component's geometry based on the Options.
+
+    An instance of a Component class,
+    or a "component instance" for short,
+    contains:
+        - Subcomponents
+        - Subpolygons
+        - Specific options
+        - Specific marks
+
+    Subcomponents and Subpolygons make up the geometry of each
+    component instance.
+
+    Each Supolygon exists on strictly one layer in its parent component.
+
+    Each Subcomponent may have different layers than the parent component,
+    and for this there exists a "layer map",
+    which dictates how the geometry of a subcomponent gets
+    transfered to the parent component.
+
+    For example, an I-shaped filter may have abstract "Ground"
+    and "Dielectric" layers,
+    which may be mapped to concrete "Ground plane" and "E-Beam Dielectric"
+    layers in the parent component.
+
+    All instances of a given Component class
+    share the same set of layers,
+    but what geometry exists on those layers may be different per component,
+    depending on the Options.
+
+    All instances of a given Component class
+    share the same set of marks,
+    but the specific locations of those marks may be different per component,
+    depending on the Options.
+
+    All instances of a given Component class
+    share the same set of options and default values,
+    but those default values may be owerwritten
+    by whoever is instantiation that Component to achieve
+    a desired outcome.
     """
+
     class Options():
+        """Namespace for options."""
+
         _option_values: Mapping[str, Any]
 
         def __init__(self):
+            """Create empty Options namespace."""
             self._option_values = {}
 
         def __iter__(self):
+            """Get options as iter."""
             raise NotImplementedError
             return iter(self._options.items())
 
     class Layers():
+        """Namespace for layers."""
+
         _layer_names: List[str]
 
         def __init__(self):
+            """Create empty Layers namespace."""
             self._layer_names = [
                 getattr(self, name)
                 for name, value in type(self).__dict__.items()
@@ -53,6 +114,7 @@ class Component(pc.Markable, pc.BBoxable):
                     )
 
         def __iter__(self):
+            """Get Layers as iter."""
             return iter(self._layer_names)
 
     Modulebrowser_howtoget: ClassVar[str | None] = None
@@ -74,6 +136,13 @@ class Component(pc.Markable, pc.BBoxable):
     layers: ClassVar[Layers]
 
     def __init_subclass__(cls, **kwargs):
+        """
+        Verify that Component class is created corresctly.
+
+        1. Check that Options namespace inherits from Component.Options
+        2. Check that Layers namespace inherits from Component.Layers
+        3. Check that Layer objects in Layers namespace are created correctly.
+        """
         super().__init_subclass__(**kwargs)
 
         if not issubclass(cls.Options, Component.Options):
@@ -96,12 +165,14 @@ class Component(pc.Markable, pc.BBoxable):
                     f"instead of {name} = pc.Layer() ??\n"
                     )
 
-
-
     def __init__(self, options=None):
         """
-        opts: options
-        transform: unused
+        Create new component instance.
+
+        Parameters
+        ----------
+        options: dict
+            Set custom options
         """
         super().__init__()
 
@@ -116,24 +187,8 @@ class Component(pc.Markable, pc.BBoxable):
 
         self._make(self.options)
 
-    #def _set_opts(self, opts: dict):
-    #    """
-    #    Apply new options,
-    #    """
-    #    unexpected_opts = set(opts.keys()) - set(self.Options.keys())
-    #    if unexpected_opts:
-    #        raise Exception(
-    #            f"Component {self} received "
-    #            f"Unexpected options: {unexpected_opts}"
-    #            )
-    #    self.opts = pc.Dict({
-    #        name: optspec.default
-    #        for name, optspec
-    #        in self.Options.items()
-    #        })
-    #    self.opts.update(opts)
-
     def copy(self):
+        """Copy the component instance."""
         # TODO think about this
         return deepcopy(self)
 
@@ -142,9 +197,7 @@ class Component(pc.Markable, pc.BBoxable):
             component,
             layermap_shorthand: SubcomponentLayermapShorthand = None,
             ):
-        """
-        Add new component as a subcomponent.
-        """
+        """Add new component as a subcomponent."""
         layermap = parse_subcomponent_layermap_shorthand(
             self,
             component,
@@ -165,21 +218,17 @@ class Component(pc.Markable, pc.BBoxable):
             polygon,
             layermap: SubpolygonLayerShorthand = None,
             ):
-        """
-        Layermap map subcomponent layers to component layers
-        """
+        """Add new polygon as a subpolygon."""
         layermap_full = parse_subpolygon_layer_shorthand(
             self,
             polygon,
-            layermap
+   layermap
             )
 
         subpolygon = Subpolygon(
             polygon,
             layermap_full,
             )
-
-        #self._bbox.add_xyarray(polygon.get_xyarray())
 
         self.subpolygons.append(subpolygon)
 
@@ -236,85 +285,16 @@ class Component(pc.Markable, pc.BBoxable):
                 ]
             if layermap[subpoly.layer] is not None
             ]
-    
+
     def _get_subpolygons(self):
         return self.get_subpolygons(do_apply_transform=False)
 
-    #def get_polygons(self, include_layers=None):
-    #    """
-    #    This should descend into subcomponents and subpolygons recursively,
-    #    applying layermaps and transformations as it goes,
-    #    to get a list of raw polygons in the end.
-
-    #    returns dict mapping layers to polygons
-    #    layers are same as self.layers
-
-    #    include_layers is to specify which layers
-    #    are needed, None means all.
-    #    """
-
-    #    if include_layers is None:
-    #        include_layers = self.Layers()
-    #    else:
-    #        assert set(include_layers).issubset(self.Layers.keys())
-
-    #    layers = {layer: [] for layer in include_layers}
-
-    #    for subcomponent in self.subcomponents:
-    #        for layer, polygons in subcomponent.get_polygons(include_layers).items():
-    #            for polygon in polygons:
-    #                polygon.apply_transform(self.transform)
-    #                layers[layer].append(polygon)
-
-    #    for subpolygon in self.subpolygons:
-    #        polygon = subpolygon.get_polygon(include_layers)
-    #        if not polygon:
-    #            continue
-    #        polygon.apply_transform(self.transform)
-    #        layers[subpolygon.layermap].append(polygon)
-
-    #    return layers
-
-    #def _get_polygons(self, include_layers=None):
-    #    """
-    #    wtf
-    #    """
-    #    if include_layers is None:
-    #        include_layers = self.Layers.keys()
-    #    else:
-    #        assert set(include_layers).issubset(self.Layers.keys())
-
-    #    layers = {layer: [] for layer in include_layers}
-
-    #    for subcomponent in self.subcomponents:
-    #        for layer, polygons in subcomponent.get_polygons(include_layers).items():
-    #            for polygon in polygons:
-    #                layers[layer].append(polygon)
-
-    #    for subpolygon in self.subpolygons:
-    #        polygon = subpolygon.get_polygon(include_layers)
-    #        if not polygon:
-    #            continue
-    #        layers[subpolygon.layermap].append(polygon)
-
-    #    return layers
-
     def _get_xyarray(self):
+        # TODO slow
         xyarray = []
         for subpoly in self._get_subpolygons():
             xyarray.extend(subpoly.polygon.get_xyarray())
-        #for layer in self._get_polygons().values():
-        #    for poly in layer:
-        #        # TODO slow
-        #        xyarray.extend(poly.get_xyarray())
         return np.array(xyarray)
-
-
-    #def __str__(self):
-    #    #return (
-    #    #    f'Component {type(self).__name__} '
-    #    #    f'with {str(self.transform)}'
-    #    #    )
 
     def _make(self, opts: Options):
         """
@@ -417,34 +397,6 @@ class Subcomponent(object):
             if self.layermap[subpoly.layer] is not None
             ]
 
-#    def get_polygons(self, include_layers):
-#        """
-#        This is the counterpart to component.get_polygons()
-#        that applies the correct transformations and
-#
-#        So basically it's a constant flip-flop between component.get_polygons()
-#        and subcomponent.get_polygons(), in a sort of tree,
-#        with the leaves being subpolygons
-#        """
-#        # Which layers (of the child) need to be included?
-#        include_layers_child = [
-#            child_layer
-#            for child_layer, parent_layer in self.layermap.items()
-#            if parent_layer is not None
-#            ]
-#
-#        # Get a dict mapping child layer names to lists of polys
-#        child_layers = self.component.get_polygons(include_layers_child)
-#
-#        # Create a dict mapping *parent* layer names to lists of polys
-#        parent_layers = {
-#            self.layermap[child_layer_name]: polys
-#            for child_layer_name, polys in child_layers.items()
-#            }
-#
-#        return parent_layers
-
-
 def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: SubcomponentLayermapShorthand):
 
     parent_layers = set(parent.layers)
@@ -464,12 +416,6 @@ def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: Sub
                 )
             layermap = dict(zip(child_layers, parent_layers))
 
-        #elif len(child_layers) == len(parent_layers) == 1:
-        #    # Case Two: parent and child both have one layer
-        #    # (not necessarily same name)
-        #    layermap = {list(child_layers)[0]: list(parent_layers)[0]}
-        #    # (the list() cast is in here just in case someone passes
-        #    # something like a dict_keys object into this function
         else:
             raise Exception(
                 f"You must specify how to map the layers {child_layers} "

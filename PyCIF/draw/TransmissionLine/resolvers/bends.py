@@ -109,7 +109,6 @@ def construct_bend(before, point, after, radius):
 
         case _:
             assert False
-            #f'Invalid turn `{turn}` ocurred in TransmissionLine'
 
     offset_turn_center = radius / pc.sin(corner_angle / 2)
 
@@ -145,7 +144,6 @@ def make_bend_component(spec: BendSpec, Compo: pc.typing.ComponentClass):
         orientation=spec.orientation,
         bend_radius=spec.radius,
         )).marks.center.to(spec.point_center)
-        #)).align_mark_to_point('center', spec.point_center)
 
 def make_bend_components(
         specs: Iterable[BendSpec],

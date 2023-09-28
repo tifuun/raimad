@@ -19,9 +19,10 @@ README = (HERE / "README.md").read_text()
 setuptools.setup(
     name='PyCIF',
     version=__version__,
-    description=
-        'Collaborative CAD Platform for hierarchical '
-        'design of on-chip imaging devices',
+    description=(
+        'Collaborative CAD platform for hierarchical '
+        'design of on-chip imaging devices'
+        ),
     long_description=README,
     long_description_content_type="text/markdown",
     author=__author__,
@@ -41,3 +42,4 @@ setuptools.setup(
             ],
         },
 )
+

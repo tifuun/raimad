@@ -8,7 +8,6 @@ def _render_path_as_svg(svg, path):
     for conn, next_conn in pc.iter.duplets(path):
 
         if isinstance(conn.to, pc.Point):
-            #svg.circle(*conn.to, name=repr(conn))
             svg.circle(*conn.to)
 
             if isinstance(next_conn.to, pc.Point):
@@ -55,11 +54,6 @@ def render_paths_as_svg(paths):
 
     for svg in svgs[1:]:
         finalsvg.collage_E(svg)
-    #svg = pc.viz.SVG(stream=stream)
-    #for path in paths:
-    #    _render_path_as_svg(svg, path)
-    #    svg.collage_E()
-    #svg.done()
 
     finalsvg.done()
 

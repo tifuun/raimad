@@ -33,66 +33,72 @@ import PyCIF as pc
 
 # TODO TODO FIXME TODO move the below out FIXME FIXME TODO
 
-BendOpts = pc.Dict(
-    bend_radius=pc.Option.Geometric(
+class BendOpts(pc.Component.Options):
+    bend_radius = pc.Option.Geometric(
         10,
         'Bend Radius',
-        ),
-    angle_start=pc.Option.Geometric(
+        )
+
+    angle_start = pc.Option.Geometric(
         pc.degrees(10),
         'Angle at the start of the turn',
-        ),
-    angle_end=pc.Option.Geometric(
+        )
+
+    angle_end = pc.Option.Geometric(
         pc.degrees(50),
         'Angle at the end of the turn',
-        ),
-    orientation=pc.Option.Geometric(
+        )
+
+    orientation = pc.Option.Geometric(
         pc.Orientation.Counterclockwise,
         'Clockwise or counterclockwise?',
-        ),
-    )
+        )
 
-StraightOpts = pc.Dict(
-    length=pc.Option.Geometric(
+class StraightOpts(pc.Component.Options):
+    lengt = pc.Option.Geometric(
         4,
         'Straight segment length (dimension parallel to line)',
-        ),
-    )
+        )
 
-BridgeOpts = pc.Dict(
-    length=pc.Option.Geometric(
+class BridgeOpts(pc.Component.Options):
+    length = pc.Option.Geometric(
         4,
         'Bridge length (dimension perpendicular to line)',
-        ),
-    width=pc.Option.Geometric(
+        )
+
+    width = pc.Option.Geometric(
         2,
         'Bridge width (dimension parallel with line)',
-        ),
-    )
+        )
 
-TLOpts = pc.Dict(
-    bend_radius=pc.Option.Geometric(
+class TLOpts(pc.Component.Options):
+    bend_radius = pc.Option.Geometric(
         10,
         'Bend Radius',
-        ),
-    rigid=pc.Option.Geometric(
+        )
+
+    rigid = pc.Option.Geometric(
         False,
         'Make only right angle turns?',
-        ),
-    bridging=pc.Option.Geometric(
+        )
+
+    bridging = pc.Option.Geometric(
         False,
         'Enable Bridging?',
-        ),
-    bridge_base_spacing=pc.Option.Geometric(
+        )
+
+    bridge_base_spacing = pc.Option.Geometric(
         20,
         'Base spacing interval between bridges',
-        ),
-    bridge_spacing_scramble=pc.Option.Geometric(
+        )
+
+    bridge_spacing_scramble = pc.Option.Geometric(
         1,
         'Maximum deviation from base bridge spacing '
         '(to prevent standing waves)',
-        ),
-    waypoints=pc.Option.Geometric(
+        )
+
+    waypoints = pc.Option.Geometric(
         [
             [0, 0],
             [150, 0],
@@ -111,6 +117,4 @@ TLOpts = pc.Dict(
             ],
         "numpy array containing points that the line should pass through",
         )
-    )
-
 

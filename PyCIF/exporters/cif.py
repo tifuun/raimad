@@ -46,36 +46,10 @@ def export(stream, component: Component):
 
         except Exception as e:
             raise Exception(
-                f'Failed to export polygon {poly}. ',
+                f'Failed to export polygon {subpoly}. ',
                 ) from e
 
     stream.write('E\n')
-
-
-    #for layer_name, polys in component.get_polygons().items():
-    #    layer_index = component.Layers[layer_name].index
-    #    stream.write(f'L L{layer_name};\n')
-    #    for poly in polys:
-    #        xyarray = poly.get_xyarray()
-
-    #        if len(xyarray) == 0:
-    #            continue
-
-    #        stream.write('P ')
-
-    #        try:
-    #            for point in np.nditer(xyarray):
-    #                point2 = point * 100  # TODO wtf??
-    #                stream.write(f'{point2:9.0f} ')
-    #            stream.write(';\n')
-
-    #        except Exception as e:
-    #            raise Exception(
-    #                f'Failed to export polygon {poly}. ',
-    #                ) from e
-
-    #stream.write('E\n')
-
 
 def create_parser_options(parser):
     """

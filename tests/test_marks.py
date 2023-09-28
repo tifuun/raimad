@@ -1,8 +1,5 @@
 import unittest
 
-import numpy as np
-import itertools
-
 import PyCIF as pc
 
 log = pc.get_logger(__name__)
@@ -25,7 +22,7 @@ class ThreeMarkCompo(pc.Component):
 class TestMarks(unittest.TestCase):
 
     def test_marks(self):
-        
+
         class MyCompo(pc.Component):
 
             class Layers(pc.Component.Layers):
@@ -46,8 +43,6 @@ class TestMarks(unittest.TestCase):
                 arc2 = arc1.copy().rotate(70).scale(0.3)
                 arc3 = arc1.copy().rotate(-70).scale(0.3)
 
-                #arc2.align_mark_to_point('center', arc1.marks.end_mid)
-                #arc3.align_mark_to_point('center', arc1.marks.start_mid)
                 arc2.marks.center.to(arc1.marks.end_mid)
                 arc3.marks.center.to(arc1.marks.start_mid)
 
@@ -56,9 +51,6 @@ class TestMarks(unittest.TestCase):
                 self.add_subpolygon(arc3, 'l3')
 
         compo = MyCompo()
-
-        #with open('./test.cif', 'w') as f:
-        #    pc.export_cif(f, compo)
 
     def test_poly_bbox_transform(self):
         poly = pc.RectWH(1, 1)
@@ -504,7 +496,7 @@ class TestMarks(unittest.TestCase):
         # No duplicate straights, should be equal
         path2 = pc.tl.reduce_straights(path1)
         self.assertEqual(path1, path2)
-        
+
         # No bends
         path3, bendspecs = pc.tl.construct_bends(path2, radius=10)
         self.assertEqual(path2, path3)

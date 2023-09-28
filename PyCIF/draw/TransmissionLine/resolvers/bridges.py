@@ -30,7 +30,6 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
     default_spacing = spacing
     default_scramble = scramble
     default_bridge_width = bridge_width
-    
 
     for conn, after in pc.iter.duplets(path):
 
