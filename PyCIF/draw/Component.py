@@ -109,7 +109,7 @@ class Component(pc.Markable, pc.BBoxable):
         self.layers = self.Layers()
 
         if options:
-            self.options._options.update(options)
+            self.options._option_values.update(options)
 
         self.subcomponents = []
         self.subpolygons = []
@@ -316,7 +316,7 @@ class Component(pc.Markable, pc.BBoxable):
     #    #    f'with {str(self.transform)}'
     #    #    )
 
-    def _make(self, opts):
+    def _make(self, opts: Options):
         """
         This method should actually generate all subpolygons
         and subcomponents.

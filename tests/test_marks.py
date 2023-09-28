@@ -554,5 +554,37 @@ class TestMarks(unittest.TestCase):
 
     #    compo = MyCompo()
 
+    def test_marks_apartness(self):
+        """
+        Tests whether different components can have a mark
+        defined in two different places.
+        There was a bug where all marks were shared across all
+        instances of a component class,
+        that managed to survive surprisingly long
+        before this test was written!
+        """
+
+        class MyCompo(pc.Component):
+            class Layers(pc.Component.Layers):
+                root = pc.Layer()
+            class Marks(pc.Component.Marks):
+                foo = pc.Mark()
+            class Options(pc.Component.Options):
+                mark_height = pc.Option(10)
+
+            def _make(self, opts: Options):
+                self.marks.foo = pc.Point(0, opts.mark_height)
+
+
+        compo1 = MyCompo(options=dict(
+            mark_height=10
+            ))
+        compo2 = MyCompo(options=dict(
+            mark_height=20
+            ))
+
+        self.assertEqual(compo1.marks.foo, (0, 10))
+        self.assertEqual(compo2.marks.foo, (0, 20))
+
 
 
