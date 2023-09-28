@@ -21,29 +21,60 @@ def export(stream, component: Component):
     stream.write('(3584 CA  Utrecht);\n')
     stream.write('(Nederland);\n')
 
-    for layer_name, polys in component.get_polygons().items():
-        layer_index = component.Layers[layer_name].index
-        stream.write(f'L L{layer_name};\n')
-        for poly in polys:
-            xyarray = poly.get_xyarray()
+    subpolys = sorted(
+        component.get_subpolygons(),
+        key=lambda subpoly: subpoly.layer
+        )
 
-            if len(xyarray) == 0:
-                continue
+    prev_layer = None
+    for subpoly in subpolys:
+        if subpoly.layer != prev_layer:
+            stream.write(f'L L{subpoly.layer};\n')
 
-            stream.write('P ')
+        xyarray = subpoly.polygon.get_xyarray()
 
-            try:
-                for point in np.nditer(xyarray):
-                    point2 = point * 100  # TODO wtf??
-                    stream.write(f'{point2:9.0f} ')
-                stream.write(';\n')
+        if len(xyarray) == 0:
+            continue
 
-            except Exception as e:
-                raise Exception(
-                    f'Failed to export polygon {poly}. ',
-                    ) from e
+        stream.write('P ')
+
+        try:
+            for point in np.nditer(xyarray):
+                point2 = point * 100  # TODO wtf??
+                stream.write(f'{point2:9.0f} ')
+            stream.write(';\n')
+
+        except Exception as e:
+            raise Exception(
+                f'Failed to export polygon {poly}. ',
+                ) from e
 
     stream.write('E\n')
+
+
+    #for layer_name, polys in component.get_polygons().items():
+    #    layer_index = component.Layers[layer_name].index
+    #    stream.write(f'L L{layer_name};\n')
+    #    for poly in polys:
+    #        xyarray = poly.get_xyarray()
+
+    #        if len(xyarray) == 0:
+    #            continue
+
+    #        stream.write('P ')
+
+    #        try:
+    #            for point in np.nditer(xyarray):
+    #                point2 = point * 100  # TODO wtf??
+    #                stream.write(f'{point2:9.0f} ')
+    #            stream.write(';\n')
+
+    #        except Exception as e:
+    #            raise Exception(
+    #                f'Failed to export polygon {poly}. ',
+    #                ) from e
+
+    #stream.write('E\n')
 
 
 def create_parser_options(parser):

@@ -121,17 +121,27 @@ class Transform(object):
         move_x, move_y = get_translation(self._affine)
         scale_x, scale_y, shear = get_scale_shear(self._affine)
         rotation = get_rotation(self._affine)
+
+        does_translate = np.linalg.norm((move_x, move_y)) > 0.001  # TODO epsilon
+        does_rotate = rotation > 0.01
+        does_shear = shear > 0.01
+        does_scale = 1 - np.linalg.norm((scale_x, scale_y)) > 0.001
+
+        if True not in {does_translate, does_rotate, does_shear, does_scale}:
+            # Could also test if affine == identity
+            return "<Identity Transform>"
+
         return ''.join((
-            "[Transform ",
+            "<Transform ",
             f"➚ ({move_x:+.2f}, {move_y:+.2f}) "
-                if np.linalg.norm((move_x, move_y)) > 0.001 else '',  # TODO epsilon
+                if does_translate else '',
             f"⭯ {pc.radians(rotation):.2f}) "
-                if rotation > 0.01 else '',
+                if does_rotate else '',
             f"▱ {shear:.2f} "
-                if shear > 0.01 else '',
+                if does_shear else '',
             f"◱ ({scale_x:.2f}, {scale_y:.2f})"
-                if 1 - np.linalg.norm((scale_x, scale_y)) > 0.001 else '',
-            "]",
+                if does_scale else '',
+            ">",
             ))
 
 

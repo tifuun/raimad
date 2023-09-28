@@ -54,7 +54,7 @@ class Transformable(object):
         self.transform.flip(x, y)
         return self
 
-    def apply_transform(self, transform: Self):
+    def apply_transform(self, transform: pc.Transform) -> Self:
         self.transform.apply_transform(transform)
         return self
 

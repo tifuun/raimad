@@ -13,11 +13,15 @@ class Mark(metaclass=pc.SlotsFromAnnotationsMeta):
     _point: pc.Point | None
     #_boundpoint: pc.BoundPoint | None
     description: str
+    name: str
 
     def __init__(self, description: str):
         self.description = description
         self._point = None
         #self._boundpoint = None
+
+    def __set_name__(self, owner, name):
+        self.name = name
 
     def __get__(self, obj, cls=None):
         #return self._boundpoint

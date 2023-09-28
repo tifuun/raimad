@@ -1,3 +1,5 @@
+raise NotImplementedError
+
 class LayerParams(object):
     def __init__(self, index, name, fancy_name, color1, color2):
         self.index = index

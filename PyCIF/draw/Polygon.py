@@ -24,10 +24,10 @@ class Polygon(pc.Markable, pc.BBoxable):
         self._xyarray = None
         #self._bbox = None
 
-    def __str__(self):
+    def __repr__(self):
         return (
-            f'Polygon {type(self).__name__} '
-            f'with {str(self.transform)}'
+            f'<Polygon {type(self).__name__} '
+            f'with {str(self.transform)}>'
             )
 
     def copy(self):

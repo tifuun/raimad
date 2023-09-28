@@ -2,6 +2,8 @@
 OptCategory -- Option categories
 """
 
+raise NotImplementedError
+
 from dataclasses import dataclass
 
 

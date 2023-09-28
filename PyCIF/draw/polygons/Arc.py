@@ -9,9 +9,12 @@ import numpy as np
 import PyCIF as pc
 
 class Arc(pc.Polygon):
-    radius_inner: ClassVar[float]
-    radius_outter: ClassVar[float]
-    angle: ClassVar[float]
+    radius_inner: float
+    radius_outter: float
+    angle_start: float
+    angle_end: float
+    orientation: pc.Orientation
+    radial_center: float
 
     class Marks(pc.Polygon.Marks):
         center = pc.Mark('Center of the arc')

@@ -32,21 +32,21 @@ class BoundPoint(pc.Point):
             self,
             x: float | pc.Point,  # TODO typing.point
             y: float | None = None,
-            ) -> Self:
+            ) -> pc.Transformable:
 
         self._transformable.scale(x, y, self.x, self.y)
         return self._transformable
 
-    def hflip(self) -> Self:
+    def hflip(self) -> pc.Transformable:
         self._transformable.hflip(self.y)
-        return self
+        return self._transformable
 
-    def vflip(self) -> Self:
+    def vflip(self) -> pc.Transformable:
         self._transformable.vflip(self.x)
-        return self
+        return self._transformable
 
-    def flip(self) -> Self:
+    def flip(self) -> pc.Transformable:
         self._transformable.flip(self.x, self.y)
-        return self
+        return self._transformable
 
 

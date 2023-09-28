@@ -7,6 +7,9 @@ import numpy as np
 import PyCIF as pc
 
 class Circle(pc.Polygon):
+    class Marks(pc.Polygon.Marks):
+        center = pc.Mark('Center of the circle')
+
     radius: float
 
     def __init__(
@@ -15,6 +18,7 @@ class Circle(pc.Polygon):
             ):
         super().__init__()
         self.radius = radius
+        self.marks.center = pc.Point(0, 0)
 
     def _get_xyarray(self):
         points = 200

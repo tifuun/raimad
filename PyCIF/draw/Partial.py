@@ -11,6 +11,7 @@ class Partial:
             opts: pc.Dict | None = None,
             transform: pc.Transform | None = None,
             ):
+        raise NotImplementedError  # this is broken
         self.Compo = Compo
         self.opts = pc.Dict({
             k: v for k, v in opts.items()

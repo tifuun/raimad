@@ -39,7 +39,7 @@ from PyCIF.draw.Markable import Markable
 from PyCIF.draw.Polygon import Polygon
 from PyCIF.draw.Group import Group
 #from PyCIF.draw.Component import Component
-from PyCIF.draw.Option import Option
+from PyCIF.draw import Option
 from PyCIF.draw.Layer import Layer
 from PyCIF.draw.Component import Component
 from PyCIF.draw.Partial import Partial
