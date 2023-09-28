@@ -6,7 +6,7 @@ import numpy as np
 
 import PyCIF as pc
 
-class Group(pc.Transformable, pc.BBoxable):
+class Group(pc.BBoxable):
     def __init__(self, *polygons):
         super().__init__()
         self.polys = polygons

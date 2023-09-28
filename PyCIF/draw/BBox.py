@@ -161,7 +161,7 @@ class BBox(object):
             raise EmptyBBoxException(*args, **kwargs)
 
     def copy(self):
-        raise NotImplementedError
+        """Copy bbox."""
         # TODO read up on how to properly do copies
         # in Python
         new_bbox = BBox()

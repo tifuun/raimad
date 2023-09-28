@@ -33,9 +33,9 @@ from PyCIF.helpers.slots import SlotsFromAnnotationsMeta
 from PyCIF.draw.Point import Point
 from PyCIF.draw.Transform import Transform
 from PyCIF.draw.Transformable import Transformable
+from PyCIF.draw.BoundPoint import BoundPoint
 from PyCIF.draw.BBox import BBox
 from PyCIF.draw.BBoxable import BBoxable
-from PyCIF.draw.BoundPoint import BoundPoint
 from PyCIF.draw.Mark import Mark
 from PyCIF.draw.Markable import Markable
 from PyCIF.draw.Polygon import Polygon
