@@ -138,7 +138,7 @@ def construct_bend(before, point, after, radius):
         )
 
 def make_bend_component(spec: BendSpec, Compo: pc.typing.ComponentClass):
-    return Compo(opts=dict(
+    return Compo(options=dict(
         angle_start=spec.angle_start,
         angle_end=spec.angle_end,
         orientation=spec.orientation,
