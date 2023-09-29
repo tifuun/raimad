@@ -8,7 +8,7 @@ def make_straight_components(path, Compo: pc.typing.ComponentClass):
             continue
 
         straights.append(
-            Compo(opts=dict(
+            Compo(options=dict(
                 length=pc.distance_between(conn.to, after.to),
                 ))
                 .marks.tl_enter.to(conn.to)

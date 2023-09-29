@@ -55,7 +55,7 @@ class BendOpts(pc.Component.Options):
         )
 
 class StraightOpts(pc.Component.Options):
-    lengt = pc.Option.Geometric(
+    length = pc.Option.Geometric(
         4,
         'Straight segment length (dimension parallel to line)',
         )
