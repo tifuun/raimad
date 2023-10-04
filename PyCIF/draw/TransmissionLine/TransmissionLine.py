@@ -5,8 +5,7 @@ import logging
 
 import PyCIF as pc
 
-log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+log = pc.get_logger(__name__)
 
 class TransmissionLine:
     bends_: Sequence[pc.Component]

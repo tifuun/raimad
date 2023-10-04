@@ -1,13 +1,10 @@
 from dataclasses import dataclass
-import logging
 from typing import Iterable
 
 import PyCIF as pc
 from PyCIF.draw import TransmissionLine as tl
 
-log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
-# TODO logging
+log = pc.get_logger(__name__)
 
 @dataclass
 class BendSpec:

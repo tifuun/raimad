@@ -186,3 +186,33 @@ class BBoxable(pc.Transformable):
         self.bbox.mid_right.to(other.bbox.mid_left)
         return self
 
+    def snap_mid(self, other: Self) -> Self:
+        """
+        Snap self to the middle of another BBoxable.
+
+        Equivalent to aligning self.bbox.mid
+        to other.bbox.mid
+        Like this:
+
+            ._________.
+            |         |
+            |   self  |
+        .---|----.----|---.
+        |   |         |   |
+        |   |         |   |
+        .   |    X    |   .
+        |   |  other  |   |
+        |   |         |   |
+        .---|----.----|---.
+            |         |
+            |         |
+            .---------.
+
+        Returns
+        -------
+        Self
+            returns self, can be used for chaining transformations.
+        """
+        self.bbox.mid.to(other.bbox.mid)
+        return self
+
