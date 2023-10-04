@@ -36,10 +36,10 @@ def cli():
             if args.exporter == exporter.CLI_NAME:
                 exporter.run_cli(args)
                 break
-            else:
-                # This should never happen, since
-                # argparse validates this.
-                parser.error('Unknown exporter')
+        else:
+            # This should never happen, since
+            # argparse validates this.
+            parser.error('Unknown exporter')
 
     elif args.action == 'browser':
 

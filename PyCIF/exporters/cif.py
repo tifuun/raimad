@@ -4,13 +4,13 @@ Caltech Intermediate Form Exporter.
 
 import numpy as np
 
-from PyCIF.draw.Component import Component
+import PyCIF as pc
 from PyCIF.exporters import argparse_utils
 
 CLI_NAME = 'cif'
 
 
-def export(stream, component: Component):
+def export(stream, component: pc.Component):
     """
     Export CIF file to stream.
     """

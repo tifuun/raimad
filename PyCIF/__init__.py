@@ -73,7 +73,10 @@ from PyCIF.draw.polygons.RectWire import RectWire
 from PyCIF.draw.polygons.RectWH import RectWH
 from PyCIF.draw.polygons.CustomPolygon import CustomPolygon
 
+from PyCIF.draw.Snowman import Snowman
+
 from PyCIF import viz as viz
 
 from PyCIF.exporters.cif import export as export_cif
+from PyCIF.exporters.svg import export as export_svg
 
