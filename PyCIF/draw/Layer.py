@@ -10,7 +10,7 @@ class Layer:
 
     def __get__(self, obj, objtype=None):
         if obj is None:
-            return self
+            return self.name
         return self.name
 
     def __set__(self, obj, value):

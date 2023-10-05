@@ -37,7 +37,7 @@ class Connection:
         if clone_from is not None:
             to = to or clone_from.to
             radius = radius or clone_from.radius
-            do_bridges = do_bridges or clone_from.bridges
+            do_bridges = do_bridges or clone_from.do_bridges
             bridge_spacing = bridge_spacing or clone_from.bridge_spacing
             bridge_scramble = bridge_scramble or clone_from.bridge_scramble
             bridge_length = bridge_length or clone_from.bridge_length

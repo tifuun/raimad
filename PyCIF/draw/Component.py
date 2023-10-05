@@ -106,11 +106,7 @@ class Component(pc.Markable, pc.BBoxable):
                 getattr(self, name)  # get the NAME
                 for name in dir(type(self))
                 if not name.startswith('_')
-                and isinstance(getattr(type(self), name), pc.Layer)
-                #                      ^^^^^^^^^^ get the DESCRIPTOR
                 ]
-            # TODO fix my habbit of writing ungodly list comprehensions
-            # instead of normal readable sane code
 
             # The usage of `dir` here as opposed to __dict__ is crucial,
             # `__dict__` won't include inherited layers, but `dir` does.
