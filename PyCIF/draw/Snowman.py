@@ -48,7 +48,7 @@ class Snowman(pc.Component):
             head.bbox.interpolate(0.7, 0.7)
             )
 
-        nose_tip = (self.options.l_nose, 0),
+        nose_tip = (self.options.l_nose, 0)
         nose = pc.CustomPolygon([
             (0, 2),
             nose_tip,

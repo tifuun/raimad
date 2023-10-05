@@ -3,6 +3,8 @@ Polygon -- a method for prepresenting geometry
 that can be exported to cif
 """
 
+from io import StringIO
+
 from copy import deepcopy
 
 import PyCIF as pc
@@ -29,4 +31,20 @@ class Polygon(pc.Markable, pc.BBoxable):
         Return a copy of this polygon
         """
         return deepcopy(self)
+
+    def _repr_svg_(self):
+        """IPython/Jupyter integration: show polygon as svg."""
+
+        # TODO this is very hacky!
+        class WrapperComponent(pc.Component):
+            class Layers(pc.Component.Layers):
+                root = pc.Layer()
+
+            def _make(c_self):
+                c_self.add_subpolygon(self)
+
+        stream = StringIO()
+        pc.export_svg(stream, WrapperComponent())
+        return stream.getvalue()
+
 
