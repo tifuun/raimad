@@ -27,9 +27,9 @@ class TurnDirection(Enum):
 def angspace(
         start: float,
         end: float,
-        num_steps:
-        int = 50,
+        num_steps: int = 50,
         orientation: Orientation = Orientation.Counterclockwise,
+        endpoint: bool = True,
         ):
     """
     Angular space:
@@ -45,7 +45,7 @@ def angspace(
     while end < start:
         end += fullcircle
 
-    return np.linspace(start, end, num_steps)
+    return np.linspace(start, end, num_steps, endpoint=endpoint)
 
 def classify_turn(before, point, after):
     # Thank you ChatGPT for this one,
