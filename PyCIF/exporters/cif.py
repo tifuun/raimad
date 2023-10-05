@@ -10,7 +10,7 @@ from PyCIF.exporters import argparse_utils
 CLI_NAME = 'cif'
 
 
-def export(stream, component: pc.Component):
+def export(stream, component: pc.Component, multiply=1e6):
     """
     Export CIF file to stream.
     """
@@ -31,7 +31,7 @@ def export(stream, component: pc.Component):
         if subpoly.layer != prev_layer:
             stream.write(f'L L{subpoly.layer};\n')
 
-        xyarray = subpoly.polygon.get_xyarray()
+        xyarray = subpoly.polygon.get_xyarray() * multiply
 
         if len(xyarray) == 0:
             continue
@@ -40,7 +40,7 @@ def export(stream, component: pc.Component):
 
         try:
             for point in np.nditer(xyarray):
-                point2 = point * 100  # TODO wtf??
+                point2 = point
                 stream.write(f'{point2:9.0f} ')
             stream.write(';\n')
 
