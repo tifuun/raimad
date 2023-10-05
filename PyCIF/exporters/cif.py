@@ -10,7 +10,7 @@ from PyCIF.exporters import argparse_utils
 CLI_NAME = 'cif'
 
 
-def export(stream, component: pc.Component, multiply=1e6):
+def export(stream, component: pc.Component, multiply=1e3):
     """
     Export CIF file to stream.
     """

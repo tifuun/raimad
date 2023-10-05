@@ -8,7 +8,7 @@ class RectCompo(pc.Component):
     class Layers(pc.Component.Layers):
         root = pc.Layer()
 
-    def _make(self, opts: pc.Component.Options):
+    def _make(self):
         rect1 = pc.RectWH(10, 10).bbox.bot_left.to((0, 0))
         rect2 = rect1.copy().bbox.bot_left.rotate(pc.quartercircle / 10)
         rect3 = rect1.copy().bbox.bot_left.rotate(pc.quartercircle / 2)

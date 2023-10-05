@@ -29,7 +29,7 @@ class Snowman(pc.Component):
     class Marks(pc.Component.Marks):
         nose_tip = pc.Mark("Tip of the nose")
 
-    def _make(self, opts: pc.Component.Options):
+    def _make(self):
         base = pc.Circle(50)
         torso = pc.Circle(40)
         head = pc.Circle(20)
@@ -37,7 +37,7 @@ class Snowman(pc.Component):
         torso.snap_above(base)
         head.snap_above(torso)
 
-        eye_l = pc.Circle(opts.eye_size)
+        eye_l = pc.Circle(self.options.eye_size)
         eye_r = eye_l.copy()
 
         eye_l.marks.center.to(
@@ -50,7 +50,7 @@ class Snowman(pc.Component):
 
         nose = pc.CustomPolygon([
             (0, 2),
-            (opts.l_nose, 0),
+            (self.options.l_nose, 0),
             (0, -2)
             ])
 

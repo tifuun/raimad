@@ -14,7 +14,7 @@ class ThreeMarkCompo(pc.Component):
         right = pc.Mark('Test mark to the right')
         down = pc.Mark('Test mark below the origin')
 
-    def _make(self, opts):
+    def _make(self):
         self.marks.center = pc.Point(0, 0)
         self.marks.right = pc.Point(1, 0)
         self.marks.down = pc.Point(0, -1)
@@ -30,7 +30,7 @@ class TestMarks(unittest.TestCase):
                 l2 = pc.Layer()
                 l3 = pc.Layer()
 
-            def _make(self, opts):
+            def _make(self):
                 arc1 = pc.Arc(
                     angle_start=pc.degrees(45),
                     angle_end=pc.degrees(90),
@@ -245,7 +245,7 @@ class TestMarks(unittest.TestCase):
 #            class Layers(pc.Component.Layers):
 #                root = pc.Layer()
 #
-#            def _make(self, opts):
+#            def _make(self):
 #                rect = pc.RectWH(10, 10)
 #                rect.bbox.mid.to((0, 0))
 #                self.add_subpolygon(rect)
@@ -273,7 +273,7 @@ class TestMarks(unittest.TestCase):
             class Layers(pc.Component.Layers):
                 root = pc.Layer()
 
-            def _make(self, opts):
+            def _make(self):
                 rect = pc.RectWH(1, 1)
                 rect.bbox.mid.to((0, 0))
                 rect.move(5, 5)
@@ -283,7 +283,7 @@ class TestMarks(unittest.TestCase):
             class Layers(pc.Component.Layers):
                 root = pc.Layer()
 
-            def _make(self, opts):
+            def _make(self):
                 inner = Inner()
                 self.add_subcomponent(inner)
 
@@ -316,7 +316,7 @@ class TestMarks(unittest.TestCase):
 #                start = pc.Mark('Start of the rectangle')
 #                end = pc.Mark('End of the rectangle')
 #
-#            def _make(self, opts):
+#            def _make(self):
 #                self.marks.start = pc.Point(0, 0)
 #                self.marks.end = pc.Point(0, 16)
 #                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2))
@@ -335,7 +335,7 @@ class TestMarks(unittest.TestCase):
 #                child_start = pc.Mark('Start of the child rectangle')
 #                child_end = pc.Mark('End of the child rectangle')
 #
-#            def _make(self, opts):
+#            def _make(self):
 #                self.marks.start = pc.Point(0, 0)
 #                self.marks.end = pc.Point(0, 16)
 #                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
@@ -371,7 +371,7 @@ class TestMarks(unittest.TestCase):
 #                grandchild_start = pc.Mark('Start of the granchild rectangle')
 #                grandchild_end = pc.Mark('End of the grandchild rectangle')
 #
-#            def _make(self, opts):
+#            def _make(self):
 #                self.marks.start = pc.Point(0, 0)
 #                self.marks.end = pc.Point(0, 16)
 #                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
@@ -398,7 +398,7 @@ class TestMarks(unittest.TestCase):
 #                l2 = pc.Layer()
 #                l3 = pc.Layer()
 #
-#            def _make(self, opts):
+#            def _make(self):
 #                compo_a = NestedCompoA()
 #                compo_b = NestedCompoB()
 #                compo_c = NestedCompoC()
@@ -480,7 +480,7 @@ class TestMarks(unittest.TestCase):
 
         length = 100
         bridge_spacing = 10
-        bridge_width = 2
+        bridge_length = 2
         start = pc.Point(10, 10)
         stop = start + (length, 0)
 
@@ -508,7 +508,7 @@ class TestMarks(unittest.TestCase):
             path3,
             spacing=bridge_spacing,
             scramble=0,
-            bridge_width=bridge_width
+            bridge_length=bridge_length
             )
         #log.debug(pc.tl.format_path(path4))
         #self.assertEqual(path3, path4)
@@ -529,7 +529,7 @@ class TestMarks(unittest.TestCase):
     #            l3=pc.Layer(),
     #            )
 
-    #        def _make(self, opts):
+    #        def _make(self):
     #            compo_a = NestedCompoA()
     #            compo_b = NestedCompoB()
     #            compo_c = NestedCompoC()
@@ -564,8 +564,8 @@ class TestMarks(unittest.TestCase):
             class Options(pc.Component.Options):
                 mark_height = pc.Option(10)
 
-            def _make(self, opts: Options):
-                self.marks.foo = pc.Point(0, opts.mark_height)
+            def _make(self):
+                self.marks.foo = pc.Point(0, self.options.mark_height)
 
 
         compo1 = MyCompo(options=dict(

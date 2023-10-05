@@ -23,7 +23,7 @@ class BridgeSpec:
     angle: float
     length: float
 
-def construct_bridges(path, do_bridges, spacing, scramble, bridge_length, striped=False):
+def construct_bridges(path, spacing, scramble, bridge_length, do_bridges=True, striped=False):
     newpath = []
     specs = []
 

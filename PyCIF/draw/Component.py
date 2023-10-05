@@ -1,5 +1,6 @@
 """Component.py: contains Component class, relevant helpers, and Exceptions."""
 
+from io import StringIO
 from typing import Any, Type, Self, List, ClassVar, Mapping
 import inspect
 from copy import deepcopy
@@ -188,7 +189,7 @@ class Component(pc.Markable, pc.BBoxable):
         self.subcomponents = []
         self.subpolygons = []
 
-        self._make(self.options)
+        self._make()
 
     def copy(self):
         """Copy the component instance."""
@@ -299,7 +300,7 @@ class Component(pc.Markable, pc.BBoxable):
             xyarray.extend(subpoly.polygon.get_xyarray())
         return np.array(xyarray)
 
-    def _make(self, opts: Options):
+    def _make(self):
         """
         This method should actually generate all subpolygons
         and subcomponents.
@@ -361,6 +362,12 @@ class Component(pc.Markable, pc.BBoxable):
             in cls.__dict__.items()
             if not attr_name.startswith('_') and inspect.isfunction(attr)
             }
+
+    def _repr_svg_(self):
+        """Export component as svg. For use in Jupyter notebooks."""
+        stream = StringIO()
+        pc.export_svg(stream, self)
+        return stream.getvalue()
 
 class Subpolygon(object):
     """
