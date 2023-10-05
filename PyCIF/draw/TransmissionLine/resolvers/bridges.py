@@ -21,15 +21,15 @@ bridge_rng = Random(42)
 class BridgeSpec:
     start: pc.Point
     angle: float
-    width: float
+    length: float
 
-def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
+def construct_bridges(path, spacing, scramble, bridge_length, striped=False):
     newpath = []
     specs = []
 
     default_spacing = spacing
     default_scramble = scramble
-    default_bridge_width = bridge_width
+    default_bridge_length = bridge_length
 
     for conn, after in pc.iter.duplets(path):
 
@@ -41,9 +41,9 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
             conn.bridge_scramble or
             (scramble if striped else default_scramble)
             )
-        bridge_width = (
-            conn.bridge_width or
-            (bridge_width if striped else default_bridge_width)
+        bridge_length = (
+            conn.bridge_length or
+            (bridge_length if striped else default_bridge_length)
             )
 
         if not isinstance(after, tl.StraightTo):
@@ -62,13 +62,13 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
         newpath.append(conn)
         newpath.append(
             tl.JumpTo(
-                conn.to + pc.Point(arg=leg_angle, mag=bridge_width),
+                conn.to + pc.Point(arg=leg_angle, mag=bridge_length),
                 )
             )
         specs.append(BridgeSpec(
             start=conn.to,
             angle=leg_angle,
-            width=bridge_width
+            length=bridge_length
             ))
 
         for distance in distances:
@@ -77,7 +77,7 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
             enter_point = (
                 conn.to + pc.Point(
                     arg=leg_angle,
-                    mag=(distance - bridge_width / 2)
+                    mag=(distance - bridge_length / 2)
                     )
                 )
 
@@ -90,20 +90,20 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
                 tl.JumpTo(
                     conn.to + pc.Point(
                         arg=leg_angle,
-                        mag=(distance + bridge_width / 2)
+                        mag=(distance + bridge_length / 2)
                         )
                     )
                 )
             specs.append(BridgeSpec(
                 start=enter_point,
                 angle=leg_angle,
-                width=bridge_width
+                length=bridge_length
                 ))
 
         enter_point = (
             after.to + pc.Point(
                 arg=leg_angle,
-                mag=-bridge_width
+                mag=-bridge_length
                 )
             )
         newpath.append(
@@ -119,7 +119,7 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
         specs.append(tl.BridgeSpec(
             start=enter_point,
             angle=leg_angle,
-            width=bridge_width,
+            length=bridge_length,
             ))
 
     # TODO split up and refactor this CHONKER of a function
@@ -127,7 +127,7 @@ def construct_bridges(path, spacing, scramble, bridge_width, striped=False):
 
 def make_bridge_component(spec: BridgeSpec, Compo: pc.typing.ComponentClass):
     return (
-        Compo(options=dict(width=spec.width))
+        Compo(options=dict(length=spec.length))
         .marks.tl_enter.to(spec.start)
         .marks.tl_enter.rotate(spec.angle)
         )

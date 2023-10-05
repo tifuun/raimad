@@ -57,13 +57,13 @@ class BendOpts(pc.Component.Options):
 class StraightOpts(pc.Component.Options):
     length = pc.Option.Geometric(
         4,
-        'Straight segment length (dimension parallel to line)',
+        'Straight segment length (dimension parallel with line)',
         )
 
 class BridgeOpts(pc.Component.Options):
     length = pc.Option.Geometric(
         4,
-        'Bridge length (dimension perpendicular to line)',
+        'Bridge length (dimension parallel with line)',
         )
 
 class TLOpts(pc.Component.Options):

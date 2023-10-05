@@ -15,7 +15,7 @@ class TransmissionLine:
     bend_radius: float  # at start of connection
     bridge_spacing: float
     bridge_scramble: float
-    bridge_width: float
+    bridge_length: float
     bridges: bool
 
     def __init__(
@@ -24,13 +24,13 @@ class TransmissionLine:
             bend_radius: float,  # at start of connection
             bridge_spacing: float,
             bridge_scramble: float,
-            bridge_width: float,
+            bridge_length: float,
             bridges: bool = True,
             ):
         self.bend_radius = bend_radius
         self.bridge_spacing = bridge_spacing
         self.bridge_scramble = bridge_scramble
-        self.bridge_width = bridge_width
+        self.bridge_length = bridge_length
         self.bridges = bridges
 
         log.debug('====== Original path ======')
@@ -55,7 +55,7 @@ class TransmissionLine:
             path3,
             spacing=self.bridge_spacing,
             scramble=self.bridge_scramble,
-            bridge_width=self.bridge_width,
+            bridge_length=self.bridge_length,
             )
         log.debug('====== Step 4: construct bridges ======')
         log.debug(pc.tl.format_path(path4))

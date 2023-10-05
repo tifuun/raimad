@@ -17,7 +17,7 @@ class Connection:
     bridges: bool | None
     bridge_spacing: float | None
     bridge_scramble: float | None
-    bridge_width: float | None
+    bridge_length: float | None
 
     pretty_name: ClassVar[str] = 'Connect to'
 
@@ -28,7 +28,7 @@ class Connection:
             bridges: bool | None = None,
             bridge_spacing: float | None = None,
             bridge_scramble: float | None = None,
-            bridge_width: float | None = None,
+            bridge_length: float | None = None,
             clone_from: Self | None = None,
             ):
         if type(self) is Connection:
@@ -40,7 +40,7 @@ class Connection:
             bridges = bridges or clone_from.bridges
             bridge_spacing = bridge_spacing or clone_from.bridge_spacing
             bridge_scramble = bridge_scramble or clone_from.bridge_scramble
-            bridge_width = bridge_width or clone_from.bridge_width
+            bridge_length = bridge_length or clone_from.bridge_length
 
         if isinstance(to, pc.Point):
             self.to = to
@@ -51,7 +51,7 @@ class Connection:
         self.bridges = bridges
         self.bridge_spacing = bridge_spacing
         self.bridge_scramble = bridge_scramble
-        self.bridge_width = bridge_width
+        self.bridge_length = bridge_length
 
     def __repr__(self):
         return f'{self.pretty_name} {self.to}: r={self.radius}'

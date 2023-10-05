@@ -71,6 +71,22 @@ class BoundPoint(pc.Point):
         self._transformable.move(x, y)
         return self._transformable
 
+    #def to_x(self, point: pc.Point | float):
+    #    if isinstance(point, int | float):
+    #        x = point - self.x
+    #    else:
+    #        x = point[0] - self.x
+
+    #    self._transformable.move(x, 0)
+
+    #def to_y(self, point: pc.Point | float):
+    #    if isinstance(point, int | float):
+    #        y = point - self.y
+    #    else:
+    #        y = point[1] - self.y
+
+    #    self._transformable.move(0, y)
+
     def rotate(self, angle: float):
         """Rotate the Transformable around this point."""
         self._transformable.rotate(angle, self)
