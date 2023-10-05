@@ -66,11 +66,6 @@ class BridgeOpts(pc.Component.Options):
         'Bridge length (dimension perpendicular to line)',
         )
 
-    width = pc.Option.Geometric(
-        2,
-        'Bridge width (dimension parallel with line)',
-        )
-
 class TLOpts(pc.Component.Options):
     bend_radius = pc.Option.Geometric(
         10,

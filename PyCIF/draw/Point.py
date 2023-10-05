@@ -114,9 +114,9 @@ class Point(object, metaclass=pc.SlotsFromAnnotationsMeta):
 
         raise Exception("Points consist of only two coordinates")
 
-    def __array__(self) -> np.ndarray:
+    def __array__(self, dtype=None) -> np.ndarray:
         """Cast self to array."""
-        return np.array((self.x, self.y))
+        return np.array((self.x, self.y), dtype=dtype)
 
     def __eq__(self, other) -> bool:
         """Check if two Point objects have the same coordinates."""

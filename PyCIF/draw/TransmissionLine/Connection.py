@@ -42,7 +42,11 @@ class Connection:
             bridge_scramble = bridge_scramble or clone_from.bridge_scramble
             bridge_width = bridge_width or clone_from.bridge_width
 
-        self.to = to
+        if isinstance(to, pc.Point):
+            self.to = to
+        else:
+            self.to = pc.Point(*to)  # TODO
+
         self.radius = radius
         self.bridges = bridges
         self.bridge_spacing = bridge_spacing
