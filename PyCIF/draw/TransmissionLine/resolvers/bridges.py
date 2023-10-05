@@ -23,10 +23,11 @@ class BridgeSpec:
     angle: float
     length: float
 
-def construct_bridges(path, spacing, scramble, bridge_length, striped=False):
+def construct_bridges(path, do_bridges, spacing, scramble, bridge_length, striped=False):
     newpath = []
     specs = []
 
+    default_do_bridges = do_bridges
     default_spacing = spacing
     default_scramble = scramble
     default_bridge_length = bridge_length
@@ -34,19 +35,29 @@ def construct_bridges(path, spacing, scramble, bridge_length, striped=False):
     for conn, after in pc.iter.duplets(path):
 
         spacing = (
-            conn.bridge_spacing or
+            after.bridge_spacing if after.bridge_spacing is not None else
             (spacing if striped else default_spacing)
             )
         scramble = (
-            conn.bridge_scramble or
+            after.bridge_scramble if after.bridge_scramble is not None else
             (scramble if striped else default_scramble)
             )
         bridge_length = (
-            conn.bridge_length or
+            after.bridge_length if after.bridge_length is not None else
             (bridge_length if striped else default_bridge_length)
             )
+        do_bridges = (
+            after.do_bridges if after.do_bridges is not None else
+            (do_bridges if striped else default_do_bridges)
+            )
+
+        # TODO clean up this spaghett
 
         if not isinstance(after, tl.StraightTo):
+            continue
+
+        if not do_bridges:
+            newpath.append(after)
             continue
 
         leg_distance = pc.distance_between(conn.to, after.to)

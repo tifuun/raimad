@@ -16,7 +16,7 @@ class TransmissionLine:
     bridge_spacing: float
     bridge_scramble: float
     bridge_length: float
-    bridges: bool
+    do_bridges: bool
 
     def __init__(
             self,
@@ -25,13 +25,13 @@ class TransmissionLine:
             bridge_spacing: float,
             bridge_scramble: float,
             bridge_length: float,
-            bridges: bool = True,
+            do_bridges: bool = True,
             ):
         self.bend_radius = bend_radius
         self.bridge_spacing = bridge_spacing
         self.bridge_scramble = bridge_scramble
         self.bridge_length = bridge_length
-        self.bridges = bridges
+        self.do_bridges = do_bridges
 
         log.debug('====== Original path ======')
         log.debug(pc.tl.format_path(path))
@@ -40,9 +40,10 @@ class TransmissionLine:
         log.debug('====== Step 1: resolve elbows ======')
         log.debug(pc.tl.format_path(path1))
 
-        path2 = pc.tl.reduce_straights(path1)
-        log.debug('====== Step 2: reduce straights ======')
-        log.debug(pc.tl.format_path(path2))
+        path2 = path1
+        #path2 = pc.tl.reduce_straights(path1)
+        #log.debug('====== Step 2: reduce straights ======')
+        #log.debug(pc.tl.format_path(path2))
 
         path3, self._bendspecs = pc.tl.construct_bends(
             path2,
@@ -53,6 +54,7 @@ class TransmissionLine:
 
         path4, self._bridgespecs = pc.tl.construct_bridges(
             path3,
+            do_bridges=do_bridges,
             spacing=self.bridge_spacing,
             scramble=self.bridge_scramble,
             bridge_length=self.bridge_length,

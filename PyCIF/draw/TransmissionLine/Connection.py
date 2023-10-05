@@ -14,7 +14,7 @@ class Connection:
     """
     to: ConnectionTarget
     radius: float | None  # at start of connection
-    bridges: bool | None
+    do_bridges: bool | None
     bridge_spacing: float | None
     bridge_scramble: float | None
     bridge_length: float | None
@@ -25,7 +25,7 @@ class Connection:
             self,
             to: ConnectionTarget,
             radius: float | None = None,
-            bridges: bool | None = None,
+            do_bridges: bool | None = None,
             bridge_spacing: float | None = None,
             bridge_scramble: float | None = None,
             bridge_length: float | None = None,
@@ -37,7 +37,7 @@ class Connection:
         if clone_from is not None:
             to = to or clone_from.to
             radius = radius or clone_from.radius
-            bridges = bridges or clone_from.bridges
+            do_bridges = do_bridges or clone_from.bridges
             bridge_spacing = bridge_spacing or clone_from.bridge_spacing
             bridge_scramble = bridge_scramble or clone_from.bridge_scramble
             bridge_length = bridge_length or clone_from.bridge_length
@@ -48,7 +48,7 @@ class Connection:
             self.to = pc.Point(*to)  # TODO
 
         self.radius = radius
-        self.bridges = bridges
+        self.do_bridges = do_bridges
         self.bridge_spacing = bridge_spacing
         self.bridge_scramble = bridge_scramble
         self.bridge_length = bridge_length
