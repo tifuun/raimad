@@ -3,6 +3,7 @@ iter.py -- iteration-related helpers
 """
 
 from collections.abc import Iterable
+from itertools import chain
 
 
 def overlap(n, iterable):
@@ -75,4 +76,7 @@ def flatten(iterable):
         for item in flatten(sub)
         ]
 
+
+def braid(*iterables):
+    return list(chain(*zip(*iterables)))
 
