@@ -21,7 +21,10 @@ from .resolvers.bridges import construct_bridges
 from .resolvers.bridges import make_bridge_component
 from .resolvers.bridges import make_bridge_components
 
+from .resolvers.straights import StraightSpec
 from .resolvers.straights import make_straight_components
+from .resolvers.straights import make_straight_component
+from .resolvers.straights import construct_straights
 
 from .viz import render_path_as_svg
 from .viz import render_paths_as_svg
