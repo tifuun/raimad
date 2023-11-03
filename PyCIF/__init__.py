@@ -24,6 +24,8 @@ from numpy import pi
 # and actual polygons, because
 # many polygons use these shorthands in their representation.
 
+from addict import Dict
+
 from PyCIF.logging import get_logger
 from PyCIF.helpers.overload import kwoverload
 from PyCIF.helpers.slots import SlotsFromAnnotationsMeta
