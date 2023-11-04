@@ -26,11 +26,5 @@ dependencies = [
 	'numpy',
 	]
 
-[tool.setuptools]
-# For some reason setuptools is angry
-# about the `img` directory, even thought
-# it has no `__init__.py` ???
-# Need to tell it explicitly which directory
-# contans the package.
-packages = [ "PyCIF" ]
-
+[project.package]
+include = 'mypackage'
