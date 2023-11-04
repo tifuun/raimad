@@ -32,5 +32,5 @@ dependencies = [
 # it has no `__init__.py` ???
 # Need to tell it explicitly which directory
 # contans the package.
-include = [ "PyCIF.*" ]
+include = [ "PyCIF", "PyCIF.*" ]
 
