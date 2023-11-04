@@ -5,7 +5,20 @@ PyCIF: Collaborative CAD platform for hierarchical design of on-chip imaging dev
 ![DeshimaDemo screenshot](img/DeshimaDemo.png)
 
 ## Documentation
-Check out the (work-in progress) documentation at https://gitlab.tudelft.nl/exp-ast/pycif-doc/
+You can read the (work-in-progress) documentation on Gitlab Pages:
+https://pycif-doc-exp-ast-9eaacae6a67b6164b16cb406c607dd46952114ff89777.gitlab.io/
+
+Unfortunately,
+TU Delft's gitlab instance [disables](https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)
+ <sup>[archived](https://web.archive.org/web/20231104192845/https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)</sup>
+the Pages feature,
+so we have to mirror this repository to gitlab.com.
+Consequently,
+you will need to register an account on gitlab.com
+and contact me so that I can give you access.
+
+The source code for the documentation is available at
+https://gitlab.tudelft.nl/exp-ast/pycif-doc/
 
 ## Installing
 
