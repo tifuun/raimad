@@ -30,7 +30,9 @@ dependencies = [
 # For some reason setuptools is angry
 # about the `img` directory, even thought
 # it has no `__init__.py` ???
-# Need to tell it explicitly which directory
-# contans the package.
+# Need to tell it explicitly
+# what packages to include.
+# This could theoretically be avoided by switching
+# to src-layout, but I don't want to ._.
 include = [ "PyCIF", "PyCIF.*" ]
 
