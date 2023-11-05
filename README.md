@@ -9,7 +9,7 @@ You can read the (work-in-progress) documentation on Gitlab Pages:
 https://pycif-doc-exp-ast-9eaacae6a67b6164b16cb406c607dd46952114ff89777.gitlab.io/
 
 Unfortunately,
-TU Delft's gitlab instance [disables](https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)
+TU Delft's Gitlab instance [disables](https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)
  <sup>[archived](https://web.archive.org/web/20231104192845/https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)</sup>
 the Pages feature,
 so we have to mirror this repository to gitlab.com.
