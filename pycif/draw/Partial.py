@@ -14,8 +14,11 @@ class Partial:
         self.options = options or {}
 
     def __call__(self, options=None):
+        new_options = dict()
+        new_options.update(self.options)
+        new_options.update(options)
         return self.Compo(
-            options=pc.Dict(self.options, options),
+            options=new_options,
             )
 
 
