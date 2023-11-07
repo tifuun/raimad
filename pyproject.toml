@@ -7,7 +7,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "PyCIF"
+name = "pycif"
 version = "0.0.0"
 description = """\
 Collaborative CAD platform for \
@@ -34,5 +34,5 @@ dependencies = [
 # what packages to include.
 # This could theoretically be avoided by switching
 # to src-layout, but I don't want to ._.
-include = [ "PyCIF", "PyCIF.*" ]
+include = [ "pycif", "pycif.*" ]
 

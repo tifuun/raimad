@@ -1,10 +1,10 @@
-import unittest
+"""Snowman: very basic example component."""
 
 import pycif as pc
 
-log = pc.get_logger(__name__)
-
 class Snowman(pc.Component):
+    """Snowman: very basic example component."""
+
     class Layers(pc.Component.Layers):
         snow = pc.Layer(
             "A collection of individual crystals of frozen dihydrogen monoxide"
@@ -23,7 +23,7 @@ class Snowman(pc.Component):
             )
         eye_size = pc.Option(
             2,
-            "Testing module-level __call__"
+            "Eye radius"
             )
 
     class Marks(pc.Component.Marks):
@@ -48,9 +48,10 @@ class Snowman(pc.Component):
             head.bbox.interpolate(0.7, 0.7)
             )
 
+        nose_tip = (self.options.l_nose, 0)
         nose = pc.CustomPolygon([
             (0, 2),
-            (self.options.l_nose, 0),
+            nose_tip,
             (0, -2)
             ])
 
@@ -67,10 +68,5 @@ class Snowman(pc.Component):
 
         self.add_subpolygon(nose, self.layers.carrot)
 
-class TestComponentCreation(unittest.TestCase):
-    def test_component_creation(self):
-        compo = Snowman()
-
-        with open('./test.cif', 'w') as f:
-            pc.export_cif(f, compo)
+        self.marks.nose_tip = nose_tip
 

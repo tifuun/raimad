@@ -1,6 +1,6 @@
 import unittest
 
-import PyCIF as pc
+import pycif as pc
 
 log = pc.get_logger(__name__)
 
