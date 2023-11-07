@@ -12,10 +12,8 @@ Unfortunately,
 TU Delft's Gitlab instance [disables](https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)
  <sup>[archived](https://web.archive.org/web/20231104192845/https://tu-delft-dcc.github.io/infrastructure/gitlab/gitlab_intro.html#:~:text=Hosting%20a%20website%20through%20pages%20is%20currently%20deactivated)</sup>
 the Pages feature,
-so we have to mirror this repository to gitlab.com.
-Consequently,
-you will need to register an account on gitlab.com
-and contact me so that I can give you access.
+so instead we use the public instance at gitlab.com
+to host the Pages site.
 
 The source code for the documentation is available at
 https://gitlab.tudelft.nl/exp-ast/pycif-doc/
