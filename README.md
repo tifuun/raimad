@@ -1,6 +1,6 @@
-# PyCIF
+# pycif
 
-PyCIF: Collaborative CAD platform for hierarchical design of on-chip imaging devices
+pycif: Collaborative CAD platform for hierarchical design of on-chip imaging devices
 
 ![DeshimaDemo screenshot](img/DeshimaDemo.png)
 
@@ -35,13 +35,13 @@ pip install git+https://gitlab.tudelft.nl/exp-ast/pycif
 ## Installing in development mode
 
 Installing in editable/development mode will allow you to
-edit PyCIF source code
+edit pycif source code
 and have the changes be immediately available,
 without having to reinstall every time.
 
 When cloning this repo
 make sure that the name of the folder it gets cloned into
-is different to the name of the package (i.e. `PyCIF`),
+is different to the name of the package (i.e. `pycif`),
 since that could cause issues.
 The check is case-sensitive,
 so something like
@@ -57,10 +57,10 @@ pip install -e ./pycif
 
 ## Examples
 
-Make sure PyCIF works by compiling the built-in Snowman component:
+Make sure pycif works by compiling the built-in Snowman component:
 
 ```bash
-python -m PyCIF export cif PyCIF:Snowman -o snowman.cif
+python -m pycif export cif pycif:Snowman -o snowman.cif
 ```
 
 Want a more *involved* example? Check out [DeshimaDemo](https://gitlab.tudelft.nl/exp-ast/pc_deshimademo)!
