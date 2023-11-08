@@ -14,6 +14,7 @@ from pathlib import Path
 from pycif import exporters
 from pycif.helpers.import_from_string import import_package_from_string
 
+ACTION_EXPORT = 'export'
 
 def cli():
     parser = argparse.ArgumentParser(
@@ -27,11 +28,10 @@ def cli():
         )
 
     _add_export_action(subparsers)
-    _add_modulebrowser_action(subparsers)
 
     args = parser.parse_args()
 
-    if args.action == 'export':
+    if args.action == ACTION_EXPORT:
         for exporter in exporters.CLI_EXPORTERS:
             if args.exporter == exporter.CLI_NAME:
                 exporter.run_cli(args)
@@ -41,22 +41,6 @@ def cli():
             # argparse validates this.
             parser.error('Unknown exporter')
 
-    elif args.action == 'browser':
-
-        if args.mb_action == 'generate':
-            from pycif.modulebrowser.Modulebrowser import Modulebrowser
-            browser = Modulebrowser()
-
-            for package in args.packages:
-                browser.register_package(package)
-
-            browser.generate_html(args.browser_dir)
-
-        elif args.mb_action == 'open':
-            import webbrowser
-            # Web browser needs to know the absolute path
-            index_path = args.browser_dir.resolve() / 'index.html'
-            webbrowser.open(f'file://{index_path}')
     else:
         # This should never happen, since
         # argparse validates this.
@@ -66,7 +50,7 @@ def cli():
 def _add_export_action(subparsers):
     """Setup parsers for 'export' action."""
     parser_export = subparsers.add_parser(
-        'export',
+        ACTION_EXPORT,
         )
 
     subparsers_export = parser_export.add_subparsers(
@@ -95,48 +79,4 @@ def _add_exporter_parser(subparsers, exporter):
         )
 
     exporter.create_parser_options(parser)
-
-
-def _add_modulebrowser_action(subparsers):
-    """Setup parsers for 'export' action."""
-    parser_mb = subparsers.add_parser(
-        'browser',
-        )
-
-    subparsers_mb = parser_mb.add_subparsers(
-        title='Modulebrowser Action',
-        dest='mb_action',
-        description='Modulebrowser action',
-        )
-
-    parser_mb_gen = subparsers_mb.add_parser(
-        'generate',
-        )
-
-    parser_mb_gen.add_argument(
-        'packages',
-        nargs='+',
-        help='List of packages to include',
-        type=import_package_from_string,
-        )
-
-    parser_mb_gen.add_argument(
-        '--browser-dir',
-        '-d',
-        type=Path,
-        help='Output directory',
-        default='./module_browser',
-        )
-
-    parser_mb_open = subparsers_mb.add_parser(
-        'open',
-        )
-
-    parser_mb_open.add_argument(
-        '--browser-dir',
-        '-d',
-        type=Path,
-        help='Module browser directory',
-        default='./module_browser',
-        )
 
