@@ -75,6 +75,6 @@ from pycif.draw.Snowman import Snowman
 
 from pycif import viz as viz
 
-from pycif.exporters.cif import export as export_cif
-from pycif.exporters.svg import export as export_svg
+from pycif.exporters.cif import export_cif
+from pycif.exporters.svg import export_svg
 

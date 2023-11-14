@@ -2,12 +2,13 @@
 Scalable Vector Graphics Exporter.
 """
 
+from io import IOBase, StringIO
+import typing
+from pathlib import Path
+
 import numpy as np
 
 import pycif as pc
-from pycif.exporters import argparse_utils
-
-CLI_NAME = 'svg'
 
 COLORS = [  # Matplotlib tab10 colorscheme ;D
     '1f77b4',
@@ -22,7 +23,7 @@ COLORS = [  # Matplotlib tab10 colorscheme ;D
     '17becf',
     ]
 
-def export(stream, component: pc.Component):
+def _export_svg(stream, component: pc.Component):
     """
     Export SVG file to stream.
     """
@@ -78,15 +79,25 @@ def export(stream, component: pc.Component):
 
     stream.write('</g></g></svg>\n')
 
-def create_parser_options(parser):
-    """
-    Add options to argparse parser to invoke this exporter
-    """
-    argparse_utils.arg_output_file(parser)
-    argparse_utils.arg_component(parser)
 
+def export_svg(
+        component: pc.Component,
+        dest: None | str | Path | IOBase = None):
+    """
+    Export SVG file as string or to stream or to filename
+    """
+    if dest is None:
+        stream = StringIO()
+        _export_svg(stream, component)
+        return stream.getvalue()
 
-def run_cli(args):
-    component = args.component()
-    export(args.output_file, component)
+    elif isinstance(dest, str | Path):
+        with open(dest, 'w') as file:
+            _export_svg(file, component)
+
+    elif isinstance(dest, IOBase):
+        _export_svg(dest, component)
+
+    else:
+        raise Exception(f"Cannot export to {dest}")
 

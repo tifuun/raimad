@@ -2,15 +2,13 @@
 Caltech Intermediate Form Exporter.
 """
 
+from io import IOBase, StringIO
+from pathlib import Path
+
 import numpy as np
-
 import pycif as pc
-from pycif.exporters import argparse_utils
 
-CLI_NAME = 'cif'
-
-
-def export(stream, component: pc.Component, multiply=1e3):
+def _export_cif(stream, component: pc.Component, multiply=1e3):
     """
     Export CIF file to stream.
     """
@@ -51,15 +49,24 @@ def export(stream, component: pc.Component, multiply=1e3):
 
     stream.write('E\n')
 
-def create_parser_options(parser):
+def export_cif(
+        component: pc.Component,
+        dest: None | str | Path | IOBase = None):
     """
-    Add options to argparse parser to invoke this exporter
+    Export CIF file as string or to stream or to filename
     """
-    argparse_utils.arg_output_file(parser)
-    argparse_utils.arg_component(parser)
+    if dest is None:
+        stream = StringIO()
+        _export_cif(stream, component)
+        return stream.getvalue()
 
+    elif isinstance(dest, str | Path):
+        with open(dest, 'w') as file:
+            _export_cif(file, component)
 
-def run_cli(args):
-    component = args.component()
-    export(args.output_file, component)
+    elif isinstance(dest, IOBase):
+        _export_cif(dest, component)
+
+    else:
+        raise Exception(f"Cannot export to {dest}")
 

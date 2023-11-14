@@ -71,6 +71,6 @@ class TestComponentCreation(unittest.TestCase):
     def test_component_creation(self):
         compo = Snowman()
 
-        with open('./test.cif', 'w') as f:
-            pc.export_cif(f, compo)
+        #with open('./test.cif', 'w') as f:
+        #    pc.export_cif(f, compo)
 

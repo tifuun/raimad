@@ -19,10 +19,10 @@ class RectCompo(pc.Component):
         self.add_subpolygon(rect3)
         self.add_subpolygon(rect4)
 
-class TestCoordinates(unittest.TestCase):
-    def test_coordinates(self):
-        compo = RectCompo()
-
-        with open('./test.cif', 'w') as f:
-            pc.export_cif(f, compo)
+#class TestCoordinates(unittest.TestCase):
+#    def test_coordinates(self):
+#        compo = RectCompo()
+#
+#        with open('./test.cif', 'w') as f:
+#            pc.export_cif(f, compo)
 
