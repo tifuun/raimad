@@ -96,30 +96,52 @@ class Component(pc.Markable, pc.BBoxable):
             raise NotImplementedError
             return iter(self._options.items())
 
-    class Layers():
-        """Namespace for layers."""
-
-        _layer_names: List[str]
-
-        def __init__(self):
-            """Create empty Layers namespace."""
-            self._layer_names = [
-                getattr(self, name)  # get the NAME
-                for name in dir(type(self))
-                if not name.startswith('_')
-                ]
-
-            # The usage of `dir` here as opposed to __dict__ is crucial,
-            # `__dict__` won't include inherited layers, but `dir` does.
-
-            if len(self._layer_names) < 1:
-                log.warning(
-                    f"{self} has no layers"
-                    )
-
+    class LayersMeta(type):
         def __iter__(self):
-            """Get Layers as iter."""
-            return iter(self._layer_names)
+            yield from self().__iter__()
+
+        def __getitem__(self, item):
+            return self().__getitem__(item)
+
+    class Layers(tuple, metaclass=LayersMeta):
+        _singleton: ClassVar[Self]
+
+        def __new__(cls):
+            if not '_singleton' in vars(cls).keys():
+                cls._singleton = super().__new__(cls, (
+                    layer
+                    for parent in cls.__mro__
+                        if issubclass(parent, Component.Layers)
+                    for layer in vars(parent).values()
+                        if isinstance(layer, pc.Layer)
+                    ))
+
+            return cls._singleton
+
+    #class Layers():
+    #    """Namespace for layers."""
+
+    #    _layer_names: List[str]
+
+    #    def __init__(self):
+    #        """Create empty Layers namespace."""
+    #        self._layer_names = [
+    #            getattr(self, name)  # get the NAME
+    #            for name in dir(type(self))
+    #            if not name.startswith('_')
+    #            ]
+
+    #        # The usage of `dir` here as opposed to __dict__ is crucial,
+    #        # `__dict__` won't include inherited layers, but `dir` does.
+
+    #        if len(self._layer_names) < 1:
+    #            log.warning(
+    #                f"{self} has no layers"
+    #                )
+
+    #    def __iter__(self):
+    #        """Get Layers as iter."""
+    #        return iter(self._layer_names)
 
     Modulebrowser_howtoget: ClassVar[str | None] = None
     # Something like 'from pc_Mymodule.Mycompo import Mycompo',

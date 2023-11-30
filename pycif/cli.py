@@ -19,7 +19,6 @@ ACTION_EXPORT = 'export'
 FORMATS = (  # These MUST be lowercase!
     FORMAT_CIF := 'cif',
     FORMAT_SVG := 'svg',
-    FORMAT_BROWSER := 'pycif-browser',
     )
 
 def cli(custom_args = None):
@@ -36,9 +35,6 @@ def cli(custom_args = None):
 
         elif args.format == FORMAT_SVG:
             pycif.export_svg(compo, args.output_file)
-
-        elif args.format == FORMAT_BROWSER:
-            NotImplemented
 
         else:
             # This should never happen, since

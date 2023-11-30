@@ -78,3 +78,5 @@ from pycif import viz as viz
 from pycif.exporters.cif import export_cif
 from pycif.exporters.svg import export_svg
 
+from pycif import err
+

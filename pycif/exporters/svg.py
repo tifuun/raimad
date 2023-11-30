@@ -50,7 +50,7 @@ def _export_svg(stream, component: pc.Component):
             '   M0,4 l4,-4'
             '   M3,5 l2,-2" '
             f'   style="stroke:#{color}; stroke-width:1" />'
-            '</pattern>'
+            '</pattern>\n'
             )
 
     for subpoly in component.get_subpolygons():
