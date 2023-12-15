@@ -43,8 +43,6 @@ class Polygon(pc.Markable, pc.BBoxable):
             def _make(c_self):
                 c_self.add_subpolygon(self)
 
-        stream = StringIO()
-        pc.export_svg(stream, WrapperComponent())
-        return stream.getvalue()
+        return pc.export_svg(WrapperComponent())
 
 

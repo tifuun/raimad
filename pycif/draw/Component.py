@@ -82,19 +82,40 @@ class Component(pc.Markable, pc.BBoxable):
     a desired outcome.
     """
 
-    class Options():
-        """Namespace for options."""
-
-        _option_values: Mapping[str, Any]
-
-        def __init__(self):
-            """Create empty Options namespace."""
-            self._option_values = {}
-
+    class OptionsMeta(type):
         def __iter__(self):
-            """Get options as iter."""
-            raise NotImplementedError
-            return iter(self._options.items())
+            for parent in self.__mro__:
+                if not issubclass(parent, Component.Options):
+                    break
+
+                for name, option in vars(parent).items():
+                    if not isinstance(option, pc.Option):
+                        continue
+
+                    yield option
+
+    class Options(dict, metaclass=OptionsMeta):
+        def __init__(self, values = None):
+            for parent in type(self).__mro__:
+                if not issubclass(parent, Component.Options):
+                    break
+
+                for name, option in vars(parent).items():
+                    if not isinstance(option, pc.Option.Option):
+                        continue
+                    self[name] = option.default
+
+            if values is None:
+                return
+
+            if (unknown_opts := set(values.keys()) - self.keys()):
+                raise pc.draw.Option.UnknownOptionSuppliedError(
+                    f'Unknown option(s) {unknown_opts}. '
+                    f'Known option(s) are {self.keys()}.'
+                    )
+
+            for option, value in values.items():
+                self[option] = value
 
     class LayersMeta(type):
         def __iter__(self):
@@ -202,11 +223,8 @@ class Component(pc.Markable, pc.BBoxable):
         """
         super().__init__()
 
-        self.options = self.Options()
+        self.options = self.Options(options)
         self.layers = self.Layers()
-
-        if options:
-            self.options._option_values.update(options)
 
         self.subcomponents = []
         self.subpolygons = []
@@ -387,9 +405,7 @@ class Component(pc.Markable, pc.BBoxable):
 
     def _repr_svg_(self):
         """Export component as svg. For use in Jupyter notebooks."""
-        stream = StringIO()
-        pc.export_svg(stream, self)
-        return stream.getvalue()
+        return pc.export_svg(self)
 
 class Subpolygon(object):
     """
