@@ -1,6 +1,7 @@
 import unittest
 import tempfile
 import shlex
+import os
 from io import StringIO
 
 import pycif as pc
@@ -38,7 +39,7 @@ class TestExportCif(unittest.TestCase):
         num_polys = string.count('P')
         self.assertEqual(num_polys, 6)
 
-    def test_export_cif_cli(self):
+    def test_export_cif_cli_guess_format(self):
         with tempfile.NamedTemporaryFile(
                 'w',
                 suffix=f'.{cli.FORMAT_CIF}',
@@ -51,6 +52,18 @@ class TestExportCif(unittest.TestCase):
 
         with open(path, 'r') as file:
             string = file.read()
+
+        num_polys = string.count('P')
+        self.assertEqual(num_polys, 6)
+
+    def test_export_cif_cli_guess_filename(self):
+        with tempfile.TemporaryDirectory(delete=True) as folder:
+
+            os.chdir(folder)
+            cli.cli(shlex.split('export pycif:Snowman --format cif'))
+
+            with open('Snowman.cif', 'r') as file:
+                string = file.read()
 
         num_polys = string.count('P')
         self.assertEqual(num_polys, 6)

@@ -20,8 +20,9 @@ FORMATS = (  # These MUST be lowercase!
     FORMAT_CIF := 'cif',
     FORMAT_SVG := 'svg',
     )
+FILE_STDOUT = '-'
 
-def cli(custom_args = None):
+def cli(custom_args=None):
 
     parser = _setup_parser()
     args = parser.parse_args(*[custom_args])
@@ -85,11 +86,12 @@ def _add_export_action(subparsers):
         type=str,
         nargs='?',
         help=(
-            'Output file. Use `-` for stdout. '
+            f'Output file. Use `{FILE_STDOUT}` for stdout. '
             '`{name}` will get formatted with component name. '
-            'Extension is used to guess format.'
+            '`{format}` will get formatted with the specified format '
+            '(cif by default). '
             ),
-        default='{name}.cif',
+        default='{name}.{format}',
         )
 
     parser.add_argument(
@@ -101,30 +103,49 @@ def _add_export_action(subparsers):
         help=(
             'Output format. '
             'If not given, guess from extension of output file. '
-            'If output file is `-` (stdout), cif format is assumed. '
+            f'If output file not given or `{FILE_STDOUT}` (stdout), '
+            'cif format is assumed. '
             ),
         )
 
-def _process_args(args):
-    if args.output_file == '-':
-        args.output_file = stdout
-        if not args.format:
-            args.format = FORMAT_CIF
+def guess_format(args):
+    if args.format:
+        return args.format
 
-    else:
-        args.output_file = args.output_file.replace(
+    if args.output_file == FILE_STDOUT:
+        return FORMAT_CIF
+
+    lower = args.output_file.lower()
+    for fmt in FORMATS:
+        if lower.endswith(f'.{fmt}'):
+            return fmt
+
+    raise Exception(
+        "Could not determine format from filename."
+        )
+
+def guess_file(args, fmt):
+    if args.output_file == FILE_STDOUT:
+        return stdout
+
+    return (
+        args.output_file
+        .replace(
             '{name}',
             args.component.__name__
             )
+        .replace(
+            '{format}',
+            fmt
+            )
+        )
 
-    if not args.format:
-        lower = args.output_file.lower()
-        for fmt in FORMATS:
-            if lower.endswith(f'.{fmt}'):
-                args.format = fmt
-                break
-        else:
-            raise Exception(
-                "Could not determine format from filename."
-                )
+
+def _process_args(args):
+
+    fmt = guess_format(args)
+    file = guess_file(args, fmt)
+    args.output_file = file
+    args.format = fmt
+
 
