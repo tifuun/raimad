@@ -26,11 +26,11 @@ def cli(custom_args=None):
 
     parser = _setup_parser()
     args = parser.parse_args(*[custom_args])
-    _process_args(args)
-
-    compo = args.component()
 
     if args.action == ACTION_EXPORT:
+        _process_args(args)
+        compo = args.component()
+
         if args.format == FORMAT_CIF:
             pycif.export_cif(compo, args.output_file)
 
@@ -108,7 +108,7 @@ def _add_export_action(subparsers):
             ),
         )
 
-def guess_format(args):
+def _guess_format(args):
     if args.format:
         return args.format
 
@@ -124,7 +124,7 @@ def guess_format(args):
         "Could not determine format from filename."
         )
 
-def guess_file(args, fmt):
+def _guess_file(args, fmt):
     if args.output_file == FILE_STDOUT:
         return stdout
 
@@ -143,8 +143,8 @@ def guess_file(args, fmt):
 
 def _process_args(args):
 
-    fmt = guess_format(args)
-    file = guess_file(args, fmt)
+    fmt = _guess_format(args)
+    file = _guess_file(args, fmt)
     args.output_file = file
     args.format = fmt
 
