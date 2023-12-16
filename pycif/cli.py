@@ -22,6 +22,10 @@ FORMATS = (  # These MUST be lowercase!
     )
 FILE_STDOUT = '-'
 
+class UnknownFormatError(Exception):
+    pass
+
+
 def cli(custom_args=None):
 
     parser = _setup_parser()
@@ -120,7 +124,7 @@ def _guess_format(args):
         if lower.endswith(f'.{fmt}'):
             return fmt
 
-    raise Exception(
+    raise UnknownFormatError(
         "Could not determine format from filename."
         )
 

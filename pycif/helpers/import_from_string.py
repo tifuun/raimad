@@ -8,7 +8,7 @@ import importlib
 from typing import Any
 
 
-class ImportFromStringError(Exception):
+class ImportFromStringError(ImportError):
     pass
 
 
