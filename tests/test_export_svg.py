@@ -55,3 +55,20 @@ class TestExportSvg(unittest.TestCase):
         num_polys = string.count('<polygon')
         self.assertEqual(num_polys, 6)
 
+    def test_export_svg_compo_repr(self):
+        compo = pc.Snowman()
+        string = compo._repr_svg_()
+        num_polys = string.count('<polygon')
+        self.assertEqual(num_polys, 6)
+
+    def test_export_svg_poly_repr(self):
+        poly = pc.RectWire(
+            pc.Point(0, 0),
+            pc.Point(100, 100),
+            5,
+            )
+
+        string = poly._repr_svg_()
+        num_polys = string.count('<polygon')
+        self.assertEqual(num_polys, 1)
+

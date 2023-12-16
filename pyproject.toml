@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pycif"
-version = "0.0.2"
+version = "0.0.3"
 description = """\
 Collaborative CAD platform for \
 hierarchical design of on-chip imaging devices\
