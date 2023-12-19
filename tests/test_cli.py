@@ -44,7 +44,6 @@ class TestCLI(unittest.TestCase):
         with self.assertRaises(pc.err.UnknownFormatError):
             cli.cli(shlex.split('export pycif:Snowman -o invalid.invalid'))
 
-
     def test_cli_invalid_component(self):
 
         with self.assertRaises(pc.err.ImportFromStringError):
