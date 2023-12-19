@@ -3,6 +3,7 @@ import tempfile
 import shlex
 import os
 from io import StringIO
+from pathlib import Path
 
 import pycif as pc
 from pycif import cli
@@ -35,6 +36,19 @@ class TestExportSvg(unittest.TestCase):
             pc.export_svg(compo, file)
             file.seek(0)
             string = file.read()
+
+        num_polys = string.count('<polygon')
+        self.assertEqual(num_polys, 6)
+
+    def test_export_svg_py_filename(self):
+        compo = pc.Snowman()
+
+        with tempfile.NamedTemporaryFile('w', delete=False) as file:
+            path = file.name
+
+        pc.export_svg(compo, path)
+
+        string = Path(path).read_text()
 
         num_polys = string.count('<polygon')
         self.assertEqual(num_polys, 6)
