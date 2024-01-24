@@ -1,4 +1,4 @@
-"""Component.py: contains Component class, relevant helpers, and Exceptions."""
+"""Compo.py: contains Compo class, relevant helpers, and Exceptions."""
 
 from io import StringIO
 from typing import Any, Type, Self, List, ClassVar, Mapping
@@ -17,75 +17,75 @@ log = pc.get_logger(__name__)
 # str can be used to specify the layername of the parent
 # when child has only one layer
 # otherwise needs full dict
-SubcomponentLayermapShorthand = None | str | dict
+SubcompoLayermapShorthand = None | str | dict
 SubpolygonLayerShorthand = None | str
 
-class Component(pc.Markable, pc.BBoxable):
+class Compo(pc.Markable, pc.BBoxable):
     """
-    Components: the building blocks of all pycif designs.
+    Compos: the building blocks of all pycif designs.
 
-    A Component class consists of:
+    A Compo class consists of:
         - Layers
         - Options
         - Marks
         - the _make function
 
-    Layers define the lithographic layers that a component class
+    Layers define the lithographic layers that a compo class
     places its geometry on.
 
-    Options are customization parameters that users of the component
+    Options are customization parameters that users of the compo
     may wish to change.
 
-    Marks are named points in the component,
+    Marks are named points in the compo,
     which may be of interest to its users.
 
     The _make() function contains instructions on how
-    to create the component's geometry based on the Options.
+    to create the compo's geometry based on the Options.
 
-    An instance of a Component class,
-    or a "component instance" for short,
+    An instance of a Compo class,
+    or a "compo instance" for short,
     contains:
-        - Subcomponents
+        - Subcompos
         - Subpolygons
         - Specific options
         - Specific marks
 
-    Subcomponents and Subpolygons make up the geometry of each
-    component instance.
+    Subcompos and Subpolygons make up the geometry of each
+    compo instance.
 
-    Each Supolygon exists on strictly one layer in its parent component.
+    Each Supolygon exists on strictly one layer in its parent compo.
 
-    Each Subcomponent may have different layers than the parent component,
+    Each Subcompo may have different layers than the parent compo,
     and for this there exists a "layer map",
-    which dictates how the geometry of a subcomponent gets
-    transfered to the parent component.
+    which dictates how the geometry of a subcompo gets
+    transfered to the parent compo.
 
     For example, an I-shaped filter may have abstract "Ground"
     and "Dielectric" layers,
     which may be mapped to concrete "Ground plane" and "E-Beam Dielectric"
-    layers in the parent component.
+    layers in the parent compo.
 
-    All instances of a given Component class
+    All instances of a given Compo class
     share the same set of layers,
-    but what geometry exists on those layers may be different per component,
+    but what geometry exists on those layers may be different per compo,
     depending on the Options.
 
-    All instances of a given Component class
+    All instances of a given Compo class
     share the same set of marks,
-    but the specific locations of those marks may be different per component,
+    but the specific locations of those marks may be different per compo,
     depending on the Options.
 
-    All instances of a given Component class
+    All instances of a given Compo class
     share the same set of options and default values,
     but those default values may be owerwritten
-    by whoever is instantiation that Component to achieve
+    by whoever is instantiation that Compo to achieve
     a desired outcome.
     """
 
     class OptionsMeta(type):
         def __iter__(self):
             for parent in self.__mro__:
-                if not issubclass(parent, Component.Options):
+                if not issubclass(parent, Compo.Options):
                     break
 
                 for name, option in vars(parent).items():
@@ -97,7 +97,7 @@ class Component(pc.Markable, pc.BBoxable):
     class Options(dict, metaclass=OptionsMeta):
         def __init__(self, values = None):
             for parent in type(self).__mro__:
-                if not issubclass(parent, Component.Options):
+                if not issubclass(parent, Compo.Options):
                     break
 
                 for name, option in vars(parent).items():
@@ -132,7 +132,7 @@ class Component(pc.Markable, pc.BBoxable):
                 cls._singleton = super().__new__(cls, (
                     layer
                     for parent in cls.__mro__
-                        if issubclass(parent, Component.Layers)
+                        if issubclass(parent, Compo.Layers)
                     for layer in vars(parent).values()
                         if isinstance(layer, pc.Layer)
                     ))
@@ -168,15 +168,15 @@ class Component(pc.Markable, pc.BBoxable):
     # Something like 'from pc_Mymodule.Mycompo import Mycompo',
     # otherwise this is autogenerated using inspect.
 
-    # Every component instance has its own instance of Options,
+    # Every compo instance has its own instance of Options,
     # so that Options._options (which stores the actual values for each
-    # component) is unique per component instance
+    # compo) is unique per compo instance
     options: Options
 
-    # Layers are the same for each component class,
+    # Layers are the same for each compo class,
     # so we store it as a classvar.
     # We could also store the Layers *class*
-    # for each Component class
+    # for each Compo class
     # (i.e. ClassVar[Type[Layers]] ),
     # but we don't, for consistency's sake,
     # and also because then the Layer descriptor wouldn't work.
@@ -184,28 +184,28 @@ class Component(pc.Markable, pc.BBoxable):
 
     def __init_subclass__(cls, **kwargs):
         """
-        Verify that Component class is created corresctly.
+        Verify that Compo class is created corresctly.
 
-        1. Check that Options namespace inherits from Component.Options
-        2. Check that Layers namespace inherits from Component.Layers
+        1. Check that Options namespace inherits from Compo.Options
+        2. Check that Layers namespace inherits from Compo.Layers
         3. Check that Layer objects in Layers namespace are created correctly.
         """
         super().__init_subclass__(**kwargs)
 
-        if not issubclass(cls.Options, Component.Options):
+        if not issubclass(cls.Options, Compo.Options):
             raise Exception(
-                """`Options` must inherit from Component.Options"""
+                """`Options` must inherit from Compo.Options"""
                 )
 
-        if not issubclass(cls.Layers, Component.Layers):
+        if not issubclass(cls.Layers, Compo.Layers):
             raise Exception(
-                """`Layers` must inherit from Component.Layers"""
+                """`Layers` must inherit from Compo.Layers"""
                 )
 
         for name, obj in cls.Layers.__dict__.items():
             if isinstance(obj, type) and issubclass(obj, pc.Layer):
                 log.warn(
-                    f"Component class {cls},\n"
+                    f"Compo class {cls},\n"
                     f"layer specification {cls.Layers}\n"
                     f"contains Layer *class* {obj}.\n"
                     f"Did somebody accidentally type {name} = pc.Layer\n"
@@ -214,7 +214,7 @@ class Component(pc.Markable, pc.BBoxable):
 
     def __init__(self, options=None):
         """
-        Create new component instance.
+        Create new compo instance.
 
         Parameters
         ----------
@@ -226,36 +226,36 @@ class Component(pc.Markable, pc.BBoxable):
         self.options = self.Options(options)
         self.layers = self.Layers()
 
-        self.subcomponents = []
+        self.subcompos = []
         self.subpolygons = []
 
         self._make()
 
     def copy(self):
-        """Copy the component instance."""
+        """Copy the compo instance."""
         # TODO think about this
         return deepcopy(self)
 
-    def add_subcomponent(
+    def add_subcompo(
             self,
-            component,
-            layermap_shorthand: SubcomponentLayermapShorthand = None,
+            compo,
+            layermap_shorthand: SubcompoLayermapShorthand = None,
             ):
-        """Add new component as a subcomponent."""
-        layermap = parse_subcomponent_layermap_shorthand(
+        """Add new compo as a subcompo."""
+        layermap = parse_subcompo_layermap_shorthand(
             self,
-            component,
+            compo,
             layermap_shorthand,
             )
 
-        subcomponent = Subcomponent(
-            component,
+        subcompo = Subcompo(
+            compo,
             layermap,
             )
 
         # TODO update bbox here?
 
-        self.subcomponents.append(subcomponent)
+        self.subcompos.append(subcompo)
 
     def add_subpolygon(
             self,
@@ -319,7 +319,7 @@ class Component(pc.Markable, pc.BBoxable):
             for subpoly in [
                 *[
                     subpoly_inner
-                    for subcompo in self.subcomponents
+                    for subcompo in self.subcompos
                     for subpoly_inner in subcompo.get_subpolygons()
                     ],
                 *[
@@ -343,7 +343,7 @@ class Component(pc.Markable, pc.BBoxable):
     def _make(self):
         """
         This method should actually generate all subpolygons
-        and subcomponents.
+        and subcompos.
 
         This is an abstract base class,
         so here this method actually does nothing.
@@ -365,20 +365,20 @@ class Component(pc.Markable, pc.BBoxable):
 
     @classmethod
     def is_interface(cls):
-        if cls is Component:
-            print("""Base Component class is not an interface.""")
+        if cls is Compo:
+            print("""Base Compo class is not an interface.""")
             return False
 
-        return (cls.parent() is Component)
+        return (cls.parent() is Compo)
 
     @classmethod
     def is_interface_of(cls, of: Type[Self]):
-        if cls is Component:
-            print("""Base Component class is not an interface.""")
+        if cls is Compo:
+            print("""Base Compo class is not an interface.""")
             return False
 
-        if of is Component:
-            print("""Base Component class cannot have interfaces""")
+        if of is Compo:
+            print("""Base Compo class cannot have interfaces""")
             return False
 
         return issubclass(cls, of)
@@ -386,7 +386,7 @@ class Component(pc.Markable, pc.BBoxable):
     @classmethod
     def get_custom_methods(cls):
         """
-        Extract custom methods from this component class.
+        Extract custom methods from this compo class.
         For example, automatic connection methods
         from CPWs.
         """
@@ -404,7 +404,7 @@ class Component(pc.Markable, pc.BBoxable):
             }
 
     def _repr_svg_(self):
-        """Export component as svg. For use in Jupyter notebooks."""
+        """Export compo as svg. For use in Jupyter notebooks."""
         return pc.export_svg(self)
 
 class Subpolygon(object):
@@ -421,31 +421,31 @@ class Subpolygon(object):
 
     def get_subpolygon(self):
         # This is where the polygons of the living breathing
-        # component hierarchy get cloned for export.
+        # compo hierarchy get cloned for export.
         return Subpolygon(self.polygon.copy(), self.layer)
 
     def get_polygon(self):
         # This is where the polygons of the living breathing
-        # component hierarchy get cloned for export.
+        # compo hierarchy get cloned for export.
         return self.polygon.copy()
 
-class Subcomponent(object):
+class Subcompo(object):
     """
-    Container for component that is part of another component.
+    Container for compo that is part of another compo.
     """
-    def __init__(self, component, layermap):
-        self.component = component
+    def __init__(self, compo, layermap):
+        self.compo = compo
         self.layermap = layermap
 
     def get_subpolygons(self):
         return [
             Subpolygon(subpoly.get_polygon(), self.layermap[subpoly.layer])
             for subpoly
-            in self.component.get_subpolygons()
+            in self.compo.get_subpolygons()
             if self.layermap[subpoly.layer] is not None
             ]
 
-def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: SubcomponentLayermapShorthand):
+def parse_subcompo_layermap_shorthand(parent, child, layermap_shorthand: SubcompoLayermapShorthand):
 
     parent_layers = set(parent.layers)
     child_layers = set(child.layers)
@@ -467,23 +467,23 @@ def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: Sub
         else:
             raise Exception(
                 f"You must specify how to map the layers {child_layers} "
-                f"of child component {child} "
+                f"of child compo {child} "
                 f"to the layers {parent_layers} "
-                f"of parent component {parent}"
+                f"of parent compo {parent}"
                 )
 
     elif isinstance(layermap_shorthand, str):
         if len(child_layers) != 1:
             raise Exception(
                 "You specified an str layermap shorthand, "
-                "but the child component doesn't have "
+                "but the child compo doesn't have "
                 "just one layer."
                 )
 
         if layermap_shorthand not in parent_layers:
             raise Exception(
                 "You specified an str layermap shorthand, "
-                "but that layer is not in the parent component."
+                "but that layer is not in the parent compo."
                 )
 
         layermap = {list(child_layers)[0]: layermap_shorthand}
@@ -491,12 +491,12 @@ def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: Sub
     elif isinstance(layermap_shorthand, dict):
         if not set(layermap_shorthand.keys()).issubset(child_layers):
             raise Exception(
-                "Layermap keys are not a subset of child component layers"
+                "Layermap keys are not a subset of child compo layers"
                 )
 
         if not set(layermap_shorthand.values()).issubset(parent_layers):
             raise Exception(
-                "Layermap values are not a subset of parent component layers"
+                "Layermap values are not a subset of parent compo layers"
                 )
 
         layermap = layermap_shorthand
@@ -509,7 +509,7 @@ def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: Sub
     # Pad layermap
     for missing_layer in child_layers - set(layermap):
         log.warning(
-            f"throwing away layer {missing_layer} of child component {child} "
+            f"throwing away layer {missing_layer} of child compo {child} "
             f"with parent {parent} "
             f"because it was not mentioned in the layermap."
             f"Please explicitly map this layer to None in the future."
@@ -521,7 +521,7 @@ def parse_subcomponent_layermap_shorthand(parent, child, layermap_shorthand: Sub
 
 
 def parse_subpolygon_layer_shorthand(
-        parent: Component,
+        parent: Compo,
         child: pc.Polygon,
         layer_shorthand: SubpolygonLayerShorthand
         ):
@@ -539,7 +539,7 @@ def parse_subpolygon_layer_shorthand(
         else:
             raise Exception(
                 f"Could not map polygon {child} to \n"
-                f"parent component {parent} \n"
+                f"parent compo {parent} \n"
                 "because the parent contains multiple layers \n"
                 f"({parent_layers}), \n"
                 f"and you did not specify which layer this polygon "
@@ -552,7 +552,7 @@ def parse_subpolygon_layer_shorthand(
         else:
             raise Exception(
                 f"Could not map polygon {child} to \n"
-                f"parent component {parent} \n"
+                f"parent compo {parent} \n"
                 f"because the specified layer `{layer_shorthand}` \n"
                 f"could not be found in the parent \n"
                 f"(valid layers are {parent_layers})."

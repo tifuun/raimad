@@ -4,8 +4,8 @@ import pycif as pc
 
 log = pc.get_logger(__name__)
 
-class RectCompo(pc.Component):
-    class Layers(pc.Component.Layers):
+class RectCompo(pc.Compo):
+    class Layers(pc.Compo.Layers):
         root = pc.Layer()
 
     def _make(self):

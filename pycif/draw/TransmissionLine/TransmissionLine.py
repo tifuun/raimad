@@ -12,9 +12,9 @@ from .resolvers.bridges import BridgeSpec
 log = pc.get_logger(__name__)
 
 class TransmissionLine:
-    bends_: Sequence[pc.Component]
-    bridges_: Sequence[pc.Component]
-    straights_: Sequence[pc.Component]
+    bends_: Sequence[pc.Compo]
+    bridges_: Sequence[pc.Compo]
+    straights_: Sequence[pc.Compo]
 
     bendspecs_: Sequence[BendSpec]
     bridgespecs_: Sequence[BridgeSpec]
@@ -78,22 +78,22 @@ class TransmissionLine:
         self._resolved_path = path4
         # TODO type for path
 
-    def make_bends(self, bend_compo: pc.typing.ComponentClass):
-        self.bends_ = pc.tl.make_bend_components(
+    def make_bends(self, bend_compo: pc.typing.CompoClass):
+        self.bends_ = pc.tl.make_bend_compos(
             self.bendspecs_,
             bend_compo
             )
         return self.bends_
 
-    def make_bridges(self, bridge_compo: pc.typing.ComponentClass):
-        self.bridges_ = pc.tl.make_bridge_components(
+    def make_bridges(self, bridge_compo: pc.typing.CompoClass):
+        self.bridges_ = pc.tl.make_bridge_compos(
             self.bridgespecs_,
             bridge_compo
             )
         return self.bridges_
 
-    def make_straights(self, straight_compo: pc.typing.ComponentClass):
-        self.straights_ = pc.tl.make_straight_components(
+    def make_straights(self, straight_compo: pc.typing.CompoClass):
+        self.straights_ = pc.tl.make_straight_compos(
             self.straightspecs_,
             straight_compo
             )

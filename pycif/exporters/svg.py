@@ -23,11 +23,11 @@ COLORS = [  # Matplotlib tab10 colorscheme ;D
     '17becf',
     ]
 
-def _export_svg(stream, component: pc.Component):
+def _export_svg(stream, compo: pc.Compo):
     """
     Export SVG file to stream.
     """
-    bbox = component.bbox.pad(10)
+    bbox = compo.bbox.pad(10)
 
     stream.write(
         '<svg xmlns="http://www.w3.org/2000/svg" '
@@ -53,7 +53,7 @@ def _export_svg(stream, component: pc.Component):
             '</pattern>\n'
             )
 
-    for subpoly in component.get_subpolygons():
+    for subpoly in compo.get_subpolygons():
         poly = subpoly.polygon
 
         color_index = sum(map(ord, subpoly.layer)) % len(COLORS)
@@ -81,22 +81,22 @@ def _export_svg(stream, component: pc.Component):
 
 
 def export_svg(
-        component: pc.Component,
+        compo: pc.Compo,
         dest: None | str | Path | IOBase = None):
     """
     Export SVG file as string or to stream or to filename
     """
     if dest is None:
         stream = StringIO()
-        _export_svg(stream, component)
+        _export_svg(stream, compo)
         return stream.getvalue()
 
     elif isinstance(dest, str | Path):
         with open(dest, 'w') as file:
-            _export_svg(file, component)
+            _export_svg(file, compo)
 
     elif isinstance(dest, IOBase):
-        _export_svg(dest, component)
+        _export_svg(dest, compo)
 
     else:
         raise Exception(f"Cannot export to {dest}")

@@ -4,8 +4,8 @@ import pycif as pc
 
 log = pc.get_logger(__name__)
 
-class Snowman(pc.Component):
-    class Layers(pc.Component.Layers):
+class Snowman(pc.Compo):
+    class Layers(pc.Compo.Layers):
         snow = pc.Layer(
             "A collection of individual crystals of frozen dihydrogen monoxide"
             )
@@ -16,7 +16,7 @@ class Snowman(pc.Component):
             "Non-malleable polycrystalline silicon layer"
             )
 
-    class Options(pc.Component.Options):
+    class Options(pc.Compo.Options):
         l_nose = pc.Option.Geometric(
             10,
             "Nose length"
@@ -26,7 +26,7 @@ class Snowman(pc.Component):
             "Testing module-level __call__"
             )
 
-    class Marks(pc.Component.Marks):
+    class Marks(pc.Compo.Marks):
         nose_tip = pc.Mark("Tip of the nose")
 
     def _make(self):
@@ -67,8 +67,8 @@ class Snowman(pc.Component):
 
         self.add_subpolygon(nose, self.layers.carrot)
 
-class TestComponentCreation(unittest.TestCase):
-    def test_component_creation(self):
+class TestCompoCreation(unittest.TestCase):
+    def test_compo_creation(self):
         compo = Snowman()
 
         #with open('./test.cif', 'w') as f:

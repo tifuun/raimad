@@ -19,15 +19,15 @@ def arg_output_file(parser):
         )
 
 
-def arg_component(parser):
+def arg_compo(parser):
     """
     Add an argument for specifying the compoent
     in uvicorn import_fom_string notation.
     """
     parser.add_argument(
-        'component',
+        'compo',
         type=import_from_string,
-        help='Component to export. {Path to module}:{Object name}',
+        help='Compo to export. {Path to module}:{Object name}',
         )
 
 

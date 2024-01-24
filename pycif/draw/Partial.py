@@ -1,5 +1,5 @@
 """
-Allow specifying component options partially
+Allow specifying compo options partially
 """
 
 import pycif as pc
@@ -7,7 +7,7 @@ import pycif as pc
 class Partial:
     def __init__(
             self,
-            Compo: pc.Component,
+            Compo: pc.Compo,
             options: dict | None = None,
             ):
         self.Compo = Compo

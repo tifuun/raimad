@@ -136,19 +136,19 @@ def construct_bridges(path, spacing, scramble, bridge_length, do_bridges=True, s
     # TODO split up and refactor this CHONKER of a function
     return newpath, specs
 
-def make_bridge_component(spec: BridgeSpec, Compo: pc.typing.ComponentClass):
+def make_bridge_compo(spec: BridgeSpec, Compo: pc.typing.CompoClass):
     return (
         Compo(options=dict(length=spec.length))
         .marks.tl_enter.to(spec.start)
         .marks.tl_enter.rotate(spec.angle)
         )
 
-def make_bridge_components(
+def make_bridge_compos(
         specs: Iterable[BridgeSpec],
-        Compo: pc.typing.ComponentClass,
+        Compo: pc.typing.CompoClass,
         ):
     return [
-        make_bridge_component(spec, Compo)
+        make_bridge_compo(spec, Compo)
         for spec in specs
         ]
 

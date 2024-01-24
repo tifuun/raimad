@@ -1,5 +1,5 @@
 """
-Markable -- interface for adding named points to components
+Markable -- interface for adding named points to compos
 """
 
 from typing import Mapping

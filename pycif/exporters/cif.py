@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pycif as pc
 
-def _export_cif(stream, component: pc.Component, multiply=1e3):
+def _export_cif(stream, compo: pc.Compo, multiply=1e3):
     """
     Export CIF file to stream.
     """
@@ -20,7 +20,7 @@ def _export_cif(stream, component: pc.Component, multiply=1e3):
     stream.write('(Nederland);\n')
 
     subpolys = sorted(
-        component.get_subpolygons(),
+        compo.get_subpolygons(),
         key=lambda subpoly: subpoly.layer
         )
 
@@ -50,22 +50,22 @@ def _export_cif(stream, component: pc.Component, multiply=1e3):
     stream.write('E\n')
 
 def export_cif(
-        component: pc.Component,
+        compo: pc.Compo,
         dest: None | str | Path | IOBase = None):
     """
     Export CIF file as string or to stream or to filename
     """
     if dest is None:
         stream = StringIO()
-        _export_cif(stream, component)
+        _export_cif(stream, compo)
         return stream.getvalue()
 
     elif isinstance(dest, str | Path):
         with open(dest, 'w') as file:
-            _export_cif(file, component)
+            _export_cif(file, compo)
 
     elif isinstance(dest, IOBase):
-        _export_cif(dest, component)
+        _export_cif(dest, compo)
 
     else:
         raise Exception(f"Cannot export to {dest}")

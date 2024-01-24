@@ -134,7 +134,7 @@ class Transform(object):
     # TODO typing.point
     # types defined in own files
     # then mergen in pc.typing
-    # or just PointType, ComponentClassType, etc
+    # or just PointType, CompoClassType, etc
     def move(self, x: float | pc.Point = 0, y: float = 0) -> Self:
         if isinstance(x, pc.Point):
             x, y = x

@@ -134,7 +134,7 @@ def construct_bend(before, point, after, radius):
         point_center=point_turn_center,
         )
 
-def make_bend_component(spec: BendSpec, Compo: pc.typing.ComponentClass):
+def make_bend_compo(spec: BendSpec, Compo: pc.typing.CompoClass):
     return Compo(options=dict(
         angle_start=spec.angle_start,
         angle_end=spec.angle_end,
@@ -142,12 +142,12 @@ def make_bend_component(spec: BendSpec, Compo: pc.typing.ComponentClass):
         bend_radius=spec.radius,
         )).marks.center.to(spec.point_center)
 
-def make_bend_components(
+def make_bend_compos(
         specs: Iterable[BendSpec],
-        Compo: pc.typing.ComponentClass
+        Compo: pc.typing.CompoClass
         ):
     return [
-        make_bend_component(spec, Compo)
+        make_bend_compo(spec, Compo)
         for spec in specs
         ]
 

@@ -1,11 +1,11 @@
-"""Snowman: very basic example component."""
+"""Snowman: very basic example compo."""
 
 import pycif as pc
 
-class Snowman(pc.Component):
-    """Snowman: very basic example component."""
+class Snowman(pc.Compo):
+    """Snowman: very basic example compo."""
 
-    class Layers(pc.Component.Layers):
+    class Layers(pc.Compo.Layers):
         snow = pc.Layer(
             "A collection of individual crystals of frozen dihydrogen monoxide"
             )
@@ -16,7 +16,7 @@ class Snowman(pc.Component):
             "Non-malleable polycrystalline silicon layer"
             )
 
-    class Options(pc.Component.Options):
+    class Options(pc.Compo.Options):
         l_nose = pc.Option.Geometric(
             10,
             "Nose length"
@@ -26,7 +26,7 @@ class Snowman(pc.Component):
             "Eye radius"
             )
 
-    class Marks(pc.Component.Marks):
+    class Marks(pc.Compo.Marks):
         nose_tip = pc.Mark("Tip of the nose")
 
     def _make(self):

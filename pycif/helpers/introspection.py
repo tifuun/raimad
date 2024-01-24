@@ -1,8 +1,8 @@
 """
-Helpers for understanding what's going on inside components
+Helpers for understanding what's going on inside compos
 """
 
-def print_component(compo, depth=0):
+def print_compo(compo, depth=0):
     print(
         '    ' * depth,
         compo,
@@ -14,15 +14,15 @@ def print_polygon(poly, depth=0):
         poly,
         )
 
-def print_component_tree(compo, depth=0):
+def print_compo_tree(compo, depth=0):
     """
-    Print hierarchy of a component, down to the polygons
+    Print hierarchy of a compo, down to the polygons
     """
 
-    print_component(compo, depth=depth)
+    print_compo(compo, depth=depth)
 
-    for subcompo in compo.subcomponents:
-        print_component_tree(subcompo.component, depth=depth + 1)
+    for subcompo in compo.subcompos:
+        print_compo_tree(subcompo.compo, depth=depth + 1)
 
     for subpoly in compo.subpolygons:
         print_polygon(subpoly.polygon, depth=depth + 1)

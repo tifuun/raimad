@@ -20,33 +20,33 @@ class BoundPoint(pc.Point):
     # Rotate 45 degrees around middle
 
     or
-    mycomponent.marks.readout_connection.to((10, 20))
-    # Position mycomponent such that the readout connection
+    mycompo.marks.readout_connection.to((10, 20))
+    # Position mycompo such that the readout connection
     # point is exactly at (10, 20)
 
     In many ways, BoundPoints allow you to make your code less ambiguous.
     Consider, for example:
 
-    mycomponent.rotate(pc.semicircle)
-    # This rotates mycomponent by 45 degrees around the origin
+    mycompo.rotate(pc.semicircle)
+    # This rotates mycompo by 45 degrees around the origin
     # of its internal coordinate system.
     # But where is that origin?
     # Anyone reading your code will have to go dig up the source code
-    # of mycomponent to figure out
+    # of mycompo to figure out
 
     versus
 
-    mycomponent.bbox.mid.rotate(pc.semicircle)
-    # Immediately clear where the component will end up
+    mycompo.bbox.mid.rotate(pc.semicircle)
+    # Immediately clear where the compo will end up
 
     That is not to say you must use the BoundPoint interface for
     absolutely all transformations.
     For example, the below point is prefectly concise:
 
-    mycomponent.rotate(45)
-    mycomponent.bbox.mid.to((10, 10))
+    mycompo.rotate(45)
+    mycompo.bbox.mid.to((10, 10))
     # It's still ambiguous around which point the first rotation is happening,
-    # but it doesn't matter, since the component gets moved
+    # but it doesn't matter, since the compo gets moved
     # to a new position immediately after.
 
     See Also

@@ -4,11 +4,11 @@ import pycif as pc
 
 log = pc.get_logger(__name__)
 
-class A(pc.Component.Layers):
+class A(pc.Compo.Layers):
     l2 = pc.Layer()
     l1 = pc.Layer()
 
-class B(pc.Component.Layers):
+class B(pc.Compo.Layers):
     l5 = pc.Layer()
     weeee = pc.Layer()
     l3 = pc.Layer()
@@ -22,7 +22,7 @@ class TestLayers(unittest.TestCase):
 
     def test_invalid_layer_name(self):
         with self.assertRaises(pc.err.InvalidLayerNameError):
-            class InvalidLayers(pc.Component.Layers):
+            class InvalidLayers(pc.Compo.Layers):
                 root = pc.Layer('this should be fine')
                 keys = pc.Layer('this one should fail')
 

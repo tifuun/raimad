@@ -21,12 +21,12 @@ class EmptyBBoxException(Exception):
 
 class BBox(object):
     """
-    BBox: Bounding box (of Components, Polygons, or Groups).
+    BBox: Bounding box (of Compos, Polygons, or Groups).
 
     BBoxes represent the smallest straight (not rotated)
     rectangle required to fit a group of points
     (be it the geometry of a single polygon, a Group of polygons,
-    or a component).
+    or a compo).
     BBoxes are a nice way to work with the overall shape of an object,
     without worrying what it's made up of.
 
@@ -40,11 +40,11 @@ class BBox(object):
     In the latter case, called "bound bbox",
     methods like pc.top_left will return pycif.BoundPoint objects,
     which allow applying transforms relative to a given bbox point.
-    For example. `somecomponent.bbox.top_left` will return a BoundPoint
-    that is bound to `somecomponent`,
+    For example. `somecompo.bbox.top_left` will return a BoundPoint
+    that is bound to `somecompo`,
     and therefore allows doing things like
-    `somecomponent.bbox.top_left.rotate(pycif.semicircle)`
-    to rotate `somecomponent` by 180 degrees about the top left corner
+    `somecompo.bbox.top_left.rotate(pycif.semicircle)`
+    to rotate `somecompo` by 180 degrees about the top left corner
     of its bounding box.
 
     Attributes

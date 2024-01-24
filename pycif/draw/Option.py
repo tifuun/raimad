@@ -95,7 +95,7 @@ class Manufacture(Option):
 
 class Debug(Option):
     """
-    Options used for debugging by the component developer.
+    Options used for debugging by the compo developer.
     """
     pass
 

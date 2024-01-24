@@ -13,17 +13,17 @@ from .resolvers.reducers import reduce_straights
 from .resolvers.bends import BendSpec
 from .resolvers.bends import construct_bends
 from .resolvers.bends import construct_bend
-from .resolvers.bends import make_bend_component
-from .resolvers.bends import make_bend_components
+from .resolvers.bends import make_bend_compo
+from .resolvers.bends import make_bend_compos
 
 from .resolvers.bridges import BridgeSpec
 from .resolvers.bridges import construct_bridges
-from .resolvers.bridges import make_bridge_component
-from .resolvers.bridges import make_bridge_components
+from .resolvers.bridges import make_bridge_compo
+from .resolvers.bridges import make_bridge_compos
 
 from .resolvers.straights import StraightSpec
-from .resolvers.straights import make_straight_components
-from .resolvers.straights import make_straight_component
+from .resolvers.straights import make_straight_compos
+from .resolvers.straights import make_straight_compo
 from .resolvers.straights import construct_straights
 
 from .viz import render_path_as_svg
@@ -36,7 +36,7 @@ import pycif as pc
 
 # TODO TODO FIXME TODO move the below out FIXME FIXME TODO
 
-class BendOpts(pc.Component.Options):
+class BendOpts(pc.Compo.Options):
     bend_radius = pc.Option.Geometric(
         10,
         'Bend Radius',
@@ -57,19 +57,19 @@ class BendOpts(pc.Component.Options):
         'Clockwise or counterclockwise?',
         )
 
-class StraightOpts(pc.Component.Options):
+class StraightOpts(pc.Compo.Options):
     length = pc.Option.Geometric(
         4,
         'Straight segment length (dimension parallel with line)',
         )
 
-class BridgeOpts(pc.Component.Options):
+class BridgeOpts(pc.Compo.Options):
     length = pc.Option.Geometric(
         4,
         'Bridge length (dimension parallel with line)',
         )
 
-class TLOpts(pc.Component.Options):
+class TLOpts(pc.Compo.Options):
     bend_radius = pc.Option.Geometric(
         10,
         'Bend Radius',

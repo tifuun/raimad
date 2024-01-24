@@ -10,7 +10,7 @@ class BBoxable(pc.Transformable):
     """
     BBoxable: Objects with coordinate points and a bounding box.
 
-    BBoxable serves as a base class for Polygons, Groups, and Components.
+    BBoxable serves as a base class for Polygons, Groups, and Compos.
     It provides functionality for easily retrieving a (bounded) bbox,
     as well as snapping objects to each other.
 

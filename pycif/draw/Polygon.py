@@ -36,13 +36,13 @@ class Polygon(pc.Markable, pc.BBoxable):
         """IPython/Jupyter integration: show polygon as svg."""
 
         # TODO this is very hacky!
-        class WrapperComponent(pc.Component):
-            class Layers(pc.Component.Layers):
+        class WrapperCompo(pc.Compo):
+            class Layers(pc.Compo.Layers):
                 root = pc.Layer()
 
             def _make(c_self):
                 c_self.add_subpolygon(self)
 
-        return pc.export_svg(WrapperComponent())
+        return pc.export_svg(WrapperCompo())
 
 

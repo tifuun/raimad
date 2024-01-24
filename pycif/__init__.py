@@ -40,7 +40,7 @@ from pycif.draw.Polygon import Polygon
 from pycif.draw.Group import Group
 from pycif.draw import Option
 from pycif.draw.Layer import Layer
-from pycif.draw.Component import Component
+from pycif.draw.Compo import Compo
 from pycif.draw.Partial import Partial
 
 from pycif import typing

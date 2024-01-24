@@ -4,12 +4,12 @@ import pycif as pc
 
 log = pc.get_logger(__name__)
 
-class ThreeMarkCompo(pc.Component):
+class ThreeMarkCompo(pc.Compo):
 
-    class Layers(pc.Component.Layers):
+    class Layers(pc.Compo.Layers):
         l1 = pc.Layer()
 
-    class Marks(pc.Component.Marks):
+    class Marks(pc.Compo.Marks):
         center = pc.Mark('Test mark at the origin')
         right = pc.Mark('Test mark to the right')
         down = pc.Mark('Test mark below the origin')
@@ -23,9 +23,9 @@ class TestMarks(unittest.TestCase):
 
     def test_marks(self):
 
-        class MyCompo(pc.Component):
+        class MyCompo(pc.Compo):
 
-            class Layers(pc.Component.Layers):
+            class Layers(pc.Compo.Layers):
                 l1 = pc.Layer()
                 l2 = pc.Layer()
                 l3 = pc.Layer()
@@ -240,9 +240,9 @@ class TestMarks(unittest.TestCase):
 
 #    def test_subpolygon_transform(self):  # TODO legacy polygon mechanism
 #
-#        class MyCompo(pc.Component):
+#        class MyCompo(pc.Compo):
 #
-#            class Layers(pc.Component.Layers):
+#            class Layers(pc.Compo.Layers):
 #                root = pc.Layer()
 #
 #            def _make(self):
@@ -266,11 +266,11 @@ class TestMarks(unittest.TestCase):
 #        poly = layer[0]
 #        self.assertEqual(poly.bbox.mid, (5, 5))
 
-    def test_subcomponent_transform_simple(self):
+    def test_subcompo_transform_simple(self):
 
-        class Inner(pc.Component):
+        class Inner(pc.Compo):
 
-            class Layers(pc.Component.Layers):
+            class Layers(pc.Compo.Layers):
                 root = pc.Layer()
 
             def _make(self):
@@ -279,13 +279,13 @@ class TestMarks(unittest.TestCase):
                 rect.move(5, 5)
                 self.add_subpolygon(rect)
 
-        class Outter(pc.Component):
-            class Layers(pc.Component.Layers):
+        class Outter(pc.Compo):
+            class Layers(pc.Compo.Layers):
                 root = pc.Layer()
 
             def _make(self):
                 inner = Inner()
-                self.add_subcomponent(inner)
+                self.add_subcompo(inner)
 
         compo = Outter()
         self.assertEqual(compo.bbox.mid, (5, 5))
@@ -302,17 +302,17 @@ class TestMarks(unittest.TestCase):
         poly = compo.get_subpolygons()[0].polygon
         self.assertEqual(poly.bbox.mid, (10, 5))
 
-#    def test_subcomponent_transform(self):  # TODO legacy polygons
+#    def test_subcompo_transform(self):  # TODO legacy polygons
 #
-#        class NestedCompoA(pc.Component):
+#        class NestedCompoA(pc.Compo):
 #            """
-#            A component consisting of one layer containing a 1x16 rectangle
+#            A compo consisting of one layer containing a 1x16 rectangle
 #            with marks at (0, 0) and (0, 16)
 #            """
-#            class Layers(pc.Component.Layers):
+#            class Layers(pc.Compo.Layers):
 #                l1 = pc.Layer()
 #
-#            class Marks(pc.Component.Marks):
+#            class Marks(pc.Compo.Marks):
 #                start = pc.Mark('Start of the rectangle')
 #                end = pc.Mark('End of the rectangle')
 #
@@ -321,15 +321,15 @@ class TestMarks(unittest.TestCase):
 #                self.marks.end = pc.Point(0, 16)
 #                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2))
 #
-#        class NestedCompoB(pc.Component):
+#        class NestedCompoB(pc.Compo):
 #            """
-#            A component that includes NestedCompoA
+#            A compo that includes NestedCompoA
 #            """
-#            class Layers(pc.Component.Layers):
+#            class Layers(pc.Compo.Layers):
 #                l1 = pc.Layer()
 #                l2 = pc.Layer()
 #
-#            class Marks(pc.Component.Marks):
+#            class Marks(pc.Compo.Marks):
 #                start = pc.Mark('Start of the rectangle')
 #                end = pc.Mark('End of the rectangle')
 #                child_start = pc.Mark('Start of the child rectangle')
@@ -344,7 +344,7 @@ class TestMarks(unittest.TestCase):
 #                child.marks.start.to(self.marks.end)
 #                child.marks.start.rotate(-pc.degrees(90))
 #                child.marks.start.scale(1 / 2)
-#                self.add_subcomponent(
+#                self.add_subcompo(
 #                    child,
 #                    pc.Dict(
 #                        l1='l2'
@@ -354,16 +354,16 @@ class TestMarks(unittest.TestCase):
 #                self.marks.child_start = child.marks.start
 #                self.marks.child_end = child.marks.end
 #
-#        class NestedCompoC(pc.Component):
+#        class NestedCompoC(pc.Compo):
 #            """
-#            A component that includes NestedCompoB
+#            A compo that includes NestedCompoB
 #            """
-#            class Layers(pc.Component.Layers):
+#            class Layers(pc.Compo.Layers):
 #                l1 = pc.Layer()
 #                l2 = pc.Layer()
 #                l3 = pc.Layer()
 #
-#            class Marks(pc.Component.Marks):
+#            class Marks(pc.Compo.Marks):
 #                start = pc.Mark('Start of the rectangle')
 #                end = pc.Mark('End of the rectangle')
 #                child_start = pc.Mark('Start of the child rectangle')
@@ -379,7 +379,7 @@ class TestMarks(unittest.TestCase):
 #                child.marks.start.to(self.marks.end)
 #                child.marks.start.rotate(-pc.degrees(90))
 #                child.marks.start.scale(1 / 2)
-#                self.add_subcomponent(
+#                self.add_subcompo(
 #                    child,
 #                    pc.Dict(
 #                        l1='l2',
@@ -392,8 +392,8 @@ class TestMarks(unittest.TestCase):
 #                self.marks.grandchild_end = child.marks.child_end
 #
 #
-#        class MyCompo(pc.Component):
-#            class Layers(pc.Component.Layers):
+#        class MyCompo(pc.Compo):
+#            class Layers(pc.Compo.Layers):
 #                l1 = pc.Layer()
 #                l2 = pc.Layer()
 #                l3 = pc.Layer()
@@ -407,9 +407,9 @@ class TestMarks(unittest.TestCase):
 #                compo_b.marks.start.to((16, 0))
 #                compo_c.marks.start.to((32, 0))
 #
-#                self.add_subcomponent(compo_a)
-#                self.add_subcomponent(compo_b)
-#                self.add_subcomponent(compo_c)
+#                self.add_subcompo(compo_a)
+#                self.add_subcompo(compo_b)
+#                self.add_subcompo(compo_c)
 #
 #                #self.add_subpolygon(pc.Circle(3).bbox.mid.to((0, 0)), 'l1')
 #                #self.add_subpolygon(pc.Circle(3).bbox.mid.to((16, 0)), 'l1')
@@ -418,7 +418,7 @@ class TestMarks(unittest.TestCase):
 #        compo = MyCompo()
 #
 #        # If you're trying to figure out what's going on with
-#        # this test, taking a look at the component that's
+#        # this test, taking a look at the compo that's
 #        # being generated might help:
 #        with open('../test.cif', 'w') as f:
 #            pc.export_cif(f, compo)
@@ -522,7 +522,7 @@ class TestMarks(unittest.TestCase):
 
     #def test_nested_compo_transform_2(self):
 
-    #    class MyCompo(pc.Component):
+    #    class MyCompo(pc.Compo):
     #        Layers = pc.Dict(
     #            l1=pc.Layer(),
     #            l2=pc.Layer(),
@@ -540,28 +540,28 @@ class TestMarks(unittest.TestCase):
     #            compo_c.snap_right(compo_b)
     #            compo_c.movex(5)
 
-    #            self.add_subcomponent(compo_a)
-    #            self.add_subcomponent(compo_b)
-    #            self.add_subcomponent(compo_c)
+    #            self.add_subcompo(compo_a)
+    #            self.add_subcompo(compo_b)
+    #            self.add_subcompo(compo_c)
 
     #    compo = MyCompo()
 
     def test_marks_apartness(self):
         """
-        Tests whether different components can have a mark
+        Tests whether different compos can have a mark
         defined in two different places.
         There was a bug where all marks were shared across all
-        instances of a component class,
+        instances of a compo class,
         that managed to survive surprisingly long
         before this test was written!
         """
 
-        class MyCompo(pc.Component):
-            class Layers(pc.Component.Layers):
+        class MyCompo(pc.Compo):
+            class Layers(pc.Compo.Layers):
                 root = pc.Layer()
-            class Marks(pc.Component.Marks):
+            class Marks(pc.Compo.Marks):
                 foo = pc.Mark()
-            class Options(pc.Component.Options):
+            class Options(pc.Compo.Options):
                 mark_height = pc.Option(10)
 
             def _make(self):

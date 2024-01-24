@@ -33,7 +33,7 @@ def cli(custom_args=None):
 
     if args.action == ACTION_EXPORT:
         _process_args(args)
-        compo = args.component()
+        compo = args.compo()
 
         if args.format == FORMAT_CIF:
             pycif.export_cif(compo, args.output_file)
@@ -70,15 +70,15 @@ def _add_export_action(subparsers):
     parser = subparsers.add_parser(
         ACTION_EXPORT,
         help=(
-            "Export a component to disk"
+            "Export a compo to disk"
             )
         )
 
     parser.add_argument(
-        'component',
+        'compo',
         type=import_from_string,
         help=(
-            'Component to export in the format '
+            'Compo to export in the format '
             '`{dot-separated path to module}:{Object name}`. '
             'For example, `pycif:Snowman`.'
             )
@@ -91,7 +91,7 @@ def _add_export_action(subparsers):
         nargs='?',
         help=(
             f'Output file. Use `{FILE_STDOUT}` for stdout. '
-            '`{name}` will get formatted with component name. '
+            '`{name}` will get formatted with compo name. '
             '`{format}` will get formatted with the specified format '
             '(cif by default). '
             ),
@@ -136,7 +136,7 @@ def _guess_file(args, fmt):
         args.output_file
         .replace(
             '{name}',
-            args.component.__name__
+            args.compo.__name__
             )
         .replace(
             '{format}',

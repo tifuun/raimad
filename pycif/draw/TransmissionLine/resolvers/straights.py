@@ -24,19 +24,19 @@ def construct_straights(path):
 
     return path, specs
 
-def make_straight_component(spec: StraightSpec, Compo: pc.typing.ComponentClass):
+def make_straight_compo(spec: StraightSpec, Compo: pc.typing.CompoClass):
     return (
         Compo(options=dict(length=spec.length))
         .marks.tl_enter.to(spec.start)
         .marks.tl_enter.rotate(spec.angle)
         )
 
-def make_straight_components(
+def make_straight_compos(
         specs: Iterable[StraightSpec],
-        Compo: pc.typing.ComponentClass,
+        Compo: pc.typing.CompoClass,
         ):
     return [
-        make_straight_component(spec, Compo)
+        make_straight_compo(spec, Compo)
         for spec in specs
         ]
 
