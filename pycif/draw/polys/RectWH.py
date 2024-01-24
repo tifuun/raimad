@@ -7,7 +7,7 @@ import numpy as np
 import pycif as pc
 
 
-class RectWH(pc.Polygon):
+class RectWH(pc.Poly):
 
     def __init__(self, width: float, height: float):
         super().__init__()

@@ -7,7 +7,7 @@ import numpy as np
 
 import pycif as pc
 
-class RectWire(pc.Polygon):
+class RectWire(pc.Poly):
 
     def __init__(self, p1, p2, thickness: float):
         super().__init__()

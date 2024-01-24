@@ -53,13 +53,13 @@ def _export_svg(stream, compo: pc.Compo):
             '</pattern>\n'
             )
 
-    for subpoly in compo.get_subpolygons():
-        poly = subpoly.polygon
+    for subpoly in compo.get_subpolys():
+        poly = subpoly.poly
 
         color_index = sum(map(ord, subpoly.layer)) % len(COLORS)
 
         stream.write(
-            '<polygon '
+            '<poly '
             f'fill="url(#hatch_{color_index})" '
             f'stroke="#{COLORS[color_index]}" '
             'stroke-width="1" '
@@ -72,7 +72,7 @@ def _export_svg(stream, compo: pc.Compo):
 
         except Exception as e:
             raise Exception(
-                f'Failed to export polygon {subpoly}. ',
+                f'Failed to export poly {subpoly}. ',
                 ) from e
 
         stream.write('" />\n')

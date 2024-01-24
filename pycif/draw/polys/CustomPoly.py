@@ -1,5 +1,5 @@
 """
-Custom polygon built from a set of points
+Custom poly built from a set of points
 """
 
 import numpy as np
@@ -7,7 +7,7 @@ import numpy as np
 import pycif as pc
 
 
-class CustomPolygon(pc.Polygon):
+class CustomPoly(pc.Poly):
 
     def __init__(self, points):
         super().__init__()

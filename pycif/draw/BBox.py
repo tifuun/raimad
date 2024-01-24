@@ -21,11 +21,11 @@ class EmptyBBoxException(Exception):
 
 class BBox(object):
     """
-    BBox: Bounding box (of Compos, Polygons, or Groups).
+    BBox: Bounding box (of Compos, Polys, or Groups).
 
     BBoxes represent the smallest straight (not rotated)
     rectangle required to fit a group of points
-    (be it the geometry of a single polygon, a Group of polygons,
+    (be it the geometry of a single poly, a Group of polys,
     or a compo).
     BBoxes are a nice way to work with the overall shape of an object,
     without worrying what it's made up of.

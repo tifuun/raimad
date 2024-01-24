@@ -10,7 +10,7 @@ class BBoxable(pc.Transformable):
     """
     BBoxable: Objects with coordinate points and a bounding box.
 
-    BBoxable serves as a base class for Polygons, Groups, and Compos.
+    BBoxable serves as a base class for Polys, Groups, and Compos.
     It provides functionality for easily retrieving a (bounded) bbox,
     as well as snapping objects to each other.
 
@@ -23,7 +23,7 @@ class BBoxable(pc.Transformable):
         """
         Get array of x,y coordinate pairs in internal coordinates.
 
-        Polygons should override this method with one that actually
+        Polys should override this method with one that actually
         generates their representation as an xyarray in internal coordinates.
 
         Returns
@@ -38,8 +38,8 @@ class BBoxable(pc.Transformable):
         """
         Get array of x,y coordinate pairs in external coordinates.
 
-        Polygons should NOT override this method.
-        Polygons should instead override the provate method
+        Polys should NOT override this method.
+        Polys should instead override the provate method
         `_get_xyarray()`.
         This method simply calls `_get_xyarray()` and applies
         the transformation.

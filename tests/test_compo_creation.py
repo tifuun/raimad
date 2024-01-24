@@ -48,7 +48,7 @@ class Snowman(pc.Compo):
             head.bbox.interpolate(0.7, 0.7)
             )
 
-        nose = pc.CustomPolygon([
+        nose = pc.CustomPoly([
             (0, 2),
             (self.options.l_nose, 0),
             (0, -2)
@@ -58,14 +58,14 @@ class Snowman(pc.Compo):
             head.bbox.interpolate(0.5, 0.5)
             )
 
-        self.add_subpolygon(base, self.layers.snow)
-        self.add_subpolygon(torso, self.layers.snow)
-        self.add_subpolygon(head, self.layers.snow)
+        self.add_subpoly(base, self.layers.snow)
+        self.add_subpoly(torso, self.layers.snow)
+        self.add_subpoly(head, self.layers.snow)
 
-        self.add_subpolygon(eye_l, self.layers.pebble)
-        self.add_subpolygon(eye_r, self.layers.pebble)
+        self.add_subpoly(eye_l, self.layers.pebble)
+        self.add_subpoly(eye_r, self.layers.pebble)
 
-        self.add_subpolygon(nose, self.layers.carrot)
+        self.add_subpoly(nose, self.layers.carrot)
 
 class TestCompoCreation(unittest.TestCase):
     def test_compo_creation(self):

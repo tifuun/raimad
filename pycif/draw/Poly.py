@@ -1,5 +1,5 @@
 """
-Polygon -- a method for prepresenting geometry
+Poly -- a method for prepresenting geometry
 that can be exported to cif
 """
 
@@ -9,9 +9,9 @@ from copy import deepcopy
 
 import pycif as pc
 
-class Polygon(pc.Markable, pc.BBoxable):
+class Poly(pc.Markable, pc.BBoxable):
     """
-    Polygon.
+    Poly.
     Inheritrs from Transformable, so you can transform it.
     """
     def __init__(self):
@@ -22,18 +22,18 @@ class Polygon(pc.Markable, pc.BBoxable):
 
     def __repr__(self):
         return (
-            f'<Polygon {type(self).__name__} '
+            f'<Poly {type(self).__name__} '
             f'with {str(self.transform)}>'
             )
 
     def copy(self):
         """
-        Return a copy of this polygon
+        Return a copy of this poly
         """
         return deepcopy(self)
 
     def _repr_svg_(self):
-        """IPython/Jupyter integration: show polygon as svg."""
+        """IPython/Jupyter integration: show poly as svg."""
 
         # TODO this is very hacky!
         class WrapperCompo(pc.Compo):
@@ -41,7 +41,7 @@ class Polygon(pc.Markable, pc.BBoxable):
                 root = pc.Layer()
 
             def _make(c_self):
-                c_self.add_subpolygon(self)
+                c_self.add_subpoly(self)
 
         return pc.export_svg(WrapperCompo())
 

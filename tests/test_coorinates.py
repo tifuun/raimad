@@ -14,10 +14,10 @@ class RectCompo(pc.Compo):
         rect3 = rect1.copy().bbox.bot_left.rotate(pc.quartercircle / 2)
         rect4 = pc.RectWH(10.5, 10.5).bbox.bot_left.to((.5, .5))
 
-        self.add_subpolygon(rect1)
-        self.add_subpolygon(rect2)
-        self.add_subpolygon(rect3)
-        self.add_subpolygon(rect4)
+        self.add_subpoly(rect1)
+        self.add_subpoly(rect2)
+        self.add_subpoly(rect3)
+        self.add_subpoly(rect4)
 
 #class TestCoordinates(unittest.TestCase):
 #    def test_coordinates(self):

@@ -20,7 +20,7 @@ def _export_cif(stream, compo: pc.Compo, multiply=1e3):
     stream.write('(Nederland);\n')
 
     subpolys = sorted(
-        compo.get_subpolygons(),
+        compo.get_subpolys(),
         key=lambda subpoly: subpoly.layer
         )
 
@@ -29,7 +29,7 @@ def _export_cif(stream, compo: pc.Compo, multiply=1e3):
         if subpoly.layer != prev_layer:
             stream.write(f'L L{subpoly.layer};\n')
 
-        xyarray = subpoly.polygon.get_xyarray() * multiply
+        xyarray = subpoly.poly.get_xyarray() * multiply
 
         if len(xyarray) == 0:
             continue
@@ -44,7 +44,7 @@ def _export_cif(stream, compo: pc.Compo, multiply=1e3):
 
         except Exception as e:
             raise Exception(
-                f'Failed to export polygon {subpoly}. ',
+                f'Failed to export poly {subpoly}. ',
                 ) from e
 
     stream.write('E\n')

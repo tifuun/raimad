@@ -16,7 +16,7 @@ class TestExportSvg(unittest.TestCase):
 
         string = pc.export_svg(compo)
 
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_py_stream(self):
@@ -26,7 +26,7 @@ class TestExportSvg(unittest.TestCase):
         pc.export_svg(compo, stream)
         string = stream.getvalue()
 
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_py_file(self):
@@ -37,7 +37,7 @@ class TestExportSvg(unittest.TestCase):
             file.seek(0)
             string = file.read()
 
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_py_filename(self):
@@ -50,7 +50,7 @@ class TestExportSvg(unittest.TestCase):
 
         string = Path(path).read_text()
 
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_cli_guess_format(self):
@@ -67,7 +67,7 @@ class TestExportSvg(unittest.TestCase):
         with open(path, 'r') as file:
             string = file.read()
 
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_cli_guess_filename(self):
@@ -79,13 +79,13 @@ class TestExportSvg(unittest.TestCase):
             with open('Snowman.svg', 'r') as file:
                 string = file.read()
 
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_compo_repr(self):
         compo = pc.Snowman()
         string = compo._repr_svg_()
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 6)
 
     def test_export_svg_poly_repr(self):
@@ -96,6 +96,6 @@ class TestExportSvg(unittest.TestCase):
             )
 
         string = poly._repr_svg_()
-        num_polys = string.count('<polygon')
+        num_polys = string.count('<poly')
         self.assertEqual(num_polys, 1)
 

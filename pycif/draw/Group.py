@@ -1,5 +1,5 @@
 """
-Polygon group -- used for grouping polygons together for transformations
+Poly group -- used for grouping polys together for transformations
 """
 
 import numpy as np
@@ -7,9 +7,9 @@ import numpy as np
 import pycif as pc
 
 class Group(pc.BBoxable):
-    def __init__(self, *polygons):
+    def __init__(self, *polys):
         super().__init__()
-        self.polys = polygons
+        self.polys = polys
 
     def apply(self):
         for poly in self.polys:
@@ -23,6 +23,6 @@ class Group(pc.BBoxable):
             xyarray.extend(poly.get_xyarray())
         return np.array(xyarray)
 
-    def get_polygons(self):
+    def get_polys(self):
         return self.polys
 

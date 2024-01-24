@@ -1,12 +1,12 @@
 """
-Arc polygon
+Arc poly
 """
 
 import numpy as np
 
 import pycif as pc
 
-class Arc(pc.Polygon):
+class Arc(pc.Poly):
     radius_inner: float
     radius_outter: float
     angle_start: float
@@ -14,7 +14,7 @@ class Arc(pc.Polygon):
     orientation: pc.Orientation
     radial_center: float
 
-    class Marks(pc.Polygon.Marks):
+    class Marks(pc.Poly.Marks):
         center = pc.Mark('Center of the arc')
         start_mid = pc.Mark(
             'Midway between the two radii, at the start of the arc'

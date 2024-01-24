@@ -20,9 +20,9 @@ from numpy import tan
 from numpy import pi
 
 # Order of these imports is very important.
-# For example, Polygon must be imported before
-# and actual polygons, because
-# many polygons use these shorthands in their representation.
+# For example, Poly must be imported before
+# and actual polys, because
+# many polys use these shorthands in their representation.
 
 from pycif.logging import get_logger
 from pycif.helpers.overload import kwoverload
@@ -36,7 +36,7 @@ from pycif.draw.BBox import BBox
 from pycif.draw.BBoxable import BBoxable
 from pycif.draw.Mark import Mark
 from pycif.draw.Markable import Markable
-from pycif.draw.Polygon import Polygon
+from pycif.draw.Poly import Poly
 from pycif.draw.Group import Group
 from pycif.draw import Option
 from pycif.draw.Layer import Layer
@@ -65,11 +65,11 @@ from pycif.helpers.angles import TurnDirection
 
 from pycif.draw import TransmissionLine as tl
 
-from pycif.draw.polygons.Arc import Arc
-from pycif.draw.polygons.Circle import Circle
-from pycif.draw.polygons.RectWire import RectWire
-from pycif.draw.polygons.RectWH import RectWH
-from pycif.draw.polygons.CustomPolygon import CustomPolygon
+from pycif.draw.polys.Arc import Arc
+from pycif.draw.polys.Circle import Circle
+from pycif.draw.polys.RectWire import RectWire
+from pycif.draw.polys.RectWH import RectWH
+from pycif.draw.polys.CustomPoly import CustomPoly
 
 from pycif.draw.Snowman import Snowman
 

@@ -46,9 +46,9 @@ class TestMarks(unittest.TestCase):
                 arc2.marks.center.to(arc1.marks.end_mid)
                 arc3.marks.center.to(arc1.marks.start_mid)
 
-                self.add_subpolygon(arc1, 'l1')
-                self.add_subpolygon(arc2, 'l2')
-                self.add_subpolygon(arc3, 'l3')
+                self.add_subpoly(arc1, 'l1')
+                self.add_subpoly(arc2, 'l2')
+                self.add_subpoly(arc3, 'l3')
 
         compo = MyCompo()
 
@@ -238,7 +238,7 @@ class TestMarks(unittest.TestCase):
         (compo.marks.center + (0, 1)).hflip()
         self.assertEqual(compo.marks.down, (0, 3))  # TODO correct?
 
-#    def test_subpolygon_transform(self):  # TODO legacy polygon mechanism
+#    def test_subpoly_transform(self):  # TODO legacy poly mechanism
 #
 #        class MyCompo(pc.Compo):
 #
@@ -248,10 +248,10 @@ class TestMarks(unittest.TestCase):
 #            def _make(self):
 #                rect = pc.RectWH(10, 10)
 #                rect.bbox.mid.to((0, 0))
-#                self.add_subpolygon(rect)
+#                self.add_subpoly(rect)
 #
 #        compo = MyCompo()
-#        layers = compo.get_polygons()
+#        layers = compo.get_polys()
 #        self.assertEqual(len(layers), 1)
 #        layer = layers['root']
 #        self.assertEqual(len(layer), 1)
@@ -259,7 +259,7 @@ class TestMarks(unittest.TestCase):
 #        self.assertEqual(poly.bbox.mid, (0, 0))
 #
 #        compo = MyCompo().bbox.mid.to((5, 5))
-#        layers = compo.get_polygons()
+#        layers = compo.get_polys()
 #        self.assertEqual(len(layers), 1)
 #        layer = layers['root']
 #        self.assertEqual(len(layer), 1)
@@ -277,7 +277,7 @@ class TestMarks(unittest.TestCase):
                 rect = pc.RectWH(1, 1)
                 rect.bbox.mid.to((0, 0))
                 rect.move(5, 5)
-                self.add_subpolygon(rect)
+                self.add_subpoly(rect)
 
         class Outter(pc.Compo):
             class Layers(pc.Compo.Layers):
@@ -289,20 +289,20 @@ class TestMarks(unittest.TestCase):
 
         compo = Outter()
         self.assertEqual(compo.bbox.mid, (5, 5))
-        poly = compo.get_subpolygons()[0].polygon
+        poly = compo.get_subpolys()[0].poly
         self.assertEqual(poly.bbox.mid, (5, 5))
 
         compo.bbox.mid.to((5, 5))
         self.assertEqual(compo.bbox.mid, (5, 5))
-        poly = compo.get_subpolygons()[0].polygon
+        poly = compo.get_subpolys()[0].poly
         self.assertEqual(poly.bbox.mid, (5, 5))
 
         compo.move(5, 0)
         self.assertEqual(compo.bbox.mid, (10, 5))
-        poly = compo.get_subpolygons()[0].polygon
+        poly = compo.get_subpolys()[0].poly
         self.assertEqual(poly.bbox.mid, (10, 5))
 
-#    def test_subcompo_transform(self):  # TODO legacy polygons
+#    def test_subcompo_transform(self):  # TODO legacy polys
 #
 #        class NestedCompoA(pc.Compo):
 #            """
@@ -319,7 +319,7 @@ class TestMarks(unittest.TestCase):
 #            def _make(self):
 #                self.marks.start = pc.Point(0, 0)
 #                self.marks.end = pc.Point(0, 16)
-#                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2))
+#                self.add_subpoly(pc.RectWire(self.marks.start, self.marks.end, 2))
 #
 #        class NestedCompoB(pc.Compo):
 #            """
@@ -338,7 +338,7 @@ class TestMarks(unittest.TestCase):
 #            def _make(self):
 #                self.marks.start = pc.Point(0, 0)
 #                self.marks.end = pc.Point(0, 16)
-#                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
+#                self.add_subpoly(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
 #
 #                child = NestedCompoA()
 #                child.marks.start.to(self.marks.end)
@@ -374,7 +374,7 @@ class TestMarks(unittest.TestCase):
 #            def _make(self):
 #                self.marks.start = pc.Point(0, 0)
 #                self.marks.end = pc.Point(0, 16)
-#                self.add_subpolygon(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
+#                self.add_subpoly(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
 #                child = NestedCompoB()
 #                child.marks.start.to(self.marks.end)
 #                child.marks.start.rotate(-pc.degrees(90))
@@ -411,9 +411,9 @@ class TestMarks(unittest.TestCase):
 #                self.add_subcompo(compo_b)
 #                self.add_subcompo(compo_c)
 #
-#                #self.add_subpolygon(pc.Circle(3).bbox.mid.to((0, 0)), 'l1')
-#                #self.add_subpolygon(pc.Circle(3).bbox.mid.to((16, 0)), 'l1')
-#                #self.add_subpolygon(pc.Circle(3).bbox.mid.to((32, 0)), 'l1')
+#                #self.add_subpoly(pc.Circle(3).bbox.mid.to((0, 0)), 'l1')
+#                #self.add_subpoly(pc.Circle(3).bbox.mid.to((16, 0)), 'l1')
+#                #self.add_subpoly(pc.Circle(3).bbox.mid.to((32, 0)), 'l1')
 #
 #        compo = MyCompo()
 #
@@ -454,7 +454,7 @@ class TestMarks(unittest.TestCase):
 #            ]
 #        expected_polys = [expected_polys_l1, expected_polys_l2, expected_polys_l3]
 #
-#        layers = compo.get_polygons()
+#        layers = compo.get_polys()
 #        l1 = layers['l1']
 #        l2 = layers['l2']
 #        l3 = layers['l3']

@@ -16,7 +16,7 @@ class BoundPoint(pc.Point):
     are what is returned by bound bboxes or markable objects,
     and allow for syntax like:
 
-    mypolygon.bbox.mid.rotate(pc.quartercircle)
+    mypoly.bbox.mid.rotate(pc.quartercircle)
     # Rotate 45 degrees around middle
 
     or

@@ -1,13 +1,13 @@
 """
-Circle polygon
+Circle poly
 """
 
 import numpy as np
 
 import pycif as pc
 
-class Circle(pc.Polygon):
-    class Marks(pc.Polygon.Marks):
+class Circle(pc.Poly):
+    class Marks(pc.Poly.Marks):
         center = pc.Mark('Center of the circle')
 
     radius: float

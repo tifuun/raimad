@@ -18,7 +18,7 @@ log = pc.get_logger(__name__)
 # when child has only one layer
 # otherwise needs full dict
 SubcompoLayermapShorthand = None | str | dict
-SubpolygonLayerShorthand = None | str
+SubpolyLayerShorthand = None | str
 
 class Compo(pc.Markable, pc.BBoxable):
     """
@@ -46,14 +46,14 @@ class Compo(pc.Markable, pc.BBoxable):
     or a "compo instance" for short,
     contains:
         - Subcompos
-        - Subpolygons
+        - Subpolys
         - Specific options
         - Specific marks
 
-    Subcompos and Subpolygons make up the geometry of each
+    Subcompos and Subpolys make up the geometry of each
     compo instance.
 
-    Each Supolygon exists on strictly one layer in its parent compo.
+    Each Supoly exists on strictly one layer in its parent compo.
 
     Each Subcompo may have different layers than the parent compo,
     and for this there exists a "layer map",
@@ -227,7 +227,7 @@ class Compo(pc.Markable, pc.BBoxable):
         self.layers = self.Layers()
 
         self.subcompos = []
-        self.subpolygons = []
+        self.subpolys = []
 
         self._make()
 
@@ -257,49 +257,49 @@ class Compo(pc.Markable, pc.BBoxable):
 
         self.subcompos.append(subcompo)
 
-    def add_subpolygon(
+    def add_subpoly(
             self,
-            polygon,
-            layermap: SubpolygonLayerShorthand = None,
+            poly,
+            layermap: SubpolyLayerShorthand = None,
             ):
-        """Add new polygon as a subpolygon."""
-        layermap_full = parse_subpolygon_layer_shorthand(
+        """Add new poly as a subpoly."""
+        layermap_full = parse_subpoly_layer_shorthand(
             self,
-            polygon,
+            poly,
    layermap
             )
 
-        subpolygon = Subpolygon(
-            polygon,
+        subpoly = Subpoly(
+            poly,
             layermap_full,
             )
 
-        self.subpolygons.append(subpolygon)
+        self.subpolys.append(subpoly)
 
-    def add_subpolygons(
+    def add_subpolys(
             self,
-            polys: List[pc.Polygon | pc.Group] | pc.Polygon | pc.Group,
-            layermap: SubpolygonLayerShorthand = None,
+            polys: List[pc.Poly | pc.Group] | pc.Poly | pc.Group,
+            layermap: SubpolyLayerShorthand = None,
             ):
         """
-        Add multiple subpolygons or subpolygon groups.
+        Add multiple subpolys or subpoly groups.
         """
-        if isinstance(polys, pc.Polygon):
-            self.add_subpolygon(polys, layermap)
+        if isinstance(polys, pc.Poly):
+            self.add_subpoly(polys, layermap)
 
         elif isinstance(polys, pc.Group):
-            for polygon in polys.get_polygons():
-                self.add_subpolygon(polygon, layermap)
+            for poly in polys.get_polys():
+                self.add_subpoly(poly, layermap)
 
         elif isinstance(polys, list | tuple | set):
             # TODO isiterable
             for poly in polys:
-                self.add_subpolygons(poly, layermap)
+                self.add_subpolys(poly, layermap)
 
         else:
-            raise Exception("Please only pass polygons or polygongroups")
+            raise Exception("Please only pass polys or polygroups")
 
-    def get_subpolygons(self, layermap=None, do_apply_transform=True):
+    def get_subpolys(self, layermap=None, do_apply_transform=True):
 
         if layermap is None:
             layermap = dict(zip(self.layers, self.layers))
@@ -308,11 +308,11 @@ class Compo(pc.Markable, pc.BBoxable):
             assert set(layermap.keys()).issubset(self.layers)
 
         return [
-            Subpolygon(
+            Subpoly(
                 (
-                    subpoly.get_polygon().apply_transform(self.transform)
+                    subpoly.get_poly().apply_transform(self.transform)
                     if do_apply_transform
-                    else subpoly.get_polygon()
+                    else subpoly.get_poly()
                     ),
                 layermap[subpoly.layer]
                 )
@@ -320,29 +320,29 @@ class Compo(pc.Markable, pc.BBoxable):
                 *[
                     subpoly_inner
                     for subcompo in self.subcompos
-                    for subpoly_inner in subcompo.get_subpolygons()
+                    for subpoly_inner in subcompo.get_subpolys()
                     ],
                 *[
-                    subpoly_inner_2.get_subpolygon()
-                    for subpoly_inner_2 in self.subpolygons
+                    subpoly_inner_2.get_subpoly()
+                    for subpoly_inner_2 in self.subpolys
                     ]
                 ]
             if layermap[subpoly.layer] is not None
             ]
 
-    def _get_subpolygons(self):
-        return self.get_subpolygons(do_apply_transform=False)
+    def _get_subpolys(self):
+        return self.get_subpolys(do_apply_transform=False)
 
     def _get_xyarray(self):
         # TODO slow
         xyarray = []
-        for subpoly in self._get_subpolygons():
-            xyarray.extend(subpoly.polygon.get_xyarray())
+        for subpoly in self._get_subpolys():
+            xyarray.extend(subpoly.poly.get_xyarray())
         return np.array(xyarray)
 
     def _make(self):
         """
-        This method should actually generate all subpolygons
+        This method should actually generate all subpolys
         and subcompos.
 
         This is an abstract base class,
@@ -407,27 +407,27 @@ class Compo(pc.Markable, pc.BBoxable):
         """Export compo as svg. For use in Jupyter notebooks."""
         return pc.export_svg(self)
 
-class Subpolygon(object):
+class Subpoly(object):
     """
-    Container that stores a polygon and which layer it belongs
+    Container that stores a poly and which layer it belongs
     to in the parent
     """
-    polygon: pc.Polygon
+    poly: pc.Poly
     layer: str
 
-    def __init__(self, polygon: pc.Polygon, layer: str):
-        self.polygon = polygon
+    def __init__(self, poly: pc.Poly, layer: str):
+        self.poly = poly
         self.layer = layer
 
-    def get_subpolygon(self):
-        # This is where the polygons of the living breathing
+    def get_subpoly(self):
+        # This is where the polys of the living breathing
         # compo hierarchy get cloned for export.
-        return Subpolygon(self.polygon.copy(), self.layer)
+        return Subpoly(self.poly.copy(), self.layer)
 
-    def get_polygon(self):
-        # This is where the polygons of the living breathing
+    def get_poly(self):
+        # This is where the polys of the living breathing
         # compo hierarchy get cloned for export.
-        return self.polygon.copy()
+        return self.poly.copy()
 
 class Subcompo(object):
     """
@@ -437,11 +437,11 @@ class Subcompo(object):
         self.compo = compo
         self.layermap = layermap
 
-    def get_subpolygons(self):
+    def get_subpolys(self):
         return [
-            Subpolygon(subpoly.get_polygon(), self.layermap[subpoly.layer])
+            Subpoly(subpoly.get_poly(), self.layermap[subpoly.layer])
             for subpoly
-            in self.compo.get_subpolygons()
+            in self.compo.get_subpolys()
             if self.layermap[subpoly.layer] is not None
             ]
 
@@ -520,10 +520,10 @@ def parse_subcompo_layermap_shorthand(parent, child, layermap_shorthand: Subcomp
     return layermap
 
 
-def parse_subpolygon_layer_shorthand(
+def parse_subpoly_layer_shorthand(
         parent: Compo,
-        child: pc.Polygon,
-        layer_shorthand: SubpolygonLayerShorthand
+        child: pc.Poly,
+        layer_shorthand: SubpolyLayerShorthand
         ):
     parent_layers = set(parent.layers)
 
@@ -531,18 +531,18 @@ def parse_subpolygon_layer_shorthand(
         if len(parent_layers) == 1:
             sole_layer = list(parent_layers)[0]
             log.debug(
-                f"Mapping polygon {child} \n"
+                f"Mapping poly {child} \n"
                 f"to sole layer {sole_layer} of {parent} \n"
                 f"because no layermap was specified. \n"
                 )
             return sole_layer
         else:
             raise Exception(
-                f"Could not map polygon {child} to \n"
+                f"Could not map poly {child} to \n"
                 f"parent compo {parent} \n"
                 "because the parent contains multiple layers \n"
                 f"({parent_layers}), \n"
-                f"and you did not specify which layer this polygon "
+                f"and you did not specify which layer this poly "
                 f"belongs on."
                 )
 
@@ -551,7 +551,7 @@ def parse_subpolygon_layer_shorthand(
             return layer_shorthand
         else:
             raise Exception(
-                f"Could not map polygon {child} to \n"
+                f"Could not map poly {child} to \n"
                 f"parent compo {parent} \n"
                 f"because the specified layer `{layer_shorthand}` \n"
                 f"could not be found in the parent \n"
