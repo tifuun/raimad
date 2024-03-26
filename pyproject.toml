@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pycif"
-version = "0.0.4"
+version = "0.1.0"
 description = """\
 Collaborative CAD platform for \
 hierarchical design of on-chip imaging devices\
@@ -26,13 +26,6 @@ dependencies = [
 	'numpy',
 	]
 
-[tool.setuptools.packages.find]
-# For some reason setuptools is angry
-# about the `img` directory, even thought
-# it has no `__init__.py` ???
-# Need to tell it explicitly
-# what packages to include.
-# This could theoretically be avoided by switching
-# to src-layout, but I don't want to ._.
-include = [ "pycif", "pycif.*" ]
+#[project.entry-points."flake8.extension"]
+#RAI = "pycif.lint.mark_names:LintMarkNames"
 

@@ -1,582 +1,171 @@
 import unittest
 
+import numpy as np
+
 import pycif as pc
 
-log = pc.get_logger(__name__)
+from .utils import ArrayAlmostEqual
 
-class ThreeMarkCompo(pc.Compo):
-
-    class Layers(pc.Compo.Layers):
-        l1 = pc.Layer()
-
-    class Marks(pc.Compo.Marks):
-        center = pc.Mark('Test mark at the origin')
-        right = pc.Mark('Test mark to the right')
-        down = pc.Mark('Test mark below the origin')
-
+class BareGeometric(pc.Compo):
     def _make(self):
-        self.marks.center = pc.Point(0, 0)
-        self.marks.right = pc.Point(1, 0)
-        self.marks.down = pc.Point(0, -1)
+        self.geoms.update({
+            'root': [
+                np.array([
+                    [0, 0],
+                    [0, 10],
+                    [10, 10],
+                    [10, 0],
+                    ]),
+                np.array([
+                    [20, 20],
+                    [40, 20],
+                    [30, 40],
+                    ]),
+                ]
+            })
+        self.set_mark('triangle_corner', (20, 40))
 
-class TestMarks(unittest.TestCase):
+class Intermid(pc.Compo):
+    def _make(self):
+        self.subcompos.append(
+            pc.Proxy(
+                BareGeometric(),
+                {'root': 'intermediary'},
+                pc.Transform().movex(-3)
+                )
+            )
+        self.set_mark(
+            'propagated',
+            self.subcompos[0].get_mark('triangle_corner')
+            )
+
+class BareStructural(pc.Compo):
+    def _make(self):
+        self.subcompos.append(
+            pc.Proxy(
+                BareGeometric(),
+                {'root': 'upper'},
+                pc.Transform().scale(2)
+                )
+            )
+        self.subcompos.append(
+            pc.Proxy(
+                BareGeometric(),
+                {'root': 'lower'},
+                pc.Transform().scale(0.5)
+                )
+            )
+        self.subcompos.append(
+            pc.Proxy(
+                Intermid(),
+                {'intermediary': 'lower'},
+                pc.Transform().movey(-3)
+                )
+            )
+
+        self.set_mark(
+            'propagated',
+            self.subcompos[2].get_mark('propagated')
+            )
+
+class BareGeometricSyntax(pc.Compo):
+    def _make(self):
+        self.geoms.update({
+            'root': [
+                np.array([
+                    [0, 0],
+                    [0, 10],
+                    [10, 10],
+                    [10, 0],
+                    ]),
+                np.array([
+                    [20, 20],
+                    [40, 20],
+                    [30, 40],
+                    ]),
+                ]
+            })
+        self.marks.triangle_corner = (20, 40)
+
+class IntermidSyntax(pc.Compo):
+    def _make(self):
+        self.subcompos.append(
+            pc.Proxy(
+                BareGeometricSyntax(),
+                {'root': 'intermediary'},
+                pc.Transform().movex(-3)
+                )
+            )
+        self.set_mark(
+            'propagated',
+            self.subcompos[0].marks.triangle_corner
+            )
+
+class BareStructuralSyntax(pc.Compo):
+    def _make(self):
+        self.subcompos.append(
+            pc.Proxy(
+                BareGeometricSyntax(),
+                {'root': 'upper'},
+                pc.Transform().scale(2)
+                )
+            )
+        self.subcompos.append(
+            pc.Proxy(
+                BareGeometricSyntax(),
+                {'root': 'lower'},
+                pc.Transform().scale(0.5)
+                )
+            )
+        self.subcompos.append(
+            pc.Proxy(
+                IntermidSyntax(),
+                {'intermediary': 'lower'},
+                pc.Transform().movey(-3)
+                )
+            )
+
+        self.marks.propagated = self.subcompos[2].marks.propagated
+
+class TestMarks(ArrayAlmostEqual, unittest.TestCase, decimal=3):
 
     def test_marks(self):
+        compo = BareStructural()
 
-        class MyCompo(pc.Compo):
-
-            class Layers(pc.Compo.Layers):
-                l1 = pc.Layer()
-                l2 = pc.Layer()
-                l3 = pc.Layer()
-
-            def _make(self):
-                arc1 = pc.Arc(
-                    angle_start=pc.degrees(45),
-                    angle_end=pc.degrees(90),
-                    radius_inner=10,
-                    radius_outter=20
-                    )
-
-                # TODO rotate around mark
-
-                arc2 = arc1.copy().rotate(70).scale(0.3)
-                arc3 = arc1.copy().rotate(-70).scale(0.3)
-
-                arc2.marks.center.to(arc1.marks.end_mid)
-                arc3.marks.center.to(arc1.marks.start_mid)
-
-                self.add_subpoly(arc1, 'l1')
-                self.add_subpoly(arc2, 'l2')
-                self.add_subpoly(arc3, 'l3')
-
-        compo = MyCompo()
-
-    def test_poly_bbox_transform(self):
-        poly = pc.RectWH(1, 1)
-
-        poly.bbox.mid.to((0, 0))
-        self.assertEqual(poly.bbox.mid, (0, 0))
-
-        poly.bbox.mid.to((0, 0))
-        self.assertEqual(poly.bbox.mid, (0, 0))
-
-        poly.bbox.mid.to((5, 6))
-        self.assertEqual(poly.bbox.mid, (5, 6))
-
-        poly.bbox.mid.to((0, 0))
-        self.assertEqual(poly.bbox.mid, (0, 0))
-
-    def test_mark_compo_transform(self):
-
-        compo = ThreeMarkCompo()
-
-        self.assertEqual(compo.marks.center, pc.Point(0, 0))
-        self.assertEqual(compo.marks.right, pc.Point(1, 0))
-        self.assertEqual(compo.marks.down, pc.Point(0, -1))
-
-        compo.move(5, 5)
-        self.assertEqual(compo.marks.center, pc.Point(5, 5))
-        self.assertEqual(compo.marks.right, pc.Point(6, 5))
-        self.assertEqual(compo.marks.down, pc.Point(5, 4))
-
-        compo.marks.center.rotate(pc.degrees(90))
-        self.assertEqual(compo.marks.center, pc.Point(5, 5))
-        self.assertEqual(compo.marks.right, pc.Point(5, 6))
-        self.assertEqual(compo.marks.down, pc.Point(6, 5))
-
-        compo.marks.right.scale(2)
-        self.assertEqual(compo.marks.center, pc.Point(5, 4))
-        self.assertEqual(compo.marks.right, pc.Point(5, 6))
-        self.assertEqual(compo.marks.down, pc.Point(7, 4))
-
-        compo.marks.right.scale(0.5)
-        self.assertEqual(compo.marks.center, pc.Point(5, 5))
-        self.assertEqual(compo.marks.right, pc.Point(5, 6))
-        self.assertEqual(compo.marks.down, pc.Point(6, 5))
-
-        compo.marks.center.rotate(pc.degrees(-90))
-        self.assertEqual(compo.marks.center, pc.Point(5, 5))
-        self.assertEqual(compo.marks.right, pc.Point(6, 5))
-        self.assertEqual(compo.marks.down, pc.Point(5, 4))
-
-        compo.move(-5, -5)
-        self.assertEqual(compo.marks.center, pc.Point(0, 0))
-        self.assertEqual(compo.marks.right, pc.Point(1, 0))
-        self.assertEqual(compo.marks.down, pc.Point(0, -1))
-
-    def test_compo_transform_chaining(self):
-
-        compo = ThreeMarkCompo()
-
-        self.assertEqual(compo.marks.origin, pc.Point(0, 0))
-
-        self.assertEqual(compo.marks.center, pc.Point(0, 0))
-        self.assertEqual(compo.marks.right, pc.Point(1, 0))
-        self.assertEqual(compo.marks.down, pc.Point(0, -1))
-
-        compo.move(5, 5).move(-5, -5)
-
-        self.assertEqual(compo.marks.center, pc.Point(0, 0))
-        self.assertEqual(compo.marks.right, pc.Point(1, 0))
-        self.assertEqual(compo.marks.down, pc.Point(0, -1))
-
-        compo.scale(10).scale(0.2)
-
-        self.assertEqual(compo.marks.center, pc.Point(0, 0))
-        self.assertEqual(compo.marks.right, pc.Point(2, 0))
-        self.assertEqual(compo.marks.down, pc.Point(0, -2))
-
-        (
-            compo
-            .scale(0.5)
-            .rotate(pc.degrees(45))
-            .scale(2 ** (1 / 2))
-            .move(5, 0)
-            .move(0, 5)
+        self.assertArrayAlmostEqual(
+            compo.get_mark('propagated'),
+            (20 - 3, 40 - 3)
             )
 
-        self.assertEqual(compo.marks.center, pc.Point(5, 5))
-        self.assertEqual(compo.marks.right, pc.Point(6, 6))
-        self.assertEqual(compo.marks.down, pc.Point(6, 4))
-
-    def test_poly_snap(self):
-
-        poly1 = pc.RectWH(1, 1).bbox.mid.to(pc.Point(0, 0))
-        poly2 = poly1.copy()
-        poly3 = poly1.copy()
-
-        poly2.snap_above(poly1)
-        self.assertEqual(poly1.bbox.mid, (0, 0))
-        self.assertEqual(poly2.bbox.mid, (0, 1))
-
-        poly2.snap_left(poly1)
-        self.assertEqual(poly1.bbox.mid, (0, 0))
-        self.assertEqual(poly2.bbox.mid, (-1, 0))
-
-        poly2.snap_right(poly1)
-        self.assertEqual(poly1.bbox.mid, (0, 0))
-        self.assertEqual(poly2.bbox.mid, (1, 0))
-
-        poly2.snap_below(poly1)
-        self.assertEqual(poly1.bbox.mid, (0, 0))
-        self.assertEqual(poly2.bbox.mid, (0, -1))
-
-        poly3.snap_below(poly2)
-        self.assertEqual(poly1.bbox.mid, (0, 0))
-        self.assertEqual(poly2.bbox.mid, (0, -1))
-        self.assertEqual(poly3.bbox.mid, (0, -2))
-
-    def test_bbox_pad(self):
-
-        poly1 = pc.RectWH(2, 2)
-        poly1.bbox.mid.to((0, 0))
-        bbox = poly1.bbox
-
-        self.assertEqual(bbox.left,   -1)
-        self.assertEqual(bbox.right,   1)
-        self.assertEqual(bbox.top,     1)
-        self.assertEqual(bbox.bottom, -1)
-
-        # No args: simple copy
-        bbox2 = bbox.pad()
-        self.assertEqual(bbox2.left,   -1)
-        self.assertEqual(bbox2.right,   1)
-        self.assertEqual(bbox2.top,     1)
-        self.assertEqual(bbox2.bottom, -1)
-
-        # One arg: same pad everywhere
-        bbox2 = bbox.pad(1)
-        self.assertEqual(bbox2.left,   -2)
-        self.assertEqual(bbox2.right,   2)
-        self.assertEqual(bbox2.top,     2)
-        self.assertEqual(bbox2.bottom, -2)
-
-        # two args: pad horizontally and vertically
-        bbox2 = bbox.pad(5, 10)
-        self.assertEqual(bbox2.left,   -6)
-        self.assertEqual(bbox2.right,   6)
-        self.assertEqual(bbox2.top,     11)
-        self.assertEqual(bbox2.bottom, -11)
-
-        # explicit pad for all sides
-        bbox2 = bbox.pad(
-            left=5,
-            top=7,
-            right=0,
-            bottom=4
+        self.assertArrayAlmostEqual(
+            compo.subcompos[2].subcompos[0].get_mark('triangle_corner'),
+            (20 - 3, 40 - 3)
             )
-        self.assertEqual(bbox2.left,   -6)
-        self.assertEqual(bbox2.right,   1)
-        self.assertEqual(bbox2.top,     8)
-        self.assertEqual(bbox2.bottom, -5)
 
-        # Base padding + specific on sides
-        bbox2 = bbox.pad(
-            2,
-            left=5,
-            top=7,
-            right=0,
-            bottom=4
+        self.assertArrayAlmostEqual(
+            compo.subcompos[2].get_mark('propagated'),
+            (20 - 3, 40 - 3)
             )
-        self.assertEqual(bbox2.left,   -8)
-        self.assertEqual(bbox2.right,   3)
-        self.assertEqual(bbox2.top,     10)
-        self.assertEqual(bbox2.bottom, -7)
 
-    def test_compo_flip(self):
-        
-        compo = ThreeMarkCompo()
-        self.assertEqual(compo.marks.down, (0, -1))
+    def test_marks_syntax(self):
+        compo = BareStructuralSyntax()
 
-        compo.marks.center.hflip()
-        self.assertEqual(compo.marks.down, (0, 1))
-
-        compo.marks.center.hflip()
-        self.assertEqual(compo.marks.down, (0, -1))
-
-        (compo.marks.center + (0, 1)).hflip()
-        self.assertEqual(compo.marks.down, (0, 3))  # TODO correct?
-
-#    def test_subpoly_transform(self):  # TODO legacy poly mechanism
-#
-#        class MyCompo(pc.Compo):
-#
-#            class Layers(pc.Compo.Layers):
-#                root = pc.Layer()
-#
-#            def _make(self):
-#                rect = pc.RectWH(10, 10)
-#                rect.bbox.mid.to((0, 0))
-#                self.add_subpoly(rect)
-#
-#        compo = MyCompo()
-#        layers = compo.get_polys()
-#        self.assertEqual(len(layers), 1)
-#        layer = layers['root']
-#        self.assertEqual(len(layer), 1)
-#        poly = layer[0]
-#        self.assertEqual(poly.bbox.mid, (0, 0))
-#
-#        compo = MyCompo().bbox.mid.to((5, 5))
-#        layers = compo.get_polys()
-#        self.assertEqual(len(layers), 1)
-#        layer = layers['root']
-#        self.assertEqual(len(layer), 1)
-#        poly = layer[0]
-#        self.assertEqual(poly.bbox.mid, (5, 5))
-
-    def test_subcompo_transform_simple(self):
-
-        class Inner(pc.Compo):
-
-            class Layers(pc.Compo.Layers):
-                root = pc.Layer()
-
-            def _make(self):
-                rect = pc.RectWH(1, 1)
-                rect.bbox.mid.to((0, 0))
-                rect.move(5, 5)
-                self.add_subpoly(rect)
-
-        class Outter(pc.Compo):
-            class Layers(pc.Compo.Layers):
-                root = pc.Layer()
-
-            def _make(self):
-                inner = Inner()
-                self.add_subcompo(inner)
-
-        compo = Outter()
-        self.assertEqual(compo.bbox.mid, (5, 5))
-        poly = compo.get_subpolys()[0].poly
-        self.assertEqual(poly.bbox.mid, (5, 5))
-
-        compo.bbox.mid.to((5, 5))
-        self.assertEqual(compo.bbox.mid, (5, 5))
-        poly = compo.get_subpolys()[0].poly
-        self.assertEqual(poly.bbox.mid, (5, 5))
-
-        compo.move(5, 0)
-        self.assertEqual(compo.bbox.mid, (10, 5))
-        poly = compo.get_subpolys()[0].poly
-        self.assertEqual(poly.bbox.mid, (10, 5))
-
-#    def test_subcompo_transform(self):  # TODO legacy polys
-#
-#        class NestedCompoA(pc.Compo):
-#            """
-#            A compo consisting of one layer containing a 1x16 rectangle
-#            with marks at (0, 0) and (0, 16)
-#            """
-#            class Layers(pc.Compo.Layers):
-#                l1 = pc.Layer()
-#
-#            class Marks(pc.Compo.Marks):
-#                start = pc.Mark('Start of the rectangle')
-#                end = pc.Mark('End of the rectangle')
-#
-#            def _make(self):
-#                self.marks.start = pc.Point(0, 0)
-#                self.marks.end = pc.Point(0, 16)
-#                self.add_subpoly(pc.RectWire(self.marks.start, self.marks.end, 2))
-#
-#        class NestedCompoB(pc.Compo):
-#            """
-#            A compo that includes NestedCompoA
-#            """
-#            class Layers(pc.Compo.Layers):
-#                l1 = pc.Layer()
-#                l2 = pc.Layer()
-#
-#            class Marks(pc.Compo.Marks):
-#                start = pc.Mark('Start of the rectangle')
-#                end = pc.Mark('End of the rectangle')
-#                child_start = pc.Mark('Start of the child rectangle')
-#                child_end = pc.Mark('End of the child rectangle')
-#
-#            def _make(self):
-#                self.marks.start = pc.Point(0, 0)
-#                self.marks.end = pc.Point(0, 16)
-#                self.add_subpoly(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
-#
-#                child = NestedCompoA()
-#                child.marks.start.to(self.marks.end)
-#                child.marks.start.rotate(-pc.degrees(90))
-#                child.marks.start.scale(1 / 2)
-#                self.add_subcompo(
-#                    child,
-#                    pc.Dict(
-#                        l1='l2'
-#                        )
-#                    )
-#
-#                self.marks.child_start = child.marks.start
-#                self.marks.child_end = child.marks.end
-#
-#        class NestedCompoC(pc.Compo):
-#            """
-#            A compo that includes NestedCompoB
-#            """
-#            class Layers(pc.Compo.Layers):
-#                l1 = pc.Layer()
-#                l2 = pc.Layer()
-#                l3 = pc.Layer()
-#
-#            class Marks(pc.Compo.Marks):
-#                start = pc.Mark('Start of the rectangle')
-#                end = pc.Mark('End of the rectangle')
-#                child_start = pc.Mark('Start of the child rectangle')
-#                child_end = pc.Mark('End of the child rectangle')
-#                grandchild_start = pc.Mark('Start of the granchild rectangle')
-#                grandchild_end = pc.Mark('End of the grandchild rectangle')
-#
-#            def _make(self):
-#                self.marks.start = pc.Point(0, 0)
-#                self.marks.end = pc.Point(0, 16)
-#                self.add_subpoly(pc.RectWire(self.marks.start, self.marks.end, 2), 'l1')
-#                child = NestedCompoB()
-#                child.marks.start.to(self.marks.end)
-#                child.marks.start.rotate(-pc.degrees(90))
-#                child.marks.start.scale(1 / 2)
-#                self.add_subcompo(
-#                    child,
-#                    pc.Dict(
-#                        l1='l2',
-#                        l2='l3',
-#                        )
-#                    )
-#                self.marks.child_start = child.marks.start
-#                self.marks.child_end = child.marks.end
-#                self.marks.grandchild_start = child.marks.child_start
-#                self.marks.grandchild_end = child.marks.child_end
-#
-#
-#        class MyCompo(pc.Compo):
-#            class Layers(pc.Compo.Layers):
-#                l1 = pc.Layer()
-#                l2 = pc.Layer()
-#                l3 = pc.Layer()
-#
-#            def _make(self):
-#                compo_a = NestedCompoA()
-#                compo_b = NestedCompoB()
-#                compo_c = NestedCompoC()
-#
-#                compo_a.marks.start.to((0, 0))
-#                compo_b.marks.start.to((16, 0))
-#                compo_c.marks.start.to((32, 0))
-#
-#                self.add_subcompo(compo_a)
-#                self.add_subcompo(compo_b)
-#                self.add_subcompo(compo_c)
-#
-#                #self.add_subpoly(pc.Circle(3).bbox.mid.to((0, 0)), 'l1')
-#                #self.add_subpoly(pc.Circle(3).bbox.mid.to((16, 0)), 'l1')
-#                #self.add_subpoly(pc.Circle(3).bbox.mid.to((32, 0)), 'l1')
-#
-#        compo = MyCompo()
-#
-#        # If you're trying to figure out what's going on with
-#        # this test, taking a look at the compo that's
-#        # being generated might help:
-#        with open('../test.cif', 'w') as f:
-#            pc.export_cif(f, compo)
-#
-#        expected_polys_l1 = [
-#            p1 := np.array([
-#                [-1, 0],
-#                [-1, 16],
-#                [1, 16],
-#                [1, 0],
-#                ]),
-#            p1 + [16, 0],
-#            p1 + [32, 0],
-#            ]
-#
-#        expected_polys_l2 = [
-#            p1 := np.array([
-#                [16, 15.5],
-#                [16, 16.5],
-#                [24, 16.5],
-#                [24, 15.5],
-#                ]),
-#            p1 + [16, 0],
-#            ]
-#
-#        expected_polys_l3 = [
-#            np.array([
-#                [39.75, 12],
-#                [39.75, 16],
-#                [40.25, 16],
-#                [40.25, 12],
-#                ]),
-#            ]
-#        expected_polys = [expected_polys_l1, expected_polys_l2, expected_polys_l3]
-#
-#        layers = compo.get_polys()
-#        l1 = layers['l1']
-#        l2 = layers['l2']
-#        l3 = layers['l3']
-#
-#        self.assertEqual(len(l1), 3)
-#        self.assertEqual(len(l2), 2)
-#        self.assertEqual(len(l3), 1)
-#
-#        for actual_layer, expected_layer in zip((l1, l2, l3), expected_polys):
-#            for actual_poly in actual_layer:
-#                for i, expected_poly in enumerate(expected_layer):
-#
-#                    deviation = abs((actual_poly.get_xyarray() - expected_poly).sum())
-#                    log.debug(deviation)
-#                    if deviation < 0.001:
-#                        expected_layer.pop(i)
-#                        break
-#
-#                else:
-#                    self.assertTrue(False)
-
-    def test_tl_simple(self):
-
-        length = 100
-        bridge_spacing = 10
-        bridge_length = 2
-        start = pc.Point(10, 10)
-        stop = start + (length, 0)
-
-        path0 = [
-            pc.tl.StartAt(start),
-            pc.tl.StraightTo(stop),
-            ]
-
-        # No elbows, should be equal
-        path1 = pc.tl.resolve_elbows(path0)
-        self.assertEqual(path0, path1)
-        
-        # No duplicate straights, should be equal
-        path2 = pc.tl.reduce_straights(path1)
-        self.assertEqual(path1, path2)
-
-        # No bends
-        path3, bendspecs = pc.tl.construct_bends(path2, radius=10)
-        self.assertEqual(path2, path3)
-        self.assertFalse(bendspecs)
-
-        # Set bridge spacing to once every 10 px,
-        # should be 100 / 10 = 10
-        path4, bridgespecs = pc.tl.construct_bridges(
-            path3,
-            spacing=bridge_spacing,
-            scramble=0,
-            bridge_length=bridge_length
+        self.assertArrayAlmostEqual(
+            compo.marks.propagated,
+            (20 - 3, 40 - 3)
             )
-        #log.debug(pc.tl.format_path(path4))
-        #self.assertEqual(path3, path4)
-        self.assertEqual(len(bridgespecs), length / bridge_spacing)
 
-        # TODO this just tests that all bridges are
-        # somewhere on the line segment between the two points.
-        # Is this what we want?
-        for bridge in bridgespecs:
-            self.assertTrue(bridge.start.x in range(start.x, stop.x))
+        self.assertArrayAlmostEqual(
+            compo.subcompos[2].subcompos[0].marks.triangle_corner,
+            (20 - 3, 40 - 3)
+            )
 
-    #def test_nested_compo_transform_2(self):
-
-    #    class MyCompo(pc.Compo):
-    #        Layers = pc.Dict(
-    #            l1=pc.Layer(),
-    #            l2=pc.Layer(),
-    #            l3=pc.Layer(),
-    #            )
-
-    #        def _make(self):
-    #            compo_a = NestedCompoA()
-    #            compo_b = NestedCompoB()
-    #            compo_c = NestedCompoC()
-
-    #            compo_b.snap_right(compo_a)
-    #            compo_b.movex(5)
-
-    #            compo_c.snap_right(compo_b)
-    #            compo_c.movex(5)
-
-    #            self.add_subcompo(compo_a)
-    #            self.add_subcompo(compo_b)
-    #            self.add_subcompo(compo_c)
-
-    #    compo = MyCompo()
-
-    def test_marks_apartness(self):
-        """
-        Tests whether different compos can have a mark
-        defined in two different places.
-        There was a bug where all marks were shared across all
-        instances of a compo class,
-        that managed to survive surprisingly long
-        before this test was written!
-        """
-
-        class MyCompo(pc.Compo):
-            class Layers(pc.Compo.Layers):
-                root = pc.Layer()
-            class Marks(pc.Compo.Marks):
-                foo = pc.Mark()
-            class Options(pc.Compo.Options):
-                mark_height = pc.Option(10)
-
-            def _make(self):
-                self.marks.foo = pc.Point(0, self.options.mark_height)
+        self.assertArrayAlmostEqual(
+            compo.subcompos[2].marks.propagated,
+            (20 - 3, 40 - 3)
+            )
 
 
-        compo1 = MyCompo(options=dict(
-            mark_height=10
-            ))
-        compo2 = MyCompo(options=dict(
-            mark_height=20
-            ))
-
-        self.assertEqual(compo1.marks.foo, (0, 10))
-        self.assertEqual(compo2.marks.foo, (0, 20))
-
-
+if __name__ == '__main__':
+    unittest.main()
 
