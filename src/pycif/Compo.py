@@ -108,4 +108,12 @@ class Compo:
                 bbox.add_xyarray(geom)
         return bbox
 
+    def __init_subclass__(cls):
+        if not hasattr(cls, 'Marks'):
+            cls.Marks = []
+        else:
+            cls.Marks = [
+                name for name in cls.Marks.__dict__.keys() if not name.startswith('_')
+                ]
+            # TODO inheritance and stuff!
 

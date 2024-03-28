@@ -22,3 +22,13 @@ from pycif.cif import export_cif
 from pycif import err
 from pycif import debug
 
+from pycif.checker.violations import (
+    Viol,
+    MarksViol,
+    LenientViol,
+    RAI412,
+    RAI442
+    )
+
+from pycif.checker.checker import check_compo
+
