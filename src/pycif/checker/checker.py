@@ -1,4 +1,5 @@
 import ast
+import inspect
 
 import pycif as pc
 
@@ -101,12 +102,26 @@ def _check_compo(compo, tree):
             ),
         )""", True)
 
+    redundancy = {}
     for assign in mark_assigns:
-        if assign.attr not in compo.Marks:
-            yield pc.RAI442(assign.lineno, mark=assign.attr)
+        mark_name = assign.attr
+
+        if mark_name not in compo.Marks:
+            yield pc.RAI442(assign.lineno, mark=mark_name)
+
+        if mark_name not in redundancy.keys():
+            redundancy[mark_name] = []
+        redundancy[mark_name].append(assign.lineno)
+
+    for mark_name, lines in redundancy.items():
+        if len(lines) > 1:
+            for line in lines:
+                yield pc.RAI412(line, mark=mark_name, lines=lines)
 
 
-def check_compo(compo, root):
+def check_compo(compo):
+    code = inspect.getsource(compo)
+    root = ast.parse(code)
     tree = __find(root, """ast.ClassDef()""")
     write_parents(tree)
     yield from _check_compo(compo, tree)

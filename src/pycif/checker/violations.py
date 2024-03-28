@@ -1,4 +1,4 @@
-class Viol(Exception):
+class Viol():
     """
     Viol: Checker violation.
     This is a base class that can be used to catch
@@ -10,7 +10,12 @@ class Viol(Exception):
         self.context = context
 
     def __str__(self):
-        return self.desc.format(**self.context)
+        desc = self.desc.format(**self.context)
+        name = type(self).__name__
+        return f"<{name} at line {self.line}: {desc}>"
+
+    def __repr__(self):
+        return self.__str__()
 
 class MarksViol(Viol):
     """
@@ -36,8 +41,8 @@ class AuthoritarianViol(Viol):
     """
 
 class RAI412(MarksViol, LenientViol):
-    desc = "Mark {mark} assigned multiple times at lines {lines}."
+    desc = "Mark {mark} assigned multiple times at lines {lines}"
 
 class RAI442(MarksViol, AuthoritarianViol):
-    desc = "Assignment to undeclared mark {mark}."
+    desc = "Assignment to undeclared mark {mark}"
 
