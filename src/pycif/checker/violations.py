@@ -1,3 +1,5 @@
+import ast
+
 class Viol():
     """
     Viol: Checker violation.
@@ -5,9 +7,19 @@ class Viol():
     all checker violtations.
     """
 
-    def __init__(self, line, **context):
-        self.line = line
+    def __init__(self, line, col=0, **context):
+        if isinstance(line, ast.AST):
+            self.line = line.lineno
+            self.col = line.col_offset
+        else:
+            self.line = line
+            self.col = col
         self.context = context
+
+    def flake8(self):
+        desc = self.desc.format(**self.context)
+        name = type(self).__name__
+        return f"{name} {desc}"
 
     def __str__(self):
         desc = self.desc.format(**self.context)
@@ -41,8 +53,8 @@ class AuthoritarianViol(Viol):
     """
 
 class RAI412(MarksViol, LenientViol):
-    desc = "Mark {mark} assigned multiple times at lines {lines}"
+    desc = "Mark `{mark}` assigned multiple times at lines {lines}"
 
 class RAI442(MarksViol, AuthoritarianViol):
-    desc = "Assignment to undeclared mark {mark}"
+    desc = "Assignment to undeclared mark `{mark}`"
 

@@ -6,7 +6,9 @@ radians = lambda r: r
 
 from pycif.helpers import *
 
-from pycif.Mark import Mark
+from pycif.Mark import Mark, MarkAnnot
+from pycif.Layer import Layer, LayerAnnot
+from pycif.Option import Option, OptionAnnot
 from pycif.Transform import Transform
 from pycif.Compo import Compo
 from pycif.Proxy import Proxy
@@ -30,5 +32,9 @@ from pycif.checker.violations import (
     RAI442
     )
 
-from pycif.checker.checker import check_compo
+from pycif.checker.checker import (
+    check_compo,
+    check_module,
+    Flake8Checker
+    )
 

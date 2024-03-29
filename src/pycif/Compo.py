@@ -1,3 +1,5 @@
+import inspect
+
 import pycif as pc
 
 class MarksContainer(dict):
@@ -109,11 +111,53 @@ class Compo:
         return bbox
 
     def __init_subclass__(cls):
-        if not hasattr(cls, 'Marks'):
-            cls.Marks = []
-        else:
-            cls.Marks = [
-                name for name in cls.Marks.__dict__.keys() if not name.startswith('_')
-                ]
-            # TODO inheritance and stuff!
+        _class_to_dictlist(cls, 'Marks', pc.MarkAnnot)
+        _class_to_dictlist(cls, 'Layers', pc.LayerAnnot)
+        _class_to_dictlist(cls, 'Options', pc.OptionAnnot)
+
+        for param in inspect.signature(cls._make).parameters.values():
+            if param.name not in cls.Options.keys():
+                # TODO unannotated
+                continue
+
+            cls.Options[param.name].default = param.default
+
+            if (
+                    param.annotation is inspect._empty
+                    and param.default is not inspect._empty
+                    ):
+                cls.Options[param.name].annot = type(param.default)
+            else:
+
+                cls.Options[param.name].annot = param.annotation
+
+class DictList(dict):
+    """
+    A dict that is also a list!
+    """
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return list(self.values())[key]
+        return super().__getitem__(key)
+
+    def append(self, item):
+        self[len(self)] = item
+
+    def __iter__(self):
+        return iter(self.values())
+
+
+def _class_to_dictlist(cls, attr, wanted_type):
+    if not hasattr(cls, attr):
+        setattr(cls, attr, DictList())
+        return
+
+    new_list = DictList()
+    for name, annot in getattr(cls, attr).__dict__.items():
+        if not isinstance(annot, wanted_type):
+            continue
+        annot.name = name
+        new_list[name] = annot
+
+    setattr(cls, attr, new_list)
 

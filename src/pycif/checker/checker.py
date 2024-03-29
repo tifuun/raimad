@@ -53,13 +53,12 @@ def write_parents(tree):
 # but this gets the point across that you really shouldn't use this
 # outside of this module.
 def __matches(match, case):
-    locs = {'match': match}
     exec(
         "match match:\n"
         f"   case {case}:\n"
         "       did_match = True",
         globals(),
-        locs,
+        locs := {'match': match}
         )
     return 'did_match' in locs.keys()
 
@@ -106,17 +105,19 @@ def _check_compo(compo, tree):
     for assign in mark_assigns:
         mark_name = assign.attr
 
-        if mark_name not in compo.Marks:
-            yield pc.RAI442(assign.lineno, mark=mark_name)
+        if mark_name not in [mark.name for mark in compo.Marks]:
+            yield pc.RAI442(assign, mark=mark_name)
 
         if mark_name not in redundancy.keys():
             redundancy[mark_name] = []
-        redundancy[mark_name].append(assign.lineno)
+        redundancy[mark_name].append(assign)
 
-    for mark_name, lines in redundancy.items():
-        if len(lines) > 1:
-            for line in lines:
-                yield pc.RAI412(line, mark=mark_name, lines=lines)
+    for mark_name, nodes in redundancy.items():
+        if len(nodes) > 1:
+            for node in nodes:
+                yield pc.RAI412(node, mark=mark_name, lines=[
+                    node.lineno for node in nodes
+                    ])
 
 
 def check_compo(compo):
@@ -125,4 +126,42 @@ def check_compo(compo):
     tree = __find(root, """ast.ClassDef()""")
     write_parents(tree)
     yield from _check_compo(compo, tree)
+
+def check_module(tree):
+    exec(
+        compile(tree, '<string>', 'exec'),
+        {},
+        locs := {}
+        )
+
+    for compo_node in __find(tree, "ast.ClassDef()", True):
+        compo = locs.get(compo_node.name, None)
+        if compo is None:
+            continue
+        if not isinstance(compo, type):
+            continue
+        if not issubclass(compo, pc.Compo):
+            continue
+        yield from _check_compo(compo, compo_node)
+
+class Flake8Checker:
+    name = __name__
+    version = 0
+
+    def __init__(self, tree: ast.AST) -> None:
+        self._tree = tree
+
+    def run(self):
+        if not hasattr(self._tree, 'body'):
+            return
+        for toplevel in self._tree.body:
+            match toplevel:
+                case ast.Expr(value=ast.Constant(value='pc_checkme')):
+                    break
+        else:
+            return
+
+        for viol in check_module(self._tree):
+            yield viol.line, viol.col, viol.flake8(), type
+
 

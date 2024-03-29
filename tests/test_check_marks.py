@@ -11,6 +11,17 @@ class Unannotated(pc.Compo):
         self.marks.square_center = (5, 5)
         self.marks.square_corner = (10, 10)
 
+class Annotated(pc.Compo):
+    class Marks:
+        square_corner = pc.Mark['corner of the square']
+        square_center = pc.Mark['corner of the square']
+        triangle_corner = pc.Mark['corner of the square']
+
+    def _make(self):
+        self.marks.triangle_corner = (20, 40)
+        self.marks.square_center = (5, 5)
+        self.marks.square_corner = (10, 10)
+
 class Reassign(pc.Compo):
     class Marks:
         square_corner = pc.Mark['corner of the square']
@@ -40,7 +51,11 @@ def same_viols(actual, expected):
     return True
 
 
-class TestLintMarkNames(unittest.TestCase):
+class TestCheckMarkNames(unittest.TestCase):
+
+    def test_lint_annotated(self):
+        viols = list(pc.check_compo(Annotated))
+        self.assertEqual(len(viols), 0)
 
     def test_lint_unannotated(self):
         viols = list(pc.check_compo(Unannotated))
