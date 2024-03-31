@@ -6,6 +6,8 @@ radians = lambda r: r
 
 from pycif.helpers import *
 
+from pycif.dictlist import DictList
+
 from pycif.mark import Mark, MarkAnnot
 from pycif.layer import Layer, LayerAnnot
 from pycif.option import Option, OptionAnnot

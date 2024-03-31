@@ -123,6 +123,14 @@ class Proxy:
     def snap_left(self, other):
         self.bbox.mid_right.to(other.bbox.mid_left)
         return self
+
+    def snap_above(self, other):
+        self.bbox.bot_mid.to(other.bbox.top_mid)
+        return self
+
+    def snap_below(self, other):
+        self.bbox.top_mid.to(other.bbox.bot_mid)
+        return self
     # TODO the rest of the snapping functions
 
 

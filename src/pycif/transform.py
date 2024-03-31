@@ -74,6 +74,11 @@ class Transform(object):
         if len(xyarray) == 0:
             return xyarray
 
+        if not isinstance(xyarray, np.ndarray):
+            # TODO instead of dynamic hacks like this,
+            # grind through with a static checker
+            xyarray = np.array(xyarray)
+
         homogeneous = np.hstack((
             xyarray,
             np.ones((xyarray.shape[0], 1)),

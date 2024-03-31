@@ -32,10 +32,19 @@ class MarksContainer(dict):
         new._proxy = proxy
         return new
 
+class SubcompoContainer(pc.DictList):
+    def _filter(self, item):
+        if isinstance(item, pc.Compo):
+            return pc.Proxy(item)
+        elif isinstance(item, pc.Proxy):
+            return item
+        else:
+            raise Exception  # TODO actual exception
+
 class Compo:
     def __init__(self, *args, **kwargs):
         self.geoms = {}
-        self.subcompos = []
+        self.subcompos = SubcompoContainer()
         self.marks = MarksContainer()
 
         self._make(*args, **kwargs)
@@ -131,28 +140,24 @@ class Compo:
 
                 cls.Options[param.name].annot = param.annotation
 
-class DictList(dict):
-    """
-    A dict that is also a list!
-    """
-    def __getitem__(self, key):
-        if isinstance(key, int):
-            return list(self.values())[key]
-        return super().__getitem__(key)
-
-    def append(self, item):
-        self[len(self)] = item
-
-    def __iter__(self):
-        return iter(self.values())
+    # TODO pass lmap and transform directly?
+    # TODO name?
+    def subcompo(self, compo, name: str | None = None):
+        proxy = pc.Proxy(compo)
+        if name is None:
+            self.subcompos.append(proxy)
+        else:
+            # TODO runtime check for subcompo reassignment?
+            self.subcompos[name] = proxy
+        return proxy
 
 
 def _class_to_dictlist(cls, attr, wanted_type):
     if not hasattr(cls, attr):
-        setattr(cls, attr, DictList())
+        setattr(cls, attr, pc.DictList())
         return
 
-    new_list = DictList()
+    new_list = pc.DictList()
     for name, annot in getattr(cls, attr).__dict__.items():
         if not isinstance(annot, wanted_type):
             continue
