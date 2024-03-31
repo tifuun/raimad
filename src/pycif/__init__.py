@@ -8,13 +8,13 @@ from pycif.helpers import *
 
 from pycif.dictlist import DictList
 
-from pycif.mark import Mark, MarkAnnot
-from pycif.layer import Layer, LayerAnnot
-from pycif.option import Option, OptionAnnot
+from pycif.mark import Mark
+from pycif.layer import Layer
+from pycif.option import Option
+from pycif.boundpoint import BoundPoint
 from pycif.transform import Transform
 from pycif.compo import Compo
 from pycif.proxy import Proxy
-from pycif.boundpoint import BoundPoint
 from pycif.bbox import BBox
 
 from pycif.rectwh import RectWH

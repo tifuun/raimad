@@ -4,7 +4,7 @@ import pycif as pc
 
 class Unannotated(pc.Compo):
     class Marks:
-        square_corner = pc.Mark['corner of the square']
+        square_corner = pc.Mark('corner of the square')
 
     def _make(self):
         self.marks.triangle_corner = (20, 40)
@@ -13,9 +13,9 @@ class Unannotated(pc.Compo):
 
 class Annotated(pc.Compo):
     class Marks:
-        square_corner = pc.Mark['corner of the square']
-        square_center = pc.Mark['corner of the square']
-        triangle_corner = pc.Mark['corner of the square']
+        square_corner = pc.Mark('corner of the square')
+        square_center = pc.Mark('corner of the square')
+        triangle_corner = pc.Mark('corner of the square')
 
     def _make(self):
         self.marks.triangle_corner = (20, 40)
@@ -24,7 +24,7 @@ class Annotated(pc.Compo):
 
 class Reassign(pc.Compo):
     class Marks:
-        square_corner = pc.Mark['corner of the square']
+        square_corner = pc.Mark('corner of the square')
 
     def _make(self):
         self.marks.square_corner = (5, 5)

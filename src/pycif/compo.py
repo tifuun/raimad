@@ -2,21 +2,10 @@ import inspect
 
 import pycif as pc
 
-class MarksContainer(dict):
+class MarksContainer(pc.DictList):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._proxy = None
-
-    def __setattr__(self, name, value):
-
-        if name.startswith('_'):
-            super().__setattr__(name, value)
-            return
-
-        if hasattr(self.__class__, name):
-            raise Exception  # TODO actual exception
-        else:
-            self[name] = value
 
     def __getattr__(self, name):
 
@@ -40,6 +29,7 @@ class SubcompoContainer(pc.DictList):
             return item
         else:
             raise Exception  # TODO actual exception
+        # TODO generally need to standardize runtime checks.
 
 class Compo:
     def __init__(self, *args, **kwargs):
@@ -105,7 +95,8 @@ class Compo:
 
     # mark functions #
     def set_mark(self, name, point):
-        self.marks[name] = pc.Mark(self, point)
+        # TODO this is a boundpoint but not actually a boundpoint?
+        self.marks[name] = pc.BoundPoint(point, None)
 
     def get_mark(self, name):
         return self.marks[name]
@@ -120,9 +111,9 @@ class Compo:
         return bbox
 
     def __init_subclass__(cls):
-        _class_to_dictlist(cls, 'Marks', pc.MarkAnnot)
-        _class_to_dictlist(cls, 'Layers', pc.LayerAnnot)
-        _class_to_dictlist(cls, 'Options', pc.OptionAnnot)
+        _class_to_dictlist(cls, 'Marks', pc.Mark)
+        _class_to_dictlist(cls, 'Layers', pc.Layer)
+        _class_to_dictlist(cls, 'Options', pc.Option)
 
         for param in inspect.signature(cls._make).parameters.values():
             if param.name not in cls.Options.keys():

@@ -5,20 +5,20 @@ import pycif as pc
 
 class Annotated(pc.Compo):
     class Marks:
-        square_corner = pc.Mark['corner of the square']
-        square_center = pc.Mark['center of the square']
+        square_corner = pc.Mark('corner of the square')
+        square_center = pc.Mark('center of the square')
 
     class Layers:
-        al = pc.Layer['Aluminium']
-        insl = pc.Layer['Insulator']
-        gnd = pc.Layer['Ground']
+        al = pc.Layer('Aluminium')
+        insl = pc.Layer('Insulator')
+        gnd = pc.Layer('Ground')
 
     class Options:
-        width = pc.Option.Geometric['width of coupler']
-        freq = pc.Option.Functional['resonant frequency']
-        grav = pc.Option.Environmental['Gravitational constant']
-        skip_beams = pc.Option.Debug['Do not generate beams']
-        print_beams = pc.Option['Print a line for every beam']
+        width = pc.Option.Geometric('width of coupler')
+        freq = pc.Option.Functional('resonant frequency')
+        grav = pc.Option.Environmental('Gravitational constant')
+        skip_beams = pc.Option.Debug('Do not generate beams')
+        print_beams = pc.Option('Print a line for every beam')
 
     def _make(
             width,
