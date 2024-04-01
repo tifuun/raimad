@@ -14,3 +14,5 @@ class Circle(pc.Compo):
                 ]
             })
 
+        self.marks.center = (0, 0)
+

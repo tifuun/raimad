@@ -189,12 +189,12 @@ class Transform(object):
 
         return self
 
-    def hflip(self, y: float = 0) -> Self:
-        self._affine = _around(_scale(1, -1), 0, y) @ self._affine
+    def hflip(self, x: float = 0) -> Self:
+        self._affine = _around(_scale(1, -1), 0, x) @ self._affine
         return self
 
-    def vflip(self, x: float = 0) -> Self:
-        self._affine = _around(_scale(-1, 1), x, 0) @ self._affine
+    def vflip(self, y: float = 0) -> Self:
+        self._affine = _around(_scale(-1, 1), y, 0) @ self._affine
         return self
 
     def flip(self, x: float = 0, y: float = 0) -> Self:

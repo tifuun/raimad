@@ -13,10 +13,10 @@ class TwoCircles(pc.Compo):
     """
     def _make(self):
         self.subcompos.append(
-            pc.Circle(5).movex(-5)
+            pc.Circle(5) @ pc.Transform().movex(-5)
             )
         self.subcompos.append(
-            pc.Circle(5).movex(5)
+            pc.Circle(5) @ pc.Transform().movex(5)
             )
 
 class RotatedCircles(pc.Compo):
@@ -26,7 +26,7 @@ class RotatedCircles(pc.Compo):
     """
     def _make(self):
         self.subcompos.append(
-            TwoCircles().rotate(pc.degrees(90))
+            TwoCircles() @ pc.Transform().rotate(pc.degrees(90))
             )
 
 class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):

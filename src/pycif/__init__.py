@@ -21,6 +21,7 @@ from pycif.rectwh import RectWH
 from pycif.rectwire import RectWire
 from pycif.circle import Circle
 from pycif.ansec import AnSec
+from pycif.custompoly import CustomPoly
 
 from pycif.cif import export_cif
 from pycif import err
@@ -39,4 +40,6 @@ from pycif.checker.checker import (
     check_module,
     Flake8Checker
     )
+
+from pycif.snowman import Snowman
 

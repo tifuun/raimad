@@ -31,10 +31,10 @@ class Intermid(pc.Compo):
 class BareStructural(pc.Compo):
     def _make(self):
         self.subcompos.append(
-            BareGeometric().scale(2) @ 'upper'
+            BareGeometric() @ pc.Transform().scale(2) @ 'upper'
             )
         self.subcompos.append(
-            BareGeometric().scale(0.5) @ 'lower'
+            BareGeometric() @ pc.Transform().scale(0.5) @ 'lower'
             )
         self.subcompos.append(
             (Intermid() @ 'lower').movey(-3)

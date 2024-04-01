@@ -1,4 +1,5 @@
 import inspect
+from copy import deepcopy
 
 import pycif as pc
 
@@ -62,36 +63,44 @@ class Compo:
 
     # Transform functions #
     # TODO for all transforms
-    def scale(self, factor):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().scale(factor)
-            )
+    #def scale(self, factor):
+    #    return pc.Proxy(
+    #        self,
+    #        transform=pc.Transform().scale(factor)
+    #        )
 
-    def movex(self, factor):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().movex(factor)
-            )
+    #def movex(self, factor):
+    #    return pc.Proxy(
+    #        self,
+    #        transform=pc.Transform().movex(factor)
+    #        )
 
-    def movey(self, factor):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().movey(factor)
-            )
+    #def movey(self, factor):
+    #    return pc.Proxy(
+    #        self,
+    #        transform=pc.Transform().movey(factor)
+    #        )
 
-    def rotate(self, angle):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().rotate(angle)
-            )
+    #def rotate(self, angle):
+    #    return pc.Proxy(
+    #        self,
+    #        transform=pc.Transform().rotate(angle)
+    #        )
 
     # lmap function #
-    def __matmul__(self, lmap):
-        return pc.Proxy(
-            self,
-            lmap=lmap
-            )
+    def __matmul__(self, what):
+        if isinstance(what, dict | str):  # TODO lmap shorthand type
+            return pc.Proxy(
+                self,
+                lmap=what
+                )
+        elif isinstance(what, pc.Transform):
+            return pc.Proxy(
+                self,
+                transform=what
+                )
+        else:
+            raise Exception()  # TODO
 
     # mark functions #
     def set_mark(self, name, point):

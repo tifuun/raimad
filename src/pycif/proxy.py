@@ -63,7 +63,18 @@ class Proxy:
 
     def proxy_copy(self, new_subcompo=None):
         return type(self)(
-            new_subcompo or self.subcompo,
+            new_subcompo or self.compo,
+            copy(self.lmap),
+            self.transform.copy(),
+            )
+
+    def copy(self):
+        return type(self)(
+            (
+                self.compo
+                if isinstance(self.compo, pc.Compo)
+                else self.compo.copy()
+                ),
             copy(self.lmap),
             self.transform.copy(),
             )
@@ -74,23 +85,34 @@ class Proxy:
     # Transform functions #
     # TODO for all transforms
     # TODO same implementation as in Compo
+    # TODO stack another transform or modify self?
     def scale(self, factor):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().scale(factor)
-            )
+        self.transform.scale(factor)
+        return self
 
     def movex(self, factor):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().movex(factor)
-            )
+        self.transform.movex(factor)
+        return self
 
     def movey(self, factor):
-        return pc.Proxy(
-            self,
-            transform=pc.Transform().movey(factor)
-            )
+        self.transform.movey(factor)
+        return self
+
+    def move(self, x: 0, y: float = 0):
+        self.transform.move(x, y)
+        return self
+
+    def hflip(self, x: float = 0):
+        self.transform.hflip(x)
+        return self
+
+    def vflip(self, y: float = 0):
+        self.transform.vflip(y)
+        return self
+
+    def flip(self, x: float = 0, y: float = 0):
+        self.transform.flip(x, y)
+        return self
 
     # lmap function #
     def __matmul__(self, lmap):
@@ -101,8 +123,11 @@ class Proxy:
 
     # mark functions #
     def get_mark(self, name):
-        return self.transform.transform_point(
-            self.compo.get_mark(name)
+        return pc.BoundPoint(
+            self.transform.transform_point(
+                self.compo.get_mark(name)
+                ),
+            self
             )
 
     @property

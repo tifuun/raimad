@@ -16,7 +16,7 @@ def yield_cif_bare(compo, multiplier=1e3, rout=1):
             for point in poly:
                 yield (
                     f'{int(point[0] * multiplier)} '
-                    f'{int(point[1] * multiplier)}'
+                    f'{int(point[1] * multiplier)} '
                     )
             yield ';\n'
 
