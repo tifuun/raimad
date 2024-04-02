@@ -51,3 +51,11 @@ def polar(arg, mod=1):
         np.sin(arg)
         ]) * mod
 
+def is_compo_class(obj):
+    return (
+        isinstance(obj, type)
+        and issubclass(obj, pc.Compo)
+        and obj is not pc.Compo
+        )
+
+

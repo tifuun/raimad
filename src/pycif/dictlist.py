@@ -48,6 +48,7 @@ class DictList():
 
     # TODO update method
 
+    # TODO remove this iter and force to use .keys() or .values()
     def __iter__(self):
         return iter(self._dict.values())
 

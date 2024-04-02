@@ -5,6 +5,24 @@ from numpy import radians as degrees
 radians = lambda r: r
 
 from pycif.helpers import *
+from pycif.iters import (
+    overlap,
+    nonoverlap,
+
+    duplets,
+    triplets,
+    quadlets,
+    quintlets,
+
+    couples,
+    triples,
+    quadles,
+    quintles,
+
+    flatten,
+    braid
+    )
+from pycif.string_import import string_import
 
 from pycif.dictlist import DictList
 
