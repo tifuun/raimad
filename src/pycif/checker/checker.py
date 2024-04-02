@@ -105,7 +105,7 @@ def _check_compo(compo, tree):
     for assign in mark_assigns:
         mark_name = assign.attr
 
-        if mark_name not in [mark.name for mark in compo.Marks]:
+        if mark_name not in [mark.name for mark in compo.Marks.values()]:
             yield pc.RAI442(assign, mark=mark_name)
 
         if mark_name not in redundancy.keys():

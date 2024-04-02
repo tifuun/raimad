@@ -42,7 +42,7 @@ class Compo:
 
     def get_geoms(self) -> dict:
         geoms = self.geoms.copy()
-        for subcompo in self.subcompos:
+        for subcompo in self.subcompos.values():
             # TODO override "update" method in geoms container?
             for layer_name, layer_geoms in subcompo.get_geoms().items():
                 if layer_name not in geoms.keys():
@@ -58,7 +58,7 @@ class Compo:
 
     def walk_hier(self):
         yield self
-        for subcompo in self.subcompos:
+        for subcompo in self.subcompos.values():
             yield from subcompo.walk_hier()
 
     # Transform functions #

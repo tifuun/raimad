@@ -4,7 +4,7 @@ import pycif as pc
 
 class TestSnowman(unittest.TestCase):
 
-    def test_bare_geometric(self):
+    def test_snowman(self):
         compo = pc.Snowman(nose_length=20, eye_size=2.5)
         geom = compo.get_geoms()
 

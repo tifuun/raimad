@@ -45,10 +45,10 @@ class Proxy:
 
     @property
     def subcompos(self):
-        return [
-            self.proxy_copy(subcompo)
-            for subcompo in self.compo.subcompos
-            ]
+        return pc.DictList({
+            name: self.proxy_copy(subcompo)
+            for name, subcompo in self.compo.subcompos.items()
+            })
         return self.compo.subcompos
 
     def final(self):

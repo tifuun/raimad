@@ -20,11 +20,11 @@ def yield_cif_bare(compo, multiplier=1e3, rout=1):
                     )
             yield ';\n'
 
-    for i, subcompo in enumerate(compo.subcompos):
+    for i, subcompo in enumerate(compo.subcompos.values()):
         yield f'\tC {rout + i};\n'
     yield 'DF;\n'
 
-    for i, subcompo in enumerate(compo.subcompos):
+    for i, subcompo in enumerate(compo.subcompos.values()):
         yield from yield_cif_bare(subcompo, multiplier, rout + i)
 
 
