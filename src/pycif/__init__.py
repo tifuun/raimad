@@ -4,6 +4,8 @@ Point = np.ndarray  # TODO
 from numpy import radians as degrees
 radians = lambda r: r
 
+Empty = object()
+
 from pycif.helpers import *
 from pycif.iters import (
     overlap,

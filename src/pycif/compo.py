@@ -131,13 +131,13 @@ class Compo:
 
             cls.Options[param.name].default = param.default
 
-            if (
-                    param.annotation is inspect._empty
-                    and param.default is not inspect._empty
-                    ):
-                cls.Options[param.name].annot = type(param.default)
-            else:
+            if param.annotation is inspect._empty:
+                if param.default is not inspect._empty:
+                    cls.Options[param.name].annot = type(param.default)
+                else:
+                    cls.Options[param.name].annot = pc.Empty
 
+            else:
                 cls.Options[param.name].annot = param.annotation
 
     # TODO pass lmap and transform directly?

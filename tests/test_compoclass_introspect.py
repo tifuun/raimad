@@ -1,5 +1,4 @@
 import unittest
-import inspect
 
 import pycif as pc
 
@@ -101,7 +100,7 @@ class TestClassIntrospection(unittest.TestCase):
         self.assertEqual(Annotated.Options[4].annot, bool)
         self.assertEqual(Annotated.Options[1].annot, float)
         # No type specified annotated, and no default value
-        self.assertEqual(Annotated.Options[0].annot, inspect._empty)
+        self.assertEqual(Annotated.Options[0].annot, pc.Empty)
 
 
 if __name__ == '__main__':
