@@ -9,14 +9,14 @@ class Snowman(pc.Compo):
         eye_size = pc.Option.Geometric("Eye radius")
 
     class Layers:
-        snow = pc.Layer(
-            "A collection of individual crystals of frozen dihydrogen monoxide"
+        pebble = pc.Layer(
+            "Non-malleable polycrystalline silicon layer"
             )
         carrot = pc.Layer(
             "Bio-lithographic layer characterised by lambda = approx. 6E-7nm"
             )
-        pebble = pc.Layer(
-            "Non-malleable polycrystalline silicon layer"
+        snow = pc.Layer(
+            "A collection of individual crystals of frozen dihydrogen monoxide"
             )
 
     def _make(
