@@ -4,7 +4,17 @@ Point = np.ndarray  # TODO
 from numpy import radians as degrees
 radians = lambda r: r
 
-Empty = object()
+class EmptyType:
+    def __bool__(self):
+        return False
+
+    def __str__(self):
+        return "<Empty>"
+
+    def __repr__(self):
+        return "<Empty>"
+
+Empty = EmptyType()
 
 from pycif.helpers import *
 from pycif.iters import (

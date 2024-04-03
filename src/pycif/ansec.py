@@ -29,11 +29,21 @@ class AnSecThetaIncorrectArgumentsError(AnSecThetaError):
     pass
 
 class AnSec(pc.Compo):
+    """
+    Annular Sector
+
+    A polygon approximating an annular sector,
+    or, in working men's terms, a "pizza crust".
+    There are many possible ways to define an AnSec;
+    # TODO examples
+    """
+    browser_tags = ["builtin", "polygon"]
+
     class Options:
-        r1 = pc.Option("Inner radius", browser_default=10)
+        r1 = pc.Option("Inner radius", browser_default=18)
         r2 = pc.Option("Outter radius", browser_default=20)
         theta1 = pc.Option("Angle 1", browser_default=pc.degrees(45))
-        theta2 = pc.Option("Angle 2", browser_default=pc.degrees(175))
+        theta2 = pc.Option("Angle 2", browser_default=pc.degrees(90))
 
     def _make(
             self,

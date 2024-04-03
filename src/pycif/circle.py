@@ -2,7 +2,19 @@ import numpy as np
 import pycif as pc
 
 class Circle(pc.Compo):
-    def _make(self, radius, num_points=200):
+    """
+    Circle
+
+    A polygon that approximates a circle,
+    defined by the radius and number of points.
+    """
+    browser_tags = ["builtin", "polygon"]
+
+    class Options:
+        radius = pc.Option('Circle radius', browser_default=15)
+        num_points = pc.Option('Number of points')
+
+    def _make(self, radius: float, num_points: int = 200):
 
         self.geoms.update({
             'root': [

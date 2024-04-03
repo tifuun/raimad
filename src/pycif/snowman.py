@@ -6,7 +6,7 @@ class Snowman(pc.Compo):
 
     A sample component with three layers, two options, and one mark.
     """
-    browser_tags = ["builtin", "sample"]
+    browser_tags = ["builtin", "example"]
 
     class Marks:
         nose = pc.Mark("Tip of the snowman's nose")

@@ -5,6 +5,25 @@ class CustomPolyException(Exception):
 
 # TODO tests
 class CustomPoly(pc.Compo):
+    """
+    Custom Polygon
+
+    A polygon that you can defined on-the fly!
+    #TODO add example
+    """
+    browser_tags = ["builtin", "polygon"]
+
+    class Options:
+        points = pc.Option(
+            "A list of points for the polygon",
+            browser_default=[
+                [0, 0],
+                [10, 0],
+                [10, 20],
+                [20, -20],
+                ]
+            )
+
     def _make(self, points):
         processed_points = []
         for point in points:

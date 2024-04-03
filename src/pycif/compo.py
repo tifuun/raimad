@@ -129,14 +129,15 @@ class Compo:
                 # TODO unannotated
                 continue
 
-            cls.Options[param.name].default = param.default
+            cls.Options[param.name].annot = pc.Empty
+            cls.Options[param.name].default = pc.Empty
+
+            if param.default is not inspect._empty:
+                cls.Options[param.name].default = param.default
 
             if param.annotation is inspect._empty:
                 if param.default is not inspect._empty:
                     cls.Options[param.name].annot = type(param.default)
-                else:
-                    cls.Options[param.name].annot = pc.Empty
-
             else:
                 cls.Options[param.name].annot = param.annotation
 
