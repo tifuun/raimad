@@ -29,6 +29,12 @@ class AnSecThetaIncorrectArgumentsError(AnSecThetaError):
     pass
 
 class AnSec(pc.Compo):
+    class Options:
+        r1 = pc.Option("Inner radius", browser_default=10)
+        r2 = pc.Option("Outter radius", browser_default=20)
+        theta1 = pc.Option("Angle 1", browser_default=pc.degrees(45))
+        theta2 = pc.Option("Angle 2", browser_default=pc.degrees(175))
+
     def _make(
             self,
             r1=None,
