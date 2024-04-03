@@ -23,6 +23,7 @@ from pycif.iters import (
     braid
     )
 from pycif.string_import import string_import
+from pycif.docparse import split_docstring
 
 from pycif.dictlist import DictList
 

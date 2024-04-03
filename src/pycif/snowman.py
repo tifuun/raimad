@@ -1,6 +1,13 @@
 import pycif as pc
 
 class Snowman(pc.Compo):
+    """
+    Snowman
+
+    A sample component with three layers, two options, and one mark.
+    """
+    browser_tags = ["builtin", "sample"]
+
     class Marks:
         nose = pc.Mark("Tip of the snowman's nose")
 
