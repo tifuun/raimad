@@ -31,35 +31,42 @@ class Snowman(pc.Compo):
             nose_length: float = 10,
             eye_size: float = 2,
             ):
-        base = self.subcompo(pc.Circle(50) @ 'snow', 'base')
-        torso = self.subcompo(pc.Circle(40) @ 'snow', 'torso')
-        head = self.subcompo(pc.Circle(20) @ 'snow', 'head')
+
+        base = pc.Circle(50) @ 'snow'
+        torso = pc.Circle(40) @ 'snow'
+        head = pc.Circle(20) @ 'snow'
 
         torso.snap_above(base)
         head.snap_above(torso)
 
-        eye_l = self.subcompo(pc.Circle(eye_size) @ 'pebble')
+        eye_l = pc.Circle(eye_size) @ 'pebble'
 
         eye_l.marks.center.to(
             head.bbox.interpolate(0.3, 0.7)
             )
 
-        eye_r = self.subcompo(eye_l.copy())
+        eye_r = eye_l.copy()
         eye_r.vflip(head.bbox.mid[0])
         # TODO flip at arbitrary angle around point?
         # also, for hflip/vflip, is passed point,
         # automatically pick coordinate.
 
-        nose = self.subcompo(pc.CustomPoly([
+        nose = pc.CustomPoly([
             (0, 2),
             ('tip', (nose_length, 0)),
             (0, -2)
-            ]) @ 'carrot',
-            'nose')
+            ]) @ 'carrot'
 
         nose.move(
             head.bbox.interpolate(0.5, 0.5)
             )
 
         self.marks.nose = nose.marks.tip
+
+        self.subcompos.base = base
+        self.subcompos.torso = torso
+        self.subcompos.head = head
+        self.subcompos.eye_l = eye_l
+        self.subcompos.eye_r = eye_r
+        self.subcompos.nose = nose
 

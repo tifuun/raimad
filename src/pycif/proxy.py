@@ -46,7 +46,7 @@ class Proxy:
     @property
     def subcompos(self):
         return pc.DictList({
-            name: self.proxy_copy(subcompo)
+            name: self.copy(subcompo)
             for name, subcompo in self.compo.subcompos.items()
             })
         return self.compo.subcompos
@@ -59,16 +59,16 @@ class Proxy:
 
     def walk_hier(self):
         for subcompo in self.compo.walk_hier():
-            yield self.proxy_copy(subcompo)
+            yield self.copy(subcompo)
 
-    def proxy_copy(self, new_subcompo=None):
+    def copy(self, new_subcompo=None):
         return type(self)(
             new_subcompo or self.compo,
             copy(self.lmap),
             self.transform.copy(),
             )
 
-    def copy(self):
+    def deepcopy(self):
         return type(self)(
             (
                 self.compo

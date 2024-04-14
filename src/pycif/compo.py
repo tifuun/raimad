@@ -141,16 +141,34 @@ class Compo:
             else:
                 cls.Options[param.name].annot = param.annotation
 
-    # TODO pass lmap and transform directly?
-    # TODO name?
-    def subcompo(self, compo, name: str | None = None):
-        proxy = pc.Proxy(compo)
-        if name is None:
-            self.subcompos.append(proxy)
-        else:
-            # TODO runtime check for subcompo reassignment?
-            self.subcompos[name] = proxy
-        return proxy
+    # Condemned method, I don't like it
+    #def subcompo(self, compo, name: str | None = None):
+    #    proxy = pc.Proxy(compo)
+    #    if name is None:
+    #        self.subcompos.append(proxy)
+    #    else:
+    #        # TODO runtime check for subcompo reassignment?
+    #        self.subcompos[name] = proxy
+    #    return proxy
+
+    def auto_subcompos(self):
+        """
+        Automatically add all proxies defined in whatever function you
+        call this from as subcompos using some arcane stack inspection
+        hackery.
+        """
+        # Get all local variables in the above frame
+        locs = inspect.stack()[1].frame.f_locals
+
+        for name, obj in locs.items():
+            if (
+                    isinstance(obj, pc.Proxy)
+                    and name != 'self'
+                    and not name.startswith('_')
+                    ):
+                # TODO forbid adding compo directly as subcompo,
+                # only proxy, instead of doing it automatically.
+                self.subcompos[name] = obj
 
 
 def _class_to_dictlist(cls, attr, wanted_type):
