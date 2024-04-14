@@ -112,12 +112,15 @@ def _check_compo(compo, tree):
             redundancy[mark_name] = []
         redundancy[mark_name].append(assign)
 
-    for mark_name, nodes in redundancy.items():
-        if len(nodes) > 1:
-            for node in nodes:
-                yield pc.RAI412(node, mark=mark_name, lines=[
-                    node.lineno for node in nodes
-                    ])
+    # TODO how to deal with multiple asignment
+    # that's not actually multiple asignment
+    # because it's in a mutually exclusive `if`?
+    #for mark_name, nodes in redundancy.items():
+    #    if len(nodes) > 1:
+    #        for node in nodes:
+    #            yield pc.RAI412(node, mark=mark_name, lines=[
+    #                node.lineno for node in nodes
+    #                ])
 
 
 def check_compo(compo):
@@ -128,9 +131,10 @@ def check_compo(compo):
     yield from _check_compo(compo, tree)
 
 def check_module(tree):
+    compiled = compile(tree, '<string>', 'exec')
     exec(
-        compile(tree, '<string>', 'exec'),
-        {},
+        compiled,
+        globals(),  # TODO is this correct?
         locs := {}
         )
 

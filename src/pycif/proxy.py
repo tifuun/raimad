@@ -114,6 +114,10 @@ class Proxy:
         self.transform.flip(x, y)
         return self
 
+    def rotate(self, angle: float, x: float = 0, y: float = 0):
+        self.transform.rotate(angle, x, y)
+        return self
+
     # lmap function #
     def __matmul__(self, lmap):
         return pc.Proxy(
@@ -149,6 +153,10 @@ class Proxy:
         self.bbox.mid_right.to(other.bbox.mid_left)
         return self
 
+    def snap_right(self, other):
+        self.bbox.mid_left.to(other.bbox.mid_right)
+        return self
+
     def snap_above(self, other):
         self.bbox.bot_mid.to(other.bbox.top_mid)
         return self
@@ -156,7 +164,6 @@ class Proxy:
     def snap_below(self, other):
         self.bbox.top_mid.to(other.bbox.bot_mid)
         return self
-    # TODO the rest of the snapping functions
 
 
 

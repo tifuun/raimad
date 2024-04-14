@@ -80,3 +80,9 @@ def flatten(iterable):
 def braid(*iterables):
     return list(chain(*zip(*iterables)))
 
+def is_distinct(iterable):
+    """
+    Return true if no two items in `iterable` are the same
+    """
+    return len(iterable) == len(set(iterable))
+

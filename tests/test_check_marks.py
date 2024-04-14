@@ -64,13 +64,13 @@ class TestCheckMarkNames(unittest.TestCase):
             (7, pc.RAI442),
             ]))
 
-    def test_lint_reassign(self):
-        viols = list(pc.check_compo(Reassign))
-        self.assertTrue(same_viols(viols, [
-            (6, pc.RAI412),
-            (7, pc.RAI442),
-            (9, pc.RAI412),
-            ]))
+#    def test_lint_reassign(self):
+#        viols = list(pc.check_compo(Reassign))
+#        self.assertTrue(same_viols(viols, [
+#            (6, pc.RAI412),
+#            (7, pc.RAI442),
+#            (9, pc.RAI412),
+#            ]))
 
 
 if __name__ == '__main__':

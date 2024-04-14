@@ -17,6 +17,7 @@ class EmptyType:
 Empty = EmptyType()
 
 from pycif.helpers import *
+import pycif.iters as iters
 from pycif.iters import (
     overlap,
     nonoverlap,
