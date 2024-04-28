@@ -49,6 +49,9 @@ class CIFExporter:
 
         self.rout_names = {}
 
+        # Map routine numbers to lists of cif fragments
+        self.cif_map = {}
+
     def export_cif(self):
         self._make_compo(self.compo)
 
@@ -66,11 +69,18 @@ class CIFExporter:
                     self._make_compo(fragment.compo)
                     )
 
-                self.cif_fragments[i] = ''.join((
+                new_fragments = [
                     f'\t C {rout_num} ',
                     *self.compile_transform(fragment.transform),
                     ";\n"
-                    ))
+                    ]
+
+                self.cif_fragments[i] = ''.join(new_fragments)
+                self.cif_map[fragment.rout_num][
+                    self.cif_map[fragment.rout_num].index(fragment)
+                    ] = f'\t C {rout_num} [...];\n'
+                    #] = ''.join(new_fragments)  # TODO!!!
+                # TODO the above line is a mess
 
                 self.rout_list.add((fragment.rout_num, rout_num))
                 self.rout_names[rout_num] = fragment.name
@@ -79,11 +89,15 @@ class CIFExporter:
         self._call_root()
         return ''.join(self.cif_fragments)
 
-    def _frag(self, fragment):
+    def _frag(self, fragment, rout_num=None):
         self.cif_fragments.append(fragment)
+        if rout_num is not None:
+            self.cif_map[rout_num].append(fragment)
 
     def _delayed(self, compo, transform, rout_num, name=None):
-        self.cif_fragments.append(DelayedRoutCall(compo, transform, rout_num, name))
+        fragment = DelayedRoutCall(compo, transform, rout_num, name)
+        self.cif_fragments.append(fragment)
+        self.cif_map[rout_num].append(fragment)
 
     def _call_root(self):
         self._frag( 'C 1;\n' )
@@ -94,39 +108,42 @@ class CIFExporter:
         self.rout_num += 1
         self.rout_map[compo] = this_rout_num
         self.reverse_rout_map[this_rout_num] = compo
+        self.cif_map[this_rout_num] = []
 
         if isinstance(compo, pc.Proxy):
-            self._frag( f'DS {this_rout_num};\n' )
+            self._frag( f'DS {this_rout_num};\n', this_rout_num )
             self._delayed(compo.compo, compo.transform, this_rout_num)
-            self._frag( 'DF;\n' )
+            self._frag( 'DF;\n', this_rout_num )
 
         else:
-            self._frag( f'DS {this_rout_num} 1 1;\n' )
-            self._make_geometries(compo)
+            self._frag( f'DS {this_rout_num} 1 1;\n', this_rout_num )
+            self._make_geometries(compo, this_rout_num)
 
             for name, proxy in compo.subcompos.items():
                 self._delayed(proxy, None, this_rout_num, name)
 
             # close the cell definition
-            self._frag( 'DF;\n' )
+            self._frag( 'DF;\n', this_rout_num )
 
         return this_rout_num
 
-    def _make_geometries(self, compo):
+    def _make_geometries(self, compo, rout_num):
         """
         yield the direct geometries of a compo as CIF polygons,
         with the appropriate layer switches.
         """
         for layer, geom in compo.geoms.items():
-            self._frag(f'\tL L{layer};\n')
+            self._frag(f'\tL L{layer};\n', rout_num)
             for poly in geom:
-                self._frag('\tP ')
+                self._frag('\tP ', rout_num)
                 for point in poly:
                     self._frag(
                         f'{int(point[0] * self.multiplier)} '
-                        f'{int(point[1] * self.multiplier)} '
+                        f'{int(point[1] * self.multiplier)} ',
+                        #rout_num
                         )
-                self._frag(';\n')
+                self.cif_map[rout_num].append('[...]')
+                self._frag(';\n', rout_num)
 
     def compile_transform(self, transform):
         if transform is None:
@@ -160,34 +177,46 @@ class CIFExporter:
         yield ' '
 
     @pc.join_generator('', pc.gv.DOTString)
-    def as_dot(self):
+    def as_dot(self, include_code=True, include_meta=False):
         yield 'digraph D {\n'
 
         for rout_num in range(1, self.rout_num):
             compo = self.reverse_rout_map[rout_num]
 
             label = []
-            label.append(f'Cell {rout_num}')
+            if include_meta:
+                label.append(f'Cell {rout_num}')
 
             if isinstance(compo, pc.Proxy):
-                shape = 'ellipse'
-                if (name := self.rout_names.get(rout_num)):
-                    label.append(rf'\"{name}\"')
+                shape = 'note'
+                if include_meta:
+                    if (name := self.rout_names.get(rout_num)):
+                        label.append(rf'\"{name}\"')
 
-                if compo.transform.does_translate:
-                    transl = compo.transform.get_translation()
-                    label.append(f'Move {transl[0]:.3g}, {transl[1]:.3g}')
+                if include_meta:
+                    if compo.transform.does_translate:
+                        transl = compo.transform.get_translation()
+                        label.append(f'Move {transl[0]:.3g}, {transl[1]:.3g}')
 
-                if compo.transform.does_rotate:
-                    rot = pc.rad2deg(compo.transform.get_rotation())
-                    label.append(f'Rotate {rot:.3g}')
+                    if compo.transform.does_rotate:
+                        rot = pc.rad2deg(compo.transform.get_rotation())
+                        label.append(f'Rotate {rot:.3g}')
             else:
                 shape = 'box'
-                label.append(type(compo).__name__)
+                if include_meta:
+                    # TODO this entire funtion is getting out of hand as well
+                    label.append(type(compo).__name__)
 
-            label = r'\n'.join(label)
+            if include_code:
+                label.append(''.join([
+                    line.replace('\n', r'\l').replace('\t', '    ')
+                    for line in
+                    self.cif_map[rout_num]
+                    ]).rstrip(r'\l'))
 
-            yield f'\t{rout_num} [shape={shape} label="{label}"];\n'
+            label = r'\l'.join(label)
+
+            yield f'\t{rout_num} [shape={shape} label="{label}\\l"];\n'
 
         for from_, to in self.rout_list:
             yield f'\t{from_} -> {to};\n'
