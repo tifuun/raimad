@@ -82,6 +82,9 @@ class Proxy:
         yield self
         yield from self.compo.descend_p()
 
+    def proxy(self):
+        return pc.Proxy(self)
+
     def walk_hier(self):
         for subcompo in self.compo.walk_hier():
             yield self.copy_reassign(subcompo)
