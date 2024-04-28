@@ -62,7 +62,6 @@ class RectWH(pc.Compo):
     #    return ''.join(cifstring)
 
     def _export_cif(self, cif_exporter):
-        (x1, y1), _, (x2, y2), _ = self.geoms['root'][0]
         cifstring = [
             "\tL Lwtf;\n\tB "
             f"{int(self.width * cif_exporter.multiplier)} "
@@ -70,6 +69,36 @@ class RectWH(pc.Compo):
             "0 "
             "0 "
             ]
+
+        cifstring.append(";\n")
+
+        return ''.join(cifstring)
+
+    def _export_cif_transformed(self, cif_exporter, transform):
+        if transform.does_scale():
+            return NotImplemented
+
+        if transform.does_shear():
+            return NotImplemented
+
+        move_x, move_y = transform.get_translation()
+        cifstring = [
+            "\tL Lwtf;\n\tB "
+            f"{int(self.width * cif_exporter.multiplier)} "
+            f"{int(self.height * cif_exporter.multiplier)} "
+            f"{int(move_x * cif_exporter.multiplier)} "
+            f"{int(move_y * cif_exporter.multiplier)} "
+            ]
+
+        if transform.does_rotate():
+            # TODO call cif exporter
+            rot = transform.get_rotation()
+            rotvec_x = int(pc.cos(rot) * cif_exporter.multiplier)
+            rotvec_y = int(pc.sin(rot) * cif_exporter.multiplier)
+
+            cifstring.append(
+                f"{rotvec_x} {rotvec_y} "
+            )
 
         cifstring.append(";\n")
 

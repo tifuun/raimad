@@ -28,6 +28,7 @@ class CIFExporter:
             cif_link=True,
             cif_link_fatal=False,
             flatten_proxies=True,
+            native_inline=True,
             ):
 
         self.compo = compo
@@ -36,6 +37,7 @@ class CIFExporter:
         self.rot_multiplier = rot_multiplier
         self.cif_native = cif_native
         self.flatten_proxies = flatten_proxies
+        self.native_inline = native_inline
 
         # TODO cif_link and cif_link_native
         self.cif_fragments = []
@@ -115,45 +117,80 @@ class CIFExporter:
         self._frag( 'E' )
 
     def _make_compo(self, compo):
-        this_rout_num = self.rout_num
+        rout_num = self.rout_num
         self.rout_num += 1
-        self.rout_map[compo] = this_rout_num
-        self.reverse_rout_map[this_rout_num] = compo
-        self.cif_map[this_rout_num] = []
+        self.rout_map[compo] = rout_num
+        self.reverse_rout_map[rout_num] = compo
+        self.cif_map[rout_num] = []
 
         if isinstance(compo, pc.Proxy):
-            self._frag( f'DS {this_rout_num};\n', this_rout_num )
-            self._delayed(compo.compo, compo.transform, this_rout_num)
-            self._frag( 'DF;\n', this_rout_num )
+            self._frag( f'DS {rout_num};\n', rout_num )
+
+            if self.native_inline:
+                # This branch only ever happens if flatten_proxies is off,
+                # but native_inline is on.... I think
+                did_make_inline = self._actually_make_compo(
+                    compo.final(),
+                    rout_num,
+                    compo.get_flat_transform()
+                    )
+
+            if not self.native_inline or not did_make_inline:
+                self._delayed(compo.compo, compo.transform, rout_num)
+
+            self._frag( 'DF;\n', rout_num )
 
         else:
-            self._frag( f'DS {this_rout_num} 1 1;\n', this_rout_num )
+            self._frag( f'DS {rout_num} 1 1;\n', rout_num )
+            self._actually_make_compo(compo, rout_num)
+            self._frag( 'DF;\n', rout_num )
 
-            if (
-                    self.cif_native
-                    and
-                    (cif_native := compo._export_cif(self)) is not NotImplemented
-                    ):
-                self._frag(cif_native, this_rout_num)
+        return rout_num
+
+    def _actually_make_compo(self, compo, rout_num, transform=None):
+        """
+        TODO better function name
+        """
+        assert isinstance(compo, pc.Compo)
+        assert not isinstance(compo, pc.Proxy)
+        if self.cif_native:
+            if transform is not None:
+                native_inline = compo._export_cif_transformed(self, transform)
+                if native_inline is NotImplemented:
+                    return False
+
+                self._frag(native_inline, rout_num)
+                return True
+
+            native = compo._export_cif(self)
+            if native is not NotImplemented:
+                self._frag(native, rout_num)
+                return True
+
+        self._make_geometries(compo, rout_num)
+
+        for name, proxy in compo.subcompos.items():
+            if self.flatten_proxies:
+                if self.native_inline:
+                    print('here!')
+                    did_make_inline = self._actually_make_compo(
+                        proxy.final(),
+                        rout_num,
+                        compo.get_flat_transform()
+                        )
+                    print(did_make_inline, proxy.final())
+
+                if not self.native_inline or not did_make_inline:
+                    self._delayed(
+                        proxy.final(),
+                        proxy.get_flat_transform(),
+                        rout_num
+                        )
 
             else:
-                self._make_geometries(compo, this_rout_num)
+                self._delayed(proxy, None, rout_num, name)
 
-                for name, proxy in compo.subcompos.items():
-                    if self.flatten_proxies:
-                        self._delayed(
-                            proxy.final(),
-                            proxy.get_flat_transform(),
-                            this_rout_num
-                            )
-
-                    else:
-                        self._delayed(proxy, None, this_rout_num, name)
-
-            # close the cell definition
-            self._frag( 'DF;\n', this_rout_num )
-
-        return this_rout_num
+        return True
 
     def _make_geometries(self, compo, rout_num):
         """
@@ -259,7 +296,8 @@ def export_cif(
         cif_native=True,
         cif_link=True,
         cif_link_fatal=False,
-        flatten_proxies=True,
+        flatten_proxies=False,
+        native_inline=True,
         ):
     return CIFExporter(
         compo,
@@ -269,6 +307,7 @@ def export_cif(
         cif_link,
         cif_link_fatal,
         flatten_proxies,
+        native_inline,
         ).export_cif()
 
 

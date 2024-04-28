@@ -3,6 +3,8 @@ Point = np.ndarray  # TODO
 
 deg2rad = np.radians
 rad2deg = np.degrees
+cos = np.cos
+sin = np.sin
 
 class EmptyType:
     def __bool__(self):

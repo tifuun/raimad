@@ -189,7 +189,10 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
-    def _export_cif(self, transform=None):
+    def _export_cif(self, cif_exporter, transform: pc.Transform | None = None):
+        return NotImplemented
+
+    def _export_cif_transformed(self, cif_exporter, transform):
         return NotImplemented
 
     def __str__(self):
