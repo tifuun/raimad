@@ -5,14 +5,14 @@ import numpy as np
 
 import pycif as pc
 
-fullcircle = pc.degrees(360)
-halfcircle = pc.degrees(180)
-quartercircle = pc.degrees(90)
-eigthcircle = pc.degrees(45)
+fullcircle = pc.deg2rad(360)
+halfcircle = pc.deg2rad(180)
+quartercircle = pc.deg2rad(90)
+eigthcircle = pc.deg2rad(45)
 
-semicircle = pc.degrees(180)
-demisemicircle = pc.degrees(90)
-hemidemisemicircle = pc.degrees(45)
+semicircle = pc.deg2rad(180)
+demisemicircle = pc.deg2rad(90)
+hemidemisemicircle = pc.deg2rad(45)
 
 class Orientation(Enum):
     POS = 1

@@ -42,8 +42,8 @@ class AnSec(pc.Compo):
     class Options:
         r1 = pc.Option("Inner radius", browser_default=18)
         r2 = pc.Option("Outter radius", browser_default=20)
-        theta1 = pc.Option("Angle 1", browser_default=pc.degrees(45))
-        theta2 = pc.Option("Angle 2", browser_default=pc.degrees(90))
+        theta1 = pc.Option("Angle 1", browser_default=pc.deg2rad(45))
+        theta2 = pc.Option("Angle 2", browser_default=pc.deg2rad(90))
 
     def _make(
             self,

@@ -1,8 +1,8 @@
 import numpy as np
 Point = np.ndarray  # TODO
 
-from numpy import radians as degrees
-radians = lambda r: r
+deg2rad = np.radians
+rad2deg = np.degrees
 
 class EmptyType:
     def __bool__(self):

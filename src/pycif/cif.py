@@ -170,7 +170,15 @@ class CIFExporter:
             if isinstance(compo, pc.Proxy):
                 shape = 'ellipse'
                 if (name := self.rout_names.get(rout_num)):
-                    label.append(name)
+                    label.append(rf'\"{name}\"')
+
+                if compo.transform.does_translate:
+                    transl = compo.transform.get_translation()
+                    label.append(f'Move {transl[0]:.3g}, {transl[1]:.3g}')
+
+                if compo.transform.does_rotate:
+                    rot = pc.rad2deg(compo.transform.get_rotation())
+                    label.append(f'Rotate {rot:.3g}')
             else:
                 shape = 'box'
                 label.append(type(compo).__name__)
