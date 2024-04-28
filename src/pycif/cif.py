@@ -97,7 +97,7 @@ class CIFExporter:
 
         if isinstance(compo, pc.Proxy):
             self._frag( f'DS {this_rout_num};\n' )
-            self._delayed(compo.compo, None, this_rout_num)
+            self._delayed(compo.compo, compo.transform, this_rout_num)
             self._frag( 'DF;\n' )
 
         else:
@@ -105,7 +105,7 @@ class CIFExporter:
             self._make_geometries(compo)
 
             for name, proxy in compo.subcompos.items():
-                self._delayed(proxy, proxy.transform, this_rout_num, name)
+                self._delayed(proxy, None, this_rout_num, name)
 
             # close the cell definition
             self._frag( 'DF;\n' )
