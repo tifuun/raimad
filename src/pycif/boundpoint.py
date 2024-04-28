@@ -26,3 +26,10 @@ class BoundPoint(np.ndarray):
             )
         return self
 
+    def rotate(self, angle: float):
+        self.proxy.transform.rotate(
+            angle,
+            self[0],
+            self[1]
+            )
+
