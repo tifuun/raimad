@@ -14,43 +14,8 @@ class CannotCIFLinkError(Exception):
 class DelayedRoutCall():
     compo: pc.Proxy
     transform: pc.Transform
-    #rout_num: int
-
-def find_link_in_stack(top_proxy):
-
-    link = None
-    depth = 0
-
-    for proxy in top_proxy.descend_p():
-        if link is None:
-            depth = depth + 1
-            if proxy._cif_link:
-                link = proxy.compo
-
-        else:
-            if proxy._cif_link:
-                # TODO
-                raise Exception
-
-    return link, depth
-
-def find_linked_in_stack(top_proxy):
-
-    link = None
-    depth = 0
-
-    for proxy in top_proxy.descend_p():
-        if link is None:
-            depth = depth + 1
-            if proxy._cif_linked:
-                link = proxy.compo
-
-        else:
-            if proxy._cif_linked:
-                # TODO
-                raise Exception
-
-    return link, depth
+    rout_num: int
+    name: str | None = None
 
 
 class CIFExporter:
@@ -71,39 +36,53 @@ class CIFExporter:
         self.cif_native = cif_native
 
         # TODO cif_link and cif_link_native
-
         self.cif_fragments = []
 
-        # map proxy objects to routine numbers
+        # map proxy/compo objects to routine numbers
         self.rout_map = {}
+        # map routine numbers to oroxy/compo objects
+        self.reverse_rout_map = {}
 
         # list of (caller, callee) that shows which
         # cif routine calls which routines
         self.rout_list = set()
 
-    def export_cif(self):
-        self._first_pass()
-        assert len(self.rout_map) == self.rout_num - 1
+        self.rout_names = {}
 
-        for i, fragment in enumerate(fragments):
-            if isinstance(fragment, DelayedRoutCall):
-                rout_num = self.rout_map[fragment.compo]
-                fragments[i] = ''.join((
-                    f"\tC {rout_num} ",
+    def export_cif(self):
+        self._make_compo(self.compo)
+
+        new_compos = 69420
+        while new_compos > 0:
+            new_compos = 0
+
+            for i, fragment in enumerate(self.cif_fragments):
+                if not isinstance(fragment, DelayedRoutCall):
+                    continue
+
+                rout_num = (
+                    self.rout_map.get(fragment.compo, None)
+                    or
+                    self._make_compo(fragment.compo)
+                    )
+
+                self.cif_fragments[i] = ''.join((
+                    f'\t C {rout_num} ',
                     *self.compile_transform(fragment.transform),
                     ";\n"
                     ))
-                #self.rout_list.add((fragment.rout_num, rout_num))
 
-        #print('\n'.join(map(str, self.rout_list)))
+                self.rout_list.add((fragment.rout_num, rout_num))
+                new_compos += 1
+
         self._call_root()
-        return ''.join(fragments)
+        return ''.join(self.cif_fragments)
 
     def _frag(self, fragment):
         self.cif_fragments.append(fragment)
 
-    def _delayed(self, compo, transform):
-        self.cif_fragments.append(DelayedRoutCall(compo, transform))
+    def _delayed(self, compo, transform, rout_num):
+        self.cif_fragments.append(DelayedRoutCall(compo, transform, rout_num))
 
     def _call_root(self):
         self._frag( 'C 1;\n' )
@@ -113,129 +92,50 @@ class CIFExporter:
         this_rout_num = self.rout_num
         self.rout_num += 1
         self.rout_map[compo] = this_rout_num
+        self.reverse_rout_map[this_rout_num] = compo
 
         if isinstance(compo, pc.Proxy):
-
-            if compo._cif_link is not None:
-
-                self._delayed(compo.compo, compo.transform)
-
-            else:
-                yield f'DS {this_rout_num} 1 1;\n'
-                yield DelayedRoutCall(compo.compo, compo.transform)
-                yield 'DF;\n'
-
-                yield from self.yield_cif_bare(compo.compo)
+            self._delayed(compo.compo, None, this_rout_num)
 
         else:
-            # Export all geometries
-            yield f'DS {this_rout_num} 1 1;\n'
-            yield from self.yield_geometries(compo)
+            self._frag( f'DS {this_rout_num} 1 1;\n' )
+            self._make_geometries(compo)
 
-            # Precompute a list of [routine number, subcomponent]
-            # Remember, subcomponents can also have subcomponents,
-            # so the subroutine numbers won't always be consecutive.
-            # There's no way to know ahead of time,
-            # you just have to generate each subcompo and keep track of
-            # the routine number
-            subcompos = list(self.yield_subcompos(compo))
-
-            # Call subcomponent procedures
-            for i, subcompo in subcompos:
-                self.rout_list.add((this_rout_num, i))
-                yield f'\tC {i};\n'
+            for name, proxy in compo.subcompos.items():
+                self.rout_names[this_rout_num] = name
+                self._delayed(proxy, proxy.transform, this_rout_num)
 
             # close the cell definition
-            yield 'DF;\n'
+            self._frag( 'DF;\n' )
 
-            # Define those procedures
-            for i, subcompo in subcompos:
-                yield from subcompo
+        return this_rout_num
 
-        #if isinstance(compo, pc.Proxy) and compo._cif_link is not None:
-        #    yield DelayedRoutCall(compo._cif_link)
-        #    yield 'DF;\n'
-
-        #link, depth = find_link_in_stack(compo)
-
-        #if link is not None:
-        #    yield DelayedRoutCall(
-        #        link,
-        #        compo.get_flat_transform(depth),  # TODO huh?
-        #        this_rout_num
-        #        )
-        #    yield 'DF;\n'
-        #    # rout call list will be updated on second stage
-
-        #elif (
-        #        self.cif_native
-        #        and
-        #        (cif_string := compo._export_cif()) is not NotImplemented
-        #        ):
-
-        #    yield cif_string
-        #    yield 'DF;\n'
-        #    assert not compo.subcompos
-
-        #else:
-        #    # Export all geometries
-        #    yield from self.yield_geometries(compo)
-
-        #    # Precompute a list of [routine number, subcomponent]
-        #    # Remember, subcomponents can also have subcomponents,
-        #    # so the subroutine numbers won't always be consecutive.
-        #    # There's no way to know ahead of time,
-        #    # you just have to generate each subcompo and keep track of
-        #    # the routine number
-        #    subcompos = list(self.yield_subcompos(compo))
-
-        #    # Call subcomponent procedures
-        #    for i, subcompo in subcompos:
-        #        self.rout_list.add((this_rout_num, i))
-        #        yield f'\tC {i};\n'
-
-        #    # close the cell definition
-        #    yield 'DF;\n'
-
-        #    # Define those procedures
-        #    for i, subcompo in subcompos:
-        #        yield from subcompo
-
-    def yield_geometries(self, compo):
+    def _make_geometries(self, compo):
         """
         yield the direct geometries of a compo as CIF polygons,
         with the appropriate layer switches.
         """
         for layer, geom in compo.geoms.items():
-            yield f'\tL L{layer};\n'
+            self._frag(f'\tL L{layer};\n')
             for poly in geom:
-                yield '\tP '
+                self._frag('\tP ')
                 for point in poly:
-                    yield (
+                    self._frag(
                         f'{int(point[0] * self.multiplier)} '
                         f'{int(point[1] * self.multiplier)} '
                         )
-                yield ';\n'
-
-    def yield_subcompos(self, compo):
-        """
-        return subcompos of a compo as cif.
-        This forms a mutual recursion with
-        yield_cif_bare.
-        """
-        for subcompo in compo.subcompos.values():
-            yield [
-                self.rout_num,
-                list(self.yield_cif_bare(subcompo))
-                ]
+                self._frag(';\n')
 
     def compile_transform(self, transform):
+        if transform is None:
+            return ''
+
         if transform.does_scale():
             # TODO also possible to mirror in cif
-            return None
+            raise Exception()
 
         if transform.does_shear():
-            return None
+            raise Exception()
 
         if transform.does_translate():
             yield from self.compile_translation(*transform.get_translation())
@@ -256,6 +156,34 @@ class CIFExporter:
         yield ' '
         yield str(int(move_y * self.multiplier))
         yield ' '
+
+    @pc.join_generator('')
+    def as_dot(self):
+        yield 'digraph D {\n'
+
+        for rout_num in range(1, self.rout_num):
+            compo = self.reverse_rout_map[rout_num]
+
+            label = []
+            label.append(f'Cell {rout_num}')
+
+            if isinstance(compo, pc.Proxy):
+                shape = 'ellipse'
+                if (name := self.rout_names.get(rout_num)):
+                    label.append(name)
+            else:
+                shape = 'box'
+                label.append(type(compo).__name__)
+
+            label = r'\n'.join(label)
+
+            yield f'\t{rout_num} [shape={shape} label="{label}"];\n'
+
+        for from_, to in self.rout_list:
+            yield f'\t{from_} -> {to};\n'
+
+        yield '}\n'
+
 
 def export_cif(
         compo,
