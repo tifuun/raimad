@@ -73,6 +73,7 @@ class CIFExporter:
                     ))
 
                 self.rout_list.add((fragment.rout_num, rout_num))
+                self.rout_names[rout_num] = fragment.name
                 new_compos += 1
 
         self._call_root()
@@ -81,8 +82,8 @@ class CIFExporter:
     def _frag(self, fragment):
         self.cif_fragments.append(fragment)
 
-    def _delayed(self, compo, transform, rout_num):
-        self.cif_fragments.append(DelayedRoutCall(compo, transform, rout_num))
+    def _delayed(self, compo, transform, rout_num, name=None):
+        self.cif_fragments.append(DelayedRoutCall(compo, transform, rout_num, name))
 
     def _call_root(self):
         self._frag( 'C 1;\n' )
@@ -102,8 +103,7 @@ class CIFExporter:
             self._make_geometries(compo)
 
             for name, proxy in compo.subcompos.items():
-                self.rout_names[this_rout_num] = name
-                self._delayed(proxy, proxy.transform, this_rout_num)
+                self._delayed(proxy, proxy.transform, this_rout_num, name)
 
             # close the cell definition
             self._frag( 'DF;\n' )
