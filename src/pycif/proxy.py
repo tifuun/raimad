@@ -238,11 +238,11 @@ class Proxy:
         self.bbox.top_mid.to(other.bbox.bot_mid)
         return self
 
-    def _export_cif(self, transform=None):
-        return self.compo._export_cif(
-            self.transform.copy().compose(transform)
-            if transform is not None else self.transform
-            )
+    #def _export_cif(self, transform=None):
+    #    return self.compo._export_cif(
+    #        self.transform.copy().compose(transform)
+    #        if transform is not None else self.transform
+    #        )
 
 
 

@@ -26,7 +26,8 @@ class CIFExporter:
             rot_multiplier=1e3,
             cif_native=True,
             cif_link=True,
-            cif_link_fatal=False
+            cif_link_fatal=False,
+            flatten_proxies=True,
             ):
 
         self.compo = compo
@@ -34,6 +35,7 @@ class CIFExporter:
         self.multiplier = multiplier
         self.rot_multiplier = rot_multiplier
         self.cif_native = cif_native
+        self.flatten_proxies = flatten_proxies
 
         # TODO cif_link and cif_link_native
         self.cif_fragments = []
@@ -45,7 +47,7 @@ class CIFExporter:
 
         # list of (caller, callee) that shows which
         # cif routine calls which routines
-        self.rout_list = set()
+        self.rout_list = list()
 
         self.rout_names = {}
 
@@ -76,13 +78,18 @@ class CIFExporter:
                     ]
 
                 self.cif_fragments[i] = ''.join(new_fragments)
+
+                if fragment.rout_num not in self.cif_map.keys():
+                    # TODO defaultdict?
+                    self.cif_map[fragment.rout_num] = []
+
                 self.cif_map[fragment.rout_num][
                     self.cif_map[fragment.rout_num].index(fragment)
-                    ] = f'\t C {rout_num} [...];\n'
-                    #] = ''.join(new_fragments)  # TODO!!!
+                    #] = f'\t C {rout_num} [...];\n'
+                    ] = ''.join(new_fragments)  # TODO!!!
                 # TODO the above line is a mess
 
-                self.rout_list.add((fragment.rout_num, rout_num))
+                self.rout_list.append((fragment.rout_num, rout_num))
                 self.rout_names[rout_num] = fragment.name
                 new_compos += 1
 
@@ -97,6 +104,10 @@ class CIFExporter:
     def _delayed(self, compo, transform, rout_num, name=None):
         fragment = DelayedRoutCall(compo, transform, rout_num, name)
         self.cif_fragments.append(fragment)
+
+        if rout_num not in self.cif_map.keys():
+            # TODO defaultdict?
+            self.cif_map[rout_num] = []
         self.cif_map[rout_num].append(fragment)
 
     def _call_root(self):
@@ -117,10 +128,27 @@ class CIFExporter:
 
         else:
             self._frag( f'DS {this_rout_num} 1 1;\n', this_rout_num )
-            self._make_geometries(compo, this_rout_num)
 
-            for name, proxy in compo.subcompos.items():
-                self._delayed(proxy, None, this_rout_num, name)
+            if (
+                    self.cif_native
+                    and
+                    (cif_native := compo._export_cif(self)) is not NotImplemented
+                    ):
+                self._frag(cif_native, this_rout_num)
+
+            else:
+                self._make_geometries(compo, this_rout_num)
+
+                for name, proxy in compo.subcompos.items():
+                    if self.flatten_proxies:
+                        self._delayed(
+                            proxy.final(),
+                            proxy.get_flat_transform(),
+                            this_rout_num
+                            )
+
+                    else:
+                        self._delayed(proxy, None, this_rout_num, name)
 
             # close the cell definition
             self._frag( 'DF;\n', this_rout_num )
@@ -140,9 +168,9 @@ class CIFExporter:
                     self._frag(
                         f'{int(point[0] * self.multiplier)} '
                         f'{int(point[1] * self.multiplier)} ',
-                        #rout_num
+                        rout_num
                         )
-                self.cif_map[rout_num].append('[...]')
+                #self.cif_map[rout_num].append('[...]')
                 self._frag(';\n', rout_num)
 
     def compile_transform(self, transform):
@@ -231,6 +259,7 @@ def export_cif(
         cif_native=True,
         cif_link=True,
         cif_link_fatal=False,
+        flatten_proxies=True,
         ):
     return CIFExporter(
         compo,
@@ -238,7 +267,8 @@ def export_cif(
         rot_multiplier,
         cif_native,
         cif_link,
-        cif_link_fatal
+        cif_link_fatal,
+        flatten_proxies,
         ).export_cif()
 
 
