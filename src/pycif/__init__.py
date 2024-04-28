@@ -17,6 +17,7 @@ class EmptyType:
 Empty = EmptyType()
 
 from pycif.helpers import *
+from pycif import affine
 import pycif.iters as iters
 from pycif.iters import (
     overlap,
@@ -56,6 +57,8 @@ from pycif.ansec import AnSec
 from pycif.custompoly import CustomPoly
 
 from pycif.cif import export_cif
+from pycif.cif import CIFExporter
+from pycif.svg import export_svg
 from pycif import err
 from pycif import debug
 
@@ -74,4 +77,6 @@ from pycif.checker.checker import (
     )
 
 from pycif.snowman import Snowman
+
+from pycif import graphviz as gv
 

@@ -25,7 +25,7 @@ class MarksContainer(pc.DictList):
 class SubcompoContainer(pc.DictList):
     def _filter(self, item):
         if isinstance(item, pc.Compo):
-            return pc.Proxy(item)
+            return pc.Proxy(item, _autogen=True)
         elif isinstance(item, pc.Proxy):
             return item
         else:
@@ -50,11 +50,30 @@ class Compo:
                 geoms[layer_name].extend(layer_geoms)
         return geoms
 
+    def get_flat_transform(self, maxdepth=None):
+        return pc.Transform()
+
     def final(self):
         return self
 
     def depth(self):
         return 0
+
+    def descend(self):
+        yield self
+
+    def descend_p(self):
+        return
+        yield
+
+    def proxy(self):
+        return pc.Proxy(self)
+
+    def copy(*args, **kwargs):
+        """
+        Don't copy components, copy proxies
+        """
+        return NotImplemented
 
     def walk_hier(self):
         yield self
@@ -151,14 +170,14 @@ class Compo:
     #        self.subcompos[name] = proxy
     #    return proxy
 
-    def auto_subcompos(self):
+    def auto_subcompos(self, locs=None):
         """
         Automatically add all proxies defined in whatever function you
         call this from as subcompos using some arcane stack inspection
         hackery.
         """
         # Get all local variables in the above frame
-        locs = inspect.stack()[1].frame.f_locals
+        locs = locs or inspect.stack()[1].frame.f_locals
 
         for name, obj in locs.items():
             if (
@@ -170,6 +189,25 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
+    def _export_cif(self, transform=None):
+        return NotImplemented
+
+    def __str__(self):
+        return (
+            "<"
+            f"{type(self).__name__} at {pc.wingdingify(id(self))} "
+            ">"
+            )
+
+    def __repr__(self):
+        return self.__str__()
+
+    def _repr_svg_(self):
+        """
+        Make svg representation of component.
+        This is called by jupyter and raimad doc
+        """
+        return pc.export_svg(self)
 
 def _class_to_dictlist(cls, attr, wanted_type):
     if not hasattr(cls, attr):

@@ -4,58 +4,6 @@ from typing import Self
 import numpy as np
 import pycif as pc
 
-def _rot(angle):
-    return np.array([
-        [np.cos(angle), -np.sin(angle), 0],
-        [np.sin(angle), np.cos(angle), 0],
-        [0, 0, 1],
-        ])
-
-def _mov(x, y):
-    return np.array([
-        [1, 0, x],
-        [0, 1, y],
-        [0, 0, 1],
-        ])
-
-def _scale(x, y):
-    return np.array([
-        [x, 0, 0],
-        [0, y, 0],
-        [0, 0, 1],
-        ])
-
-def _around(matrix, x, y):
-    to_origin = _mov(-x, -y)
-    from_origin = _mov(x, y)
-
-    return from_origin @ matrix @ to_origin
-
-def get_translation(matrix):
-    """
-    Given an affine matrix, return the corresponding translation.
-    Written by ChatGPT
-    """
-    return matrix[:2, 2]
-
-def get_scale_shear(matrix):
-    """
-    Given an affine matrix, return the corresponding scale and shear.
-    Written by ChatGPT
-    """
-    scale_x = np.linalg.norm(matrix[:, 0])
-    scale_y = np.linalg.norm(matrix[:, 1])
-    shear = np.dot(matrix[:, 0], matrix[:, 1]) / (scale_x * scale_y)
-    return scale_x, scale_y, shear
-
-def get_rotation(matrix):
-    """
-    Given an affine matrix, return the corresponding rotation
-    Written by ChatGPT
-    """
-    return np.arctan2(matrix[1, 0], matrix[0, 0])
-
-
 class Transform(object):
     """
     Transformation: container for affine matrix
@@ -71,32 +19,13 @@ class Transform(object):
         """
         Apply transformation to xyarray and return new transformed xyarray
         """
-        if len(xyarray) == 0:
-            return xyarray
-
-        if not isinstance(xyarray, np.ndarray):
-            # TODO instead of dynamic hacks like this,
-            # grind through with a static checker
-            xyarray = np.array(xyarray)
-
-        homogeneous = np.hstack((
-            xyarray,
-            np.ones((xyarray.shape[0], 1)),
-            ))
-        transformed = np.dot(homogeneous, self._affine.T)
-        euclidean = transformed[:, :2] / transformed[:, 2].reshape(-1, 1)
-
-        return euclidean
+        return pc.affine.transform_xyarray(self._affine, xyarray)
 
     def transform_point(self, point):
         """
         Apply transformation to point and return new transformed point
         """
-        homogeneous = np.append(point, 1)
-        transformed = np.dot(homogeneous, self._affine.T)
-        cartesian = transformed[:2] / transformed[2]
-
-        return np.array(cartesian)
+        return pc.affine.transform_point(self._affine, point)
 
     def compose(self, transform):
         """
@@ -105,15 +34,40 @@ class Transform(object):
         self._affine = transform._affine @ self._affine
         return self
 
-    def __repr__(self):
-        move_x, move_y = get_translation(self._affine)
-        scale_x, scale_y, shear = get_scale_shear(self._affine)
-        rotation = get_rotation(self._affine)
+    def get_translation(self):
+        return pc.affine.get_translation(self._affine)
 
-        does_translate = np.linalg.norm((move_x, move_y)) > 0.001  # TODO epsilon
-        does_rotate = rotation > 0.01
-        does_shear = shear > 0.01
-        does_scale = 1 - np.linalg.norm((scale_x, scale_y)) > 0.001
+    def get_rotation(self):
+        return pc.affine.get_rotation(self._affine)
+
+    def get_shear(self):
+        return pc.affine.get_shear(self._affine)
+
+    def get_scale(self):
+        return pc.affine.get_scale(self._affine)
+
+    def does_translate(self):
+        return np.linalg.norm(self.get_translation()) > 0.001  # TODO epsilon
+
+    def does_rotate(self):
+        return abs(self.get_rotation()) > 0.001  # TODO epsilon
+
+    def does_shear(self):
+        return abs(self.get_shear()) > 0.001  # TODO epsilon
+
+    def does_scale(self):
+        return 1 - np.linalg.norm(self.get_scale()) > 0.001  # TODO epsilon
+
+    def __repr__(self):
+        does_translate = self.does_translate()
+        does_rotate = self.does_rotate()
+        does_shear = self.does_shear()
+        does_scale = self.does_scale()
+
+        move_x, move_y = self.get_scale()
+        rotation = self.get_rotation()
+        shear = self.get_shear()
+        scale_x, scale_y = self.get_scale()
 
         if True not in {does_translate, does_rotate, does_shear, does_scale}:
             # Could also test if affine == identity
@@ -142,15 +96,15 @@ class Transform(object):
     def move(self, x: 0, y: float = 0):
         if isinstance(x, pc.Point):
             x, y = x
-        self._affine = _mov(x, y) @ self._affine
+        self._affine = pc.affine.move(x, y) @ self._affine
         return self
 
     def movex(self, x: float = 0) -> Self:
-        self._affine = _mov(x, 0) @ self._affine
+        self._affine = pc.affine.move(x, 0) @ self._affine
         return self
 
     def movey(self, y: float = 0) -> Self:
-        self._affine = _mov(0, y) @ self._affine
+        self._affine = pc.affine.move(0, y) @ self._affine
         return self
 
     #def scale(
@@ -167,12 +121,12 @@ class Transform(object):
     #    elif y is None:
     #        y = x
 
-    #    self._affine = _around(_scale(x, y), cx, cy) @ self._affine
+    #    self._affine = pc.affine.around(pc.affine.scale(x, y), cx, cy) @ self._affine
     #    return self
     def scale(self, x, y=None):
         if y is None:
             y = x
-        self._affine = _scale(x, y) @ self._affine
+        self._affine = pc.affine.scale(x, y) @ self._affine
         return self
 
     def rotate(
@@ -185,20 +139,20 @@ class Transform(object):
         if isinstance(x, pc.Point):
             x, y = x
 
-        self._affine = _around(_rot(angle), x, y) @ self._affine
+        self._affine = pc.affine.around(pc.affine.rotate(angle), x, y) @ self._affine
 
         return self
 
     def hflip(self, x: float = 0) -> Self:
-        self._affine = _around(_scale(1, -1), 0, x) @ self._affine
+        self._affine = pc.affine.around(pc.affine.scale(1, -1), 0, x) @ self._affine
         return self
 
     def vflip(self, y: float = 0) -> Self:
-        self._affine = _around(_scale(-1, 1), y, 0) @ self._affine
+        self._affine = pc.affine.around(pc.affine.scale(-1, 1), y, 0) @ self._affine
         return self
 
     def flip(self, x: float = 0, y: float = 0) -> Self:
-        self._affine = _around(_scale(-1, -1), x, y) @ self._affine
+        self._affine = pc.affine.around(pc.affine.scale(-1, -1), x, y) @ self._affine
         return self
 
     def inverse(self):

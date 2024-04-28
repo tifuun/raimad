@@ -10,3 +10,6 @@ from pycif.ansec import AnSecThetaIncorrectArgumentsError
 
 from pycif.bbox import EmptyBBoxError
 
+from pycif.cif import CIFExportError
+from pycif.cif import CannotCIFLinkError
+

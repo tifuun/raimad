@@ -17,7 +17,16 @@ class LMap:
     # TODO hacky
 
 class Proxy:
-    def __init__(self, compo, lmap=None, transform=None):
+    def __init__(self,
+                 compo,
+                 lmap=None,
+                 transform=None,
+                 _cif_link=False,
+                 _autogen=False,
+                 ):
+        self._cif_linked = False
+        self._cif_link = _cif_link
+        self._autogen = _autogen
         self.compo = compo
         self.lmap = LMap(lmap)
         self.transform = transform or pc.Transform()
@@ -31,6 +40,14 @@ class Proxy:
             for layer, geoms
             in self.compo.get_geoms().items()
             }
+
+    def get_flat_transform(self, maxdepth=float('inf')):
+        if maxdepth <= 0:
+            return pc.Transform()
+
+        return self.transform.copy().compose(
+            self.compo.get_flat_transform(maxdepth - 1)
+            )
 
     @property
     def geoms(self):
@@ -46,7 +63,7 @@ class Proxy:
     @property
     def subcompos(self):
         return pc.DictList({
-            name: self.copy(subcompo)
+            name: self.copy_reassign(subcompo, _autogen=True)
             for name, subcompo in self.compo.subcompos.items()
             })
         return self.compo.subcompos
@@ -57,30 +74,80 @@ class Proxy:
     def depth(self):
         return self.compo.depth() + 1
 
+    def descend(self):
+        yield self
+        yield from self.compo.descend()
+
+    def descend_p(self):
+        yield self
+        yield from self.compo.descend_p()
+
     def walk_hier(self):
         for subcompo in self.compo.walk_hier():
-            yield self.copy(subcompo)
+            yield self.copy_reassign(subcompo)
 
-    def copy(self, new_subcompo=None):
+    def copy(self):
+        if self.depth() > 1:
+            # TODO think about why someone would want to do this
+            raise Exception("Copying proxy of depth more than 1")
+
         return type(self)(
-            new_subcompo or self.compo,
+            self.compo,
             copy(self.lmap),
             self.transform.copy(),
+            )
+
+    def cifcopy(self):
+        if self.depth() > 1:
+            # TODO think about why someone would want to do this
+            raise Exception("Copying proxy of depth more than 1")
+
+        self._cif_linked = True
+
+        return type(self)(
+            self.compo,
+            copy(self.lmap),
+            self.transform.copy(),
+            _cif_link=True
+            )
+
+    def copy_reassign(self, new_subcompo, _autogen=False):
+        return type(self)(
+            new_subcompo,
+            copy(self.lmap),
+            self.transform.copy(),
+            _autogen=_autogen,
             )
 
     def deepcopy(self):
-        return type(self)(
-            (
-                self.compo
-                if isinstance(self.compo, pc.Compo)
-                else self.compo.copy()
-                ),
-            copy(self.lmap),
-            self.transform.copy(),
-            )
+        """
+        No clue what this is supposed to do
+        """
+        return NotImplemented
+        #return type(self)(
+        #    (
+        #        self.compo
+        #        if isinstance(self.compo, pc.Compo)
+        #        else self.compo.copy()
+        #        ),
+        #    copy(self.lmap),
+        #    self.transform.copy(),
+        #    )
 
     def __str__(self):
-        return f"<Proxy of {self.compo} at {id(self)}>"
+        stack = ''.join([
+            'ma'[proxy._autogen]
+            for proxy in self.descend_p()
+            ])
+        return (
+            "<"
+            f"Proxy of {self.final()} at {pc.wingdingify(id(self))} "
+            f"stack `{stack}x`"
+            ">"
+            )
+
+    def __repr__(self):
+        return self.__str__()
 
     # Transform functions #
     # TODO for all transforms
@@ -120,10 +187,13 @@ class Proxy:
 
     # lmap function #
     def __matmul__(self, lmap):
-        return pc.Proxy(
-            self,
-            lmap=lmap
-            )
+        # TODO warn on override lmap?
+        self.lmap = LMap(lmap)
+        return self
+        #return pc.Proxy(
+        #    self,
+        #    lmap=lmap
+        #    )
 
     # mark functions #
     def get_mark(self, name):
@@ -164,6 +234,12 @@ class Proxy:
     def snap_below(self, other):
         self.bbox.top_mid.to(other.bbox.bot_mid)
         return self
+
+    def _export_cif(self, transform=None):
+        return self.compo._export_cif(
+            self.transform.copy().compose(transform)
+            if transform is not None else self.transform
+            )
 
 
 
