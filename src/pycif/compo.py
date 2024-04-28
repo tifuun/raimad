@@ -208,7 +208,7 @@ class Compo:
     def _repr_svg_(self):
         """
         Make svg representation of component.
-        This is called by jupyter and raimad doc
+        This is called by jupyter and raimark
         """
         return pc.export_svg(self)
 

@@ -172,13 +172,11 @@ class CIFExporter:
         for name, proxy in compo.subcompos.items():
             if self.flatten_proxies:
                 if self.native_inline:
-                    print('here!')
                     did_make_inline = self._actually_make_compo(
                         proxy.final(),
                         rout_num,
                         compo.get_flat_transform()
                         )
-                    print(did_make_inline, proxy.final())
 
                 if not self.native_inline or not did_make_inline:
                     self._delayed(

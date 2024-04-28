@@ -238,6 +238,13 @@ class Proxy:
         self.bbox.top_mid.to(other.bbox.bot_mid)
         return self
 
+    def _repr_svg_(self):
+        """
+        Make svg representation of component.
+        This is called by jupyter and raimark
+        """
+        return pc.export_svg(self)
+
     #def _export_cif(self, transform=None):
     #    return self.compo._export_cif(
     #        self.transform.copy().compose(transform)
