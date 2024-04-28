@@ -77,7 +77,7 @@ class Transform(object):
             "<Transform ",
             f"Move ({move_x:+.2f}, {move_y:+.2f}) "
                 if does_translate else '',
-            f"Rotate {pc.radians(rotation):.2f}) "
+            f"Rotate {pc.rad2deg(rotation):.2f}) "
                 if does_rotate else '',
             f"Shear {shear:.2f} "
                 if does_shear else '',

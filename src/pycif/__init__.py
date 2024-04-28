@@ -16,6 +16,7 @@ class EmptyType:
 
 Empty = EmptyType()
 
+from pycif import graphviz as gv
 from pycif.helpers import *
 from pycif import affine
 import pycif.iters as iters
@@ -78,5 +79,4 @@ from pycif.checker.checker import (
 
 from pycif.snowman import Snowman
 
-from pycif import graphviz as gv
 

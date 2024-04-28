@@ -4,6 +4,10 @@ graphviz.py
 Utilities for generating DOT code
 """
 
+class DOTString(str):
+    def _repr_dot_(self):
+        return self
+
 def _adjlist2dot(adjlist):
     """
     Convert adjecency list to DOT code

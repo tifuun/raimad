@@ -96,7 +96,9 @@ class CIFExporter:
         self.reverse_rout_map[this_rout_num] = compo
 
         if isinstance(compo, pc.Proxy):
+            self._frag( f'DS {this_rout_num};\n' )
             self._delayed(compo.compo, None, this_rout_num)
+            self._frag( 'DF;\n' )
 
         else:
             self._frag( f'DS {this_rout_num} 1 1;\n' )
@@ -157,7 +159,7 @@ class CIFExporter:
         yield str(int(move_y * self.multiplier))
         yield ' '
 
-    @pc.join_generator('')
+    @pc.join_generator('', pc.gv.DOTString)
     def as_dot(self):
         yield 'digraph D {\n'
 

@@ -90,11 +90,11 @@ def wingdingify(value: int):
         '\033[0m',
         ))
 
-def join_generator(string):
+def join_generator(string, post=lambda x: x):
     def join_generator_inner(generator):
         @functools.wraps(generator)
         def wrapper(*args, **kwargs):
-            return string.join(generator(*args, **kwargs))
+            return post(string.join(generator(*args, **kwargs)))
         return wrapper
     return join_generator_inner
 
