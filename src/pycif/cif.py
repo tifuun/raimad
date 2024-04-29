@@ -261,7 +261,7 @@ class CIFExporter:
                 shape = 'note'
                 if include_name:
                     if (name := self.rout_names.get(rout_num)):
-                        label.append(rf'\"{name}\"')
+                        label.append(rf'({name})')
 
                 if include_meta:
                     if compo.transform.does_translate:
@@ -275,7 +275,7 @@ class CIFExporter:
                 shape = 'box'
                 if include_name:
                     # TODO this entire funtion is getting out of hand as well
-                    label.append(type(compo).__name__)
+                    label.append(rf'({type(compo).__name__})')
 
             if include_code:
                 label.append(''.join([
