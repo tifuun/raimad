@@ -40,6 +40,10 @@ class Compo:
 
         self._make(*args, **kwargs)
 
+    @classmethod
+    def partial(cls, **kwargs):
+        return pc.Partial(cls, **kwargs)
+
     def get_geoms(self) -> dict:
         geoms = self.geoms.copy()
         for subcompo in self.subcompos.values():

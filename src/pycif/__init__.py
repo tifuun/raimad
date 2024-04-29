@@ -51,6 +51,7 @@ from pycif.boundpoint import BoundPoint
 from pycif.transform import Transform
 from pycif.compo import Compo
 from pycif.proxy import Proxy
+from pycif.partial import Partial
 from pycif.bbox import BBox
 
 from pycif.rectwh import RectWH

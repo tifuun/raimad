@@ -17,6 +17,10 @@ class DelayedRoutCall():
     rout_num: int
     name: str | None = None
 
+# TODO native_inline must imply cif_native!!
+# TODO native_inline is broken?
+# TODO stacked proxies lose subcompo names?
+
 
 class CIFExporter:
     def __init__(
@@ -24,11 +28,9 @@ class CIFExporter:
             compo,
             multiplier=1e3,
             rot_multiplier=1e3,
-            cif_native=True,
-            cif_link=True,
-            cif_link_fatal=False,
-            flatten_proxies=True,
-            native_inline=True,
+            cif_native=False,
+            flatten_proxies=False,
+            native_inline=False,
             ):
 
         self.compo = compo
@@ -39,7 +41,6 @@ class CIFExporter:
         self.flatten_proxies = flatten_proxies
         self.native_inline = native_inline
 
-        # TODO cif_link and cif_link_native
         self.cif_fragments = []
 
         # map proxy/compo objects to routine numbers
@@ -55,6 +56,11 @@ class CIFExporter:
 
         # Map routine numbers to lists of cif fragments
         self.cif_map = {}
+
+        # The resulting cif file
+        self.cif_string = ''
+
+        self.export_cif()
 
     def export_cif(self):
         self._make_compo(self.compo)
@@ -96,7 +102,8 @@ class CIFExporter:
                 new_compos += 1
 
         self._call_root()
-        return ''.join(self.cif_fragments)
+        self.cif_string = ''.join(self.cif_fragments)
+        return self.cif_string
 
     def _frag(self, fragment, rout_num=None):
         self.cif_fragments.append(fragment)
@@ -240,7 +247,7 @@ class CIFExporter:
         yield ' '
 
     @pc.join_generator('', pc.gv.DOTString)
-    def as_dot(self, include_code=True, include_meta=False):
+    def as_dot(self, include_code=True, include_meta=False, include_name=True):
         yield 'digraph D {\n'
 
         for rout_num in range(1, self.rout_num):
@@ -252,7 +259,7 @@ class CIFExporter:
 
             if isinstance(compo, pc.Proxy):
                 shape = 'note'
-                if include_meta:
+                if include_name:
                     if (name := self.rout_names.get(rout_num)):
                         label.append(rf'\"{name}\"')
 
@@ -266,7 +273,7 @@ class CIFExporter:
                         label.append(f'Rotate {rot:.3g}')
             else:
                 shape = 'box'
-                if include_meta:
+                if include_name:
                     # TODO this entire funtion is getting out of hand as well
                     label.append(type(compo).__name__)
 
@@ -292,8 +299,6 @@ def export_cif(
         multiplier=1e3,
         rot_multiplier=1e3,
         cif_native=True,
-        cif_link=True,
-        cif_link_fatal=False,
         flatten_proxies=False,
         native_inline=True,
         ):
@@ -302,8 +307,6 @@ def export_cif(
         multiplier,
         rot_multiplier,
         cif_native,
-        cif_link,
-        cif_link_fatal,
         flatten_proxies,
         native_inline,
         ).export_cif()

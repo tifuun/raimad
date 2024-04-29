@@ -33,3 +33,12 @@ class BoundPoint(np.ndarray):
             self[1]
             )
 
+    def move(self, x, y):
+        """
+        `move`ing a boundpoint is functionally identical to `move`ing
+        the proxy itself, so there is no reason to call this explicitly.
+        However, this function is still defined, so that you can use
+        `move` in a chain of actions on a boundpoint
+        """
+        self.proxy.transform.move(x, y)
+        return self
