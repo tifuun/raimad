@@ -148,6 +148,7 @@ class CIFExporter:
             self._frag( 'DF;\n', rout_num )
 
         else:
+            # TODO this is bad, use a context manager or something
             self._frag( f'DS {rout_num} 1 1;\n', rout_num )
             self._actually_make_compo(compo, rout_num)
             self._frag( 'DF;\n', rout_num )
@@ -164,6 +165,7 @@ class CIFExporter:
             if transform is not None:
                 native_inline = compo._export_cif_transformed(self, transform)
                 if native_inline is NotImplemented:
+                    # TODO Bug here?
                     return False
 
                 self._frag(native_inline, rout_num)
@@ -182,7 +184,7 @@ class CIFExporter:
                     did_make_inline = self._actually_make_compo(
                         proxy.final(),
                         rout_num,
-                        compo.get_flat_transform()
+                        proxy.get_flat_transform()
                         )
 
                 if not self.native_inline or not did_make_inline:
@@ -226,11 +228,15 @@ class CIFExporter:
         if transform.does_shear():
             raise Exception()
 
-        if transform.does_translate():
-            yield from self.compile_translation(*transform.get_translation())
+        # TODO order matters here! rotation before translation
+        # Not a syntax thing, just transform.get_rotation is around
+        # origin
 
         if transform.does_rotate():
             yield from self.compile_rotation(transform.get_rotation())
+
+        if transform.does_translate():
+            yield from self.compile_translation(*transform.get_translation())
 
     def compile_rotation(self, rotation):
         yield 'R '
