@@ -63,7 +63,7 @@ class RectWH(pc.Compo):
 
     def _export_cif(self, cif_exporter):
         cifstring = [
-            "\tL Lwtf;\n\tB "
+            "\tL Lroot;\n\tB "
             f"{int(self.width * cif_exporter.multiplier)} "
             f"{int(self.height * cif_exporter.multiplier)} "
             "0 "
@@ -83,7 +83,7 @@ class RectWH(pc.Compo):
 
         move_x, move_y = transform.get_translation()
         cifstring = [
-            "\tL Lwtf;\n\tB "
+            "\tL Lroot;\n\tB "
             f"{int(self.width * cif_exporter.multiplier)} "
             f"{int(self.height * cif_exporter.multiplier)} "
             f"{int(move_x * cif_exporter.multiplier)} "

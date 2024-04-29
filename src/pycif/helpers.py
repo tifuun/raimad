@@ -98,3 +98,11 @@ def join_generator(string, post=lambda x: x):
         return wrapper
     return join_generator_inner
 
+def midpoint(p1, p2):
+    """
+    Midpoint between two points
+    """
+    return (p1 + p2) / 2
+
+# TODO chaining boundpoint actions?
+

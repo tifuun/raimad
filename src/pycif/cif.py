@@ -80,7 +80,7 @@ class CIFExporter:
                     )
 
                 new_fragments = [
-                    f'\t C {rout_num} ',
+                    f'\tC {rout_num} ',
                     *self.compile_transform(fragment.transform),
                     ";\n"
                     ]
