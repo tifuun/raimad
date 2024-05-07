@@ -90,6 +90,12 @@ def wingdingify(value: int):
         '\033[0m',
         ))
 
+def preload_generator(generator):
+    @functools.wraps(generator)
+    def wrapper(*args, **kwargs):
+        return list(generator(*args, **kwargs))
+    return wrapper
+
 def join_generator(string, post=lambda x: x):
     def join_generator_inner(generator):
         @functools.wraps(generator)
@@ -105,4 +111,18 @@ def midpoint(p1, p2):
     return (p1 + p2) / 2
 
 # TODO chaining boundpoint actions?
+
+def klay(cifstring):
+    """
+    Do not use this function.
+    This is a helper for me to debug the CIF export process
+    until I come up with something better
+    """
+    import subprocess
+    with open('/home/maybetree/tmp/raimad.cif', 'w') as cif:
+        cif.write(cifstring)
+    #subprocess.Popen(
+    #    'flatpak run de.klayout.KLayout /home/maybetree/tmp/raimad.cif'
+    #    .split(' '))
+
 

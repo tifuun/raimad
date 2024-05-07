@@ -56,7 +56,9 @@ class Transform(object):
         return abs(self.get_shear()) > 0.001  # TODO epsilon
 
     def does_scale(self):
-        return 1 - np.linalg.norm(self.get_scale()) > 0.001  # TODO epsilon
+        scale_x, scale_y = self.get_scale()
+        # TODO epsilon
+        return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001
 
     def __repr__(self):
         does_translate = self.does_translate()
@@ -77,7 +79,7 @@ class Transform(object):
             "<Transform ",
             f"Move ({move_x:+.2f}, {move_y:+.2f}) "
                 if does_translate else '',
-            f"Rotate {pc.rad2deg(rotation):.2f}) "
+            f"Rotate {np.rad2deg(rotation):.2f}) "
                 if does_rotate else '',
             f"Shear {shear:.2f} "
                 if does_shear else '',

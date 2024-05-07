@@ -7,7 +7,7 @@ import pycif as pc
 class CIFExportError(Exception):
     pass
 
-class CannotCIFLinkError(Exception):
+class CannotCompileTransformError(CIFExportError):
     pass
 
 @dataclass
@@ -23,23 +23,30 @@ class DelayedRoutCall():
 
 
 class CIFExporter:
+    multiplier: float = 1e3
+    rot_multiplier: float = 1e3
+
     def __init__(
             self,
             compo,
-            multiplier=1e3,
-            rot_multiplier=1e3,
+            multiplier=None,
+            rot_multiplier=None,
             cif_native=False,
             flatten_proxies=False,
             native_inline=False,
+            transform_fatal: bool = False
             ):
 
         self.compo = compo
         self.rout_num = 1
-        self.multiplier = multiplier
-        self.rot_multiplier = rot_multiplier
+        if multiplier is not None:
+            self.multiplier = multiplier
+        if rot_multiplier is not None:
+            self.rot_multiplier = rot_multiplier
         self.cif_native = cif_native
         self.flatten_proxies = flatten_proxies
         self.native_inline = native_inline
+        self.transform_fatal = transform_fatal
 
         self.cif_fragments = []
 
@@ -60,9 +67,12 @@ class CIFExporter:
         # The resulting cif file
         self.cif_string = ''
 
-        self.export_cif()
+        # list of transforms that could not be compiled
+        self.invalid_transforms = []
 
-    def export_cif(self):
+        self._export_cif()
+
+    def _export_cif(self):
         self._make_compo(self.compo)
 
         new_compos = 69420
@@ -73,32 +83,55 @@ class CIFExporter:
                 if not isinstance(fragment, DelayedRoutCall):
                     continue
 
-                rout_num = (
-                    self.rout_map.get(fragment.compo, None)
-                    or
-                    self._make_compo(fragment.compo)
+                try:
+                    # TODO this is hell
+                    transform = fragment.compo.get_flat_transform()
+                    if fragment.transform is not None:
+                        transform.compose(fragment.transform)
+
+                    compiled_transform = self.compile_transform(
+                        transform)
+
+                except CannotCompileTransformError as exc:
+                    if self.transform_fatal:
+                        raise exc
+                    compiled_transform = None
+                    self.invalid_transforms.append(transform)
+
+                if compiled_transform is not None:
+                    rout_num = (
+                        self.rout_map.get(fragment.compo, None)
+                        or
+                        self._make_compo(fragment.compo)
                     )
 
-                new_fragments = [
-                    f'\tC {rout_num} ',
-                    *self.compile_transform(fragment.transform),
-                    ";\n"
-                    ]
+                    new_fragments = [
+                        f'\tC {rout_num} ',
+                        *compiled_transform,
+                        ";\n"
+                        ]
+
+                    if fragment.rout_num not in self.cif_map.keys():
+                        # TODO defaultdict?
+                        self.cif_map[fragment.rout_num] = []
+
+                    self.cif_map[fragment.rout_num][
+                        self.cif_map[fragment.rout_num].index(fragment)
+                        #] = f'\t C {rout_num} [...];\n'
+                        ] = ''.join(new_fragments)  # TODO!!!
+                    # TODO the above line is a mess
+
+                    self.rout_list.append((fragment.rout_num, rout_num))
+                    self.rout_names[rout_num] = fragment.name
+
+                else:
+                    new_fragments = self.export_flat(
+                        fragment.compo,
+                        fragment.transform,
+                        )
 
                 self.cif_fragments[i] = ''.join(new_fragments)
 
-                if fragment.rout_num not in self.cif_map.keys():
-                    # TODO defaultdict?
-                    self.cif_map[fragment.rout_num] = []
-
-                self.cif_map[fragment.rout_num][
-                    self.cif_map[fragment.rout_num].index(fragment)
-                    #] = f'\t C {rout_num} [...];\n'
-                    ] = ''.join(new_fragments)  # TODO!!!
-                # TODO the above line is a mess
-
-                self.rout_list.append((fragment.rout_num, rout_num))
-                self.rout_names[rout_num] = fragment.name
                 new_compos += 1
 
         self._call_root()
@@ -217,16 +250,23 @@ class CIFExporter:
                 #self.cif_map[rout_num].append('[...]')
                 self._frag(';\n', rout_num)
 
+    @pc.preload_generator
     def compile_transform(self, transform):
         if transform is None:
             return ''
 
         if transform.does_scale():
             # TODO also possible to mirror in cif
-            raise Exception()
+            raise CannotCompileTransformError(
+                f"Cannot compile {transform} to CIF "
+                "because it scales."
+                )
 
         if transform.does_shear():
-            raise Exception()
+            raise CannotCompileTransformError(
+                f"Cannot compile {transform} to CIF "
+                "because it shears."
+                )
 
         # TODO order matters here! rotation before translation
         # Not a syntax thing, just transform.get_rotation is around
@@ -251,6 +291,21 @@ class CIFExporter:
         yield ' '
         yield str(int(move_y * self.multiplier))
         yield ' '
+
+    @pc.preload_generator
+    def export_flat(self, compo, transform):
+        # TODO get_geoms is a bit of an unclear name,
+        # maybe get_flat_geoms?
+        proxy = pc.Proxy(compo, transform=transform)
+        for layer_name, layer_geoms in proxy.get_geoms().items():
+            yield '\t(flat)\n'
+            yield f'\tL L{layer_name};\n'
+            for xyarray in layer_geoms:
+                yield '\tP '
+                for point in xyarray:
+                    for coordinate in point:
+                        yield f'{int(coordinate * self.multiplier)} '
+                yield ';\n'
 
     @pc.join_generator('', pc.gv.DOTString)
     def as_dot(self, include_code=True, include_meta=False, include_name=True):
@@ -307,15 +362,18 @@ def export_cif(
         cif_native=True,
         flatten_proxies=False,
         native_inline=True,
+        transform_fatal=False,
         ):
-    return CIFExporter(
+    exporter = CIFExporter(
         compo,
         multiplier,
         rot_multiplier,
         cif_native,
         flatten_proxies,
         native_inline,
-        ).export_cif()
+        transform_fatal,
+        )
+    return exporter.cif_string
 
 
 

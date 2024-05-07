@@ -34,7 +34,7 @@ from pycif.option import Option
 from pycif.boundpoint import BoundPoint
 from pycif.transform import Transform
 from pycif.compo import Compo
-from pycif.proxy import Proxy
+from pycif.proxy import Proxy, LMap
 from pycif.partial import Partial
 from pycif.bbox import BBox
 

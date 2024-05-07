@@ -17,9 +17,9 @@ class Compo_direct(pc.Compo):
 
 class Compo_auto(pc.Compo):
     def _make(self):
-        beam = pc.RectWH(2, 20) @ 'root'
-        coup_top = pc.RectWH(10, 2) @ 'root'
-        coup_bot = pc.RectWH(8, 2) @ 'root'
+        beam = pc.RectWH(2, 20).proxy().map('root')
+        coup_top = pc.RectWH(10, 2).proxy().map('root')
+        coup_bot = pc.RectWH(8, 2).proxy().map('root')
 
         beam.bbox.mid.to((0, 0))
 

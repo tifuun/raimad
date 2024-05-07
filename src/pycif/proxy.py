@@ -1,10 +1,10 @@
-from typing import Self, Iterator
+from typing import Self, Iterator, Any
 from copy import copy
 
 import pycif as pc
 
 class LMap:
-    def __init__(self, shorthand: pc.typing.LMapShorthand) -> None:
+    def __init__(self, shorthand: 'pc.typing.LMapShorthand') -> None:
         self.shorthand = shorthand
 
     def __getitem__(self, name: str) -> str:
@@ -19,9 +19,9 @@ class LMap:
 
 class Proxy:
     def __init__(self,
-                 compo: pc.typing.Compo,
-                 lmap: pc.typing.LMap = None,
-                 transform: pc.typing.Transform = None,
+                 compo: 'pc.typing.Compo',
+                 lmap: 'pc.typing.LMap' = None,
+                 transform: 'pc.typing.Transform' = None,
                  _cif_link: bool = False,
                  _autogen: bool = False,
                  ):
@@ -32,7 +32,7 @@ class Proxy:
         self.lmap = LMap(lmap)
         self.transform = transform or pc.Transform()
 
-    def get_geoms(self) -> pc.typing.Geoms:
+    def get_geoms(self) -> 'pc.typing.Geoms':
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
@@ -42,16 +42,21 @@ class Proxy:
             in self.compo.get_geoms().items()
             }
 
-    def get_flat_transform(self, maxdepth: int = -1) -> pc.typing.Transform:
+    def get_flat_transform(self, maxdepth: int = -1) -> 'pc.typing.Transform':
         if maxdepth == 0:
             return pc.Transform()
+
+        #return (
+        #    self.compo.get_flat_transform(maxdepth - 1)
+        #    .compose(self.transform)
+        #    )
 
         return self.transform.copy().compose(
             self.compo.get_flat_transform(maxdepth - 1)
             )
 
     @property
-    def geoms(self) -> pc.typing.Geoms:
+    def geoms(self) -> 'pc.typing.Geoms':
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
@@ -69,28 +74,28 @@ class Proxy:
             })
         return self.compo.subcompos
 
-    def final(self) -> pc.typing.RealCompo:
+    def final(self) -> 'pc.typing.RealCompo':
         return self.compo.final()
 
     def depth(self) -> int:
         return self.compo.depth() + 1
 
-    def descend(self) -> Iterator[pc.typing.Compo]:
+    def descend(self) -> 'Iterator[pc.typing.Compo]':
         yield self
-        yield from self.compo.descend()
+        yield from self.compo.descendre()
 
-    def descend_p(self) -> Iterator[pc.typing.Proxy]:
+    def descend_p(self) -> 'Iterator[pc.typing.Proxy]':
         yield self
         yield from self.compo.descend_p()
 
-    def proxy(self) -> pc.typing.Proxy:
+    def proxy(self) -> 'pc.typing.Proxy':
         return pc.Proxy(self)
 
-    def walk_hier(self) -> Iterator[pc.typing.Proxy]:
+    def walk_hier(self) -> 'Iterator[pc.typing.Proxy]':
         for subcompo in self.compo.walk_hier():
             yield self.copy_reassign(subcompo)
 
-    def copy(self) -> pc.typing.Proxy:
+    def copy(self) -> 'pc.typing.Proxy':
         if self.depth() > 1:
             # TODO think about why someone would want to do this
             raise Exception("Copying proxy of depth more than 1")
@@ -117,9 +122,9 @@ class Proxy:
 
     def copy_reassign(
             self,
-            new_subcompo: pc.typing.Compo,
+            new_subcompo: 'pc.typing.Compo',
             _autogen: bool = False,
-            ) -> pc.typing.Proxy:
+            ) -> 'pc.typing.Proxy':
 
         return type(self)(
             new_subcompo,
@@ -203,6 +208,9 @@ class Proxy:
     #    #    self,
     #    #    lmap=lmap
     #    #    )
+    def map(self, lmap):
+        self.lmap = LMap(lmap)
+        return self
 
     # mark functions #
     def get_mark(self, name: str) -> pc.BoundPoint:

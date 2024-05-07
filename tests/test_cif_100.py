@@ -18,28 +18,12 @@ find_box_calls = re.compile(
     re.MULTILINE
     )
 
-# Regext to find cif polygons with four points
+# Regex to find cif polygons with four points
 find_rect_polys = re.compile(
     r"^\s*P\s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)"
     r"\s(-?\d+)\s(-?\d+)\s(-?\d+)\s(-?\d+)\s*;",
     re.MULTILINE
     )
-
-def adjlist_to_cif(exporter, adjlist):
-    """
-    Helper for checking CIF routine call structure.
-    Convert an adjecency list in the format {
-        (proxy, proxy),
-        (proxy, proxy),
-        ...
-    }
-    to the format {
-        (cif_rout_number, cif_rout_number),
-        (cif_rout_number, cif_rout_number),
-        ...
-    }
-    given the exporter object.
-    """
 
 class CIFRoutGraphChecker():
     """
@@ -53,19 +37,19 @@ class CIFRoutGraphChecker():
                 tuple(exporter.rout_map[proxy] for proxy in edge)
                 for edge in adjlist
                 },
-            exporter.rout_list
+            set(exporter.rout_list)
             )
 
-class BoxesStar(pc.Compo):
+class Boxes(pc.Compo):
     """
     cif-linked boxes in "star" topology:
     multiple boxes are cif links of one root box
     """
     def _make(self, add_root: bool):
-        first = pc.RectWH(10, 10) @ 'first'
-        second = first.cifcopy().move(20, 0) @ 'second'
-        third = first.cifcopy().move(-20, 0) @ 'third'
-        fourth = first.cifcopy().move(0, 20) @ 'fourth'
+        first = pc.RectWH(10, 10).proxy().map('first')
+        second = first.copy().move(20, 0).map('second')
+        third = first.copy().move(-20, 0).map('third')
+        fourth = first.copy().move(0, 20).map('fourth')
 
         if add_root:
             self.subcompos.first = first
@@ -74,21 +58,62 @@ class BoxesStar(pc.Compo):
         self.subcompos.third = third
         self.subcompos.fourth = fourth
 
-class BoxesChain(pc.Compo):
+        self.first = first
+
+class Sub1(pc.Compo):
     """
-    cif-linked boxes in "chain" topology:
-    there is a root box, a link to that box, a link to that box, ...
+    Two rectangles, one above the other
     """
     def _make(self):
-        first = pc.RectWH(10, 10) @ 'root'
-        second = first.cifcopy().move(20, 0)
-        third = second.cifcopy().move(20, 0)
-        fourth = third.cifcopy().move(20, 0)
+        self.subcompos.first = pc.RectWH(10, 10).proxy().map('first')
+        self.subcompos.second = (
+            self.subcompos.first.copy()
+            .move(0, 20)
+            .map('second')
+            )
 
-        self.subcompos.first = first
-        self.subcompos.second = second
-        self.subcompos.third = third
-        self.subcompos.fourth = fourth
+class Sub2(pc.Compo):
+    """
+    Two circles, one above the other
+    """
+    def _make(self):
+        self.subcompos.first = pc.Circle(10).proxy().map('first')
+        self.subcompos.second = (
+            self.subcompos.first.copy()
+            .move(0, 20)
+            .map('second')
+            )
+
+class Complex(pc.Compo):
+    """
+    Left: two rectangles
+    middle: two circles, slightly rotated
+    right: two circles, rotated a little more
+    """
+    def _make(self, invalid_transform: bool = False):
+        self.subcompos.sub1 = Sub1().proxy().map({
+            'first': 'sub1_first',
+            'second': 'sub1_second',
+            }).move(-20, 0)
+
+        self.subcompos.sub2 = Sub2().proxy().map({
+            'first': 'sub2_first',
+            'second': 'sub2_second',
+            }).rotate(np.deg2rad(10))
+
+        if invalid_transform:
+            self.subcompos.sub2.scale(2)
+
+        self.subcompos.sub22 = (
+            self.subcompos.sub2.copy()
+            .move(20, 0)
+            .rotate(np.deg2rad(5))
+            .map({
+                'first': 'sub22_first',
+                'second': 'sub22_second',
+                })
+            )
+
 
 
 class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
@@ -96,9 +121,8 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.boxes_chain_sub = BoxesChain()
-        self.boxes_star_sub = BoxesStar(add_root=True)
-        self.boxes_star_nosub = BoxesStar(add_root=False)
+        self.boxes_sub = Boxes(add_root=True)
+        self.boxes_nosub = Boxes(add_root=False)
 
     def test_cif_native_rectwh(self):
         """
@@ -113,8 +137,11 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
         self.assertEqual(
             box_calls,
             [
-                #TODO hardcoded multiplier
-                (str(1000 * 10), str(1000 * 20), '0', '0')
+                (
+                    str(int(pc.CIFExporter.multiplier * 10)),
+                    str(int(pc.CIFExporter.multiplier * 20)),
+                    '0',
+                    '0')
                 ]
             )
         # This assumes that RectWH is centered at origin,
@@ -122,23 +149,18 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         # TODO also check rotation
 
-    def test_cif_link_star_sub(self):
+    def test_cif_link_sub(self):
         """
-        test copy-with-cif-link feature with "star" topology:
-        multiple copies link to one "root" compo.
-        The root compo is also a subcompo of the toplevel.
         """
 
-        compo = self.boxes_star_sub
+        compo = self.boxes_sub
 
         exporter = pc.CIFExporter(
             compo,
             cif_native=False,
-            cif_link=True,
-            cif_link_fatal=True,
+            transform_fatal=True,
             )
-        cifstring = exporter.export_cif()
-        open('/tmp/test.cif', 'w').write(cifstring)
+        cifstring = exporter.cif_string
 
         # There should only be one polygon,
         # and the rest are copies
@@ -163,23 +185,18 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         # TODO here check geometry
 
-    def test_cif_link_star_nosub(self):
+    def test_cif_link_nosub(self):
         """
-        test copy-with-cif-link feature with "star" topology:
-        multiple copies link to one "root" compo.
-        The root compo is NOT a subcompo of the toplevel.
         """
 
-        compo = self.boxes_star_nosub
+        compo = self.boxes_nosub
 
         exporter = pc.CIFExporter(
             compo,
             cif_native=False,
-            cif_link=True,
-            cif_link_fatal=True,
+            transform_fatal=True,
             )
-        cifstring = exporter.export_cif()
-        open('/tmp/test.cif', 'w').write(cifstring)
+        cifstring = exporter.cif_string
 
         # There should only be one polygon,
         # and the rest are copies
@@ -196,80 +213,9 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
                 (compo, compo.subcompos.second),
                 (compo, compo.subcompos.third),
                 (compo, compo.subcompos.fourth),
-                (compo.subcompos.second, compo.subcompos.first),
-                (compo.subcompos.third, compo.subcompos.first),
-                (compo.subcompos.fourth, compo.subcompos.first),
-                }
-            )
-
-        # TODO here check geometry
-
-    def test_cif_link_chain_sub(self):
-
-        compo = self.boxes_chain_sub
-
-        exporter = pc.CIFExporter(
-            compo,
-            cif_native=False,
-            cif_link=True,
-            cif_link_fatal=True,
-            )
-        cifstring = exporter.export_cif()
-        open('/tmp/test.cif', 'w').write(cifstring)
-
-        # There should only be one polygon,
-        # and the rest are copies
-        polygons = find_rect_polys.findall(cifstring)
-        self.assertEqual(len(polygons), 1)
-
-        # Test that the structure of the component
-        # corresponds with the structure of the cif routine calls
-        self.assertCIFRoutStructure(
-            exporter,
-            {
-                (compo, compo.subcompos.first),
-                (compo, compo.subcompos.second),
-                (compo, compo.subcompos.third),
-                (compo, compo.subcompos.fourth),
-                (compo.subcompos.second, compo.subcompos.first),
-                (compo.subcompos.third, compo.subcompos.second),
-                (compo.subcompos.fourth, compo.subcompos.third),
-                }
-            )
-
-        # TODO here check geometry
-
-    def test_cif_link_chain_nosub(self):
-
-        compo = self.boxes_chain_nosub
-
-        exporter = pc.CIFExporter(
-            compo,
-            cif_native=False,
-            cif_link=True,
-            cif_link_fatal=True,
-            )
-        cifstring = exporter.export_cif()
-        open('/tmp/test.cif', 'w').write(cifstring)
-
-        # There should only be one polygon,
-        # and the rest are copies
-        polygons = find_rect_polys.findall(cifstring)
-        self.assertEqual(len(polygons), 1)
-
-        # Test that the structure of the component
-        # corresponds with the structure of the cif routine calls
-        self.assertCIFRoutStructure(
-            exporter,
-            {
-                # This one should be missing compared to boxes_chain_sub:
-                # (compo, compo.subcompos.first),
-                (compo, compo.subcompos.second),
-                (compo, compo.subcompos.third),
-                (compo, compo.subcompos.fourth),
-                (compo.subcompos.second, compo.subcompos.first),
-                (compo.subcompos.third, compo.subcompos.second),
-                (compo.subcompos.fourth, compo.subcompos.third),
+                (compo.subcompos.second, compo.first.compo),
+                (compo.subcompos.third, compo.first.compo),
+                (compo.subcompos.fourth, compo.first.compo),
                 }
             )
 
@@ -280,52 +226,13 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
         like test_cif_link,
         but a little more complex
         """
-
-        class Sub1(pc.Compo):
-            def _make(self):
-                self.subcompos.first = pc.RectWH(10, 10) @ 'first'
-                self.subcompos.second = (
-                    self.subcompos.first.cifcopy()
-                    .move(0, 20)
-                    @ 'second'
-                    )
-
-        class Sub2(pc.Compo):
-            def _make(self):
-                self.subcompos.first = pc.Circle(10) @ 'first'
-                self.subcompos.second = (
-                    self.subcompos.first.cifcopy()
-                    .move(0, 20)
-                    @ 'second'
-                    )
-
-        class MyCompo(pc.Compo):
-            def _make(self):
-                self.subcompos.sub1 = (Sub1() @ {
-                    'first': 'sub1_first',
-                    'second': 'sub1_second',
-                    }).move(-20, 0)
-
-                self.subcompos.sub2 = (Sub2() @ {
-                    'first': 'sub2_first',
-                    'second': 'sub2_second',
-                    }).move(20, 0)
-
-                self.subcompos.sub22 = (
-                    self.subcompos.sub2.cifcopy()
-                    .move(20, 0)
-                    @ {
-                        'first': 'sub22_first',
-                        'second': 'sub22_second',
-                        }
-                    )
-
-        mycompo = MyCompo()
+        mycompo = Complex()
 
         cifstring = pc.export_cif(
             mycompo,
             cif_native=False,
-            cif_link=True
+            transform_fatal=True,
+            flatten_proxies=False,
             )
 
         polygons = find_rect_polys.findall(cifstring)
@@ -333,60 +240,102 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         # TODO here check geometry
 
-    def test_cif_link_complex_fail(self):
+    def test_cif_invalid_transform_fail(self):
         """
-        Test that cif exporter detects when
-        it's impossible to keep a component linked
         """
 
-        class Sub1(pc.Compo):
-            def _make(self):
-                self.subcompos.first = pc.RectWH(10, 10) @ 'first'
-                self.subcompos.second = (
-                    self.subcompos.first.cifcopy()
-                    .move(0, 20)
-                    @ 'second'
-                    )
+        mycompo = Complex(invalid_transform=True)
 
-        class Sub2(pc.Compo):
-            def _make(self):
-                self.subcompos.first = pc.Circle(10) @ 'first'
-                self.subcompos.second = (
-                    self.subcompos.first.cifcopy()
-                    .move(0, 20)
-                    @ 'second'
-                    )
+        with self.assertRaises(pc.err.CannotCompileTransformError):
+            pc.export_cif(
+                mycompo,
+                cif_native=False,
+                transform_fatal=True
+                )
+
+    def test_cif_invalid_transform_fallback(self):
+        """
+        """
 
         class MyCompo(pc.Compo):
             def _make(self):
-                self.subcompos.sub1 = (Sub1() @ {
-                    'first': 'sub1_first',
-                    'second': 'sub1_second',
-                    }).hflip()
-
-                self.subcompos.sub2 = (Sub2() @ {
-                    'first': 'sub2_first',
-                    'second': 'sub2_second',
-                    }).move(20, 0)
-
-                self.subcompos.sub22 = (
-                    self.subcompos.sub2.cifcopy()
-                    .move(20, 0)
-                    @ {
-                        'first': 'sub22_first',
-                        'second': 'sub22_second',
-                        }
+                self.subcompos.append(
+                    pc.RectWH(10, 20)
+                    .proxy()
+                    .scale(2)
+                    .bbox.bot_left.to((0, 0))
                     )
 
         mycompo = MyCompo()
 
-        with self.assertRaises(pc.err.CannotCIFLinkError):
-            pc.export_cif(
-                mycompo,
-                cif_native=False,
-                cif_link=True,
-                cif_link_fatal=True
+        exporter = pc.CIFExporter(
+            mycompo,
+            flatten_proxies=True,
+            cif_native=False,
+            native_inline=False,
+            transform_fatal=False,
+            multiplier=1,
+            )
+        cifstring = exporter.cif_string
+
+        self.assertEqual(
+            len(exporter.invalid_transforms),
+            1
+            )
+
+        polys = find_rect_polys.findall(cifstring)
+
+        self.assertEqual(len(polys), 1)
+
+        self.assertEqual(
+            polys[0],
+            (
+                '0', '0',
+                '20', '0',
+                '20', '40',
+                '0', '40',
                 )
+            )
+
+    def test_cif_invalid_transform_fallback_export_proxy(self):
+        """
+        """
+        mycompo = (
+            pc.RectWH(10, 20)
+            .proxy()
+            .scale(2)
+            .bbox.bot_left.to((0, 0))
+            )
+
+        exporter = pc.CIFExporter(
+            mycompo,
+            flatten_proxies=True,
+            cif_native=False,
+            native_inline=False,
+            transform_fatal=False,
+            multiplier=1,
+            )
+        cifstring = exporter.cif_string
+
+        self.assertEqual(
+            len(exporter.invalid_transforms),
+            1
+            )
+
+        polys = find_rect_polys.findall(cifstring)
+
+        self.assertEqual(len(polys), 1)
+
+        self.assertEqual(
+            polys[0],
+            (
+                '0', '0',
+                '20', '0',
+                '20', '40',
+                '0', '40',
+                )
+            )
+
 
 # TODO
 # test non-subcompo link

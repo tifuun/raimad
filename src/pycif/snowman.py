@@ -32,14 +32,14 @@ class Snowman(pc.Compo):
             eye_size: float = 2,
             ):
 
-        base = pc.Circle(50) @ 'snow'
-        torso = pc.Circle(40) @ 'snow'
-        head = pc.Circle(20) @ 'snow'
+        base = pc.Circle(50).proxy().map('snow')
+        torso = pc.Circle(40).proxy().map('snow')
+        head = pc.Circle(20).proxy().map('snow')
 
         torso.snap_above(base)
         head.snap_above(torso)
 
-        eye_l = pc.Circle(eye_size) @ 'pebble'
+        eye_l = pc.Circle(eye_size).proxy().map('pebble')
 
         eye_l.marks.center.to(
             head.bbox.interpolate(0.3, 0.7)
@@ -55,10 +55,10 @@ class Snowman(pc.Compo):
             (0, 2),
             ('tip', (nose_length, 0)),
             (0, -2)
-            ]) @ 'carrot'
+            ]).proxy().map('carrot')
 
         nose.move(
-            head.bbox.interpolate(0.5, 0.5)
+            *head.bbox.interpolate(0.5, 0.5)
             )
 
         self.marks.nose = nose.marks.tip

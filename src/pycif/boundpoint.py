@@ -24,7 +24,7 @@ class BoundPoint(np.ndarray):
             point[0] - self[0],
             point[1] - self[1],
             )
-        return self
+        return self.proxy
 
     def rotate(self, angle: float):
         self.proxy.transform.rotate(
@@ -32,6 +32,7 @@ class BoundPoint(np.ndarray):
             self[0],
             self[1]
             )
+        return self.proxy
 
     def move(self, x, y):
         """
@@ -41,4 +42,7 @@ class BoundPoint(np.ndarray):
         `move` in a chain of actions on a boundpoint
         """
         self.proxy.transform.move(x, y)
-        return self
+        return self.proxy
+
+    # TODO the rest of the functions
+

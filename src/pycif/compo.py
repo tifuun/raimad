@@ -111,19 +111,19 @@ class Compo:
     #        )
 
     # lmap function #
-    def __matmul__(self, what):
-        if isinstance(what, dict | str):  # TODO lmap shorthand type
-            return pc.Proxy(
-                self,
-                lmap=what
-                )
-        elif isinstance(what, pc.Transform):
-            return pc.Proxy(
-                self,
-                transform=what
-                )
-        else:
-            raise Exception()  # TODO
+    #def __matmul__(self, what):
+    #    if isinstance(what, dict | str):  # TODO lmap shorthand type
+    #        return pc.Proxy(
+    #            self,
+    #            lmap=what
+    #            )
+    #    elif isinstance(what, pc.Transform):
+    #        return pc.Proxy(
+    #            self,
+    #            transform=what
+    #            )
+    #    else:
+    #        raise Exception()  # TODO
 
     # mark functions #
     def set_mark(self, name, point):
