@@ -5,14 +5,14 @@ import numpy as np
 
 import pycif as pc
 
-fullcircle = pc.deg2rad(360)
-halfcircle = pc.deg2rad(180)
-quartercircle = pc.deg2rad(90)
-eigthcircle = pc.deg2rad(45)
+fullcircle = np.deg2rad(360)
+halfcircle = np.deg2rad(180)
+quartercircle = np.deg2rad(90)
+eigthcircle = np.deg2rad(45)
 
-semicircle = pc.deg2rad(180)
-demisemicircle = pc.deg2rad(90)
-hemidemisemicircle = pc.deg2rad(45)
+semicircle = np.deg2rad(180)
+demisemicircle = np.deg2rad(90)
+hemidemisemicircle = np.deg2rad(45)
 
 class Orientation(Enum):
     POS = 1
@@ -24,11 +24,11 @@ def angspace(
         num_steps: int = 50,
         orientation: Orientation = Orientation.POS,
         endpoint: bool = True,
-        ):
+        ) -> np.ndarray[float]:
     """
     Angular space:
     construct an array of angles going from `start` to `end`
-    in the positive orientation (counterclockwise)
+    in the positive orientation (counterclockwise).
     """
     if orientation is Orientation.NEG:
         start, end = end, start

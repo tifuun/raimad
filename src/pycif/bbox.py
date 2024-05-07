@@ -57,7 +57,7 @@ class BBox(object):
 
             self.add_xyarray(xyarray)
 
-    def as_list(self) -> List[str]:
+    def as_list(self) -> List[float]:
         """Return as list of [min_x, min_y, max_x, max_y]."""
         return [self.min_x, self.min_y, self.max_x, self.max_y]
 

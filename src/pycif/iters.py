@@ -2,11 +2,11 @@
 iters.py -- iteration-related helpers
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Callable, Sequence
 from itertools import chain
 
 
-def overlap(n, iterable):
+def overlap(n: int, seq: Sequence) -> Iterable:
     """
     Iterate n items at a time, with overlap:
 
@@ -16,10 +16,10 @@ def overlap(n, iterable):
         [3,4,5],
         ]
     """
-    return zip(*[iterable[offset:] for offset in range(n)])
+    return zip(*[seq[offset:] for offset in range(n)])
 
 
-def nonoverlap(n, iterable):
+def nonoverlap(n: int, seq: Sequence) -> Iterable:
     """
     Iterate n items at a time, without overlap.
     Truncates the iterable such that it is a multiple of n.
@@ -35,17 +35,22 @@ def nonoverlap(n, iterable):
         [3,4],
         ]
     """
-    return zip(*[iterable[offset::n] for offset in range(n)])
+    return zip(*[seq[offset::n] for offset in range(n)])
 
 
-def _make_alias(name, iterator, n):
-    def iterator_alias(iterable):
-        return iterator(n, iterable)
+def _make_alias(
+        name: str,
+        iterator: Callable[[int, Sequence], Iterable],
+        n:int) -> Callable[[Sequence], Iterable]:
 
-    iterator_alias.__doc__ = \
-        f'Iterator through a list {n} items at a time, ' \
-        f'with{"out" if iterator is nonoverlap else ""} overlap.\n' \
+    def iterator_alias(seq: Sequence) -> Iterable:
+        return iterator(n, seq)
+
+    iterator_alias.__doc__ = (
+        f'Iterator through a list {n} items at a time, '
+        f'with{"out" if iterator is nonoverlap else ""} overlap.\n'
         f'Equivalent to {iterator.__name__}({n}, iterable)'
+        )
     iterator_alias.__name__ = name
 
     return iterator_alias
@@ -61,7 +66,7 @@ triples = _make_alias('triples', nonoverlap, 3)
 quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
 
-def flatten(iterable):
+def flatten(iterable: Iterable) -> Iterable:
     """
     Recursively flatten a nested iterable
     """
@@ -77,10 +82,10 @@ def flatten(iterable):
         ]
 
 
-def braid(*iterables):
+def braid(*iterables) -> Iterable:
     return list(chain(*zip(*iterables)))
 
-def is_distinct(iterable):
+def is_distinct(iterable) -> bool:
     """
     Return true if no two items in `iterable` are the same
     """

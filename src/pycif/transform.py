@@ -93,7 +93,7 @@ class Transform(object):
     # types defined in own files
     # then mergen in pc.typing
     # or just PointType, CompoClassType, etc
-    def move(self, x: 0, y: float = 0):
+    def move(self, x=0, y: float = 0):
         if isinstance(x, pc.Point):
             x, y = x
         self._affine = pc.affine.move(x, y) @ self._affine

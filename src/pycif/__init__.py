@@ -1,23 +1,7 @@
 import numpy as np
 Point = np.ndarray  # TODO
 
-deg2rad = np.radians
-rad2deg = np.degrees
-cos = np.cos
-sin = np.sin
-
-class EmptyType:
-    def __bool__(self):
-        return False
-
-    def __str__(self):
-        return "<Empty>"
-
-    def __repr__(self):
-        return "<Empty>"
-
-Empty = EmptyType()
-
+from pycif.empty import Empty
 from pycif import graphviz as gv
 from pycif.helpers import *
 from pycif import affine
@@ -80,6 +64,7 @@ from pycif.checker.checker import (
     Flake8Checker
     )
 
+from pycif import typing
 from pycif.snowman import Snowman
 
 

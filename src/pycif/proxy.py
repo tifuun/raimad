@@ -1,12 +1,13 @@
+from typing import Self, Iterator
 from copy import copy
 
 import pycif as pc
 
 class LMap:
-    def __init__(self, shorthand):
+    def __init__(self, shorthand: pc.typing.LMapShorthand) -> None:
         self.shorthand = shorthand
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str) -> str:
         if self.shorthand is None:
             return name
 
@@ -18,11 +19,11 @@ class LMap:
 
 class Proxy:
     def __init__(self,
-                 compo,
-                 lmap=None,
-                 transform=None,
-                 _cif_link=False,
-                 _autogen=False,
+                 compo: pc.typing.Compo,
+                 lmap: pc.typing.LMap = None,
+                 transform: pc.typing.Transform = None,
+                 _cif_link: bool = False,
+                 _autogen: bool = False,
                  ):
         self._cif_linked = False
         self._cif_link = _cif_link
@@ -31,7 +32,7 @@ class Proxy:
         self.lmap = LMap(lmap)
         self.transform = transform or pc.Transform()
 
-    def get_geoms(self):
+    def get_geoms(self) -> pc.typing.Geoms:
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
@@ -41,8 +42,8 @@ class Proxy:
             in self.compo.get_geoms().items()
             }
 
-    def get_flat_transform(self, maxdepth=float('inf')):
-        if maxdepth <= 0:
+    def get_flat_transform(self, maxdepth: int = -1) -> pc.typing.Transform:
+        if maxdepth == 0:
             return pc.Transform()
 
         return self.transform.copy().compose(
@@ -50,7 +51,7 @@ class Proxy:
             )
 
     @property
-    def geoms(self):
+    def geoms(self) -> pc.typing.Geoms:
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
@@ -61,35 +62,35 @@ class Proxy:
             }
 
     @property
-    def subcompos(self):
+    def subcompos(self) -> pc.DictList:
         return pc.DictList({
             name: self.copy_reassign(subcompo, _autogen=True)
             for name, subcompo in self.compo.subcompos.items()
             })
         return self.compo.subcompos
 
-    def final(self):
+    def final(self) -> pc.typing.RealCompo:
         return self.compo.final()
 
-    def depth(self):
+    def depth(self) -> int:
         return self.compo.depth() + 1
 
-    def descend(self):
+    def descend(self) -> Iterator[pc.typing.Compo]:
         yield self
         yield from self.compo.descend()
 
-    def descend_p(self):
+    def descend_p(self) -> Iterator[pc.typing.Proxy]:
         yield self
         yield from self.compo.descend_p()
 
-    def proxy(self):
+    def proxy(self) -> pc.typing.Proxy:
         return pc.Proxy(self)
 
-    def walk_hier(self):
+    def walk_hier(self) -> Iterator[pc.typing.Proxy]:
         for subcompo in self.compo.walk_hier():
             yield self.copy_reassign(subcompo)
 
-    def copy(self):
+    def copy(self) -> pc.typing.Proxy:
         if self.depth() > 1:
             # TODO think about why someone would want to do this
             raise Exception("Copying proxy of depth more than 1")
@@ -100,21 +101,26 @@ class Proxy:
             self.transform.copy(),
             )
 
-    def cifcopy(self):
-        if self.depth() > 1:
-            # TODO think about why someone would want to do this
-            raise Exception("Copying proxy of depth more than 1")
+    #def cifcopy(self):
+    #    if self.depth() > 1:
+    #        # TODO think about why someone would want to do this
+    #        raise Exception("Copying proxy of depth more than 1")
 
-        self._cif_linked = True
+    #    self._cif_linked = True
 
-        return type(self)(
-            self.compo,
-            copy(self.lmap),
-            self.transform.copy(),
-            _cif_link=True
-            )
+    #    return type(self)(
+    #        self.compo,
+    #        copy(self.lmap),
+    #        self.transform.copy(),
+    #        _cif_link=True
+    #        )
 
-    def copy_reassign(self, new_subcompo, _autogen=False):
+    def copy_reassign(
+            self,
+            new_subcompo: pc.typing.Compo,
+            _autogen: bool = False,
+            ) -> pc.typing.Proxy:
+
         return type(self)(
             new_subcompo,
             copy(self.lmap),
@@ -122,7 +128,7 @@ class Proxy:
             _autogen=_autogen,
             )
 
-    def deepcopy(self):
+    def deepcopy(self) -> Any:
         """
         No clue what this is supposed to do
         """
@@ -137,7 +143,7 @@ class Proxy:
         #    self.transform.copy(),
         #    )
 
-    def __str__(self):
+    def __str__(self) -> str:
         stack = ''.join([
             'ma'[proxy._autogen]
             for proxy in self.descend_p()
@@ -149,57 +155,57 @@ class Proxy:
             ">"
             )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
     # Transform functions #
     # TODO for all transforms
     # TODO same implementation as in Compo
     # TODO stack another transform or modify self?
-    def scale(self, factor):
+    def scale(self, factor: float) -> Self:
         self.transform.scale(factor)
         return self
 
-    def movex(self, factor):
+    def movex(self, factor: float) -> Self:
         self.transform.movex(factor)
         return self
 
-    def movey(self, factor):
+    def movey(self, factor: float) -> Self:
         self.transform.movey(factor)
         return self
 
-    def move(self, x: 0, y: float = 0):
+    def move(self, x: float, y: float) -> Self:
         self.transform.move(x, y)
         return self
 
-    def hflip(self, x: float = 0):
+    def hflip(self, x: float = 0) -> Self:
         self.transform.hflip(x)
         return self
 
-    def vflip(self, y: float = 0):
+    def vflip(self, y: float = 0) -> Self:
         self.transform.vflip(y)
         return self
 
-    def flip(self, x: float = 0, y: float = 0):
+    def flip(self, x: float = 0, y: float = 0) -> Self:
         self.transform.flip(x, y)
         return self
 
-    def rotate(self, angle: float, x: float = 0, y: float = 0):
+    def rotate(self, angle: float, x: float = 0, y: float = 0) -> Self:
         self.transform.rotate(angle, x, y)
         return self
 
-    # lmap function #
-    def __matmul__(self, lmap):
-        # TODO warn on override lmap?
-        self.lmap = LMap(lmap)
-        return self
-        #return pc.Proxy(
-        #    self,
-        #    lmap=lmap
-        #    )
+    ## lmap function #
+    #def __matmul__(self, lmap):
+    #    # TODO warn on override lmap?
+    #    self.lmap = LMap(lmap)
+    #    return self
+    #    #return pc.Proxy(
+    #    #    self,
+    #    #    lmap=lmap
+    #    #    )
 
     # mark functions #
-    def get_mark(self, name):
+    def get_mark(self, name: str) -> pc.BoundPoint:
         return pc.BoundPoint(
             self.transform.transform_point(
                 self.compo.get_mark(name)

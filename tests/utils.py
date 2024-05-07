@@ -2,7 +2,7 @@ from typing import ClassVar
 import numpy as np
 
 class ArrayAlmostEqual():
-    deciamls: ClassVar[float]
+    decimal: ClassVar[float]
 
     def __init_subclass__(cls, *args, decimal=7, **kwargs) -> None:
         cls.decimal = decimal
