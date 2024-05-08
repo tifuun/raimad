@@ -98,7 +98,51 @@ class CIFExporter:
         # list of transforms that could not be compiled
         self.invalid_transforms = []
 
+        self.indent_depth = 0
+
         self._export_cif()
+
+    @pc.join_generator('')
+    def _call_routine(self, number, transform=''):
+        yield '\t' * self.indent_depth
+        yield 'C '
+        yield str(number)
+
+        if transform:
+            yield ' '
+            yield transform
+
+        yield ';\n'
+
+    @pc.join_generator('')
+    def _make_poly(self, xyarray):
+        yield '\t' * self.indent_depth
+        yield 'P '
+        for point in xyarray:
+            for coordinate in point:
+                yield f'{int(coordinate * self.multiplier)} '
+        yield ';\n'
+
+    @pc.join_generator('')
+    def _switch_layer(self, layer_name):
+        yield '\t' * self.indent_depth
+        yield f'L L{layer_name};\n'
+
+    @pc.join_generator('')
+    def _comment(self, comment_text):
+        yield '\t' * self.indent_depth
+        yield f'({comment_text})\n'
+
+    @pc.join_generator('')
+    def _make_geoms(self, geoms):
+        """
+        return the direct geometries of a compo as CIF polygons,
+        with the appropriate layer switches.
+        """
+        for layer_name, layer_geoms in geoms.items():
+            yield self._switch_layer(layer_name)
+            for xyarray in layer_geoms:
+                yield self._make_poly(xyarray)
 
     @pc.join_generator('')
     def _steamroll(self, compo, transform) -> str:
@@ -108,18 +152,12 @@ class CIFExporter:
         as well as a part of CIFExporter to steamroll
         compos with unCIFable transforms.
         """
-        indt = '\t' * 1  # TODO indent_depth
+        # This proxy is used to combine `compo`'s
+        # transform with the explicitly specified `transform`.
         proxy = pc.Proxy(compo, transform=transform)
 
-        for layer_name, layer_geoms in proxy.steamroll().items():
-            yield f'{indt}(flat)\n'
-            yield f'{indt}L L{layer_name};\n'
-            for xyarray in layer_geoms:
-                yield f'{indt}P '
-                for point in xyarray:
-                    for coordinate in point:
-                        yield f'{int(coordinate * self.multiplier)} '
-                yield ';\n'
+        yield self._comment('flat')
+        yield self._make_geoms(proxy.steamroll())
 
     def _realize_delayed_rout_call(self, call: DelayedRoutCall) -> str:
         """
@@ -147,11 +185,7 @@ class CIFExporter:
             self._make_compo(call.compo)
         )
 
-        rout_call = ''.join((
-            f'\tC {rout_num} ',
-            compiled_transform,
-            ";\n"
-            ))
+        rout_call = self._call_routine(rout_num, compiled_transform)
 
         if call.rout_num not in self.cif_map.keys():
             # TODO defaultdict?
@@ -291,7 +325,7 @@ class CIFExporter:
                 self._frag(native, rout_num)
                 return True
 
-        self._make_geometries(compo, rout_num)
+        self.cif_fragments.append(self._make_geoms(compo.geoms))
 
         for name, proxy in compo.subcompos.items():
             if self.flatten_proxies:
@@ -313,24 +347,6 @@ class CIFExporter:
                 self._delayed(proxy, None, rout_num, name)
 
         return True
-
-    def _make_geometries(self, compo, rout_num):
-        """
-        yield the direct geometries of a compo as CIF polygons,
-        with the appropriate layer switches.
-        """
-        for layer, geom in compo.geoms.items():
-            self._frag(f'\tL L{layer};\n', rout_num)
-            for poly in geom:
-                self._frag('\tP ', rout_num)
-                for point in poly:
-                    self._frag(
-                        f'{int(point[0] * self.multiplier)} '
-                        f'{int(point[1] * self.multiplier)} ',
-                        rout_num
-                        )
-                #self.cif_map[rout_num].append('[...]')
-                self._frag(';\n', rout_num)
 
     def compile_transform(self, transform):
         if transform is None:
