@@ -31,7 +31,8 @@ class Transform(object):
         """
         Apply a transform to this transform
         """
-        self._affine = transform._affine @ self._affine
+        if transform is not None:
+            self._affine = transform._affine @ self._affine
         return self
 
     def get_translation(self):

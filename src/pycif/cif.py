@@ -100,17 +100,26 @@ class CIFExporter:
 
         self._export_cif()
 
+    @pc.join_generator('')
     def _steamroll(self, compo, transform) -> str:
         """
-        Thin wrapper for `steamroll_into_cif`
-        that passes self.multiplier and self.indent_depth.
+        Export a compo into a CIF file with no subroutines.
+        This function can be used independently,
+        as well as a part of CIFExporter to steamroll
+        compos with unCIFable transforms.
         """
-        return steamroll_into_cif(
-            compo,
-            transform,
-            self.multiplier,
-            1  # TODO indent_depth
-            )
+        indt = '\t' * 1  # TODO indent_depth
+        proxy = pc.Proxy(compo, transform=transform)
+
+        for layer_name, layer_geoms in proxy.steamroll().items():
+            yield f'{indt}(flat)\n'
+            yield f'{indt}L L{layer_name};\n'
+            for xyarray in layer_geoms:
+                yield f'{indt}P '
+                for point in xyarray:
+                    for coordinate in point:
+                        yield f'{int(coordinate * self.multiplier)} '
+                yield ';\n'
 
     def _realize_delayed_rout_call(self, call: DelayedRoutCall) -> str:
         """
@@ -121,54 +130,43 @@ class CIFExporter:
         :returns: a string with the CIF subroutine call.
         :raises: `CannotCompileTransformError`
         """
-        try:
-            # TODO this is hell
-            transform = call.compo.get_flat_transform()
-            if call.transform is not None:
-                transform.compose(call.transform)
-
-            compiled_transform = self.compile_transform(
-                transform)
-
-        except CannotCompileTransformError as exc:
-            if self.transform_fatal:
-                raise exc
-            compiled_transform = None
-            self.invalid_transforms.append(transform)
-
-        if compiled_transform is not None:
-            rout_num = (
-                self.rout_map.get(call.compo, None)
-                or
-                self._make_compo(call.compo)
+        compiled_transform = self.compile_transform(
+            call.compo.get_flat_transform()
+            .compose(
+                call.transform
+                )
             )
 
-            new_fragments = [
-                f'\tC {rout_num} ',
-                *compiled_transform,
-                ";\n"
-                ]
+        if compiled_transform is None:
+            self.invalid_transforms.append('TODO')
+            return self._steamroll(call.compo, call.transform)
 
-            if call.rout_num not in self.cif_map.keys():
-                # TODO defaultdict?
-                self.cif_map[call.rout_num] = []
+        rout_num = (
+            self.rout_map.get(call.compo, None)
+            or
+            self._make_compo(call.compo)
+        )
 
-            self.cif_map[call.rout_num][
-                self.cif_map[call.rout_num].index(call)
-                #] = f'\t C {rout_num} [...];\n'
-                ] = ''.join(new_fragments)  # TODO!!!
-            # TODO the above line is a mess
+        rout_call = ''.join((
+            f'\tC {rout_num} ',
+            compiled_transform,
+            ";\n"
+            ))
 
-            self.rout_list.append((call.rout_num, rout_num))
-            self.rout_names[rout_num] = call.name
+        if call.rout_num not in self.cif_map.keys():
+            # TODO defaultdict?
+            self.cif_map[call.rout_num] = []
 
-        else:
-            return self._steamroll(
-                call.compo,
-                call.transform,
-                )
+        self.cif_map[call.rout_num][
+            self.cif_map[call.rout_num].index(call)
+            #] = f'\t C {rout_num} [...];\n'
+            ] = rout_call  # TODO!!!
+        # TODO the above line is a mess
 
-        return ''.join(new_fragments)
+        self.rout_list.append((call.rout_num, rout_num))
+        self.rout_names[rout_num] = call.name
+
+        return rout_call
 
     def _do_pass(self) -> int:
         """
@@ -334,19 +332,24 @@ class CIFExporter:
                 #self.cif_map[rout_num].append('[...]')
                 self._frag(';\n', rout_num)
 
-    @pc.preload_generator
     def compile_transform(self, transform):
         if transform is None:
             return ''
 
         if transform.does_scale():
             # TODO also possible to mirror in cif
+            if not self.transform_fatal:
+                return None
+
             raise CannotCompileTransformError(
                 f"Cannot compile {transform} to CIF "
                 "because it scales."
                 )
 
         if transform.does_shear():
+            if not self.transform_fatal:
+                return None
+
             raise CannotCompileTransformError(
                 f"Cannot compile {transform} to CIF "
                 "because it shears."
@@ -357,11 +360,15 @@ class CIFExporter:
         # origin
 
         if transform.does_rotate():
-            yield from self.compile_rotation(transform.get_rotation())
+            return self.compile_rotation(transform.get_rotation())
 
         if transform.does_translate():
-            yield from self.compile_translation(*transform.get_translation())
+            return self.compile_translation(*transform.get_translation())
 
+        # Turns out this is an identity transform
+        return ''
+
+    @pc.join_generator('')
     def compile_rotation(self, rotation):
         yield 'R '
         yield str(int(np.cos(rotation) * self.rot_multiplier))
@@ -369,6 +376,7 @@ class CIFExporter:
         yield str(int(np.sin(rotation) * self.rot_multiplier))
         yield ' '
 
+    @pc.join_generator('')
     def compile_translation(self, move_x, move_y):
         yield 'T '
         yield str(int(move_x * self.multiplier))
@@ -422,36 +430,6 @@ class CIFExporter:
             yield f'\t{from_} -> {to};\n'
 
         yield '}\n'
-
-@pc.join_generator('')
-def steamroll_into_cif(
-        compo,
-        transform=None,
-        multiplier: float = CIFExporter.multiplier,
-        indent_depth: int = 0,
-        ):
-    """
-    Export a compo into a CIF file with no subroutines.
-    This function can be used independently,
-    as well as a part of CIFExporter to steamroll
-    compos with unCIFable transforms.
-    """
-    indt = '\t' * indent_depth
-    proxy = pc.Proxy(compo, transform=transform)
-
-    for layer_name, layer_geoms in proxy.steamroll().items():
-        yield f'{indt}(flat)\n'
-        yield f'{indt}L L{layer_name};\n'
-        for xyarray in layer_geoms:
-            yield f'{indt}P '
-            for point in xyarray:
-                for coordinate in point:
-                    yield f'{int(coordinate * multiplier)} '
-            yield ';\n'
-
-
-
-
 
 def export_cif(
         compo,
