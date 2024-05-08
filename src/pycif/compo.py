@@ -44,11 +44,15 @@ class Compo:
     def partial(cls, **kwargs):
         return pc.Partial(cls, **kwargs)
 
-    def get_geoms(self) -> dict:
+    def steamroll(self) -> dict:
+        """
+        Steamroll the entire compo hierarchy into one Geoms dict
+        TODO more informative
+        """
         geoms = self.geoms.copy()
         for subcompo in self.subcompos.values():
             # TODO override "update" method in geoms container?
-            for layer_name, layer_geoms in subcompo.get_geoms().items():
+            for layer_name, layer_geoms in subcompo.steamroll().items():
                 if layer_name not in geoms.keys():
                     geoms[layer_name] = []
                 geoms[layer_name].extend(layer_geoms)
@@ -137,7 +141,7 @@ class Compo:
     @property
     def bbox(self):
         bbox = pc.BBox()
-        for geoms in self.get_geoms().values():
+        for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)
         return bbox

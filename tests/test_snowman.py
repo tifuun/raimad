@@ -6,7 +6,7 @@ class TestSnowman(unittest.TestCase):
 
     def test_snowman(self):
         compo = pc.Snowman(nose_length=20, eye_size=2.5)
-        geom = compo.get_geoms()
+        geom = compo.steamroll()
 
         # Test layers
         self.assertEqual(geom.keys(), {'snow', 'carrot', 'pebble'})

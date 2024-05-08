@@ -16,7 +16,7 @@ def yield_svg(compo):
         '<g transform="scale(1,-1)">\n'
         )
 
-    for layer_name, layer_geoms in compo.get_geoms().items():
+    for layer_name, layer_geoms in compo.steamroll().items():
         for geom in layer_geoms:
             yield (
                 '<polygon '

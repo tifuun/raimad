@@ -50,8 +50,6 @@ class DelayedRoutCall():
 # TODO native_inline must imply cif_native!!
 # TODO native_inline is broken?
 # TODO stacked proxies lose subcompo names?
-
-
 class CIFExporter:
     multiplier: float = 1e3
     rot_multiplier: float = 1e3
@@ -101,6 +99,18 @@ class CIFExporter:
         self.invalid_transforms = []
 
         self._export_cif()
+
+    def _steamroll(self, compo, transform) -> str:
+        """
+        Thin wrapper for `steamroll_into_cif`
+        that passes self.multiplier and self.indent_depth.
+        """
+        return steamroll_into_cif(
+            compo,
+            transform,
+            self.multiplier,
+            1  # TODO indent_depth
+            )
 
     def _realize_delayed_rout_call(self, call: DelayedRoutCall) -> str:
         """
@@ -153,7 +163,7 @@ class CIFExporter:
             self.rout_names[rout_num] = call.name
 
         else:
-            new_fragments = self.export_flat(
+            return self._steamroll(
                 call.compo,
                 call.transform,
                 )
@@ -366,21 +376,6 @@ class CIFExporter:
         yield str(int(move_y * self.multiplier))
         yield ' '
 
-    @pc.preload_generator
-    def export_flat(self, compo, transform):
-        # TODO get_geoms is a bit of an unclear name,
-        # maybe get_flat_geoms?
-        proxy = pc.Proxy(compo, transform=transform)
-        for layer_name, layer_geoms in proxy.get_geoms().items():
-            yield '\t(flat)\n'
-            yield f'\tL L{layer_name};\n'
-            for xyarray in layer_geoms:
-                yield '\tP '
-                for point in xyarray:
-                    for coordinate in point:
-                        yield f'{int(coordinate * self.multiplier)} '
-                yield ';\n'
-
     @pc.join_generator('', pc.gv.DOTString)
     def as_dot(self, include_code=True, include_meta=False, include_name=True):
         yield 'digraph D {\n'
@@ -427,6 +422,35 @@ class CIFExporter:
             yield f'\t{from_} -> {to};\n'
 
         yield '}\n'
+
+@pc.join_generator('')
+def steamroll_into_cif(
+        compo,
+        transform=None,
+        multiplier: float = CIFExporter.multiplier,
+        indent_depth: int = 0,
+        ):
+    """
+    Export a compo into a CIF file with no subroutines.
+    This function can be used independently,
+    as well as a part of CIFExporter to steamroll
+    compos with unCIFable transforms.
+    """
+    indt = '\t' * indent_depth
+    proxy = pc.Proxy(compo, transform=transform)
+
+    for layer_name, layer_geoms in proxy.steamroll().items():
+        yield f'{indt}(flat)\n'
+        yield f'{indt}L L{layer_name};\n'
+        for xyarray in layer_geoms:
+            yield f'{indt}P '
+            for point in xyarray:
+                for coordinate in point:
+                    yield f'{int(coordinate * multiplier)} '
+            yield ';\n'
+
+
+
 
 
 def export_cif(

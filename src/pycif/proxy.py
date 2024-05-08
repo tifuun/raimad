@@ -32,14 +32,14 @@ class Proxy:
         self.lmap = LMap(lmap)
         self.transform = transform or pc.Transform()
 
-    def get_geoms(self) -> 'pc.typing.Geoms':
+    def steamroll(self) -> 'pc.typing.Geoms':
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
                 for geom in geoms
                 ]
             for layer, geoms
-            in self.compo.get_geoms().items()
+            in self.compo.steamroll().items()
             }
 
     def get_flat_transform(self, maxdepth: int = -1) -> 'pc.typing.Transform':
@@ -230,7 +230,7 @@ class Proxy:
     @property
     def bbox(self):
         bbox = pc.BBox(proxy=self)
-        for geoms in self.get_geoms().values():
+        for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)
         return bbox

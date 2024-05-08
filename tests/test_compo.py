@@ -41,7 +41,7 @@ class TestCompo(unittest.TestCase):
 
     def test_bare_geometric(self):
         compo = BareGeometric()
-        geom = compo.get_geoms()
+        geom = compo.steamroll()
 
         # Test one root layer
         self.assertEqual(geom.keys(), {'root'})
@@ -51,11 +51,11 @@ class TestCompo(unittest.TestCase):
 
     def test_bare_geometric_copied(self):
         compo = BareGeometric()
-        self.assertIsNot(compo.geoms, compo.get_geoms())
+        self.assertIsNot(compo.geoms, compo.steamroll())
 
     def test_bare_structural(self):
         compo = BareStructural()
-        geom = compo.get_geoms()
+        geom = compo.steamroll()
 
         # Test one root layer
         self.assertEqual(geom.keys(), {'upper', 'lower'})

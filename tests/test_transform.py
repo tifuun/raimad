@@ -43,7 +43,7 @@ class TestCompo(unittest.TestCase):
 
     def test_transform(self):
         compo = BareStructural()
-        geoms = compo.get_geoms()
+        geoms = compo.steamroll()
 
         # Test one root layer
         self.assertEqual(geoms.keys(), {'upper', 'lower'})
@@ -59,8 +59,8 @@ class TestCompo(unittest.TestCase):
     def test_proxy_transform(self):
         compo = BareStructural()
 
-        geoms_0 = compo.subcompos[0].get_geoms()
-        geoms_1 = compo.subcompos[1].get_geoms()
+        geoms_0 = compo.subcompos[0].steamroll()
+        geoms_1 = compo.subcompos[1].steamroll()
 
         self.assertEqual(geoms_0.keys(), {'upper'})
         self.assertEqual(geoms_1.keys(), {'lower'})
