@@ -5,13 +5,43 @@ import numpy as np
 import pycif as pc
 
 class CIFExportError(Exception):
-    pass
+    """
+    Generic CIF export error.
+    This is an abstract base class for all other CIF export errors.
+    """
 
 class CannotCompileTransformError(CIFExportError):
-    pass
+    """
+    This error is raised when it's impossible to compile
+    a RAIMAD Transform into a CIF transform.
+    RAIMAD transforms are affine transforms;
+    that is, they support rotation, scaling, shearing, and translation.
+    CIF only supports rotation and translation.
+
+    When using CIFExporter with `transform_fatal=False`,
+    this error is caught internally,
+    and the offending transform is "baked into"
+    its corresponding compo.
+    When `transform_fatal=True`,
+    this error is emitted and the export process stops.
+    """
 
 @dataclass
 class DelayedRoutCall():
+    """
+    Delayed subroutine call.
+    When a compo contains a subcompo that has not been exported
+    yet (does not have a CIF subroutine that corresponds to it),
+    the CIFExporter emmits a `DelayedRoutCall`
+    that keeps track of the subcompo,
+    the transform of that subcompo in relation to the parent compo,
+    the subroutine number of the parent compo,
+    and the name of the subcompo.
+    During subsequent passes,
+    the CIFExporter sees the DelayedRoutCall,
+    generates the needed subroutine,
+    and replaces the DelayedRoutCall with an actually CIF subroutine call.
+    """
     compo: pc.Proxy
     transform: pc.Transform
     rout_num: int
@@ -72,67 +102,80 @@ class CIFExporter:
 
         self._export_cif()
 
+    def _do_pass(self) -> int:
+        """
+        Run one pass of the CIF export process.
+        During each pass, the exporter scans for `DelayedRoutCall`s
+        and replaces them with actual CIF subroutine calls.
+
+        :returns: the number of new routines generated in this pass.
+            If there are zero new routines, that means that no more passes
+            are necessary, and you can move on to finalizing the CIF file.
+        """
+        new_compos: int = 0
+
+        for i, fragment in enumerate(self.cif_fragments):
+            if not isinstance(fragment, DelayedRoutCall):
+                continue
+
+            try:
+                # TODO this is hell
+                transform = fragment.compo.get_flat_transform()
+                if fragment.transform is not None:
+                    transform.compose(fragment.transform)
+
+                compiled_transform = self.compile_transform(
+                    transform)
+
+            except CannotCompileTransformError as exc:
+                if self.transform_fatal:
+                    raise exc
+                compiled_transform = None
+                self.invalid_transforms.append(transform)
+
+            if compiled_transform is not None:
+                rout_num = (
+                    self.rout_map.get(fragment.compo, None)
+                    or
+                    self._make_compo(fragment.compo)
+                )
+
+                new_fragments = [
+                    f'\tC {rout_num} ',
+                    *compiled_transform,
+                    ";\n"
+                    ]
+
+                if fragment.rout_num not in self.cif_map.keys():
+                    # TODO defaultdict?
+                    self.cif_map[fragment.rout_num] = []
+
+                self.cif_map[fragment.rout_num][
+                    self.cif_map[fragment.rout_num].index(fragment)
+                    #] = f'\t C {rout_num} [...];\n'
+                    ] = ''.join(new_fragments)  # TODO!!!
+                # TODO the above line is a mess
+
+                self.rout_list.append((fragment.rout_num, rout_num))
+                self.rout_names[rout_num] = fragment.name
+
+            else:
+                new_fragments = self.export_flat(
+                    fragment.compo,
+                    fragment.transform,
+                    )
+
+            self.cif_fragments[i] = ''.join(new_fragments)
+
+            new_compos += 1
+
+        return new_compos
+
     def _export_cif(self):
         self._make_compo(self.compo)
 
-        new_compos = 69420
-        while new_compos > 0:
-            new_compos = 0
-
-            for i, fragment in enumerate(self.cif_fragments):
-                if not isinstance(fragment, DelayedRoutCall):
-                    continue
-
-                try:
-                    # TODO this is hell
-                    transform = fragment.compo.get_flat_transform()
-                    if fragment.transform is not None:
-                        transform.compose(fragment.transform)
-
-                    compiled_transform = self.compile_transform(
-                        transform)
-
-                except CannotCompileTransformError as exc:
-                    if self.transform_fatal:
-                        raise exc
-                    compiled_transform = None
-                    self.invalid_transforms.append(transform)
-
-                if compiled_transform is not None:
-                    rout_num = (
-                        self.rout_map.get(fragment.compo, None)
-                        or
-                        self._make_compo(fragment.compo)
-                    )
-
-                    new_fragments = [
-                        f'\tC {rout_num} ',
-                        *compiled_transform,
-                        ";\n"
-                        ]
-
-                    if fragment.rout_num not in self.cif_map.keys():
-                        # TODO defaultdict?
-                        self.cif_map[fragment.rout_num] = []
-
-                    self.cif_map[fragment.rout_num][
-                        self.cif_map[fragment.rout_num].index(fragment)
-                        #] = f'\t C {rout_num} [...];\n'
-                        ] = ''.join(new_fragments)  # TODO!!!
-                    # TODO the above line is a mess
-
-                    self.rout_list.append((fragment.rout_num, rout_num))
-                    self.rout_names[rout_num] = fragment.name
-
-                else:
-                    new_fragments = self.export_flat(
-                        fragment.compo,
-                        fragment.transform,
-                        )
-
-                self.cif_fragments[i] = ''.join(new_fragments)
-
-                new_compos += 1
+        while self._do_pass() > 0:
+            pass
 
         self._call_root()
         self.cif_string = ''.join(self.cif_fragments)
