@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from collections import namedtuple
 
 import numpy as np
 
@@ -44,8 +45,57 @@ class DelayedRoutCall():
     """
     compo: pc.Proxy
     transform: pc.Transform
-    rout_num: int
+    rout_caller: int
     name: str | None = None
+
+
+Edge = namedtuple('Edge', ("caller", "callee"))
+
+class SubroutineContext:
+    """
+    Context manager for CIF subroutines.
+    It's in charge of incrementing exporter.indent_depth,
+    writing the `DS` and `DF` commands,
+    and making sure we don't accidentally open a new subroutine
+    definition
+    before the previous one is closed
+    (if that happens, something has gone horribly wrong).
+    """
+    def __init__(self, exporter, rout_num):
+        self.exporter = exporter
+        self.rout_num = rout_num
+
+    def __enter__(self):
+        assert not self.exporter._is_inside_subroutine, \
+            "Tried to define a new subroutine before the previous one " \
+            "was finished."
+
+        self.exporter._is_inside_subroutine = True
+        self.exporter.indent_depth += 1
+        self.exporter._append(
+            f"{'\t' * self.exporter.indent_depth}DS {self.rout_num} 1 1;\n",
+            self.rout_num
+            )
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+
+        if exc_value is not None:
+            # If there's an exception, raise it immediately.
+            return False
+
+        assert self.exporter._is_inside_subroutine, \
+            "Tried to finish a subroutine definition " \
+            "before one was opened...? " \
+            "How on earth did that happen!?"
+
+        self.exporter._is_inside_subroutine = False
+
+        self.exporter.indent_depth -= 1
+        assert self.exporter.indent_depth >= 0
+        self.exporter._append(
+            f"{'\t' * self.exporter.indent_depth}DF;\n",
+            self.rout_num
+            )
 
 # TODO native_inline must imply cif_native!!
 # TODO native_inline is broken?
@@ -77,30 +127,45 @@ class CIFExporter:
         self.transform_fatal = transform_fatal
 
         self.cif_fragments = []
-
-        # map proxy/compo objects to routine numbers
-        self.rout_map = {}
-        # map routine numbers to oroxy/compo objects
-        self.reverse_rout_map = {}
-
-        # list of (caller, callee) that shows which
-        # cif routine calls which routines
-        self.rout_list = list()
-
-        self.rout_names = {}
-
-        # Map routine numbers to lists of cif fragments
-        self.cif_map = {}
-
-        # The resulting cif file
+        self.indent_depth = 0
+        self._is_inside_subroutine = False
         self.cif_string = ''
 
-        # list of transforms that could not be compiled
+        self.compo2rout = {}  # Map proxy/compo to routine numbers
+        self.rout2compo = {}  # Map routine numbers to proxy/compo
+        self.edges = []  # List of `Edge`
+        self.rout2name = {}  # Map routine numbers to names
+        self._rout2cif = {}  # Map routine numbers to corresponding CIF code
+        self.rout2cif = {}
         self.invalid_transforms = []
 
-        self.indent_depth = 0
-
         self._export_cif()
+
+        self.rout2cif = {
+            rout_num: ''.join(fragments)
+            for rout_num, fragments in self._rout2cif.items()
+            }
+
+        # TODO there is currently a thing I don't like:
+        # the CIF code is stored in two places at once,
+        # self.cif_fragments and self.rout2cif.
+        # There should be only one primary place, and the other one
+        # deriving from it.
+        # Should self.cif_fragments keep track of which fragment
+        # belongs to which rout, and self.cif2rout be assembled later?
+        # Or maybe the other way around, like in the below code?
+        #
+        # self.cif_string = ''.join((
+        #     *(
+        #         rout_code
+        #         for rout_num, rout_code in self.rout2cif.items()
+        #         if rout_num >= 0
+        #         ),
+        #     self.rout2cif[-1]
+        #     ))
+
+    def _subroutine(self, rout_num):
+        return SubroutineContext(self, rout_num)
 
     @pc.join_generator('')
     def _call_routine(self, number, transform=''):
@@ -144,6 +209,14 @@ class CIFExporter:
             for xyarray in layer_geoms:
                 yield self._make_poly(xyarray)
 
+    def _append(self, cif_string, rout):
+        self.cif_fragments.append(cif_string)
+
+        assert rout in self._rout2cif.keys(), \
+            f"_rout2cif[{rout}] should have been created earlier."
+
+        self._rout2cif[rout].append(cif_string)
+
     @pc.join_generator('')
     def _steamroll(self, compo, transform) -> str:
         """
@@ -179,26 +252,16 @@ class CIFExporter:
             self.invalid_transforms.append('TODO')
             return self._steamroll(call.compo, call.transform)
 
-        rout_num = (
-            self.rout_map.get(call.compo, None)
+        rout_callee = (
+            self.compo2rout.get(call.compo, None)
             or
             self._make_compo(call.compo)
         )
 
-        rout_call = self._call_routine(rout_num, compiled_transform)
+        rout_call = self._call_routine(rout_callee, compiled_transform)
 
-        if call.rout_num not in self.cif_map.keys():
-            # TODO defaultdict?
-            self.cif_map[call.rout_num] = []
-
-        self.cif_map[call.rout_num][
-            self.cif_map[call.rout_num].index(call)
-            #] = f'\t C {rout_num} [...];\n'
-            ] = rout_call  # TODO!!!
-        # TODO the above line is a mess
-
-        self.rout_list.append((call.rout_num, rout_num))
-        self.rout_names[rout_num] = call.name
+        self.edges.append(Edge(call.rout_caller, rout_callee))
+        self.rout2name[rout_callee] = call.name
 
         return rout_call
 
@@ -221,7 +284,15 @@ class CIFExporter:
             if not isinstance(fragment, DelayedRoutCall):
                 continue
 
-            self.cif_fragments[i] = self._realize_delayed_rout_call(fragment)
+            realized_call: str = self._realize_delayed_rout_call(fragment)
+            self.cif_fragments[i] = realized_call
+
+            # TODO this horrible monstrosity finds the delayed routine
+            # in self._rout2cif and replaces it with the realized call.
+            # This is as ugly as it is inefficient.
+            (
+                f := self._rout2cif[fragment.rout_caller]
+                )[f.index(fragment)] = realized_call
 
             new_compos += 1
 
@@ -249,19 +320,14 @@ class CIFExporter:
         self._call_root()
         self.cif_string = ''.join(self.cif_fragments)
 
-    def _frag(self, fragment, rout_num=None):
-        self.cif_fragments.append(fragment)
-        if rout_num is not None:
-            self.cif_map[rout_num].append(fragment)
-
-    def _delayed(self, compo, transform, rout_num, name=None):
-        fragment = DelayedRoutCall(compo, transform, rout_num, name)
+    def _delayed(self, compo, transform, rout_caller, name=None):
+        fragment = DelayedRoutCall(compo, transform, rout_caller, name)
         self.cif_fragments.append(fragment)
 
-        if rout_num not in self.cif_map.keys():
-            # TODO defaultdict?
-            self.cif_map[rout_num] = []
-        self.cif_map[rout_num].append(fragment)
+        assert rout_caller in self._rout2cif.keys(), \
+            f"_rout2cif[{rout_caller}] should have been created earlier."
+
+        self._rout2cif[rout_caller].append(fragment)
 
     def _call_root(self) -> None:
         """
@@ -269,38 +335,38 @@ class CIFExporter:
         (which corresponds to the toplevel compo)
         at the very end of the CIF file.
         """
-        self._frag( 'C 1;\n' )
-        self._frag( 'E' )
+        self._rout2cif[-1] = []
+        self._append('C 1;\n', -1)
+        self._append('E', -1)
 
     def _make_compo(self, compo):
         rout_num = self.rout_num
         self.rout_num += 1
-        self.rout_map[compo] = rout_num
-        self.reverse_rout_map[rout_num] = compo
-        self.cif_map[rout_num] = []
+        self.compo2rout[compo] = rout_num
+        self.rout2compo[rout_num] = compo
+        self._rout2cif[rout_num] = []
 
         if isinstance(compo, pc.Proxy):
-            self._frag( f'DS {rout_num};\n', rout_num )
+            with self._subroutine(rout_num):
+                if self.native_inline:
+                    # This branch only ever happens if flatten_proxies is off,
+                    # but native_inline is on.... I think
+                    assert not self.flatten_proxies, \
+                        "Wait, how did we get here again...?"
 
-            if self.native_inline:
-                # This branch only ever happens if flatten_proxies is off,
-                # but native_inline is on.... I think
-                did_make_inline = self._actually_make_compo(
-                    compo.final(),
-                    rout_num,
-                    compo.get_flat_transform()
-                    )
+                    did_make_inline = self._actually_make_compo(
+                        compo.final(),
+                        rout_num,
+                        compo.get_flat_transform()
+                        )
 
-            if not self.native_inline or not did_make_inline:
-                self._delayed(compo.compo, compo.transform, rout_num)
-
-            self._frag( 'DF;\n', rout_num )
+                if not self.native_inline or not did_make_inline:
+                    self._delayed(compo.compo, compo.transform, rout_num)
 
         else:
             # TODO this is bad, use a context manager or something
-            self._frag( f'DS {rout_num} 1 1;\n', rout_num )
-            self._actually_make_compo(compo, rout_num)
-            self._frag( 'DF;\n', rout_num )
+            with self._subroutine(rout_num):
+                self._actually_make_compo(compo, rout_num)
 
         return rout_num
 
@@ -317,15 +383,15 @@ class CIFExporter:
                     # TODO Bug here?
                     return False
 
-                self._frag(native_inline, rout_num)
+                self._append(native_inline, rout_num)
                 return True
 
             native = compo._export_cif(self)
             if native is not NotImplemented:
-                self._frag(native, rout_num)
+                self._append(native, rout_num)
                 return True
 
-        self.cif_fragments.append(self._make_geoms(compo.geoms))
+        self._append(self._make_geoms(compo.geoms), rout_num)
 
         for name, proxy in compo.subcompos.items():
             if self.flatten_proxies:
@@ -405,7 +471,7 @@ class CIFExporter:
         yield 'digraph D {\n'
 
         for rout_num in range(1, self.rout_num):
-            compo = self.reverse_rout_map[rout_num]
+            compo = self.rout2compo[rout_num]
 
             label = []
             if include_meta:
@@ -414,7 +480,7 @@ class CIFExporter:
             if isinstance(compo, pc.Proxy):
                 shape = 'note'
                 if include_name:
-                    if (name := self.rout_names.get(rout_num)):
+                    if (name := self.rout2name.get(rout_num)):
                         label.append(rf'({name})')
 
                 if include_meta:
@@ -435,14 +501,14 @@ class CIFExporter:
                 label.append(''.join([
                     line.replace('\n', r'\l').replace('\t', '    ')
                     for line in
-                    self.cif_map[rout_num]
+                    self.rout2cif[rout_num]
                     ]).rstrip(r'\l'))
 
             label = r'\l'.join(label)
 
             yield f'\t{rout_num} [shape={shape} label="{label}\\l"];\n'
 
-        for from_, to in self.rout_list:
+        for from_, to in self.edges:
             yield f'\t{from_} -> {to};\n'
 
         yield '}\n'

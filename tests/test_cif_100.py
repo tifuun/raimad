@@ -34,10 +34,10 @@ class CIFRoutGraphChecker():
     def assertCIFRoutStructure(self, exporter, adjlist):
         self.assertEqual(
             {
-                tuple(exporter.rout_map[proxy] for proxy in edge)
+                tuple(exporter.compo2rout[proxy] for proxy in edge)
                 for edge in adjlist
                 },
-            set(exporter.rout_list)
+            set(exporter.edges)
             )
 
 class Boxes(pc.Compo):
