@@ -219,6 +219,10 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
                 }
             )
 
+        self.assertTrue(
+            compo.first.compo not in compo.subcompos.values()
+            )
+
         # TODO here check geometry
 
     def test_cif_link_complex(self):

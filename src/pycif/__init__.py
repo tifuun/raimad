@@ -1,3 +1,9 @@
+"""
+Namespace flattening for RAIMAD.
+If you're confused by the redundant `import X as X` syntax,
+that's because mypy wants it that way.
+"""
+
 import numpy as np
 Point = np.ndarray  # TODO
 
@@ -33,8 +39,9 @@ from pycif.layer import Layer
 from pycif.option import Option
 from pycif.boundpoint import BoundPoint
 from pycif.transform import Transform
-from pycif.compo import Compo
-from pycif.proxy import Proxy, LMap
+from pycif.compo import Compo as Compo
+from pycif.proxy import Proxy as Proxy
+from pycif.proxy import LMap
 from pycif.partial import Partial
 from pycif.bbox import BBox
 
@@ -43,6 +50,8 @@ from pycif.rectwire import RectWire
 from pycif.circle import Circle
 from pycif.ansec import AnSec
 from pycif.custompoly import CustomPoly
+
+from pycif import typing
 
 from pycif.cif import export_cif
 from pycif.cif import CIFExporter
@@ -64,7 +73,6 @@ from pycif.checker.checker import (
     Flake8Checker
     )
 
-from pycif import typing
 from pycif.snowman import Snowman
 
 

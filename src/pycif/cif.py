@@ -1,3 +1,5 @@
+from typing import Generator, Self, Type
+from types import TracebackType
 from dataclasses import dataclass
 from collections import namedtuple
 
@@ -28,25 +30,121 @@ class CannotCompileTransformError(CIFExportError):
     """
 
 @dataclass
-class DelayedRoutCall():
+class CIFCommand():
     """
-    Delayed subroutine call.
-    When a compo contains a subcompo that has not been exported
-    yet (does not have a CIF subroutine that corresponds to it),
-    the CIFExporter emmits a `DelayedRoutCall`
-    that keeps track of the subcompo,
-    the transform of that subcompo in relation to the parent compo,
-    the subroutine number of the parent compo,
-    and the name of the subcompo.
+    Concrete CIF command.
+    This is simply a wrapper for a string that also keeps track
+    of what subroutine it corresponds to.
+    """
+    caller: int
+    string: str
+
+    def __str__(self) -> str:
+        return self.string
+
+    @classmethod
+    def polygon(
+            cls,
+            caller: int,
+            exporter: 'CIFExporter',
+            points: pc.typing.Poly
+            ) -> Self:
+
+        return cls(caller, ''.join((
+            '\t' * exporter.indent_depth,
+            'P ',
+            *(
+                f'{int(coordinate * exporter.multiplier)} '
+                for point in points
+                for coordinate in point
+                ),
+            ';\n'
+            )))
+
+    @classmethod
+    def layer_switch(
+            cls,
+            caller: int,
+            exporter: 'CIFExporter',
+            layer_name: str
+            ) -> Self:
+
+        return cls(caller, ''.join((
+            '\t' * exporter.indent_depth,
+            f'L {layer_name}',
+            ';\n'
+            )))
+
+    @classmethod
+    def comment(
+            cls,
+            caller: int,
+            exporter: 'CIFExporter',
+            comment_text: str
+            ) -> Self:
+
+        return cls(caller, ''.join((
+            '\t' * exporter.indent_depth,
+            f'({comment_text})',
+            '\n'
+            )))
+
+    @classmethod
+    def routine_call(
+            cls,
+            caller: int,
+            exporter: 'CIFExporter',
+            routine_num: int
+            ) -> Self:
+
+        return cls(caller, ''.join((
+            '\t' * exporter.indent_depth,
+            f'C {routine_num}',
+            ';\n'
+            )))
+
+    @classmethod
+    def routine_start(
+            cls,
+            exporter: 'CIFExporter',
+            routine_num: int
+            ) -> Self:
+
+        return cls(routine_num, ''.join((
+            '\t' * exporter.indent_depth,
+            f'DS {routine_num}',
+            ';\n'
+            )))
+
+    @classmethod
+    def routine_finish(
+            cls,
+            exporter: 'CIFExporter',
+            routine_num: int
+            ) -> Self:
+
+        return cls(routine_num, ''.join((
+            '\t' * exporter.indent_depth,
+            'DF',
+            ';\n'
+            )))
+
+    @classmethod
+    def end(cls) -> Self:
+        return cls(-1, 'E\n')
+
+@dataclass
+class DelayedCall():
+    """
+    A CIF subroutine call, except we haven't defined the
+    callee yet, so we don't know it's number.
     During subsequent passes,
-    the CIFExporter sees the DelayedRoutCall,
-    generates the needed subroutine,
-    and replaces the DelayedRoutCall with an actually CIF subroutine call.
+    the subroutine gets defined and this gets replaced
+    with a real CIFCommand.
     """
-    compo: pc.Proxy
-    transform: pc.Transform
-    rout_caller: int
-    name: str | None = None
+    caller: int
+    index: int
+    proxy: pc.Proxy
 
 
 Edge = namedtuple('Edge', ("caller", "callee"))
@@ -55,33 +153,47 @@ class SubroutineContext:
     """
     Context manager for CIF subroutines.
     It's in charge of incrementing exporter.indent_depth,
+    (which is probably a little overkill, since there are only
+    two indent levels).
     writing the `DS` and `DF` commands,
     and making sure we don't accidentally open a new subroutine
     definition
     before the previous one is closed
     (if that happens, something has gone horribly wrong).
     """
-    def __init__(self, exporter, rout_num):
-        self.exporter = exporter
-        self.rout_num = rout_num
+    exporter: 'CIFExporter'
+    rout_num: int
 
-    def __enter__(self):
+    def __init__(self, exporter: 'CIFExporter') -> None:
+        self.exporter = exporter
+        self.rout_num = -2
+
+    def __enter__(self) -> Self:
         assert not self.exporter._is_inside_subroutine, \
             "Tried to define a new subroutine before the previous one " \
             "was finished."
 
         self.exporter._is_inside_subroutine = True
         self.exporter.indent_depth += 1
-        self.exporter._append(
-            f"{'\t' * self.exporter.indent_depth}DS {self.rout_num} 1 1;\n",
-            self.rout_num
+        self.rout_num = self.exporter.rout_num
+        self.exporter.rout_num += 1
+
+        self.exporter.cif_commands.append(
+            CIFCommand.routine_start(self.exporter, self.rout_num)
             )
 
-    def __exit__(self, exc_type, exc_value, exc_tb):
+        return self
+
+    def __exit__(
+            self,
+            exc_type: Type[BaseException] | None,
+            exc_value: BaseException | None,
+            exc_tb: TracebackType | None
+            ) -> None:
 
         if exc_value is not None:
             # If there's an exception, raise it immediately.
-            return False
+            return
 
         assert self.exporter._is_inside_subroutine, \
             "Tried to finish a subroutine definition " \
@@ -89,12 +201,11 @@ class SubroutineContext:
             "How on earth did that happen!?"
 
         self.exporter._is_inside_subroutine = False
-
         self.exporter.indent_depth -= 1
         assert self.exporter.indent_depth >= 0
-        self.exporter._append(
-            f"{'\t' * self.exporter.indent_depth}DF;\n",
-            self.rout_num
+
+        self.exporter.cif_commands.append(
+            CIFCommand.routine_finish(self.exporter, self.rout_num)
             )
 
 # TODO native_inline must imply cif_native!!
@@ -104,16 +215,31 @@ class CIFExporter:
     multiplier: float = 1e3
     rot_multiplier: float = 1e3
 
+    compo: pc.typing.Compo
+    rout_num: int
+    cif_native: bool
+    flatten_proxies: bool
+    native_inline: bool
+    transform_fatal: bool
+
+    ident_depth: int
+    _is_inside_subroutine: bool
+    cif_commands: list[CIFCommand]
+    cif_string: str
+    _delayed_call_queue: list[DelayedCall]
+
+    compo2rout: dict[pc.typing.Compo, int]
+
     def __init__(
             self,
-            compo,
-            multiplier=None,
-            rot_multiplier=None,
-            cif_native=False,
-            flatten_proxies=False,
-            native_inline=False,
-            transform_fatal: bool = False
-            ):
+            compo: pc.typing.Compo,
+            multiplier: float = 1e3,
+            rot_multiplier: float = 1e3,
+            cif_native: bool = True,
+            flatten_proxies: bool = False,
+            native_inline: bool = True,
+            transform_fatal: bool = False,
+            ) -> None:
 
         self.compo = compo
         self.rout_num = 1
@@ -126,25 +252,29 @@ class CIFExporter:
         self.native_inline = native_inline
         self.transform_fatal = transform_fatal
 
-        self.cif_fragments = []
         self.indent_depth = 0
         self._is_inside_subroutine = False
+        self.cif_commands = []
         self.cif_string = ''
+        self._delayed_call_queue = []
 
+        # these are used during the export process
         self.compo2rout = {}  # Map proxy/compo to routine numbers
-        self.rout2compo = {}  # Map routine numbers to proxy/compo
-        self.edges = []  # List of `Edge`
-        self.rout2name = {}  # Map routine numbers to names
-        self._rout2cif = {}  # Map routine numbers to corresponding CIF code
-        self.rout2cif = {}
-        self.invalid_transforms = []
+
+        # these are only for introspection or self.as_dot()
+        #self.rout2compo = {}  # Map routine numbers to proxy/compo
+        #self.edges = []  # List of `Edge`
+        #self.rout2name = {}  # Map routine numbers to names
+        #self._rout2cif = {}  # Map routine numbers to corresponding CIF code
+        #self.rout2cif = {}
+        #self.invalid_transforms = []
 
         self._export_cif()
 
-        self.rout2cif = {
-            rout_num: ''.join(fragments)
-            for rout_num, fragments in self._rout2cif.items()
-            }
+        #self.rout2cif = {
+        #    rout_num: ''.join(fragments)
+        #    for rout_num, fragments in self._rout2cif.items()
+        #    }
 
         # TODO there is currently a thing I don't like:
         # the CIF code is stored in two places at once,
@@ -164,140 +294,6 @@ class CIFExporter:
         #     self.rout2cif[-1]
         #     ))
 
-    def _subroutine(self, rout_num):
-        return SubroutineContext(self, rout_num)
-
-    @pc.join_generator('')
-    def _call_routine(self, number, transform=''):
-        yield '\t' * self.indent_depth
-        yield 'C '
-        yield str(number)
-
-        if transform:
-            yield ' '
-            yield transform
-
-        yield ';\n'
-
-    @pc.join_generator('')
-    def _make_poly(self, xyarray):
-        yield '\t' * self.indent_depth
-        yield 'P '
-        for point in xyarray:
-            for coordinate in point:
-                yield f'{int(coordinate * self.multiplier)} '
-        yield ';\n'
-
-    @pc.join_generator('')
-    def _switch_layer(self, layer_name):
-        yield '\t' * self.indent_depth
-        yield f'L L{layer_name};\n'
-
-    @pc.join_generator('')
-    def _comment(self, comment_text):
-        yield '\t' * self.indent_depth
-        yield f'({comment_text})\n'
-
-    @pc.join_generator('')
-    def _make_geoms(self, geoms):
-        """
-        return the direct geometries of a compo as CIF polygons,
-        with the appropriate layer switches.
-        """
-        for layer_name, layer_geoms in geoms.items():
-            yield self._switch_layer(layer_name)
-            for xyarray in layer_geoms:
-                yield self._make_poly(xyarray)
-
-    def _append(self, cif_string, rout):
-        self.cif_fragments.append(cif_string)
-
-        assert rout in self._rout2cif.keys(), \
-            f"_rout2cif[{rout}] should have been created earlier."
-
-        self._rout2cif[rout].append(cif_string)
-
-    @pc.join_generator('')
-    def _steamroll(self, compo, transform) -> str:
-        """
-        Export a compo into a CIF file with no subroutines.
-        This function can be used independently,
-        as well as a part of CIFExporter to steamroll
-        compos with unCIFable transforms.
-        """
-        # This proxy is used to combine `compo`'s
-        # transform with the explicitly specified `transform`.
-        proxy = pc.Proxy(compo, transform=transform)
-
-        yield self._comment('flat')
-        yield self._make_geoms(proxy.steamroll())
-
-    def _realize_delayed_rout_call(self, call: DelayedRoutCall) -> str:
-        """
-        This function takes a DelayedRoutCall and converts it
-        to an actual CIF subroutine call string.
-
-        :param call: the DelayedRoutCall to realize
-        :returns: a string with the CIF subroutine call.
-        :raises: `CannotCompileTransformError`
-        """
-        compiled_transform = self.compile_transform(
-            call.compo.get_flat_transform()
-            .compose(
-                call.transform
-                )
-            )
-
-        if compiled_transform is None:
-            self.invalid_transforms.append('TODO')
-            return self._steamroll(call.compo, call.transform)
-
-        rout_callee = (
-            self.compo2rout.get(call.compo, None)
-            or
-            self._make_compo(call.compo)
-        )
-
-        rout_call = self._call_routine(rout_callee, compiled_transform)
-
-        self.edges.append(Edge(call.rout_caller, rout_callee))
-        self.rout2name[rout_callee] = call.name
-
-        return rout_call
-
-    def _do_pass(self) -> int:
-        """
-        Run one pass of the CIF export process.
-        During each pass, the exporter scans for `DelayedRoutCall`s
-        and replaces them with actual CIF subroutine calls.
-
-        :returns: the number of new routines generated in this pass.
-            If there are zero new routines, that means that no more passes
-            are necessary, and you can move on to finalizing the CIF file.
-        :raises: CannotCompileTransformError if CIFExporter was initialized
-            with `transform_fatal` and a transform was encountered that cannot
-            be compiled to CIF.
-        """
-        new_compos: int = 0
-
-        for i, fragment in enumerate(self.cif_fragments):
-            if not isinstance(fragment, DelayedRoutCall):
-                continue
-
-            realized_call: str = self._realize_delayed_rout_call(fragment)
-            self.cif_fragments[i] = realized_call
-
-            # TODO this horrible monstrosity finds the delayed routine
-            # in self._rout2cif and replaces it with the realized call.
-            # This is as ugly as it is inefficient.
-            (
-                f := self._rout2cif[fragment.rout_caller]
-                )[f.index(fragment)] = realized_call
-
-            new_compos += 1
-
-        return new_compos
-
     def _export_cif(self) -> None:
         """
         This is the main entrypoint for CIFExporter.
@@ -312,126 +308,156 @@ class CIFExporter:
         :raises: A `CannotCompileTransformError` may be propagated
             from self._do_pass()
         """
-        self._make_compo(self.compo)
+        self._realize_compo(self.compo)
 
-        while self._do_pass() > 0:
-            pass
+        while self._delayed_call_queue:
+            self._do_pass()
 
-        self._call_root()
-        self.cif_string = ''.join(self.cif_fragments)
+        self._finalize()
+        self.cif_string = ''.join(map(str, self.cif_commands))
 
-    def _delayed(self, compo, transform, rout_caller, name=None):
-        fragment = DelayedRoutCall(compo, transform, rout_caller, name)
-        self.cif_fragments.append(fragment)
+    def _do_pass(self) -> None:
+        """
+        Run one pass of the CIF export process.
+        During each pass, the exporter scans for `DelayedRoutCall`s
+        and replaces them with actual CIF subroutine calls.
 
-        assert rout_caller in self._rout2cif.keys(), \
-            f"_rout2cif[{rout_caller}] should have been created earlier."
+        :returns: the number of new routines generated in this pass.
+            If there are zero new routines, that means that no more passes
+            are necessary, and you can move on to finalizing the CIF file.
+        :raises: CannotCompileTransformError if CIFExporter was initialized
+            with `transform_fatal` and a transform was encountered that cannot
+            be compiled to CIF.
+        """
 
-        self._rout2cif[rout_caller].append(fragment)
+        offset = 0
+        for delayed_call in self._delayed_call_queue:
+            realized = self._realize_delayed_call(delayed_call)
+            self.cif_commands.insert(delayed_call.index + offset, realized)
+            offset += 1
 
-    def _call_root(self) -> None:
+        self._delayed_call_queue.clear()
+
+    def _realize_delayed_call(self, call: DelayedCall) -> CIFCommand:
+        try:
+            compiled_transform = self.compile_transform(call.proxy.transform)
+
+        except CannotCompileTransformError as err:
+            compiled_transform = None
+
+        flat_lmap = call.proxy.get_flat_lmap()
+
+        # TODO standardized inspection for lmap
+        if (
+                flat_lmap is None
+                and
+                compiled_transform is not None
+                ):
+            # We can represent `above` proxy as a CIF subroutine call
+
+            target_rout = self.compo2rout.get(call.proxy.compo)
+            if target_rout is None:
+                # We haven't made a subroutine that corresponds to `below` yet,
+                # have to do that now.
+                target_rout = self._realize_compo(call.proxy.compo)
+
+        else:
+            # we can't represent `above` as a CIF
+            # subroutine call, so we must steamroll `below`
+            target_rout = self._steamroll(call.caller, call.proxy)
+
+        return CIFCommand.routine_call(call.caller, self, target_rout)
+
+    def _realize_compo(self, compo: pc.typing.Compo) -> int:
+
+        if isinstance(compo, pc.Compo):
+            return self._realize_real_compo(compo)
+
+        elif isinstance(compo, pc.Proxy):
+            return self._realize_proxy(compo)
+
+        else:
+            assert False
+
+    def _realize_real_compo(self, compo: pc.typing.RealCompo) -> int:
+        with SubroutineContext(self) as this_rout:
+            for name, subcompo in compo.subcompos.items():
+                # TODO store name
+                self._delayed_call_queue.append(
+                    DelayedCall(
+                        this_rout.rout_num,
+                        len(self.cif_commands),
+                        subcompo
+                        )
+                    )
+
+            self._make_geoms(this_rout.rout_num, compo.geoms)
+
+        return this_rout.rout_num
+
+    def _realize_proxy(self, proxy: pc.typing.Proxy) -> int:
+        with SubroutineContext(self) as this_rout:
+            target_rout = self.compo2rout.get(proxy.compo)
+            if target_rout is None:
+                target_rout = self._realize_compo(proxy.compo)
+        # TODO is this correct? We want to be depth-first here?
+        return this_rout.rout_num
+        #return CIFCommand.routine_call(this_rout.rout_num, self, target_rout)
+
+    def _steamroll(self, caller: int, compo: pc.typing.Compo) -> int:
+        """
+        Export a compo into a CIF file with no subroutines.
+        This function can be used independently,
+        as well as a part of CIFExporter to steamroll
+        compos with unCIFable transforms.
+        """
+        with SubroutineContext(self) as this_rout:
+            self.cif_commands.append(
+                CIFCommand.comment(this_rout.rout_num, self, 'steamrolled')
+                )
+            self._make_geoms(this_rout.rout_num, compo.steamroll())
+        return this_rout.rout_num
+
+    def _make_geoms(self, caller: int, geoms: pc.typing.Geoms) -> None:
+        """
+        return the direct geometries of a compo as CIF polygons,
+        with the appropriate layer switches.
+        """
+        for layer_name, layer_geoms in geoms.items():
+
+            self.cif_commands.append(
+                CIFCommand.layer_switch(caller, self, f"L{layer_name}")
+                )
+
+            for points in layer_geoms:
+
+                self.cif_commands.append(
+                    CIFCommand.polygon(caller, self, points)
+                    )
+
+    def _finalize(self) -> None:
         """
         This finalizes the CIF file by calling subroutine 1
         (which corresponds to the toplevel compo)
         at the very end of the CIF file.
         """
-        self._rout2cif[-1] = []
-        self._append('C 1;\n', -1)
-        self._append('E', -1)
+        self.cif_commands.append(CIFCommand.routine_call(-1, self, 1))
+        self.cif_commands.append(CIFCommand.end())
 
-    def _make_compo(self, compo):
-        rout_num = self.rout_num
-        self.rout_num += 1
-        self.compo2rout[compo] = rout_num
-        self.rout2compo[rout_num] = compo
-        self._rout2cif[rout_num] = []
-
-        if isinstance(compo, pc.Proxy):
-            with self._subroutine(rout_num):
-                if self.native_inline:
-                    # This branch only ever happens if flatten_proxies is off,
-                    # but native_inline is on.... I think
-                    assert not self.flatten_proxies, \
-                        "Wait, how did we get here again...?"
-
-                    did_make_inline = self._actually_make_compo(
-                        compo.final(),
-                        rout_num,
-                        compo.get_flat_transform()
-                        )
-
-                if not self.native_inline or not did_make_inline:
-                    self._delayed(compo.compo, compo.transform, rout_num)
-
-        else:
-            # TODO this is bad, use a context manager or something
-            with self._subroutine(rout_num):
-                self._actually_make_compo(compo, rout_num)
-
-        return rout_num
-
-    def _actually_make_compo(self, compo, rout_num, transform=None):
-        """
-        TODO better function name
-        """
-        assert isinstance(compo, pc.Compo)
-        assert not isinstance(compo, pc.Proxy)
-        if self.cif_native:
-            if transform is not None:
-                native_inline = compo._export_cif_transformed(self, transform)
-                if native_inline is NotImplemented:
-                    # TODO Bug here?
-                    return False
-
-                self._append(native_inline, rout_num)
-                return True
-
-            native = compo._export_cif(self)
-            if native is not NotImplemented:
-                self._append(native, rout_num)
-                return True
-
-        self._append(self._make_geoms(compo.geoms), rout_num)
-
-        for name, proxy in compo.subcompos.items():
-            if self.flatten_proxies:
-                if self.native_inline:
-                    did_make_inline = self._actually_make_compo(
-                        proxy.final(),
-                        rout_num,
-                        proxy.get_flat_transform()
-                        )
-
-                if not self.native_inline or not did_make_inline:
-                    self._delayed(
-                        proxy.final(),
-                        proxy.get_flat_transform(),
-                        rout_num
-                        )
-
-            else:
-                self._delayed(proxy, None, rout_num, name)
-
-        return True
-
-    def compile_transform(self, transform):
-        if transform is None:
-            return ''
+    @pc.join_generator('')
+    def compile_transform(
+            self,
+            transform: pc.typing.Transform,
+            ) -> Generator[str, None, None]:
 
         if transform.does_scale():
             # TODO also possible to mirror in cif
-            if not self.transform_fatal:
-                return None
-
             raise CannotCompileTransformError(
                 f"Cannot compile {transform} to CIF "
                 "because it scales."
                 )
 
         if transform.does_shear():
-            if not self.transform_fatal:
-                return None
-
             raise CannotCompileTransformError(
                 f"Cannot compile {transform} to CIF "
                 "because it shears."
@@ -442,86 +468,41 @@ class CIFExporter:
         # origin
 
         if transform.does_rotate():
-            return self.compile_rotation(transform.get_rotation())
+            yield from self.compile_rotation(transform.get_rotation())
 
         if transform.does_translate():
-            return self.compile_translation(*transform.get_translation())
+            yield from self.compile_translation(*transform.get_translation())
 
-        # Turns out this is an identity transform
-        return ''
-
-    @pc.join_generator('')
-    def compile_rotation(self, rotation):
+    def compile_rotation(
+            self,
+            rotation: float,
+            ) -> Generator[str, None, None]:
         yield 'R '
         yield str(int(np.cos(rotation) * self.rot_multiplier))
         yield ' '
         yield str(int(np.sin(rotation) * self.rot_multiplier))
         yield ' '
 
-    @pc.join_generator('')
-    def compile_translation(self, move_x, move_y):
+    def compile_translation(
+            self,
+            move_x: float,
+            move_y: float,
+            ) -> Generator[str, None, None]:
         yield 'T '
         yield str(int(move_x * self.multiplier))
         yield ' '
         yield str(int(move_y * self.multiplier))
         yield ' '
 
-    @pc.join_generator('', pc.gv.DOTString)
-    def as_dot(self, include_code=True, include_meta=False, include_name=True):
-        yield 'digraph D {\n'
-
-        for rout_num in range(1, self.rout_num):
-            compo = self.rout2compo[rout_num]
-
-            label = []
-            if include_meta:
-                label.append(f'Cell {rout_num}')
-
-            if isinstance(compo, pc.Proxy):
-                shape = 'note'
-                if include_name:
-                    if (name := self.rout2name.get(rout_num)):
-                        label.append(rf'({name})')
-
-                if include_meta:
-                    if compo.transform.does_translate:
-                        transl = compo.transform.get_translation()
-                        label.append(f'Move {transl[0]:.3g}, {transl[1]:.3g}')
-
-                    if compo.transform.does_rotate:
-                        rot = pc.rad2deg(compo.transform.get_rotation())
-                        label.append(f'Rotate {rot:.3g}')
-            else:
-                shape = 'box'
-                if include_name:
-                    # TODO this entire funtion is getting out of hand as well
-                    label.append(rf'({type(compo).__name__})')
-
-            if include_code:
-                label.append(''.join([
-                    line.replace('\n', r'\l').replace('\t', '    ')
-                    for line in
-                    self.rout2cif[rout_num]
-                    ]).rstrip(r'\l'))
-
-            label = r'\l'.join(label)
-
-            yield f'\t{rout_num} [shape={shape} label="{label}\\l"];\n'
-
-        for from_, to in self.edges:
-            yield f'\t{from_} -> {to};\n'
-
-        yield '}\n'
-
 def export_cif(
-        compo,
-        multiplier=1e3,
-        rot_multiplier=1e3,
-        cif_native=True,
-        flatten_proxies=False,
-        native_inline=True,
-        transform_fatal=False,
-        ):
+        compo: pc.typing.Compo,
+        multiplier: float = 1e3,
+        rot_multiplier: float = 1e3,
+        cif_native: bool = True,
+        flatten_proxies: bool = False,
+        native_inline: bool = True,
+        transform_fatal: bool = False,
+        ) -> str:
     exporter = CIFExporter(
         compo,
         multiplier,

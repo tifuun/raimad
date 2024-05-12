@@ -74,7 +74,9 @@ class RectWH(pc.Compo):
 
         return ''.join(cifstring)
 
-    def _export_cif_transformed(self, cif_exporter, transform):
+    def _export_cif_transformed(self, cif_exporter, proxy):
+        transform = proxy.transform
+
         if transform.does_scale():
             return NotImplemented
 
@@ -83,7 +85,7 @@ class RectWH(pc.Compo):
 
         move_x, move_y = transform.get_translation()
         cifstring = [
-            "\tL Lroot;\n\tB "
+            f"\tL L{proxy.lmap['root']};\n\tB "
             f"{int(self.width * cif_exporter.multiplier)} "
             f"{int(self.height * cif_exporter.multiplier)} "
             f"{int(move_x * cif_exporter.multiplier)} "

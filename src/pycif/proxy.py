@@ -14,8 +14,38 @@ class LMap:
         if isinstance(self.shorthand, str):
             return self.shorthand
 
-        return self.shorthand[name]
+        if isinstance(self.shorthand, dict):
+            return self.shorthand[name]
+
+        assert False
     # TODO hacky
+
+    def compose(self, other: Self) -> None:
+        if other.shorthand is None:
+            # None lmap, pass everything through
+            pass
+
+        elif isinstance(other.shorthand, str):
+            # single-string lmap, flatten everything to one layer
+            self.shorthand = other.shorthand
+
+        elif isinstance(other.shorthand, dict):
+            # TODO better way to do this?
+            if isinstance(self.shorthand, dict):
+                for self_k, self_val in tuple(self.shorthand.items()):
+                    try:
+                        self.shorthand[self_k] = other[self_val]
+                    except KeyError:
+                        pass
+
+            elif self.shorthand is None:
+                self.shorthand = copy(other.shorthand)
+
+            elif isinstance(self.shorthand, str):
+                self.shorthand = other[self.shorthand]
+
+        else:
+            assert False
 
 class Proxy:
     def __init__(self,
@@ -43,7 +73,7 @@ class Proxy:
             }
 
     def get_flat_transform(self, maxdepth: int = -1) -> 'pc.typing.Transform':
-        if maxdepth == 0:
+        if maxdepth == 0 or isinstance(self.compo, pc.Compo):
             return pc.Transform()
 
         #return (
@@ -51,8 +81,17 @@ class Proxy:
         #    .compose(self.transform)
         #    )
 
+        # TODO huh? copy?
         return self.transform.copy().compose(
             self.compo.get_flat_transform(maxdepth - 1)
+            )
+
+    def get_flat_lmap(self, maxdepth: int = -1) -> LMap:
+        if maxdepth == 0 or isinstance(self.compo, pc.Compo):
+            return LMap(None)
+
+        return self.lmap.copy().compose(
+            self.compo.get_flat_lmap(maxdepth - 1)
             )
 
     @property

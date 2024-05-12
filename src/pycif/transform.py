@@ -23,7 +23,7 @@ class Transform(object):
 
     def transform_point(self, point):
         """
-        Apply transformation to point and return new transformed point
+        Apply transformatio to point and return new transformed point
         """
         return pc.affine.transform_point(self._affine, point)
 

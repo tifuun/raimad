@@ -58,9 +58,6 @@ class Compo:
                 geoms[layer_name].extend(layer_geoms)
         return geoms
 
-    def get_flat_transform(self, maxdepth=None):
-        return pc.Transform()
-
     def final(self):
         return self
 

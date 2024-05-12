@@ -1,3 +1,4 @@
+from typing import Generator, Callable, Any, TypeVar, ParamSpec, TypeAlias
 from enum import Enum
 import functools
 
@@ -90,18 +91,39 @@ def wingdingify(value: int):
         '\033[0m',
         ))
 
-def preload_generator(generator):
-    @functools.wraps(generator)
-    def wrapper(*args, **kwargs):
-        return list(generator(*args, **kwargs))
-    return wrapper
-
-def join_generator(string, post=lambda x: x):
-    def join_generator_inner(generator):
+def preload_generator(factory=tuple):
+    def preload_generator_inner(generator):
         @functools.wraps(generator)
         def wrapper(*args, **kwargs):
-            return post(string.join(generator(*args, **kwargs)))
+            return factory(generator(*args, **kwargs))
         return wrapper
+    return preload_generator_inner
+
+
+T = TypeVar('T')
+P = ParamSpec('P')
+Undecorated: TypeAlias = Callable[P, Generator[str, None, None]]
+Decorated: TypeAlias = Callable[P, T]
+Inner_Decorator: TypeAlias = Callable[[Undecorated], Decorated]
+# ARGHHHHH I feel like a C++ programmer
+
+def join_generator(
+        string: str,
+        post: Callable[[str], T] = lambda x: x,
+        ) -> Inner_Decorator:
+    def join_generator_inner(
+            generator: Undecorated
+            ) -> Decorated:
+
+        @functools.wraps(generator)
+        def wrapper(
+                *args: P.args,
+                **kwargs: P.kwargs
+                ) -> T:
+            return post(string.join(generator(*args, **kwargs)))
+
+        return wrapper
+
     return join_generator_inner
 
 def midpoint(p1, p2):
