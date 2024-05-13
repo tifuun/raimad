@@ -1,4 +1,5 @@
 import inspect
+from typing import Self
 from copy import deepcopy
 
 import pycif as pc
@@ -15,7 +16,7 @@ class MarksContainer(pc.DictList):
 
         return self._proxy.get_mark(name)
 
-    def _proxy_copy(self, proxy):
+    def _proxy_copy(self, proxy: 'pc.typing.Proxy') -> Self:
         new = type(self)({
             key: val for key, val in self.items()
             })
@@ -33,6 +34,9 @@ class SubcompoContainer(pc.DictList):
         # TODO generally need to standardize runtime checks.
 
 class Compo:
+    marks: MarksContainer
+    subcompos: SubcompoContainer
+
     def __init__(self, *args, **kwargs):
         self.geoms = {}
         self.subcompos = SubcompoContainer()
@@ -194,11 +198,16 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
-    def _export_cif(self, cif_exporter, transform: pc.Transform | None = None):
+    def _export_cif(
+            self,
+            exporter: 'pc.CIFExporter',
+            layermap: 'pc.typing.LMap',
+            transform: 'pc.typing.Transform',
+            ):
         return NotImplemented
 
-    def _export_cif_transformed(self, cif_exporter, transform):
-        return NotImplemented
+    #def _export_cif_transformed(self, cif_exporter, transform):
+    #    return NotImplemented
 
     def __str__(self):
         return (

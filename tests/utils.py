@@ -1,5 +1,20 @@
+from pprint import pprint
+from sys import stderr
 from typing import ClassVar
 import numpy as np
+
+class PrettyEqual():
+    def assertPrettyEqual(self, actual, desired):
+        try:
+            self.assertEqual(actual, desired)
+
+        except AssertionError as err:
+            pprint("ACTUAL: ", stream=stderr)
+            pprint(actual, stream=stderr)
+            pprint("DESIRED: ", stream=stderr)
+            pprint(desired, stream=stderr)
+            raise err
+
 
 class ArrayAlmostEqual():
     decimal: ClassVar[float]

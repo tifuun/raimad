@@ -1,7 +1,5 @@
 """
 Namespace flattening for RAIMAD.
-If you're confused by the redundant `import X as X` syntax,
-that's because mypy wants it that way.
 """
 
 import numpy as np
@@ -39,8 +37,10 @@ from pycif.layer import Layer
 from pycif.option import Option
 from pycif.boundpoint import BoundPoint
 from pycif.transform import Transform
-from pycif.compo import Compo as Compo
-from pycif.proxy import Proxy as Proxy
+from pycif.compo import Compo
+from pycif.compo import MarksContainer
+from pycif.compo import SubcompoContainer
+from pycif.proxy import Proxy
 from pycif.proxy import LMap
 from pycif.partial import Partial
 from pycif.bbox import BBox
@@ -74,5 +74,20 @@ from pycif.checker.checker import (
     )
 
 from pycif.snowman import Snowman
+
+# Mypy really wants __all__ to be present
+__all__ = [
+    'export_svg',
+    'Transform',
+    'Compo',
+    'DictList',
+    'Proxy',
+    'BoundPoint',
+    'MarksContainer',
+    'SubcompoContainer',
+    'BBox',
+    'Partial',
+    'LMap',
+    ]
 
 

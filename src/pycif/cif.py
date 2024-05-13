@@ -13,6 +13,11 @@ class CIFExportError(Exception):
     This is an abstract base class for all other CIF export errors.
     """
 
+class CIFExporterArgumentError(Exception):
+    """
+    problem with initializing CIF exporter
+    """
+
 class CannotCompileTransformError(CIFExportError):
     """
     This error is raised when it's impossible to compile
@@ -230,6 +235,8 @@ class CIFExporter:
 
     compo2rout: dict[pc.typing.Compo, int]
 
+    steamrolled: list[pc.typing.Compo]
+
     def __init__(
             self,
             compo: pc.typing.Compo,
@@ -240,6 +247,11 @@ class CIFExporter:
             native_inline: bool = True,
             transform_fatal: bool = False,
             ) -> None:
+
+        if native_inline and not cif_native:
+            raise CIFExporterArgumentError(
+                "If native_inline is True, then cif_native must also be True."
+                )
 
         self.compo = compo
         self.rout_num = 1
@@ -260,6 +272,8 @@ class CIFExporter:
 
         # these are used during the export process
         self.compo2rout = {}  # Map proxy/compo to routine numbers
+
+        self.steamrolled = []
 
         # these are only for introspection or self.as_dot()
         #self.rout2compo = {}  # Map routine numbers to proxy/compo
@@ -339,13 +353,34 @@ class CIFExporter:
         self._delayed_call_queue.clear()
 
     def _realize_delayed_call(self, call: DelayedCall) -> CIFCommand:
+        flat_lmap = call.proxy.get_flat_lmap()
+        flat_transform = call.proxy.get_flat_transform()
+
+        if self.cif_native:
+            native = call.proxy.final()._export_cif(
+                self, flat_lmap, flat_transform)
+
+            if native is not NotImplemented:
+                if self.native_inline:
+                    return CIFCommand(call.caller, native)
+                else:
+                    with SubroutineContext(self) as new_rout:
+                        self.cif_commands.append(
+                            CIFCommand(new_rout.rout_num, native)
+                            )
+                    return CIFCommand.routine_call(
+                        call.caller,
+                        self,
+                        new_rout.rout_num
+                        )
+
         try:
-            compiled_transform = self.compile_transform(call.proxy.transform)
+            compiled_transform = self.compile_transform(
+                flat_transform
+                )
 
         except CannotCompileTransformError as err:
             compiled_transform = None
-
-        flat_lmap = call.proxy.get_flat_lmap()
 
         # TODO standardized inspection for lmap
         if (
@@ -371,13 +406,18 @@ class CIFExporter:
     def _realize_compo(self, compo: pc.typing.Compo) -> int:
 
         if isinstance(compo, pc.Compo):
-            return self._realize_real_compo(compo)
+            new_rout_num = self._realize_real_compo(compo)
 
         elif isinstance(compo, pc.Proxy):
-            return self._realize_proxy(compo)
+            new_rout_num = self._realize_proxy(compo)
 
         else:
             assert False
+
+        assert new_rout_num not in self.compo2rout.values()
+        assert compo not in self.compo2rout.keys()
+        self.compo2rout[compo] = new_rout_num
+        return new_rout_num
 
     def _realize_real_compo(self, compo: pc.typing.RealCompo) -> int:
         with SubroutineContext(self) as this_rout:
@@ -407,10 +447,10 @@ class CIFExporter:
     def _steamroll(self, caller: int, compo: pc.typing.Compo) -> int:
         """
         Export a compo into a CIF file with no subroutines.
-        This function can be used independently,
-        as well as a part of CIFExporter to steamroll
-        compos with unCIFable transforms.
         """
+
+        self.steamrolled.append(compo)
+
         with SubroutineContext(self) as this_rout:
             self.cif_commands.append(
                 CIFCommand.comment(this_rout.rout_num, self, 'steamrolled')

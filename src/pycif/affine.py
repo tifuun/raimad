@@ -3,42 +3,45 @@ Operations on affine matrices
 """
 
 import numpy as np
+import numpy.typing as _
 
-def rotate(angle):
+import pycif as pc
+
+def rotate(angle: float) -> 'pc.typing.Affine':
     return np.array([
         [np.cos(angle), -np.sin(angle), 0],
         [np.sin(angle), np.cos(angle), 0],
         [0, 0, 1],
         ])
 
-def move(x, y):
+def move(x: float, y: float) -> 'pc.typing.Affine':
     return np.array([
         [1, 0, x],
         [0, 1, y],
         [0, 0, 1],
         ])
 
-def scale(x, y):
+def scale(x: float, y: float) -> 'pc.typing.Affine':
     return np.array([
         [x, 0, 0],
         [0, y, 0],
         [0, 0, 1],
         ])
 
-def around(matrix, x, y):
+def around(matrix: 'pc.typing.Affine', x: float, y: float) -> 'pc.typing.Affine':
     to_origin = move(-x, -y)
     from_origin = move(x, y)
 
     return from_origin @ matrix @ to_origin
 
-def get_translation(matrix):
+def get_translation(matrix: 'pc.typing.Affine') -> np.typing.NDArray[np.float64]:
     """
     Given an affine matrix, return the corresponding translation.
     Written by ChatGPT
     """
     return matrix[:2, 2]
 
-def get_scale(matrix):
+def get_scale(matrix: 'pc.typing.Affine') -> tuple[np.float64, np.float64]:
     """
     Given an affine matrix, return the corresponding scale.
     Written by ChatGPT
@@ -47,23 +50,26 @@ def get_scale(matrix):
     scale_y = np.linalg.norm(matrix[:, 1])
     return scale_x, scale_y
 
-def get_shear(matrix):
+def get_shear(matrix: 'pc.typing.Affine') -> float:
     """
     Given an affine matrix, return the corresponding shear.
     Written by ChatGPT
     """
     scale_x, scale_y = get_scale(matrix)
-    shear = np.dot(matrix[:, 0], matrix[:, 1]) / (scale_x * scale_y)
+    shear = float(np.dot(matrix[:, 0], matrix[:, 1]) / (scale_x * scale_y))
     return shear
 
-def get_rotation(matrix):
+def get_rotation(matrix: 'pc.typing.Affine') -> float:
     """
     Given an affine matrix, return the corresponding rotation
     Written by ChatGPT
     """
-    return np.arctan2(matrix[1, 0], matrix[0, 0])
+    return float(np.arctan2(matrix[1, 0], matrix[0, 0]))
 
-def transform_xyarray(matrix, xyarray: np.ndarray):
+def transform_xyarray(
+        matrix: 'pc.typing.Affine',
+        xyarray: 'pc.typing.Poly | pc.typing.PolyArray'
+        ) -> 'pc.typing.Poly | pc.typing.PolyArray':
     """
     Apply transformation to xyarray and return new transformed xyarray
     """
@@ -80,11 +86,15 @@ def transform_xyarray(matrix, xyarray: np.ndarray):
         np.ones((xyarray.shape[0], 1)),
         ))
     transformed = np.dot(homogeneous, matrix.T)
-    euclidean = transformed[:, :2] / transformed[:, 2].reshape(-1, 1)
+    euclidean: np.typing.NDArray[np.float64] = \
+        transformed[:, :2] / transformed[:, 2].reshape(-1, 1)
 
     return euclidean
 
-def transform_point(matrix, point):
+def transform_point(
+        matrix: 'pc.typing.Affine',
+        point: 'pc.typing.Point'
+        ) -> 'pc.typing.Point':
     """
     Apply transformation to point and return new transformed point
     """

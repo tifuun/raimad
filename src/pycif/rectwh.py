@@ -61,22 +61,52 @@ class RectWH(pc.Compo):
 
     #    return ''.join(cifstring)
 
-    def _export_cif(self, cif_exporter):
-        cifstring = [
-            "\tL Lroot;\n\tB "
-            f"{int(self.width * cif_exporter.multiplier)} "
-            f"{int(self.height * cif_exporter.multiplier)} "
-            "0 "
-            "0 "
-            ]
+    #def _export_cif(self, cif_exporter):
+    #    cifstring = [
+    #        "\tL Lroot;\n\tB "
+    #        f"{int(self.width * cif_exporter.multiplier)} "
+    #        f"{int(self.height * cif_exporter.multiplier)} "
+    #        "0 "
+    #        "0 "
+    #        ]
 
-        cifstring.append(";\n")
+    #    cifstring.append(";\n")
 
-        return ''.join(cifstring)
+    #    return ''.join(cifstring)
 
-    def _export_cif_transformed(self, cif_exporter, proxy):
-        transform = proxy.transform
+    #def _export_cif_transformed(self, cif_exporter, proxy):
+    #    transform = proxy.transform
 
+    #    if transform.does_scale():
+    #        return NotImplemented
+
+    #    if transform.does_shear():
+    #        return NotImplemented
+
+    #    move_x, move_y = transform.get_translation()
+    #    cifstring = [
+    #        f"\tL L{proxy.lmap['root']};\n\tB "
+    #        f"{int(self.width * cif_exporter.multiplier)} "
+    #        f"{int(self.height * cif_exporter.multiplier)} "
+    #        f"{int(move_x * cif_exporter.multiplier)} "
+    #        f"{int(move_y * cif_exporter.multiplier)} "
+    #        ]
+
+    #    if transform.does_rotate():
+    #        # TODO call cif exporter
+    #        rot = transform.get_rotation()
+    #        rotvec_x = int(pc.cos(rot) * cif_exporter.multiplier)
+    #        rotvec_y = int(pc.sin(rot) * cif_exporter.multiplier)
+
+    #        cifstring.append(
+    #            f"{rotvec_x} {rotvec_y} "
+    #        )
+
+    #    cifstring.append(";\n")
+
+    #    return ''.join(cifstring)
+
+    def _export_cif(self, exporter, lmap, transform):
         if transform.does_scale():
             return NotImplemented
 
@@ -85,18 +115,18 @@ class RectWH(pc.Compo):
 
         move_x, move_y = transform.get_translation()
         cifstring = [
-            f"\tL L{proxy.lmap['root']};\n\tB "
-            f"{int(self.width * cif_exporter.multiplier)} "
-            f"{int(self.height * cif_exporter.multiplier)} "
-            f"{int(move_x * cif_exporter.multiplier)} "
-            f"{int(move_y * cif_exporter.multiplier)} "
+            f"\tL L{lmap['root']};\n\tB "
+            f"{int(self.width * exporter.multiplier)} "
+            f"{int(self.height * exporter.multiplier)} "
+            f"{int(move_x * exporter.multiplier)} "
+            f"{int(move_y * exporter.multiplier)} "
             ]
 
         if transform.does_rotate():
             # TODO call cif exporter
             rot = transform.get_rotation()
-            rotvec_x = int(pc.cos(rot) * cif_exporter.multiplier)
-            rotvec_y = int(pc.sin(rot) * cif_exporter.multiplier)
+            rotvec_x = int(pc.cos(rot) * exporter.multiplier)
+            rotvec_y = int(pc.sin(rot) * exporter.multiplier)
 
             cifstring.append(
                 f"{rotvec_x} {rotvec_y} "
@@ -105,5 +135,4 @@ class RectWH(pc.Compo):
         cifstring.append(";\n")
 
         return ''.join(cifstring)
-
 

@@ -30,7 +30,7 @@ class BBox(object):
 
     def __init__(
             self,
-            xyarray: np.ndarray | None = None,
+            xyarray: 'pc.typing.Poly | None' = None,
             proxy=None,
             ):
         """
@@ -127,7 +127,7 @@ class BBox(object):
         new_bbox.min_y = self.min_y
         return new_bbox
 
-    def add_xyarray(self, xyarray: np.ndarray) -> None:
+    def add_xyarray(self, xyarray: 'pc.typing.Poly') -> None:
         """
         Add new points to the bounding box.
 

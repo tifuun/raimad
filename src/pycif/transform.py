@@ -4,30 +4,32 @@ from typing import Self
 import numpy as np
 import pycif as pc
 
-class Transform(object):
+class Transform:
     """
     Transformation: container for affine matrix
     """
 
-    def __init__(self):
+    _affine: 'pc.typing.Affine'
+
+    def __init__(self) -> None:
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self._affine = np.identity(3)
 
-    def transform_xyarray(self, xyarray: np.ndarray):
+    def transform_xyarray(self, poly: 'pc.typing.Poly') -> 'pc.typing.Poly':
         """
         Apply transformation to xyarray and return new transformed xyarray
         """
-        return pc.affine.transform_xyarray(self._affine, xyarray)
+        return pc.affine.transform_xyarray(self._affine, poly)
 
-    def transform_point(self, point):
+    def transform_point(self, point: 'pc.typing.Point') -> 'pc.typing.Point':
         """
-        Apply transformatio to point and return new transformed point
+        Apply transformation to point and return new transformed point
         """
         return pc.affine.transform_point(self._affine, point)
 
-    def compose(self, transform):
+    def compose(self, transform: Self) -> Self:
         """
         Apply a transform to this transform
         """
@@ -35,28 +37,29 @@ class Transform(object):
             self._affine = transform._affine @ self._affine
         return self
 
-    def get_translation(self):
+    def get_translation(self) -> tuple[float, float]:
         return pc.affine.get_translation(self._affine)
 
-    def get_rotation(self):
+    def get_rotation(self) -> float:
         return pc.affine.get_rotation(self._affine)
 
-    def get_shear(self):
+    def get_shear(self) -> float:
         return pc.affine.get_shear(self._affine)
 
-    def get_scale(self):
+    def get_scale(self) -> tuple[float, float]:
         return pc.affine.get_scale(self._affine)
 
-    def does_translate(self):
-        return np.linalg.norm(self.get_translation()) > 0.001  # TODO epsilon
+    def does_translate(self) -> bool:
+        norm: float = np.linalg.norm(self.get_translation())
+        return norm > 0.001  # TODO epsilon
 
-    def does_rotate(self):
+    def does_rotate(self) -> bool:
         return abs(self.get_rotation()) > 0.001  # TODO epsilon
 
-    def does_shear(self):
+    def does_shear(self) -> bool:
         return abs(self.get_shear()) > 0.001  # TODO epsilon
 
-    def does_scale(self):
+    def does_scale(self) -> bool:
         scale_x, scale_y = self.get_scale()
         # TODO epsilon
         return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001
@@ -89,7 +92,7 @@ class Transform(object):
             ">",
             ))
 
-    def copy(self):
+    def copy(self) -> Self:
         return deepcopy(self)
 
     # TODO typing.point
@@ -126,7 +129,7 @@ class Transform(object):
 
     #    self._affine = pc.affine.around(pc.affine.scale(x, y), cx, cy) @ self._affine
     #    return self
-    def scale(self, x, y=None):
+    def scale(self, x: float, y: float | None = None) -> 'pc.typing.Chained':
         if y is None:
             y = x
         self._affine = pc.affine.scale(x, y) @ self._affine

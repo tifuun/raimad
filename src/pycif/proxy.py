@@ -20,7 +20,10 @@ class LMap:
         assert False
     # TODO hacky
 
-    def compose(self, other: Self) -> None:
+    def copy(self) -> Self:
+        return type(self)(self.shorthand)
+
+    def compose(self, other: Self) -> Self:
         if other.shorthand is None:
             # None lmap, pass everything through
             pass
@@ -47,11 +50,15 @@ class LMap:
         else:
             assert False
 
+        return self
+
 class Proxy:
+    compo: 'pc.typing.Compo'
+
     def __init__(self,
                  compo: 'pc.typing.Compo',
-                 lmap: 'pc.typing.LMap' = None,
-                 transform: 'pc.typing.Transform' = None,
+                 lmap: 'pc.typing.LMapShorthand' = None,
+                 transform: 'pc.typing.Transform | None' = None,
                  _cif_link: bool = False,
                  _autogen: bool = False,
                  ):
@@ -74,7 +81,7 @@ class Proxy:
 
     def get_flat_transform(self, maxdepth: int = -1) -> 'pc.typing.Transform':
         if maxdepth == 0 or isinstance(self.compo, pc.Compo):
-            return pc.Transform()
+            return self.transform.copy()
 
         #return (
         #    self.compo.get_flat_transform(maxdepth - 1)
@@ -88,7 +95,7 @@ class Proxy:
 
     def get_flat_lmap(self, maxdepth: int = -1) -> LMap:
         if maxdepth == 0 or isinstance(self.compo, pc.Compo):
-            return LMap(None)
+            return self.lmap.copy()
 
         return self.lmap.copy().compose(
             self.compo.get_flat_lmap(maxdepth - 1)
@@ -106,8 +113,9 @@ class Proxy:
             }
 
     @property
-    def subcompos(self) -> pc.DictList:
-        return pc.DictList({
+    def subcompos(self) -> pc.SubcompoContainer:
+        # TODO FrozenSubcompoContainer?
+        return pc.SubcompoContainer({
             name: self.copy_reassign(subcompo, _autogen=True)
             for name, subcompo in self.compo.subcompos.items()
             })
@@ -121,7 +129,7 @@ class Proxy:
 
     def descend(self) -> 'Iterator[pc.typing.Compo]':
         yield self
-        yield from self.compo.descendre()
+        yield from self.compo.descend()
 
     def descend_p(self) -> 'Iterator[pc.typing.Proxy]':
         yield self
@@ -141,7 +149,7 @@ class Proxy:
 
         return type(self)(
             self.compo,
-            copy(self.lmap),
+            self.lmap.shorthand,
             self.transform.copy(),
             )
 
@@ -167,7 +175,7 @@ class Proxy:
 
         return type(self)(
             new_subcompo,
-            copy(self.lmap),
+            self.lmap.shorthand,
             self.transform.copy(),
             _autogen=_autogen,
             )
@@ -247,8 +255,8 @@ class Proxy:
     #    #    self,
     #    #    lmap=lmap
     #    #    )
-    def map(self, lmap):
-        self.lmap = LMap(lmap)
+    def map(self, lmap_shorthand: 'pc.typing.LMapShorthand') -> Self:
+        self.lmap = LMap(lmap_shorthand)
         return self
 
     # mark functions #
@@ -261,13 +269,13 @@ class Proxy:
             )
 
     @property
-    def marks(self):
+    def marks(self) -> pc.MarksContainer:
         return self.compo.marks._proxy_copy(self)
 
     # bbox functions #
     # TODO same as compo -- some sort of reuse?
     @property
-    def bbox(self):
+    def bbox(self) -> 'pc.typing.BBox':
         bbox = pc.BBox(proxy=self)
         for geoms in self.steamroll().values():
             for geom in geoms:
@@ -275,23 +283,23 @@ class Proxy:
         return bbox
 
     # snapping functions #
-    def snap_left(self, other):
+    def snap_left(self, other: Self) -> Self:
         self.bbox.mid_right.to(other.bbox.mid_left)
         return self
 
-    def snap_right(self, other):
+    def snap_right(self, other: Self) -> Self:
         self.bbox.mid_left.to(other.bbox.mid_right)
         return self
 
-    def snap_above(self, other):
+    def snap_above(self, other: Self) -> Self:
         self.bbox.bot_mid.to(other.bbox.top_mid)
         return self
 
-    def snap_below(self, other):
+    def snap_below(self, other: Self) -> Self:
         self.bbox.top_mid.to(other.bbox.bot_mid)
         return self
 
-    def _repr_svg_(self):
+    def _repr_svg_(self) -> str:
         """
         Make svg representation of component.
         This is called by jupyter and raimark
