@@ -17,7 +17,10 @@ class Transform:
     def reset(self) -> None:
         self._affine = np.identity(3)
 
-    def transform_xyarray(self, poly: 'pc.typing.Poly') -> 'pc.typing.Poly':
+    def transform_xyarray(
+            self,
+            poly: 'pc.typing.Poly | pc.typing.PolyArray'
+            ) -> 'pc.typing.Poly | pc.typing.PolyArray':
         """
         Apply transformation to xyarray and return new transformed xyarray
         """
@@ -37,7 +40,7 @@ class Transform:
             self._affine = transform._affine @ self._affine
         return self
 
-    def get_translation(self) -> tuple[float, float]:
+    def get_translation(self) -> np.typing.NDArray[np.float64]:
         return pc.affine.get_translation(self._affine)
 
     def get_rotation(self) -> float:
@@ -46,20 +49,20 @@ class Transform:
     def get_shear(self) -> float:
         return pc.affine.get_shear(self._affine)
 
-    def get_scale(self) -> tuple[float, float]:
+    def get_scale(self) -> tuple[np.float64, np.float64]:
         return pc.affine.get_scale(self._affine)
 
     def does_translate(self) -> bool:
-        norm: float = np.linalg.norm(self.get_translation())
+        norm = np.linalg.norm(self.get_translation())
         return norm > 0.001  # TODO epsilon
 
-    def does_rotate(self) -> bool:
+    def does_rotate(self) -> 'pc.typing.Bool':
         return abs(self.get_rotation()) > 0.001  # TODO epsilon
 
-    def does_shear(self) -> bool:
+    def does_shear(self) -> 'pc.typing.Bool':
         return abs(self.get_shear()) > 0.001  # TODO epsilon
 
-    def does_scale(self) -> bool:
+    def does_scale(self) -> 'pc.typing.Bool':
         scale_x, scale_y = self.get_scale()
         # TODO epsilon
         return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001
@@ -129,7 +132,7 @@ class Transform:
 
     #    self._affine = pc.affine.around(pc.affine.scale(x, y), cx, cy) @ self._affine
     #    return self
-    def scale(self, x: float, y: float | None = None) -> 'pc.typing.Chained':
+    def scale(self, x: float, y: float | None = None) -> Self:
         if y is None:
             y = x
         self._affine = pc.affine.scale(x, y) @ self._affine

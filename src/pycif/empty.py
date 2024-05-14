@@ -3,7 +3,7 @@ empty.py
 This file contains the EmptyType class and the Empty object
 """
 
-from typing import Self
+from typing import Self, ClassVar
 
 class EmptyType:
     """
@@ -18,7 +18,9 @@ class EmptyType:
 
     This is a singleton class.
     """
-    def __new__(cls) -> Self:
+    instance: ClassVar[Self]
+
+    def __new__(cls) -> 'EmptyType':
         if not hasattr(cls, 'instance'):
             cls.instance = super(EmptyType, cls).__new__(cls)
         return cls.instance

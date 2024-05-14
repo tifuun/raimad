@@ -28,4 +28,7 @@ LMapShorthand: TypeAlias = None | str | dict[str, str]
 #Geoms: TypeAlias = dict[str, list[XYarray]]
 LMap: TypeAlias = pc.LMap
 
+# Well, isn't this lovely?
+Bool: TypeAlias = bool | np.bool_
+
 
