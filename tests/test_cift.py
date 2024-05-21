@@ -1,5 +1,5 @@
 """
-Tests for pycif 1.0.0 cif exporter.
+Tests for raimad 1.0.0 cif exporter.
 As opposed to `test_cif_100`,
 these tests use CIFT to verify the generated CIF files.
 """
@@ -11,7 +11,7 @@ import unittest
 import cift as cf
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 from .utils import PrettyEqual
 
@@ -19,7 +19,7 @@ class CIFTRoutGraphChecker():
     """
     """
     def assertCIFTRoutStructure(self, exporter, parser, expected_edges):
-        compos_expected = set(pc.flatten(expected_edges)) - {-1}
+        compos_expected = set(rai.flatten(expected_edges)) - {-1}
         compos_actual = set(exporter.compo2rout.keys())
         if compos_expected > compos_actual:
             raise AssertionError(
@@ -59,16 +59,16 @@ class TestCIFT(unittest.TestCase, PrettyEqual, CIFTRoutGraphChecker):
     def test_cif_layer_simple(self):
         """
         """
-        class MyCompo(pc.Compo):
+        class MyCompo(rai.Compo):
             def _make(self):
                 self.subcompos.rec = (
-                    pc.RectWH(10, 20).proxy()
+                    rai.RectWH(10, 20).proxy()
                     .map('mylayer')
                     .bbox.bot_left.to((0, 0))
                     )
 
         compo = MyCompo()
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             compo,
             multiplier=1,
             rot_multiplier=1,
@@ -97,23 +97,23 @@ class TestCIFT(unittest.TestCase, PrettyEqual, CIFTRoutGraphChecker):
     def test_cif_layer_notsosimple(self):
         """
         """
-        class Inner(pc.Compo):
+        class Inner(rai.Compo):
             def _make(self):
                 self.subcompos.rec1 = (
-                    pc.RectWH(10, 10).proxy()
+                    rai.RectWH(10, 10).proxy()
                     .map('first')
                     )
 
                 self.subcompos.rec2 = (
-                    pc.RectWH(10, 10).proxy()
+                    rai.RectWH(10, 10).proxy()
                     .map('second')
                     .snap_below(self.subcompos.rec1)
                     )
 
-        class MyCompo(pc.Compo):
+        class MyCompo(rai.Compo):
             def _make(self):
                 self.subcompos.rec = (
-                    pc.RectWH(10, 20).proxy()
+                    rai.RectWH(10, 20).proxy()
                     .map('mylayer')
                     .bbox.bot_left.to((0, 0))
                     )
@@ -128,7 +128,7 @@ class TestCIFT(unittest.TestCase, PrettyEqual, CIFTRoutGraphChecker):
                     )
 
         compo = MyCompo()
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             compo,
             multiplier=1,
             rot_multiplier=1,
@@ -173,22 +173,22 @@ class TestCIFT(unittest.TestCase, PrettyEqual, CIFTRoutGraphChecker):
     def test_cif_inline_simple(self):
         """
         """
-        class MyCompo(pc.Compo):
+        class MyCompo(rai.Compo):
             def _make(self):
                 self.subcompos.rec1 = (
-                    pc.RectWH(10, 20).proxy()
+                    rai.RectWH(10, 20).proxy()
                     .map('right')
                     .bbox.bot_left.to((0, 0))
                     )
 
                 self.subcompos.rec2 = (
-                    pc.RectWH(10, 20).proxy()
+                    rai.RectWH(10, 20).proxy()
                     .map('left')
                     .bbox.bot_right.to((0, 0))
                     )
 
         compo = MyCompo()
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             compo,
             multiplier=1,
             rot_multiplier=1,
@@ -236,28 +236,28 @@ class TestCIFT(unittest.TestCase, PrettyEqual, CIFTRoutGraphChecker):
     def test_cif_inline_city(self):
         """
         """
-        class TwoTowers(pc.Compo):
+        class TwoTowers(rai.Compo):
             def _make(self):
                 self.subcompos.short = (
-                    pc.RectWH(10, 40).proxy()
+                    rai.RectWH(10, 40).proxy()
                     .map('short')
                     .bbox.bot_left.to((0, 0))
                     )
 
                 self.subcompos.tall = (
-                    pc.RectWH(10, 60).proxy()
+                    rai.RectWH(10, 60).proxy()
                     .map('tall')
                     .snap_right(self.subcompos.short)
                     )
 
-        class CityBlock(pc.Compo):
+        class CityBlock(rai.Compo):
             def _make(self):
                 self.subcompos.one = TwoTowers().proxy()
                 self.subcompos.two = self.subcompos.one.copy().move(30, 0)
                 self.subcompos.three = self.subcompos.two.copy().move(30, 0)
                 self.subcompos.four = self.subcompos.three.copy().move(30, 0)
 
-        class City(pc.Compo):
+        class City(rai.Compo):
             def _make(self):
                 self.subcompos.one = (
                     CityBlock()
@@ -272,7 +272,7 @@ class TestCIFT(unittest.TestCase, PrettyEqual, CIFTRoutGraphChecker):
                 self.subcompos.four = self.subcompos.three.copy().move(0, 100)
 
         compo = City()
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             compo,
             multiplier=1,
             rot_multiplier=1,

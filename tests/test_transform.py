@@ -2,9 +2,9 @@ import unittest
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
-class BareGeometric(pc.Compo):
+class BareGeometric(rai.Compo):
     def _make(self):
         self.geoms.update({
             'root': [
@@ -22,20 +22,20 @@ class BareGeometric(pc.Compo):
                 ]
             })
 
-class BareStructural(pc.Compo):
+class BareStructural(rai.Compo):
     def _make(self):
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometric(),
                 {'root': 'upper'},
-                pc.Transform().scale(2)
+                rai.Transform().scale(2)
                 )
             )
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometric(),
                 {'root': 'lower'},
-                pc.Transform().scale(0.5)
+                rai.Transform().scale(0.5)
                 )
             )
 

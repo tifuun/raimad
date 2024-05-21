@@ -1,10 +1,10 @@
 from typing import Self, Iterator, Any
 from copy import copy
 
-import pycif as pc
+import raimad as rai
 
 class LMap:
-    def __init__(self, shorthand: 'pc.typing.LMapShorthand') -> None:
+    def __init__(self, shorthand: 'rai.typing.LMapShorthand') -> None:
         self.shorthand = shorthand
 
     def __getitem__(self, name: str) -> str:
@@ -53,12 +53,12 @@ class LMap:
         return self
 
 class Proxy:
-    compo: 'pc.typing.Compo'
+    compo: 'rai.typing.Compo'
 
     def __init__(self,
-                 compo: 'pc.typing.Compo',
-                 lmap: 'pc.typing.LMapShorthand' = None,
-                 transform: 'pc.typing.Transform | None' = None,
+                 compo: 'rai.typing.Compo',
+                 lmap: 'rai.typing.LMapShorthand' = None,
+                 transform: 'rai.typing.Transform | None' = None,
                  _cif_link: bool = False,
                  _autogen: bool = False,
                  ):
@@ -67,9 +67,9 @@ class Proxy:
         self._autogen = _autogen
         self.compo = compo
         self.lmap = LMap(lmap)
-        self.transform = transform or pc.Transform()
+        self.transform = transform or rai.Transform()
 
-    def steamroll(self) -> 'pc.typing.Geoms':
+    def steamroll(self) -> 'rai.typing.Geoms':
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
@@ -79,8 +79,8 @@ class Proxy:
             in self.compo.steamroll().items()
             }
 
-    def get_flat_transform(self, maxdepth: int = -1) -> 'pc.typing.Transform':
-        if maxdepth == 0 or isinstance(self.compo, pc.Compo):
+    def get_flat_transform(self, maxdepth: int = -1) -> 'rai.typing.Transform':
+        if maxdepth == 0 or isinstance(self.compo, rai.Compo):
             return self.transform.copy()
 
         #return (
@@ -94,7 +94,7 @@ class Proxy:
             )
 
     def get_flat_lmap(self, maxdepth: int = -1) -> LMap:
-        if maxdepth == 0 or isinstance(self.compo, pc.Compo):
+        if maxdepth == 0 or isinstance(self.compo, rai.Compo):
             return self.lmap.copy()
 
         return self.lmap.copy().compose(
@@ -102,7 +102,7 @@ class Proxy:
             )
 
     @property
-    def geoms(self) -> 'pc.typing.Geoms':
+    def geoms(self) -> 'rai.typing.Geoms':
         return {
             self.lmap[layer]: [
                 self.transform.transform_xyarray(geom)
@@ -113,36 +113,36 @@ class Proxy:
             }
 
     @property
-    def subcompos(self) -> pc.SubcompoContainer:
+    def subcompos(self) -> rai.SubcompoContainer:
         # TODO FrozenSubcompoContainer?
-        return pc.SubcompoContainer({
+        return rai.SubcompoContainer({
             name: self.copy_reassign(subcompo, _autogen=True)
             for name, subcompo in self.compo.subcompos.items()
             })
         return self.compo.subcompos
 
-    def final(self) -> 'pc.typing.RealCompo':
+    def final(self) -> 'rai.typing.RealCompo':
         return self.compo.final()
 
     def depth(self) -> int:
         return self.compo.depth() + 1
 
-    def descend(self) -> 'Iterator[pc.typing.Compo]':
+    def descend(self) -> 'Iterator[rai.typing.Compo]':
         yield self
         yield from self.compo.descend()
 
-    def descend_p(self) -> 'Iterator[pc.typing.Proxy]':
+    def descend_p(self) -> 'Iterator[rai.typing.Proxy]':
         yield self
         yield from self.compo.descend_p()
 
-    def proxy(self) -> 'pc.typing.Proxy':
-        return pc.Proxy(self)
+    def proxy(self) -> 'rai.typing.Proxy':
+        return rai.Proxy(self)
 
-    def walk_hier(self) -> 'Iterator[pc.typing.Proxy]':
+    def walk_hier(self) -> 'Iterator[rai.typing.Proxy]':
         for subcompo in self.compo.walk_hier():
             yield self.copy_reassign(subcompo)
 
-    def copy(self) -> 'pc.typing.Proxy':
+    def copy(self) -> 'rai.typing.Proxy':
         if self.depth() > 1:
             # TODO think about why someone would want to do this
             raise Exception("Copying proxy of depth more than 1")
@@ -169,9 +169,9 @@ class Proxy:
 
     def copy_reassign(
             self,
-            new_subcompo: 'pc.typing.Compo',
+            new_subcompo: 'rai.typing.Compo',
             _autogen: bool = False,
-            ) -> 'pc.typing.Proxy':
+            ) -> 'rai.typing.Proxy':
 
         return type(self)(
             new_subcompo,
@@ -188,7 +188,7 @@ class Proxy:
         #return type(self)(
         #    (
         #        self.compo
-        #        if isinstance(self.compo, pc.Compo)
+        #        if isinstance(self.compo, rai.Compo)
         #        else self.compo.copy()
         #        ),
         #    copy(self.lmap),
@@ -202,7 +202,7 @@ class Proxy:
             ])
         return (
             "<"
-            f"Proxy of {self.final()} at {pc.wingdingify(id(self))} "
+            f"Proxy of {self.final()} at {rai.wingdingify(id(self))} "
             f"stack `{stack}x`"
             ">"
             )
@@ -251,17 +251,17 @@ class Proxy:
     #    # TODO warn on override lmap?
     #    self.lmap = LMap(lmap)
     #    return self
-    #    #return pc.Proxy(
+    #    #return rai.Proxy(
     #    #    self,
     #    #    lmap=lmap
     #    #    )
-    def map(self, lmap_shorthand: 'pc.typing.LMapShorthand') -> Self:
+    def map(self, lmap_shorthand: 'rai.typing.LMapShorthand') -> Self:
         self.lmap = LMap(lmap_shorthand)
         return self
 
     # mark functions #
-    def get_mark(self, name: str) -> pc.BoundPoint:
-        return pc.BoundPoint(
+    def get_mark(self, name: str) -> rai.BoundPoint:
+        return rai.BoundPoint(
             self.transform.transform_point(
                 self.compo.get_mark(name)
                 ),
@@ -269,14 +269,14 @@ class Proxy:
             )
 
     @property
-    def marks(self) -> pc.MarksContainer:
+    def marks(self) -> rai.MarksContainer:
         return self.compo.marks._proxy_copy(self)
 
     # bbox functions #
     # TODO same as compo -- some sort of reuse?
     @property
-    def bbox(self) -> 'pc.typing.BBox':
-        bbox = pc.BBox(proxy=self)
+    def bbox(self) -> 'rai.typing.BBox':
+        bbox = rai.BBox(proxy=self)
         for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)
@@ -304,7 +304,7 @@ class Proxy:
         Make svg representation of component.
         This is called by jupyter and raimark
         """
-        return pc.export_svg(self)
+        return rai.export_svg(self)
 
     #def _export_cif(self, transform=None):
     #    return self.compo._export_cif(

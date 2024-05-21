@@ -7,16 +7,15 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pycif"
+name = "raimad"
 version = "0.1.0"
 description = """\
-Collaborative CAD platform for \
-hierarchical design of on-chip imaging devices\
+RAIMAD Astronomical Instrument MAsk Design
 """
 authors = [
-	{name = "Nikita Soshnin", email = "n.a.soshnin@student.tudelft.nl"}
+	{name = "maybetree", email = "maybetree48@gmail.com"}
 	]
-license = { text = "I haven't decided yet" }
+license = { file = "LICENSE.txt" }
 readme = "README.md"
 classifiers = [
 	'Programming Language :: Python :: 3',
@@ -27,5 +26,5 @@ dependencies = [
 	]
 
 [project.entry-points."flake8.extension"]
-RAI = "pycif.checker.checker:Flake8Checker"
+RAI = "raimad.checker.checker:Flake8Checker"
 

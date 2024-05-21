@@ -5,7 +5,7 @@ This code is ~~stolen from~~ heavily inspired by uvicorn.
 """
 
 import importlib
-import pycif as pc
+import raimad as rai
 
 class StringImportError(ImportError):
     pass
@@ -28,14 +28,14 @@ def string_import(import_str, multiple=False):
         names = []
         compos = []
         for name, attr in module.__dict__.items():
-            if pc.is_compo_class(attr):
+            if rai.is_compo_class(attr):
                 names.append(name)
                 compos.append(attr)
 
         if not compos:
             raise StringImportError(
                 f"Module {module} identified by `{module_str}` "
-                "does not have any pycif components inside of it."
+                "does not have any raimad components inside of it."
                 )
 
         elif multiple:
@@ -62,11 +62,11 @@ def string_import(import_str, multiple=False):
                 f"does not have an object called `{attr_str}`."
                 )
 
-    if not pc.is_compo_class(attr):
+    if not rai.is_compo_class(attr):
         raise StringImportError(
             f"Object `{attr}` of "
             f"module {module} identified by `{module_str}` "
-            "is not a pycif component."
+            "is not a raimad component."
             )
 
     return attr

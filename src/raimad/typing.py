@@ -5,28 +5,28 @@ A collection of type hints
 
 from typing import TypeAlias, Sequence, Any
 import numpy as np
-import pycif as pc
+import raimad as rai
 
-CompoClass: TypeAlias = type[pc.Compo] | pc.Partial
-Compo: TypeAlias = pc.Compo | pc.Proxy
-RealCompo: TypeAlias = pc.Compo
-Proxy: TypeAlias = pc.Proxy
+CompoClass: TypeAlias = type[rai.Compo] | rai.Partial
+Compo: TypeAlias = rai.Compo | rai.Proxy
+RealCompo: TypeAlias = rai.Compo
+Proxy: TypeAlias = rai.Proxy
 Point: TypeAlias = \
         tuple[float, float] | \
         np.typing.NDArray[np.float64] | \
-        pc.BoundPoint
+        rai.BoundPoint
 Poly: TypeAlias = Sequence[Point]
 PolyArray: TypeAlias = np.typing.NDArray[np.float64]
 Polys: TypeAlias = Sequence[Poly]
 Geoms: TypeAlias = dict[str, Polys]
-Transform: TypeAlias = pc.Transform
-BBox: TypeAlias = pc.BBox
+Transform: TypeAlias = rai.Transform
+BBox: TypeAlias = rai.BBox
 Affine: TypeAlias = np.typing.NDArray[np.float64]
 
 LMapShorthand: TypeAlias = None | str | dict[str, str]
 #XYarray: TypeAlias = np.ndarray[Any, Point]
 #Geoms: TypeAlias = dict[str, list[XYarray]]
-LMap: TypeAlias = pc.LMap
+LMap: TypeAlias = rai.LMap
 
 # Well, isn't this lovely?
 Bool: TypeAlias = bool | np.bool_

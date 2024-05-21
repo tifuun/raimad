@@ -1,23 +1,23 @@
 import unittest
 
-import pycif as pc
+import raimad as rai
 
-class Annotated(pc.Compo):
+class Annotated(rai.Compo):
     class Marks:
-        square_corner = pc.Mark('corner of the square')
-        square_center = pc.Mark('center of the square')
+        square_corner = rai.Mark('corner of the square')
+        square_center = rai.Mark('center of the square')
 
     class Layers:
-        al = pc.Layer('Aluminium')
-        insl = pc.Layer('Insulator')
-        gnd = pc.Layer('Ground')
+        al = rai.Layer('Aluminium')
+        insl = rai.Layer('Insulator')
+        gnd = rai.Layer('Ground')
 
     class Options:
-        width = pc.Option.Geometric('width of coupler')
-        freq = pc.Option.Functional('resonant frequency')
-        grav = pc.Option.Environmental('Gravitational constant')
-        skip_beams = pc.Option.Debug('Do not generate beams')
-        print_beams = pc.Option('Print a line for every beam')
+        width = rai.Option.Geometric('width of coupler')
+        freq = rai.Option.Functional('resonant frequency')
+        grav = rai.Option.Environmental('Gravitational constant')
+        skip_beams = rai.Option.Debug('Do not generate beams')
+        print_beams = rai.Option('Print a line for every beam')
 
     def _make(
             width,
@@ -80,13 +80,13 @@ class TestClassIntrospection(unittest.TestCase):
         self.assertTrue(
             Annotated.Options[3].category
             is
-            pc.Option.Debug
+            rai.Option.Debug
             )
 
         self.assertTrue(
             Annotated.Options[4].category
             is
-            pc.Option
+            rai.Option
             )
 
     def test_class_introspection_options_shorthands(self):
@@ -100,7 +100,7 @@ class TestClassIntrospection(unittest.TestCase):
         self.assertEqual(Annotated.Options[4].annot, bool)
         self.assertEqual(Annotated.Options[1].annot, float)
         # No type specified annotated, and no default value
-        self.assertEqual(Annotated.Options[0].annot, pc.Empty)
+        self.assertEqual(Annotated.Options[0].annot, rai.Empty)
 
 
 if __name__ == '__main__':

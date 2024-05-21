@@ -1,5 +1,5 @@
 
-def export_svg(compo: 'pc.typing.Compo') -> str:
+def export_svg(compo: 'rai.typing.Compo') -> str:
     return ''.join(yield_svg(compo))
 
 def yield_svg(compo):

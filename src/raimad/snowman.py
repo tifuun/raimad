@@ -1,6 +1,6 @@
-import pycif as pc
+import raimad as rai
 
-class Snowman(pc.Compo):
+class Snowman(rai.Compo):
     """
     Snowman
 
@@ -9,20 +9,20 @@ class Snowman(pc.Compo):
     browser_tags = ["builtin", "example"]
 
     class Marks:
-        nose = pc.Mark("Tip of the snowman's nose")
+        nose = rai.Mark("Tip of the snowman's nose")
 
     class Options:
-        nose_length = pc.Option.Geometric("Length of nose")
-        eye_size = pc.Option.Geometric("Eye radius")
+        nose_length = rai.Option.Geometric("Length of nose")
+        eye_size = rai.Option.Geometric("Eye radius")
 
     class Layers:
-        pebble = pc.Layer(
+        pebble = rai.Layer(
             "Non-malleable polycrystalline silicon layer"
             )
-        carrot = pc.Layer(
+        carrot = rai.Layer(
             "Bio-lithographic layer characterised by lambda = approx. 6E-7nm"
             )
-        snow = pc.Layer(
+        snow = rai.Layer(
             "A collection of individual crystals of frozen dihydrogen monoxide"
             )
 
@@ -32,14 +32,14 @@ class Snowman(pc.Compo):
             eye_size: float = 2,
             ):
 
-        base = pc.Circle(50).proxy().map('snow')
-        torso = pc.Circle(40).proxy().map('snow')
-        head = pc.Circle(20).proxy().map('snow')
+        base = rai.Circle(50).proxy().map('snow')
+        torso = rai.Circle(40).proxy().map('snow')
+        head = rai.Circle(20).proxy().map('snow')
 
         torso.snap_above(base)
         head.snap_above(torso)
 
-        eye_l = pc.Circle(eye_size).proxy().map('pebble')
+        eye_l = rai.Circle(eye_size).proxy().map('pebble')
 
         eye_l.marks.center.to(
             head.bbox.interpolate(0.3, 0.7)
@@ -51,7 +51,7 @@ class Snowman(pc.Compo):
         # also, for hflip/vflip, is passed point,
         # automatically pick coordinate.
 
-        nose = pc.CustomPoly([
+        nose = rai.CustomPoly([
             (0, 2),
             ('tip', (nose_length, 0)),
             (0, -2)

@@ -1,25 +1,25 @@
 import unittest
 
-import pycif as pc
+import raimad as rai
 
 from .utils import ArrayAlmostEqual
 
-class Compo_direct(pc.Compo):
+class Compo_direct(rai.Compo):
     def _make(self):
-        self.subcompos.beam = pc.RectWH(2, 20)
-        self.subcompos.coup_top = pc.RectWH(10, 2)
-        self.subcompos.coup_bot = pc.RectWH(8, 2)
+        self.subcompos.beam = rai.RectWH(2, 20)
+        self.subcompos.coup_top = rai.RectWH(10, 2)
+        self.subcompos.coup_bot = rai.RectWH(8, 2)
 
         self.subcompos.beam.bbox.mid.to((0, 0))
 
         self.subcompos.coup_top.snap_above(self.subcompos.beam)
         self.subcompos.coup_bot.snap_below(self.subcompos.beam)
 
-class Compo_auto(pc.Compo):
+class Compo_auto(rai.Compo):
     def _make(self):
-        beam = pc.RectWH(2, 20).proxy().map('root')
-        coup_top = pc.RectWH(10, 2).proxy().map('root')
-        coup_bot = pc.RectWH(8, 2).proxy().map('root')
+        beam = rai.RectWH(2, 20).proxy().map('root')
+        coup_top = rai.RectWH(10, 2).proxy().map('root')
+        coup_bot = rai.RectWH(8, 2).proxy().map('root')
 
         beam.bbox.mid.to((0, 0))
 
@@ -28,11 +28,11 @@ class Compo_auto(pc.Compo):
 
         self.auto_subcompos()
 
-#class Compo_shorthand(pc.Compo):
+#class Compo_shorthand(rai.Compo):
 #    def _make(self):
-#        beam = self.subcompo(pc.RectWH(2, 20), 'beam')
-#        coup_top = self.subcompo(pc.RectWH(10, 2), 'coup_top')
-#        coup_bot = self.subcompo(pc.RectWH(8, 2), 'coup_bot')
+#        beam = self.subcompo(rai.RectWH(2, 20), 'beam')
+#        coup_top = self.subcompo(rai.RectWH(10, 2), 'coup_top')
+#        coup_bot = self.subcompo(rai.RectWH(8, 2), 'coup_bot')
 #
 #        beam.bbox.mid.to((0, 0))
 #

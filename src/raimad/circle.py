@@ -1,7 +1,7 @@
 import numpy as np
-import pycif as pc
+import raimad as rai
 
-class Circle(pc.Compo):
+class Circle(rai.Compo):
     """
     Circle
 
@@ -11,15 +11,15 @@ class Circle(pc.Compo):
     browser_tags = ["builtin", "polygon"]
 
     class Options:
-        radius = pc.Option('Circle radius', browser_default=15)
-        num_points = pc.Option('Number of points')
+        radius = rai.Option('Circle radius', browser_default=15)
+        num_points = rai.Option('Number of points')
 
     def _make(self, radius: float, num_points: int = 200):
 
         self.geoms.update({
             'root': [
                 np.array([
-                    pc.polar(angle, radius)
+                    rai.polar(angle, radius)
                     for angle
                     in np.linspace(0, 2 * np.pi, num_points)
                     ])

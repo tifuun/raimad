@@ -1,11 +1,11 @@
 import unittest
 
-import pycif as pc
+import raimad as rai
 
 class TestSnowman(unittest.TestCase):
 
     def test_snowman(self):
-        compo = pc.Snowman(nose_length=20, eye_size=2.5)
+        compo = rai.Snowman(nose_length=20, eye_size=2.5)
         geom = compo.steamroll()
 
         # Test layers
@@ -18,7 +18,7 @@ class TestSnowman(unittest.TestCase):
         self.assertTrue('nose' in compo.marks.keys())
 
         import pathlib
-        pathlib.Path('/tmp/tmp.cif').write_text(pc.export_cif(compo))
+        pathlib.Path('/tmp/tmp.cif').write_text(rai.export_cif(compo))
 
 
 if __name__ == '__main__':

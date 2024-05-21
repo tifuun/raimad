@@ -1,10 +1,10 @@
-import pycif as pc
+import raimad as rai
 
 class CustomPolyException(Exception):
     pass
 
 # TODO tests
-class CustomPoly(pc.Compo):
+class CustomPoly(rai.Compo):
     """
     Custom Polygon
 
@@ -14,7 +14,7 @@ class CustomPoly(pc.Compo):
     browser_tags = ["builtin", "polygon"]
 
     class Options:
-        points = pc.Option(
+        points = rai.Option(
             "A list of points for the polygon",
             browser_default=[
                 [0, 0],

@@ -1,6 +1,6 @@
-import pycif as pc
+import raimad as rai
 
-class RectWire(pc.Compo):
+class RectWire(rai.Compo):
     """
     RectWire
 
@@ -9,14 +9,14 @@ class RectWire(pc.Compo):
     browser_tags = ["builtin", "polygon"]
 
     class Options:
-        p1 = pc.Option('First point', browser_default=(0, 0))
-        p2 = pc.Option('Second point', browser_default=(10, 10))
-        thickness = pc.Option('Thickness', browser_default=2)
+        p1 = rai.Option('First point', browser_default=(0, 0))
+        p2 = rai.Option('Second point', browser_default=(10, 10))
+        thickness = rai.Option('Thickness', browser_default=2)
 
     def _make(self, p1, p2, thickness):
-        bearing = pc.angle_between(p1, p2)
-        step = pc.polar(
-            arg=bearing + pc.quartercircle,
+        bearing = rai.angle_between(p1, p2)
+        step = rai.polar(
+            arg=bearing + rai.quartercircle,
             mod=thickness / 2)
 
         self.geoms.update({

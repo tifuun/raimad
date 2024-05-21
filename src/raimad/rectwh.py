@@ -1,6 +1,6 @@
-import pycif as pc
+import raimad as rai
 
-class RectWH(pc.Compo):
+class RectWH(rai.Compo):
     """
     RectWH
 
@@ -9,8 +9,8 @@ class RectWH(pc.Compo):
     browser_tags = ["builtin", "polygon"]
 
     class Options:
-        width = pc.Option('Width of rectangle', browser_default=15)
-        height = pc.Option('Height of rectangle', browser_default=10)
+        width = rai.Option('Width of rectangle', browser_default=15)
+        height = rai.Option('Height of rectangle', browser_default=10)
 
     def _make(self, width: int, height: int):
         self.width = width
@@ -28,11 +28,11 @@ class RectWH(pc.Compo):
             })
 
     #def _export_cif(self, transform=None):
-    #    transform = transform or pc.Transform()
+    #    transform = transform or rai.Transform()
     #    import numpy as np
-    #    move_x, move_y = pc.transform.get_translation(transform._affine)
-    #    scale_x, scale_y, shear = pc.transform.get_scale_shear(transform._affine)
-    #    rotation = pc.transform.get_rotation(transform._affine)
+    #    move_x, move_y = rai.transform.get_translation(transform._affine)
+    #    scale_x, scale_y, shear = rai.transform.get_scale_shear(transform._affine)
+    #    rotation = rai.transform.get_rotation(transform._affine)
 
     #    does_translate = np.linalg.norm((move_x, move_y)) > 0.001  # TODO epsilon
     #    does_rotate = rotation > 0.01
@@ -95,8 +95,8 @@ class RectWH(pc.Compo):
     #    if transform.does_rotate():
     #        # TODO call cif exporter
     #        rot = transform.get_rotation()
-    #        rotvec_x = int(pc.cos(rot) * cif_exporter.multiplier)
-    #        rotvec_y = int(pc.sin(rot) * cif_exporter.multiplier)
+    #        rotvec_x = int(rai.cos(rot) * cif_exporter.multiplier)
+    #        rotvec_y = int(rai.sin(rot) * cif_exporter.multiplier)
 
     #        cifstring.append(
     #            f"{rotvec_x} {rotvec_y} "
@@ -125,8 +125,8 @@ class RectWH(pc.Compo):
         if transform.does_rotate():
             # TODO call cif exporter
             rot = transform.get_rotation()
-            rotvec_x = int(pc.cos(rot) * exporter.multiplier)
-            rotvec_y = int(pc.sin(rot) * exporter.multiplier)
+            rotvec_x = int(rai.cos(rot) * exporter.multiplier)
+            rotvec_y = int(rai.sin(rot) * exporter.multiplier)
 
             cifstring.append(
                 f"{rotvec_x} {rotvec_y} "

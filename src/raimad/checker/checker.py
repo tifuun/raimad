@@ -1,7 +1,7 @@
 import ast
 import inspect
 
-import pycif as pc
+import raimad as rai
 
 def write_parents(tree):
     """
@@ -106,7 +106,7 @@ def _check_compo(compo, tree):
         mark_name = assign.attr
 
         if mark_name not in [mark.name for mark in compo.Marks.values()]:
-            yield pc.RAI442(assign, mark=mark_name)
+            yield rai.RAI442(assign, mark=mark_name)
 
         if mark_name not in redundancy.keys():
             redundancy[mark_name] = []
@@ -118,7 +118,7 @@ def _check_compo(compo, tree):
     #for mark_name, nodes in redundancy.items():
     #    if len(nodes) > 1:
     #        for node in nodes:
-    #            yield pc.RAI412(node, mark=mark_name, lines=[
+    #            yield rai.RAI412(node, mark=mark_name, lines=[
     #                node.lineno for node in nodes
     #                ])
 
@@ -144,7 +144,7 @@ def check_module(tree):
             continue
         if not isinstance(compo, type):
             continue
-        if not issubclass(compo, pc.Compo):
+        if not issubclass(compo, rai.Compo):
             continue
         yield from _check_compo(compo, compo_node)
 

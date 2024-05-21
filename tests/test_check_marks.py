@@ -1,30 +1,30 @@
 import unittest
 
-import pycif as pc
+import raimad as rai
 
-class Unannotated(pc.Compo):
+class Unannotated(rai.Compo):
     class Marks:
-        square_corner = pc.Mark('corner of the square')
+        square_corner = rai.Mark('corner of the square')
 
     def _make(self):
         self.marks.triangle_corner = (20, 40)
         self.marks.square_center = (5, 5)
         self.marks.square_corner = (10, 10)
 
-class Annotated(pc.Compo):
+class Annotated(rai.Compo):
     class Marks:
-        square_corner = pc.Mark('corner of the square')
-        square_center = pc.Mark('corner of the square')
-        triangle_corner = pc.Mark('corner of the square')
+        square_corner = rai.Mark('corner of the square')
+        square_center = rai.Mark('corner of the square')
+        triangle_corner = rai.Mark('corner of the square')
 
     def _make(self):
         self.marks.triangle_corner = (20, 40)
         self.marks.square_center = (5, 5)
         self.marks.square_corner = (10, 10)
 
-class Reassign(pc.Compo):
+class Reassign(rai.Compo):
     class Marks:
-        square_corner = pc.Mark('corner of the square')
+        square_corner = rai.Mark('corner of the square')
 
     def _make(self):
         self.marks.square_corner = (5, 5)
@@ -54,22 +54,22 @@ def same_viols(actual, expected):
 class TestCheckMarkNames(unittest.TestCase):
 
     def test_lint_annotated(self):
-        viols = list(pc.check_compo(Annotated))
+        viols = list(rai.check_compo(Annotated))
         self.assertEqual(len(viols), 0)
 
     def test_lint_unannotated(self):
-        viols = list(pc.check_compo(Unannotated))
+        viols = list(rai.check_compo(Unannotated))
         self.assertTrue(same_viols(viols, [
-            (6, pc.RAI442),
-            (7, pc.RAI442),
+            (6, rai.RAI442),
+            (7, rai.RAI442),
             ]))
 
 #    def test_lint_reassign(self):
-#        viols = list(pc.check_compo(Reassign))
+#        viols = list(rai.check_compo(Reassign))
 #        self.assertTrue(same_viols(viols, [
-#            (6, pc.RAI412),
-#            (7, pc.RAI442),
-#            (9, pc.RAI412),
+#            (6, rai.RAI412),
+#            (7, rai.RAI442),
+#            (9, rai.RAI412),
 #            ]))
 
 

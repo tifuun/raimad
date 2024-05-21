@@ -1,5 +1,5 @@
 import numpy as np
-import pycif as pc
+import raimad as rai
 
 class AnSecError(Exception):
     pass
@@ -28,7 +28,7 @@ class AnSecThetaNotEnoughArgumentsError(AnSecThetaError):
 class AnSecThetaIncorrectArgumentsError(AnSecThetaError):
     pass
 
-class AnSec(pc.Compo):
+class AnSec(rai.Compo):
     """
     Annular Sector
 
@@ -40,10 +40,10 @@ class AnSec(pc.Compo):
     browser_tags = ["builtin", "polygon"]
 
     class Options:
-        r1 = pc.Option("Inner radius", browser_default=18)
-        r2 = pc.Option("Outter radius", browser_default=20)
-        theta1 = pc.Option("Angle 1", browser_default=np.deg2rad(45))
-        theta2 = pc.Option("Angle 2", browser_default=np.deg2rad(90))
+        r1 = rai.Option("Inner radius", browser_default=18)
+        r2 = rai.Option("Outter radius", browser_default=20)
+        theta1 = rai.Option("Angle 1", browser_default=np.deg2rad(45))
+        theta2 = rai.Option("Angle 2", browser_default=np.deg2rad(90))
 
     def _make(
             self,
@@ -70,12 +70,12 @@ class AnSec(pc.Compo):
             self.geoms.update({'root': [[]]})
             return
 
-        angspace = pc.angspace(theta1, theta2, orientation=orientation)
+        angspace = rai.angspace(theta1, theta2, orientation=orientation)
 
         self.geoms.update({
             'root': [
                 np.array([
-                    pc.polar(arg=angle, mod=radius)
+                    rai.polar(arg=angle, mod=radius)
                     for radius, angles in [
                         [r1, angspace],
                         [r2, reversed(angspace)],

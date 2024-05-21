@@ -4,7 +4,7 @@ import functools
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 fullcircle = np.deg2rad(360)
 halfcircle = np.deg2rad(180)
@@ -58,8 +58,8 @@ def polar(arg, mod=1):
 def is_compo_class(obj):
     return (
         isinstance(obj, type)
-        and issubclass(obj, pc.Compo)
-        and obj is not pc.Compo
+        and issubclass(obj, rai.Compo)
+        and obj is not rai.Compo
         )
 
 def _custom_base(value: int, glyphs: list[str]):

@@ -2,13 +2,13 @@ import unittest
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 
 class TestPolys(unittest.TestCase):
 
     def test_rectwh(self):
-        rect = pc.RectWH(10, 20)
+        rect = rai.RectWH(10, 20)
         self.assertIsNone(np.testing.assert_array_almost_equal(
             rect.geoms['root'][0],
             [
@@ -19,7 +19,7 @@ class TestPolys(unittest.TestCase):
             ]))
 
     def test_circle(self):
-        circle = pc.Circle(69)
+        circle = rai.Circle(69)
         points = circle.geoms['root'][0]
         self.assertGreaterEqual(len(points), 10)
         for point in points:
@@ -29,7 +29,7 @@ class TestPolys(unittest.TestCase):
                 )
 
     def test_rectwire(self):
-        rectwire = pc.RectWire((0, 0), (0, 20), 10)
+        rectwire = rai.RectWire((0, 0), (0, 20), 10)
         self.assertIsNone(np.testing.assert_array_almost_equal(
             rectwire.geoms['root'][0],
             [
@@ -41,119 +41,119 @@ class TestPolys(unittest.TestCase):
 
     def test_ansec(self):
         same = [
-            pc.AnSec(
+            rai.AnSec(
                 r1=10,
                 r2=20,
-                theta1=pc.eigthcircle,
-                theta2=-pc.eigthcircle,
-                orientation=pc.Orientation.NEG
+                theta1=rai.eigthcircle,
+                theta2=-rai.eigthcircle,
+                orientation=rai.Orientation.NEG
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 r1=10,
                 r2=20,
-                theta1=-pc.eigthcircle,
-                theta2=pc.eigthcircle,
-                orientation=pc.Orientation.POS
+                theta1=-rai.eigthcircle,
+                theta2=rai.eigthcircle,
+                orientation=rai.Orientation.POS
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 r1=10,
                 dr=10,
-                theta1=-pc.eigthcircle,
-                theta2=pc.eigthcircle,
-                orientation=pc.Orientation.POS
+                theta1=-rai.eigthcircle,
+                theta2=rai.eigthcircle,
+                orientation=rai.Orientation.POS
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 r2=20,
                 dr=10,
-                theta1=-pc.eigthcircle,
-                theta2=pc.eigthcircle,
-                orientation=pc.Orientation.POS
+                theta1=-rai.eigthcircle,
+                theta2=rai.eigthcircle,
+                orientation=rai.Orientation.POS
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 r2=20,
                 dr=10,
-                theta1=-pc.eigthcircle,
-                dtheta=pc.quartercircle,
-                orientation=pc.Orientation.POS
+                theta1=-rai.eigthcircle,
+                dtheta=rai.quartercircle,
+                orientation=rai.Orientation.POS
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 r2=20,
                 dr=10,
-                theta2=pc.eigthcircle,
-                dtheta=pc.quartercircle,
-                orientation=pc.Orientation.POS
+                theta2=rai.eigthcircle,
+                dtheta=rai.quartercircle,
+                orientation=rai.Orientation.POS
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 rmid=15,
                 dr=10,
-                theta2=-pc.eigthcircle,
-                dtheta=-pc.quartercircle,
-                orientation=pc.Orientation.NEG
+                theta2=-rai.eigthcircle,
+                dtheta=-rai.quartercircle,
+                orientation=rai.Orientation.NEG
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 rmid=15,
                 dr=10,
                 thetamid=0,
-                dtheta=pc.quartercircle,
-                orientation=pc.Orientation.POS
+                dtheta=rai.quartercircle,
+                orientation=rai.Orientation.POS
                 ),
-            pc.AnSec(
+            rai.AnSec(
                 rmid=15,
                 dr=-10,
                 thetamid=0,
-                dtheta=-pc.quartercircle,
-                orientation=pc.Orientation.NEG
+                dtheta=-rai.quartercircle,
+                orientation=rai.Orientation.NEG
                 ),
             ]
 
-        #class Foobar(pc.Compo):
+        #class Foobar(rai.Compo):
         #    def _make(self):
         #        for i, c in enumerate(same):
         #            self.subcompos.append(
         #                c.movex(i * 40)
         #                )
         #c = Foobar()
-        #with open('/tmp/foo.cif', 'w') as f: f.write(pc.export_cif(c))
+        #with open('/tmp/foo.cif', 'w') as f: f.write(rai.export_cif(c))
 
         geoms = [np.sort(ansec.geoms['root'][0], axis=0) for ansec in same]
 
         self.assertTrue(np.allclose(geoms[0], geoms))
 
         # invalid
-        with self.assertRaises(pc.err.AnSecError):
-            pc.AnSec(
+        with self.assertRaises(rai.err.AnSecError):
+            rai.AnSec(
                 r2=20,
                 r1=10,
                 dr=-10,
-                theta1=-pc.eigthcircle,
-                theta2=pc.eigthcircle,
-                orientation=pc.Orientation.POS
+                theta1=-rai.eigthcircle,
+                theta2=rai.eigthcircle,
+                orientation=rai.Orientation.POS
                 )
 
-        with self.assertRaises(pc.err.AnSecError):
-            pc.AnSec(
+        with self.assertRaises(rai.err.AnSecError):
+            rai.AnSec(
                 r2=20,
                 dr=10,
-                theta2=pc.eigthcircle,
+                theta2=rai.eigthcircle,
                 theta1=0,
-                dtheta=-pc.quartercircle,
-                orientation=pc.Orientation.NEG
+                dtheta=-rai.quartercircle,
+                orientation=rai.Orientation.NEG
                 )
 
-        with self.assertRaises(pc.err.AnSecError):
-            pc.AnSec(
+        with self.assertRaises(rai.err.AnSecError):
+            rai.AnSec(
                 rmid=15,
-                theta2=pc.eigthcircle,
-                dtheta=pc.quartercircle,
-                orientation=pc.Orientation.NEG
+                theta2=rai.eigthcircle,
+                dtheta=rai.quartercircle,
+                orientation=rai.Orientation.NEG
                 ),
 
-        with self.assertRaises(pc.err.AnSecError):
-            pc.AnSec(
+        with self.assertRaises(rai.err.AnSecError):
+            rai.AnSec(
                 rmid=15,
                 dr=5,
-                dtheta=pc.semicircle,
-                orientation=pc.Orientation.NEG
+                dtheta=rai.semicircle,
+                orientation=rai.Orientation.NEG
                 ),
 
 

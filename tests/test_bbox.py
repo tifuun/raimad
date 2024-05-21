@@ -2,24 +2,24 @@ import unittest
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 from .utils import ArrayAlmostEqual
 
-class TwoCircles(pc.Compo):
+class TwoCircles(rai.Compo):
     """
     TwoCircles
     Two circles of radius 5 side-by-side on the x axis
     """
     def _make(self):
         self.subcompos.append(
-            pc.Circle(5).proxy().movex(-5)
+            rai.Circle(5).proxy().movex(-5)
             )
         self.subcompos.append(
-            pc.Circle(5).proxy().movex(5)
+            rai.Circle(5).proxy().movex(5)
             )
 
-class RotatedCircles(pc.Compo):
+class RotatedCircles(rai.Compo):
     """
     RotatedCircles
     Two circles of radius 5 side-by-side on the y axis
@@ -32,7 +32,7 @@ class RotatedCircles(pc.Compo):
 class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
 
     def test_bbox_basic(self):
-        circle = pc.Circle(5)
+        circle = rai.Circle(5)
 
         self.assertArrayAlmostEqual(
             circle.bbox,
@@ -237,20 +237,20 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
             )
 
     def test_bbox_manual(self):
-        bbox = pc.BBox()
+        bbox = rai.BBox()
 
         self.assertTrue(bbox.is_empty())
 
-        with self.assertRaises(pc.err.EmptyBBoxError):
+        with self.assertRaises(rai.err.EmptyBBoxError):
             bbox.assert_nonempty()
 
-        with self.assertRaises(pc.err.EmptyBBoxError):
+        with self.assertRaises(rai.err.EmptyBBoxError):
             bbox.top
 
-        with self.assertRaises(pc.err.EmptyBBoxError):
+        with self.assertRaises(rai.err.EmptyBBoxError):
             bbox.top_mid
 
-        with self.assertRaises(pc.err.EmptyBBoxError):
+        with self.assertRaises(rai.err.EmptyBBoxError):
             bbox.pad(1, 1)
 
         bbox.add_point((1, 1))
@@ -276,9 +276,9 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
             )
 
     def test_bbox_snapping(self):
-        c1 = pc.Proxy(pc.Circle(10))
-        c2 = pc.Proxy(pc.Circle(5))
-        c3 = pc.Proxy(pc.Circle(2))
+        c1 = rai.Proxy(pc.Circle(10))
+        c2 = rai.Proxy(pc.Circle(5))
+        c3 = rai.Proxy(pc.Circle(2))
 
         c1.bbox.mid.to((0, 0))
         c2.snap_left(c1)

@@ -4,7 +4,7 @@ Test for lmap
 
 import unittest
 
-import pycif as pc
+import raimad as rai
 
 class TestLMap(unittest.TestCase):
 
@@ -14,8 +14,8 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_none_x_none(self):
         """
         """
-        below = pc.LMap(None)
-        above = pc.LMap(None)
+        below = rai.LMap(None)
+        above = rai.LMap(None)
         below.compose(above)
 
         self.assertEqual(below.shorthand, None)
@@ -25,8 +25,8 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_none_x_str(self):
         """
         """
-        below = pc.LMap(None)
-        above = pc.LMap('theonelayer')
+        below = rai.LMap(None)
+        above = rai.LMap('theonelayer')
         below.compose(above)
 
         self.assertEqual(below.shorthand, 'theonelayer')
@@ -36,8 +36,8 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_none_x_dict(self):
         """
         """
-        below = pc.LMap(None)
-        above = pc.LMap({
+        below = rai.LMap(None)
+        above = rai.LMap({
             'ayy': 'lmao',
             'foo': 'bar',
             })
@@ -53,8 +53,8 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_str_x_none(self):
         """
         """
-        below = pc.LMap('theonelayer')
-        above = pc.LMap(None)
+        below = rai.LMap('theonelayer')
+        above = rai.LMap(None)
         below.compose(above)
 
         self.assertEqual(below.shorthand, 'theonelayer')
@@ -64,8 +64,8 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_str_x_str(self):
         """
         """
-        below = pc.LMap('first')
-        above = pc.LMap('theonelayer')
+        below = rai.LMap('first')
+        above = rai.LMap('theonelayer')
         below.compose(above)
 
         self.assertEqual(below.shorthand, 'theonelayer')
@@ -75,8 +75,8 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_str_x_dict(self):
         """
         """
-        below = pc.LMap('theone')
-        above = pc.LMap({
+        below = rai.LMap('theone')
+        above = rai.LMap({
             'theone': 'theother',
             'notpresent': 'cantgethere',
             })
@@ -89,11 +89,11 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_dict_x_none(self):
         """
         """
-        below = pc.LMap({
+        below = rai.LMap({
             'ayy': 'lmao',
             'foo': 'bar',
             })
-        above = pc.LMap(None)
+        above = rai.LMap(None)
         below.compose(above)
 
         self.assertEqual(below['ayy'], 'lmao')
@@ -106,11 +106,11 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_dict_x_str(self):
         """
         """
-        below = pc.LMap({
+        below = rai.LMap({
             'ayy': 'lmao',
             'foo': 'bar',
             })
-        above = pc.LMap('theone')
+        above = rai.LMap('theone')
         below.compose(above)
 
         self.assertEqual(below['ayy'], 'theone')
@@ -124,13 +124,13 @@ class TestLMap(unittest.TestCase):
     def test_lmap_compose_dict_x_dict(self):
         """
         """
-        below = pc.LMap({
+        below = rai.LMap({
             'ayy': 'lmao',
             'foo': 'bar',
             'syn': 'ack',
             'yin': 'yang',
             })
-        above = pc.LMap({
+        above = rai.LMap({
             'bar': 'baz',
             'ack': 'nack',
             })

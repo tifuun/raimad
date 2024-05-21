@@ -1,8 +1,8 @@
 from typing import Self, ClassVar
-import pycif as pc
+import raimad as rai
 
 class Option:
-    def __init__(self, desc: str, browser_default=pc.Empty):
+    def __init__(self, desc: str, browser_default=rai.Empty):
         self.desc = desc
         self.category = type(self)
         self.name = 'this should be set in compo.__init_subclass_'

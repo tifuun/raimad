@@ -2,11 +2,11 @@ import unittest
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 from .utils import ArrayAlmostEqual
 
-class BareGeometric(pc.Compo):
+class BareGeometric(rai.Compo):
     def _make(self):
         self.geoms.update({
             'root': [
@@ -25,13 +25,13 @@ class BareGeometric(pc.Compo):
             })
         self.set_mark('triangle_corner', (20, 40))
 
-class Intermid(pc.Compo):
+class Intermid(rai.Compo):
     def _make(self):
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometric(),
                 {'root': 'intermediary'},
-                pc.Transform().movex(-3)
+                rai.Transform().movex(-3)
                 )
             )
         self.set_mark(
@@ -39,27 +39,27 @@ class Intermid(pc.Compo):
             self.subcompos[0].get_mark('triangle_corner')
             )
 
-class BareStructural(pc.Compo):
+class BareStructural(rai.Compo):
     def _make(self):
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometric(),
                 {'root': 'upper'},
-                pc.Transform().scale(2)
+                rai.Transform().scale(2)
                 )
             )
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometric(),
                 {'root': 'lower'},
-                pc.Transform().scale(0.5)
+                rai.Transform().scale(0.5)
                 )
             )
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 Intermid(),
                 {'intermediary': 'lower'},
-                pc.Transform().movey(-3)
+                rai.Transform().movey(-3)
                 )
             )
 
@@ -68,7 +68,7 @@ class BareStructural(pc.Compo):
             self.subcompos[2].get_mark('propagated')
             )
 
-class BareGeometricSyntax(pc.Compo):
+class BareGeometricSyntax(rai.Compo):
     def _make(self):
         self.geoms.update({
             'root': [
@@ -87,13 +87,13 @@ class BareGeometricSyntax(pc.Compo):
             })
         self.marks.triangle_corner = (20, 40)
 
-class IntermidSyntax(pc.Compo):
+class IntermidSyntax(rai.Compo):
     def _make(self):
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometricSyntax(),
                 {'root': 'intermediary'},
-                pc.Transform().movex(-3)
+                rai.Transform().movex(-3)
                 )
             )
         self.set_mark(
@@ -101,27 +101,27 @@ class IntermidSyntax(pc.Compo):
             self.subcompos[0].marks.triangle_corner
             )
 
-class BareStructuralSyntax(pc.Compo):
+class BareStructuralSyntax(rai.Compo):
     def _make(self):
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometricSyntax(),
                 {'root': 'upper'},
-                pc.Transform().scale(2)
+                rai.Transform().scale(2)
                 )
             )
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 BareGeometricSyntax(),
                 {'root': 'lower'},
-                pc.Transform().scale(0.5)
+                rai.Transform().scale(0.5)
                 )
             )
         self.subcompos.append(
-            pc.Proxy(
+            rai.Proxy(
                 IntermidSyntax(),
                 {'intermediary': 'lower'},
-                pc.Transform().movey(-3)
+                rai.Transform().movey(-3)
                 )
             )
 

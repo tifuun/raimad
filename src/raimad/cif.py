@@ -5,7 +5,7 @@ from collections import namedtuple
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 class CIFExportError(Exception):
     """
@@ -52,7 +52,7 @@ class CIFCommand():
             cls,
             caller: int,
             exporter: 'CIFExporter',
-            points: pc.typing.Poly
+            points: rai.typing.Poly
             ) -> Self:
 
         return cls(caller, ''.join((
@@ -149,7 +149,7 @@ class DelayedCall():
     """
     caller: int
     index: int
-    proxy: pc.Proxy
+    proxy: rai.Proxy
 
 
 Edge = namedtuple('Edge', ("caller", "callee"))
@@ -220,7 +220,7 @@ class CIFExporter:
     multiplier: float = 1e3
     rot_multiplier: float = 1e3
 
-    compo: pc.typing.Compo
+    compo: rai.typing.Compo
     rout_num: int
     cif_native: bool
     flatten_proxies: bool
@@ -233,13 +233,13 @@ class CIFExporter:
     cif_string: str
     _delayed_call_queue: list[DelayedCall]
 
-    compo2rout: dict[pc.typing.Compo, int]
+    compo2rout: dict[rai.typing.Compo, int]
 
-    steamrolled: list[pc.typing.Compo]
+    steamrolled: list[rai.typing.Compo]
 
     def __init__(
             self,
-            compo: pc.typing.Compo,
+            compo: rai.typing.Compo,
             multiplier: float = 1e3,
             rot_multiplier: float = 1e3,
             cif_native: bool = True,
@@ -403,12 +403,12 @@ class CIFExporter:
 
         return CIFCommand.routine_call(call.caller, self, target_rout)
 
-    def _realize_compo(self, compo: pc.typing.Compo) -> int:
+    def _realize_compo(self, compo: rai.typing.Compo) -> int:
 
-        if isinstance(compo, pc.Compo):
+        if isinstance(compo, rai.Compo):
             new_rout_num = self._realize_real_compo(compo)
 
-        elif isinstance(compo, pc.Proxy):
+        elif isinstance(compo, rai.Proxy):
             new_rout_num = self._realize_proxy(compo)
 
         else:
@@ -419,7 +419,7 @@ class CIFExporter:
         self.compo2rout[compo] = new_rout_num
         return new_rout_num
 
-    def _realize_real_compo(self, compo: pc.typing.RealCompo) -> int:
+    def _realize_real_compo(self, compo: rai.typing.RealCompo) -> int:
         with SubroutineContext(self) as this_rout:
             for name, subcompo in compo.subcompos.items():
                 # TODO store name
@@ -435,7 +435,7 @@ class CIFExporter:
 
         return this_rout.rout_num
 
-    def _realize_proxy(self, proxy: pc.typing.Proxy) -> int:
+    def _realize_proxy(self, proxy: rai.typing.Proxy) -> int:
         with SubroutineContext(self) as this_rout:
             target_rout = self.compo2rout.get(proxy.compo)
             if target_rout is None:
@@ -444,7 +444,7 @@ class CIFExporter:
         return this_rout.rout_num
         #return CIFCommand.routine_call(this_rout.rout_num, self, target_rout)
 
-    def _steamroll(self, caller: int, compo: pc.typing.Compo) -> int:
+    def _steamroll(self, caller: int, compo: rai.typing.Compo) -> int:
         """
         Export a compo into a CIF file with no subroutines.
         """
@@ -458,7 +458,7 @@ class CIFExporter:
             self._make_geoms(this_rout.rout_num, compo.steamroll())
         return this_rout.rout_num
 
-    def _make_geoms(self, caller: int, geoms: pc.typing.Geoms) -> None:
+    def _make_geoms(self, caller: int, geoms: rai.typing.Geoms) -> None:
         """
         return the direct geometries of a compo as CIF polygons,
         with the appropriate layer switches.
@@ -484,10 +484,10 @@ class CIFExporter:
         self.cif_commands.append(CIFCommand.routine_call(-1, self, 1))
         self.cif_commands.append(CIFCommand.end())
 
-    @pc.join_generator('')
+    @rai.join_generator('')
     def compile_transform(
             self,
-            transform: pc.typing.Transform,
+            transform: rai.typing.Transform,
             ) -> Generator[str, None, None]:
 
         if transform.does_scale():
@@ -535,7 +535,7 @@ class CIFExporter:
         yield ' '
 
 def export_cif(
-        compo: pc.typing.Compo,
+        compo: rai.typing.Compo,
         multiplier: float = 1e3,
         rot_multiplier: float = 1e3,
         cif_native: bool = True,

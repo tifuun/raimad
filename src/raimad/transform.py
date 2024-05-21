@@ -2,14 +2,14 @@ from copy import deepcopy
 from typing import Self
 
 import numpy as np
-import pycif as pc
+import raimad as rai
 
 class Transform:
     """
     Transformation: container for affine matrix
     """
 
-    _affine: 'pc.typing.Affine'
+    _affine: 'rai.typing.Affine'
 
     def __init__(self) -> None:
         self.reset()
@@ -19,18 +19,18 @@ class Transform:
 
     def transform_xyarray(
             self,
-            poly: 'pc.typing.Poly | pc.typing.PolyArray'
-            ) -> 'pc.typing.Poly | pc.typing.PolyArray':
+            poly: 'rai.typing.Poly | pc.typing.PolyArray'
+            ) -> 'rai.typing.Poly | pc.typing.PolyArray':
         """
         Apply transformation to xyarray and return new transformed xyarray
         """
-        return pc.affine.transform_xyarray(self._affine, poly)
+        return rai.affine.transform_xyarray(self._affine, poly)
 
-    def transform_point(self, point: 'pc.typing.Point') -> 'pc.typing.Point':
+    def transform_point(self, point: 'rai.typing.Point') -> 'pc.typing.Point':
         """
         Apply transformation to point and return new transformed point
         """
-        return pc.affine.transform_point(self._affine, point)
+        return rai.affine.transform_point(self._affine, point)
 
     def compose(self, transform: Self) -> Self:
         """
@@ -41,28 +41,28 @@ class Transform:
         return self
 
     def get_translation(self) -> np.typing.NDArray[np.float64]:
-        return pc.affine.get_translation(self._affine)
+        return rai.affine.get_translation(self._affine)
 
     def get_rotation(self) -> float:
-        return pc.affine.get_rotation(self._affine)
+        return rai.affine.get_rotation(self._affine)
 
     def get_shear(self) -> float:
-        return pc.affine.get_shear(self._affine)
+        return rai.affine.get_shear(self._affine)
 
     def get_scale(self) -> tuple[np.float64, np.float64]:
-        return pc.affine.get_scale(self._affine)
+        return rai.affine.get_scale(self._affine)
 
     def does_translate(self) -> bool:
         norm = np.linalg.norm(self.get_translation())
         return norm > 0.001  # TODO epsilon
 
-    def does_rotate(self) -> 'pc.typing.Bool':
+    def does_rotate(self) -> 'rai.typing.Bool':
         return abs(self.get_rotation()) > 0.001  # TODO epsilon
 
-    def does_shear(self) -> 'pc.typing.Bool':
+    def does_shear(self) -> 'rai.typing.Bool':
         return abs(self.get_shear()) > 0.001  # TODO epsilon
 
-    def does_scale(self) -> 'pc.typing.Bool':
+    def does_scale(self) -> 'rai.typing.Bool':
         scale_x, scale_y = self.get_scale()
         # TODO epsilon
         return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001
@@ -100,68 +100,68 @@ class Transform:
 
     # TODO typing.point
     # types defined in own files
-    # then mergen in pc.typing
+    # then mergen in rai.typing
     # or just PointType, CompoClassType, etc
     def move(self, x=0, y: float = 0):
-        if isinstance(x, pc.Point):
+        if isinstance(x, rai.Point):
             x, y = x
-        self._affine = pc.affine.move(x, y) @ self._affine
+        self._affine = rai.affine.move(x, y) @ self._affine
         return self
 
     def movex(self, x: float = 0) -> Self:
-        self._affine = pc.affine.move(x, 0) @ self._affine
+        self._affine = rai.affine.move(x, 0) @ self._affine
         return self
 
     def movey(self, y: float = 0) -> Self:
-        self._affine = pc.affine.move(0, y) @ self._affine
+        self._affine = rai.affine.move(0, y) @ self._affine
         return self
 
     #def scale(
     #        self,
-    #        x: float | pc.Point,  # TODO typing.point
+    #        x: float | rai.Point,  # TODO typing.point
     #        y: float | None = None,
     #        cx: float = 0,
     #        cy: float = 0,
     #        ) -> Self:
 
-    #    if isinstance(x, pc.Point):
+    #    if isinstance(x, rai.Point):
     #        x, y = x
 
     #    elif y is None:
     #        y = x
 
-    #    self._affine = pc.affine.around(pc.affine.scale(x, y), cx, cy) @ self._affine
+    #    self._affine = rai.affine.around(pc.affine.scale(x, y), cx, cy) @ self._affine
     #    return self
     def scale(self, x: float, y: float | None = None) -> Self:
         if y is None:
             y = x
-        self._affine = pc.affine.scale(x, y) @ self._affine
+        self._affine = rai.affine.scale(x, y) @ self._affine
         return self
 
     def rotate(
             self,
             angle: float,
-            x: float | pc.Point = 0,
+            x: float | rai.Point = 0,
             y: float = 0
             ) -> Self:
 
-        if isinstance(x, pc.Point):
+        if isinstance(x, rai.Point):
             x, y = x
 
-        self._affine = pc.affine.around(pc.affine.rotate(angle), x, y) @ self._affine
+        self._affine = rai.affine.around(pc.affine.rotate(angle), x, y) @ self._affine
 
         return self
 
     def hflip(self, x: float = 0) -> Self:
-        self._affine = pc.affine.around(pc.affine.scale(1, -1), 0, x) @ self._affine
+        self._affine = rai.affine.around(pc.affine.scale(1, -1), 0, x) @ self._affine
         return self
 
     def vflip(self, y: float = 0) -> Self:
-        self._affine = pc.affine.around(pc.affine.scale(-1, 1), y, 0) @ self._affine
+        self._affine = rai.affine.around(pc.affine.scale(-1, 1), y, 0) @ self._affine
         return self
 
     def flip(self, x: float = 0, y: float = 0) -> Self:
-        self._affine = pc.affine.around(pc.affine.scale(-1, -1), x, y) @ self._affine
+        self._affine = rai.affine.around(pc.affine.scale(-1, -1), x, y) @ self._affine
         return self
 
     def inverse(self):

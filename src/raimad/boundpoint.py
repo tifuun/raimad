@@ -1,18 +1,18 @@
 from typing import Any, Self
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 # see
 # https://numpy.org/doc/stable/user/basics.subclassing.html
 class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
 
-    _proxy: 'pc.typing.Proxy | None'
+    _proxy: 'rai.typing.Proxy | None'
 
     def __new__(
             cls,
-            input_array: 'pc.typing.Point',
-            proxy: 'pc.typing.Proxy'
+            input_array: 'rai.typing.Point',
+            proxy: 'rai.typing.Proxy'
             ) -> Self:
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
@@ -23,7 +23,7 @@ class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
         return obj
 
     @property
-    def proxy(self) -> 'pc.typing.Proxy':
+    def proxy(self) -> 'rai.typing.Proxy':
         if self._proxy is None:
             # TODO exception type
             raise Exception('Unbound BoundPoint')
@@ -36,14 +36,14 @@ class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
             return
         self._proxy = getattr(obj, 'proxy', None)
 
-    def to(self, point: 'pc.typing.Point') -> 'pc.typing.Proxy':
+    def to(self, point: 'rai.typing.Point') -> 'pc.typing.Proxy':
         self.proxy.transform.move(
             point[0] - self[0],
             point[1] - self[1],
             )
         return self.proxy
 
-    def rotate(self, angle: float) -> 'pc.typing.Proxy':
+    def rotate(self, angle: float) -> 'rai.typing.Proxy':
         self.proxy.transform.rotate(
             angle,
             self[0],
@@ -51,7 +51,7 @@ class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
             )
         return self.proxy
 
-    def move(self, x: float, y: float) -> 'pc.typing.Proxy':
+    def move(self, x: float, y: float) -> 'rai.typing.Proxy':
         """
         `move`ing a boundpoint is functionally identical to `move`ing
         the proxy itself, so there is no reason to call this explicitly.

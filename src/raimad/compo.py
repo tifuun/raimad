@@ -2,9 +2,9 @@ import inspect
 from typing import Self
 from copy import deepcopy
 
-import pycif as pc
+import raimad as rai
 
-class MarksContainer(pc.DictList):
+class MarksContainer(rai.DictList):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._proxy = None
@@ -16,18 +16,18 @@ class MarksContainer(pc.DictList):
 
         return self._proxy.get_mark(name)
 
-    def _proxy_copy(self, proxy: 'pc.typing.Proxy') -> Self:
+    def _proxy_copy(self, proxy: 'rai.typing.Proxy') -> Self:
         new = type(self)({
             key: val for key, val in self.items()
             })
         new._proxy = proxy
         return new
 
-class SubcompoContainer(pc.DictList):
+class SubcompoContainer(rai.DictList):
     def _filter(self, item):
-        if isinstance(item, pc.Compo):
-            return pc.Proxy(item, _autogen=True)
-        elif isinstance(item, pc.Proxy):
+        if isinstance(item, rai.Compo):
+            return rai.Proxy(item, _autogen=True)
+        elif isinstance(item, rai.Proxy):
             return item
         else:
             raise Exception  # TODO actual exception
@@ -46,7 +46,7 @@ class Compo:
 
     @classmethod
     def partial(cls, **kwargs):
-        return pc.Partial(cls, **kwargs)
+        return rai.Partial(cls, **kwargs)
 
     def steamroll(self) -> dict:
         """
@@ -76,7 +76,7 @@ class Compo:
         yield
 
     def proxy(self):
-        return pc.Proxy(self)
+        return rai.Proxy(self)
 
     def copy(*args, **kwargs):
         """
@@ -92,38 +92,38 @@ class Compo:
     # Transform functions #
     # TODO for all transforms
     #def scale(self, factor):
-    #    return pc.Proxy(
+    #    return rai.Proxy(
     #        self,
-    #        transform=pc.Transform().scale(factor)
+    #        transform=rai.Transform().scale(factor)
     #        )
 
     #def movex(self, factor):
-    #    return pc.Proxy(
+    #    return rai.Proxy(
     #        self,
-    #        transform=pc.Transform().movex(factor)
+    #        transform=rai.Transform().movex(factor)
     #        )
 
     #def movey(self, factor):
-    #    return pc.Proxy(
+    #    return rai.Proxy(
     #        self,
-    #        transform=pc.Transform().movey(factor)
+    #        transform=rai.Transform().movey(factor)
     #        )
 
     #def rotate(self, angle):
-    #    return pc.Proxy(
+    #    return rai.Proxy(
     #        self,
-    #        transform=pc.Transform().rotate(angle)
+    #        transform=rai.Transform().rotate(angle)
     #        )
 
     # lmap function #
     #def __matmul__(self, what):
     #    if isinstance(what, dict | str):  # TODO lmap shorthand type
-    #        return pc.Proxy(
+    #        return rai.Proxy(
     #            self,
     #            lmap=what
     #            )
-    #    elif isinstance(what, pc.Transform):
-    #        return pc.Proxy(
+    #    elif isinstance(what, rai.Transform):
+    #        return rai.Proxy(
     #            self,
     #            transform=what
     #            )
@@ -133,7 +133,7 @@ class Compo:
     # mark functions #
     def set_mark(self, name, point):
         # TODO this is a boundpoint but not actually a boundpoint?
-        self.marks[name] = pc.BoundPoint(point, None)
+        self.marks[name] = rai.BoundPoint(point, None)
 
     def get_mark(self, name):
         return self.marks[name]
@@ -141,24 +141,24 @@ class Compo:
     # bbox functions #
     @property
     def bbox(self):
-        bbox = pc.BBox()
+        bbox = rai.BBox()
         for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)
         return bbox
 
     def __init_subclass__(cls):
-        _class_to_dictlist(cls, 'Marks', pc.Mark)
-        _class_to_dictlist(cls, 'Layers', pc.Layer)
-        _class_to_dictlist(cls, 'Options', pc.Option)
+        _class_to_dictlist(cls, 'Marks', rai.Mark)
+        _class_to_dictlist(cls, 'Layers', rai.Layer)
+        _class_to_dictlist(cls, 'Options', rai.Option)
 
         for param in inspect.signature(cls._make).parameters.values():
             if param.name not in cls.Options.keys():
                 # TODO unannotated
                 continue
 
-            cls.Options[param.name].annot = pc.Empty
-            cls.Options[param.name].default = pc.Empty
+            cls.Options[param.name].annot = rai.Empty
+            cls.Options[param.name].default = rai.Empty
 
             if param.default is not inspect._empty:
                 cls.Options[param.name].default = param.default
@@ -171,7 +171,7 @@ class Compo:
 
     # Condemned method, I don't like it
     #def subcompo(self, compo, name: str | None = None):
-    #    proxy = pc.Proxy(compo)
+    #    proxy = rai.Proxy(compo)
     #    if name is None:
     #        self.subcompos.append(proxy)
     #    else:
@@ -190,7 +190,7 @@ class Compo:
 
         for name, obj in locs.items():
             if (
-                    isinstance(obj, pc.Proxy)
+                    isinstance(obj, rai.Proxy)
                     and name != 'self'
                     and not name.startswith('_')
                     ):
@@ -200,9 +200,9 @@ class Compo:
 
     def _export_cif(
             self,
-            exporter: 'pc.CIFExporter',
-            layermap: 'pc.typing.LMap',
-            transform: 'pc.typing.Transform',
+            exporter: 'rai.CIFExporter',
+            layermap: 'rai.typing.LMap',
+            transform: 'rai.typing.Transform',
             ):
         return NotImplemented
 
@@ -212,7 +212,7 @@ class Compo:
     def __str__(self):
         return (
             "<"
-            f"{type(self).__name__} at {pc.wingdingify(id(self))} "
+            f"{type(self).__name__} at {rai.wingdingify(id(self))} "
             ">"
             )
 
@@ -224,14 +224,14 @@ class Compo:
         Make svg representation of component.
         This is called by jupyter and raimark
         """
-        return pc.export_svg(self)
+        return rai.export_svg(self)
 
 def _class_to_dictlist(cls, attr, wanted_type):
     if not hasattr(cls, attr):
-        setattr(cls, attr, pc.DictList())
+        setattr(cls, attr, rai.DictList())
         return
 
-    new_list = pc.DictList()
+    new_list = rai.DictList()
     for name, annot in getattr(cls, attr).__dict__.items():
         if not isinstance(annot, wanted_type):
             continue

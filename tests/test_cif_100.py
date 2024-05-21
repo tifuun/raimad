@@ -1,5 +1,5 @@
 """
-Tests for pycif 1.0.0 cif exporter
+Tests for raimad 1.0.0 cif exporter
 """
 
 import unittest
@@ -7,7 +7,7 @@ import re
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 # Regex to find procedure calls in CIF file
 find_procedure_calls = re.compile(r"^\s*C (\w+);", re.MULTILINE)
@@ -40,13 +40,13 @@ class CIFRoutGraphChecker():
             set(exporter.edges)
             )
 
-class Boxes(pc.Compo):
+class Boxes(rai.Compo):
     """
     cif-linked boxes in "star" topology:
     multiple boxes are cif links of one root box
     """
     def _make(self, add_root: bool):
-        first = pc.RectWH(10, 10).proxy().map('first')
+        first = rai.RectWH(10, 10).proxy().map('first')
         second = first.copy().move(20, 0).map('second')
         third = first.copy().move(-20, 0).map('third')
         fourth = first.copy().move(0, 20).map('fourth')
@@ -60,31 +60,31 @@ class Boxes(pc.Compo):
 
         self.first = first
 
-class Sub1(pc.Compo):
+class Sub1(rai.Compo):
     """
     Two rectangles, one above the other
     """
     def _make(self):
-        self.subcompos.first = pc.RectWH(10, 10).proxy().map('first')
+        self.subcompos.first = rai.RectWH(10, 10).proxy().map('first')
         self.subcompos.second = (
             self.subcompos.first.copy()
             .move(0, 20)
             .map('second')
             )
 
-class Sub2(pc.Compo):
+class Sub2(rai.Compo):
     """
     Two circles, one above the other
     """
     def _make(self):
-        self.subcompos.first = pc.Circle(10).proxy().map('first')
+        self.subcompos.first = rai.Circle(10).proxy().map('first')
         self.subcompos.second = (
             self.subcompos.first.copy()
             .move(0, 20)
             .map('second')
             )
 
-class Complex(pc.Compo):
+class Complex(rai.Compo):
     """
     Left: two rectangles
     middle: two circles, slightly rotated
@@ -128,8 +128,8 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
         """
         Check native cif export of rectwh
         """
-        compo = pc.RectWH(10, 20)
-        cifstring = pc.export_cif(
+        compo = rai.RectWH(10, 20)
+        cifstring = rai.export_cif(
             compo,
             cif_native=True
             )
@@ -138,8 +138,8 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
             box_calls,
             [
                 (
-                    str(int(pc.CIFExporter.multiplier * 10)),
-                    str(int(pc.CIFExporter.multiplier * 20)),
+                    str(int(rai.CIFExporter.multiplier * 10)),
+                    str(int(rai.CIFExporter.multiplier * 20)),
                     '0',
                     '0')
                 ]
@@ -155,7 +155,7 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         compo = self.boxes_sub
 
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             compo,
             cif_native=False,
             transform_fatal=True,
@@ -191,7 +191,7 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         compo = self.boxes_nosub
 
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             compo,
             cif_native=False,
             transform_fatal=True,
@@ -232,7 +232,7 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
         """
         mycompo = Complex()
 
-        cifstring = pc.export_cif(
+        cifstring = rai.export_cif(
             mycompo,
             cif_native=False,
             transform_fatal=True,
@@ -250,8 +250,8 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         mycompo = Complex(invalid_transform=True)
 
-        with self.assertRaises(pc.err.CannotCompileTransformError):
-            pc.export_cif(
+        with self.assertRaises(rai.err.CannotCompileTransformError):
+            rai.export_cif(
                 mycompo,
                 cif_native=False,
                 transform_fatal=True
@@ -261,10 +261,10 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
         """
         """
 
-        class MyCompo(pc.Compo):
+        class MyCompo(rai.Compo):
             def _make(self):
                 self.subcompos.append(
-                    pc.RectWH(10, 20)
+                    rai.RectWH(10, 20)
                     .proxy()
                     .scale(2)
                     .bbox.bot_left.to((0, 0))
@@ -272,7 +272,7 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
 
         mycompo = MyCompo()
 
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             mycompo,
             flatten_proxies=True,
             cif_native=False,
@@ -305,13 +305,13 @@ class TestCIF100(unittest.TestCase, CIFRoutGraphChecker):
         """
         """
         mycompo = (
-            pc.RectWH(10, 20)
+            rai.RectWH(10, 20)
             .proxy()
             .scale(2)
             .bbox.bot_left.to((0, 0))
             )
 
-        exporter = pc.CIFExporter(
+        exporter = rai.CIFExporter(
             mycompo,
             flatten_proxies=True,
             cif_native=False,

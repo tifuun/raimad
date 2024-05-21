@@ -4,7 +4,7 @@ from typing import List, Self
 
 import numpy as np
 
-import pycif as pc
+import raimad as rai
 
 # Disable to use computer-style Y axis (increases downwards)
 # DO NOT TOUCH THIS IT WILL BREAK EVERYTHING
@@ -30,7 +30,7 @@ class BBox(object):
 
     def __init__(
             self,
-            xyarray: 'pc.typing.Poly | None' = None,
+            xyarray: 'rai.typing.Poly | None' = None,
             proxy=None,
             ):
         """
@@ -41,7 +41,7 @@ class BBox(object):
         xyarray: np.ndarray | None
             A N x 2 numpy array containing points to initialize the bbox with.
             This is optional.
-        proxy: pc.Proxy | None
+        proxy: rai.Proxy | None
             The proxy that this bbox should be bound to.
             This is optional.
         """
@@ -127,7 +127,7 @@ class BBox(object):
         new_bbox.min_y = self.min_y
         return new_bbox
 
-    def add_xyarray(self, xyarray: 'pc.typing.Poly') -> None:
+    def add_xyarray(self, xyarray: 'rai.typing.Poly') -> None:
         """
         Add new points to the bounding box.
 
@@ -297,9 +297,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         x = self.min_x + self.width * x_ratio
         y = self.min_y + self.height * y_ratio
@@ -307,7 +307,7 @@ class BBox(object):
         if self._proxy is None:
             return np.array([x, y])
         else:
-            return pc.BoundPoint((x, y), proxy=self._proxy)
+            return rai.BoundPoint((x, y), proxy=self._proxy)
 
     @property
     def mid(self):
@@ -328,9 +328,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get middle point of empty bbox")
         return self.interpolate(0.5, 0.5)
@@ -354,9 +354,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get top middle point of empty bbox")
         return self.interpolate(0.5, MATHEMATIC_Y_AXIS)
@@ -380,9 +380,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get bottom middle point of empty bbox")
         return self.interpolate(0.5, not MATHEMATIC_Y_AXIS)
@@ -406,9 +406,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get middle left point of empty bbox")
         return self.interpolate(0, 0.5)
@@ -432,9 +432,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get middle right point of empty bbox")
         return self.interpolate(1, 0.5)
@@ -458,9 +458,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get top left point of empty bbox")
         return self.interpolate(0, MATHEMATIC_Y_AXIS)
@@ -484,9 +484,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get top right point of empty bbox")
         return self.interpolate(1, MATHEMATIC_Y_AXIS)
@@ -510,9 +510,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get bottom left point of empty bbox")
         return self.interpolate(0, not MATHEMATIC_Y_AXIS)
@@ -536,9 +536,9 @@ class BBox(object):
 
         Returns
         -------
-        pc.Point | pc.BoundPoint
-            A regular pc.Point for unbound bboxes,
-            and a pc.BoundPoint for bound bboxes.
+        rai.Point | pc.BoundPoint
+            A regular rai.Point for unbound bboxes,
+            and a rai.BoundPoint for bound bboxes.
         """
         self.assert_nonempty("Tried to get bottom right point of empty bbox")
         return self.interpolate(1, not MATHEMATIC_Y_AXIS)
