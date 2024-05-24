@@ -17,9 +17,6 @@ class TestSnowman(unittest.TestCase):
         # Test marks
         self.assertTrue('nose' in compo.marks.keys())
 
-        #import pathlib
-        #pathlib.Path('/tmp/tmp.cif').write_text(rai.export_cif(compo))
-
 
 if __name__ == '__main__':
     unittest.main()

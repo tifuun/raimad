@@ -106,15 +106,6 @@ class TestPolys(unittest.TestCase):
                 ),
             ]
 
-        #class Foobar(rai.Compo):
-        #    def _make(self):
-        #        for i, c in enumerate(same):
-        #            self.subcompos.append(
-        #                c.movex(i * 40)
-        #                )
-        #c = Foobar()
-        #with open('/tmp/foo.cif', 'w') as f: f.write(rai.export_cif(c))
-
         geoms = [np.sort(ansec.geoms['root'][0], axis=0) for ansec in same]
 
         self.assertTrue(np.allclose(geoms[0], geoms))

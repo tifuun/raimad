@@ -198,17 +198,6 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
-    def _export_cif(
-            self,
-            exporter: 'rai.CIFExporter',
-            layermap: 'rai.typing.LMap',
-            transform: 'rai.typing.Transform',
-            ):
-        return NotImplemented
-
-    #def _export_cif_transformed(self, cif_exporter, transform):
-    #    return NotImplemented
-
     def __str__(self):
         return (
             "<"

@@ -306,11 +306,3 @@ class Proxy:
         """
         return rai.export_svg(self)
 
-    #def _export_cif(self, transform=None):
-    #    return self.compo._export_cif(
-    #        self.transform.copy().compose(transform)
-    #        if transform is not None else self.transform
-    #        )
-
-
-
