@@ -44,6 +44,61 @@ class TestPolys(unittest.TestCase):
             (-100, 0)
             ))
 
+    def test_is_rotated(self):
+        self.assertTrue(rai.iters.is_rotated(
+            'abc',
+            'bca',
+            ))
+
+        self.assertFalse(rai.iters.is_rotated(
+            'abc',
+            'aabc',
+            ))
+
+        self.assertFalse(rai.iters.is_rotated(
+            'abc',
+            'cba',
+            ))
+
+        self.assertTrue(rai.iters.is_rotated(
+            'abcd',
+            'bcda',
+            ))
+
+        self.assertTrue(rai.iters.is_rotated(
+            [1, 2, 3, 4],
+            [3, 4, 1, 2],
+            ))
+
+        self.assertTrue(rai.iters.is_rotated(
+            [
+                (1, 2),
+                (3, 4),
+                (5, 6),
+                (7, 8),
+                ],
+            [
+                (5, 6),
+                (7, 8),
+                (1, 2),
+                (3, 4),
+                ],
+            ))
+
+        self.assertFalse(rai.iters.is_rotated(
+            [
+                (1, 2),
+                (3, 4),
+                (5, 6),
+                (7, 8),
+                ],
+            [
+                (1, 2),
+                (3, 4),
+                (7, 8),
+                (5, 6),
+                ],
+            ))
 
 
 if __name__ == '__main__':

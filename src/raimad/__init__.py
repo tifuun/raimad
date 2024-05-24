@@ -53,8 +53,8 @@ from raimad.custompoly import CustomPoly
 
 from raimad import typing
 
-from raimad.cif import export_cif
-from raimad.cif import CIFExporter
+#from raimad.cif import export_cif
+#from raimad.cif import CIFExporter
 from raimad.svg import export_svg
 from raimad import err
 from raimad import debug

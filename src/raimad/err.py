@@ -10,6 +10,6 @@ from raimad.ansec import AnSecThetaIncorrectArgumentsError
 
 from raimad.bbox import EmptyBBoxError
 
-from raimad.cif import CIFExportError
-from raimad.cif import CannotCompileTransformError
+#from raimad.cif import CIFExportError
+#from raimad.cif import CannotCompileTransformError
 
