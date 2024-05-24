@@ -71,7 +71,16 @@ class GeomsEqual():
                             poly_desired,
                             poly_actual,
                             )
-            self.assertEqual(num_equal, length)
+
+            try:
+                self.assertEqual(num_equal, length)
+            except AssertionError as err:
+                print(f'ON LAYER {layer_name}', file=stderr)
+                print("ACTUAL: ", file=stderr)
+                pprint(polys_actual, stream=stderr)
+                print("DESIRED: ", file=stderr)
+                pprint(polys_desired, stream=stderr)
+                raise err
 
         return True
 
