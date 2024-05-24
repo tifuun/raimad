@@ -91,7 +91,7 @@ def is_distinct(iterable) -> bool:
     """
     return len(iterable) == len(set(iterable))
 
-def is_rotated(first, second) -> bool:
+def is_rotated(first, second, comparison=lambda a, b: a == b) -> bool:
     """
     Given two iterables, figure out whether they are "rotated"
     versions of each other.
@@ -117,7 +117,7 @@ def is_rotated(first, second) -> bool:
     for x in range(0, length):
         rotated = (*second[x:], *second[:x])
         assert len(rotated) == length
-        if first_as_tuple == rotated:
+        if comparison(first_as_tuple, rotated):
             return True
     return False
 
