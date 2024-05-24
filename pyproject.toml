@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "raimad"
-version = "0.1.0"
+version = "0.1.1"
 description = """\
 RAIMAD Astronomical Instrument MAsk Design
 """
