@@ -8,10 +8,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "raimad"
-version = "0.1.1"
-description = """\
-RAIMAD Astronomical Instrument MAsk Design
-"""
+version = "0.1.2"
+description = """RAIMAD Astronomical Instrument MAsk Designer"""
 authors = [
 	{name = "maybetree", email = "maybetree48@gmail.com"}
 	]
