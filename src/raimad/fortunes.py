@@ -32,6 +32,11 @@ fortunes = [
 
     "Required qualifications: minimal Java experience (ideally none)",
 
+    "Configuring login daemon...\n"
+    "Starting login daemon...\n"
+    "Exorcising login daemon...\n"
+    "System operational.",
+
     # Education #
 
     '"The doors are wide open, '
@@ -54,7 +59,14 @@ fortunes = [
     "Just because [pipelining] wasn't covered in the lectures "
     "doesn't meant it won't be on the exam. ",
 
+    "Learning by doing: I do, you learn. ",
+
+    "There are no stupid questions, "
+    "only stupid people. ",
+
     # Politics #
+
+    "Abuse of authority comes as no surprise. ",
 
     "Money doesn't bring happiness, but neither does poverty. ",
 
@@ -81,7 +93,7 @@ fortunes = [
     'Experimental missile nicknamed "Civil Servant": '
     "won't work and they can't fire it",
 
-    "We have throughly addressed all concerns, from A to B. ",
+    "We have thoroughly addressed all concerns, from A to B. ",
 
     "He is a man of logic and should not be taken seriously. ",
 
@@ -93,7 +105,7 @@ fortunes = [
     "- No, the watts are exactly the same, "
     "the choice is who you buy them from. ",
 
-    "- How much are you in for?\n"
+    "- How long are you in for?\n"
     "- Three years\n"
     "- What for?\n"
     "- For nothing!\n"
@@ -123,6 +135,8 @@ fortunes = [
 
     'Anything labeled "this end towards enemy" is dangerous at both ends. ',
 
+    "It works all the time 60% of the time. ",
+
     # Resilience #
 
     "Even with everyone's help, you still have to do everything on your own. ",
@@ -137,7 +151,7 @@ fortunes = [
 
     "The horrors persist, but so do I",
 
-    "New liver, same eagles.",
+    "New liver, same eagles. ",
 
     "It is what it is. ",
 
@@ -163,12 +177,12 @@ fortunes = [
 
     "He's suffered for his art and now it's our turn. ",
 
-    "i may be cringe but youre mean and whats worse",
+    "i may be cringe but youre mean and thats worse",
 
     "Qaulifications: former child",
 
     '"Whenever a door closes, another one surely opens"\n'
-    '    -- My uncle (wise man, but a terrible cabiner maker)',
+    '    -- My uncle (wise man, but a terrible cabinet maker)',
 
     "Present day, present time. ",
 

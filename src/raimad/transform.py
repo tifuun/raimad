@@ -148,20 +148,20 @@ class Transform:
         if isinstance(x, rai.Point):
             x, y = x
 
-        self._affine = rai.affine.around(pc.affine.rotate(angle), x, y) @ self._affine
+        self._affine = rai.affine.around(rai.affine.rotate(angle), x, y) @ self._affine
 
         return self
 
     def hflip(self, x: float = 0) -> Self:
-        self._affine = rai.affine.around(pc.affine.scale(1, -1), 0, x) @ self._affine
+        self._affine = rai.affine.around(rai.affine.scale(1, -1), 0, x) @ self._affine
         return self
 
     def vflip(self, y: float = 0) -> Self:
-        self._affine = rai.affine.around(pc.affine.scale(-1, 1), y, 0) @ self._affine
+        self._affine = rai.affine.around(rai.affine.scale(-1, 1), y, 0) @ self._affine
         return self
 
     def flip(self, x: float = 0, y: float = 0) -> Self:
-        self._affine = rai.affine.around(pc.affine.scale(-1, -1), x, y) @ self._affine
+        self._affine = rai.affine.around(rai.affine.scale(-1, -1), x, y) @ self._affine
         return self
 
     def inverse(self):

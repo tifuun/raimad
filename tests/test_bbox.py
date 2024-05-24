@@ -276,9 +276,9 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
             )
 
     def test_bbox_snapping(self):
-        c1 = rai.Proxy(pc.Circle(10))
-        c2 = rai.Proxy(pc.Circle(5))
-        c3 = rai.Proxy(pc.Circle(2))
+        c1 = rai.Proxy(rai.Circle(10))
+        c2 = rai.Proxy(rai.Circle(5))
+        c3 = rai.Proxy(rai.Circle(2))
 
         c1.bbox.mid.to((0, 0))
         c2.snap_left(c1)
