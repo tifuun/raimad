@@ -15,7 +15,7 @@ RAIMAD Astronomical Instrument MAsk Design
 authors = [
 	{name = "maybetree", email = "maybetree48@gmail.com"}
 	]
-license = { file = "LICENSE.txt" }
+license = { file = "LICENSE.md" }
 readme = "README.md"
 classifiers = [
 	'Programming Language :: Python :: 3',
