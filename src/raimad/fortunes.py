@@ -153,6 +153,8 @@ fortunes = [
     "- Any what?\n"
     "- Any quality.\n",
 
+    "Battery life: up to a minimum of 8 hours! ",
+
     # Resilience #
 
     "Even with everyone's help, you still have to do everything on your own. ",
