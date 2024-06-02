@@ -89,6 +89,7 @@ def is_distinct(iterable) -> bool:
     """
     Return true if no two items in `iterable` are the same
     """
+    raise NotImplementedError()
     return len(iterable) == len(set(iterable))
 
 def is_rotated(first, second, comparison=lambda a, b: a == b) -> bool:

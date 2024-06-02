@@ -37,6 +37,14 @@ fortunes = [
     "Exorcising login daemon...\n"
     "System operational.",
 
+    "This is a security feature. It secures our revenue stream. ",
+
+    "Our platform is end-to-end encrypted. "
+    "The one end is your client, and the other end is our server. ",
+
+    "We have two-factor authentication. "
+    "The first factor is your username, and second factor is your password. ",
+
     # Education #
 
     '"The doors are wide open, '
@@ -112,6 +120,9 @@ fortunes = [
     "- Do not try to play us for fools, "
     'everyone knows that "for nothing" is 5 years. ',
 
+    "Checklist for travel to The Netherlands:\n"
+    "    - Do not travel to The Netherlands."
+
     # Malapropisms #
 
     "Whatever bloats your goat! ",
@@ -137,6 +148,11 @@ fortunes = [
 
     "It works all the time 60% of the time. ",
 
+    "- I'm from quality assurance. "
+    "I can assure you we didn't find any in this product.\n"
+    "- Any what?\n"
+    "- Any quality.\n",
+
     # Resilience #
 
     "Even with everyone's help, you still have to do everything on your own. ",
@@ -161,6 +177,8 @@ fortunes = [
     "doesn't mean you should have to. ",
 
     "Tip: spice up your panic attack with a harmonica. ",
+
+    "Don't delay, despair today! ",
 
     # Misc "
 

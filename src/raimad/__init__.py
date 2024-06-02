@@ -54,6 +54,7 @@ from raimad.custompoly import CustomPoly
 from raimad import typing
 
 from raimad import cif
+from raimad.cif.shorthand import export_cif
 from raimad.svg import export_svg
 from raimad import err
 from raimad import debug

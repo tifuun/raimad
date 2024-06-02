@@ -4,7 +4,9 @@ RAIMAD Astronomical Instrument MAsk Designer
 
 ![RAIMAD banner](img/raimad-banner.png)
 
-This is a work-in-progress project. Documentation coming soon!
+## Documentation
+
+Documentation is at <https://maybeetree.github.io/raidoc/>.
 
 ## License
 
