@@ -100,6 +100,32 @@ class TestPolys(unittest.TestCase):
                 ],
             ))
 
+    def test_flatten(self):
+        self.assertEqual(
+            rai.flatten([[[1, 2], 3, [4], [5, 6], 7], 8]),
+            [1, 2, 3, 4, 5, 6, 7, 8]
+            )
+
+        self.assertEqual(
+            rai.flatten([1, 2, 3, 4, 5, 6, 7, 8]),
+            [1, 2, 3, 4, 5, 6, 7, 8]
+            )
+
+        self.assertEqual(
+            rai.flatten([[['a', 'bcd'], 'e', ['f'], ['g', 'h'], 'ij'], 'klm']),
+            ['a', 'bcd', 'e', 'f', 'g', 'h', 'ij', 'klm']
+            )
+
+        self.assertEqual(
+            rai.flatten('string'),
+            ['string'],
+            )
+
+        self.assertEqual(
+            rai.flatten(10),
+            [10],
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

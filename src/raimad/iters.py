@@ -71,7 +71,7 @@ def flatten(iterable: Iterable) -> Iterable:
     Recursively flatten a nested iterable
     """
 
-    if not isinstance(iterable, Iterable):
+    if not isinstance(iterable, Iterable) or isinstance(iterable, str):
         # This terminates the recursion
         return [iterable]
 
