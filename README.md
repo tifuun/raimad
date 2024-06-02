@@ -8,6 +8,8 @@ Read the documentation at [RAIDOC](https://maybeetree.github.io/raidoc/).
 
 Browse RAIMAD packages at [RAIDEX](https://maybeetree.github.io/raidex/).
 
+PyPI page: <https://pypi.org/project/raimad/>
+
 ## License
 
 RAIMAD is free software: you can redistribute it and/or modify it under
