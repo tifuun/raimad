@@ -7,8 +7,8 @@ import raimad as rai
 
 class TestPolys(unittest.TestCase):
 
-    def test_rectwh(self):
-        rect = rai.RectWH(10, 20)
+    def test_rectlw(self):
+        rect = rai.RectLW(10, 20)
         self.assertIsNone(np.testing.assert_array_almost_equal(
             rect.geoms['root'][0],
             [

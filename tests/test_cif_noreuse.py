@@ -10,7 +10,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
     def test_cif_noreuse_rect(self):
         """
         """
-        compo = rai.RectWH(10, 20)
+        compo = rai.RectLW(10, 20)
 
         exporter = rai.cif.NoReuse(
             compo,
@@ -38,7 +38,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         """
         """
         compo = (
-            rai.RectWH(10, 20)
+            rai.RectLW(10, 20)
             .proxy()
             .map('mylayer')
             .bbox.bot_left.to((0, 0))

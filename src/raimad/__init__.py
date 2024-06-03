@@ -45,7 +45,7 @@ from raimad.proxy import LMap
 from raimad.partial import Partial
 from raimad.bbox import BBox
 
-from raimad.rectwh import RectWH
+from raimad.rectlw import RectLW
 from raimad.rectwire import RectWire
 from raimad.circle import Circle
 from raimad.ansec import AnSec

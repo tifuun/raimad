@@ -6,9 +6,9 @@ from .utils import ArrayAlmostEqual
 
 class Compo_direct(rai.Compo):
     def _make(self):
-        self.subcompos.beam = rai.RectWH(2, 20)
-        self.subcompos.coup_top = rai.RectWH(10, 2)
-        self.subcompos.coup_bot = rai.RectWH(8, 2)
+        self.subcompos.beam = rai.RectLW(2, 20)
+        self.subcompos.coup_top = rai.RectLW(10, 2)
+        self.subcompos.coup_bot = rai.RectLW(8, 2)
 
         self.subcompos.beam.bbox.mid.to((0, 0))
 
@@ -17,9 +17,9 @@ class Compo_direct(rai.Compo):
 
 class Compo_auto(rai.Compo):
     def _make(self):
-        beam = rai.RectWH(2, 20).proxy().map('root')
-        coup_top = rai.RectWH(10, 2).proxy().map('root')
-        coup_bot = rai.RectWH(8, 2).proxy().map('root')
+        beam = rai.RectLW(2, 20).proxy().map('root')
+        coup_top = rai.RectLW(10, 2).proxy().map('root')
+        coup_bot = rai.RectLW(8, 2).proxy().map('root')
 
         beam.bbox.mid.to((0, 0))
 
@@ -30,9 +30,9 @@ class Compo_auto(rai.Compo):
 
 #class Compo_shorthand(rai.Compo):
 #    def _make(self):
-#        beam = self.subcompo(rai.RectWH(2, 20), 'beam')
-#        coup_top = self.subcompo(rai.RectWH(10, 2), 'coup_top')
-#        coup_bot = self.subcompo(rai.RectWH(8, 2), 'coup_bot')
+#        beam = self.subcompo(rai.RectLW(2, 20), 'beam')
+#        coup_top = self.subcompo(rai.RectLW(10, 2), 'coup_top')
+#        coup_bot = self.subcompo(rai.RectLW(8, 2), 'coup_bot')
 #
 #        beam.bbox.mid.to((0, 0))
 #

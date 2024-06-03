@@ -1,4 +1,10 @@
-from typing import Generator, Callable, Any, TypeVar, ParamSpec, TypeAlias
+from typing import (
+        Callable,
+        Generator,
+        ParamSpec,
+        TypeAlias,
+        TypeVar,
+        )
 from enum import Enum
 import functools
 
