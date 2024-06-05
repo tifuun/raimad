@@ -29,6 +29,17 @@ class TestPolys(unittest.TestCase):
                 )
 
     def test_rectwire(self):
+        rectwire = rai.RectWire((0, 0), (0, 20), width=10)
+        self.assertIsNone(np.testing.assert_array_almost_equal(
+            rectwire.geoms['root'][0],
+            [
+                [-5, 0],
+                [5, 0],
+                [5, 20],
+                [-5, 20]
+            ]))
+
+    def test_rectwire_shortsyntax(self):
         rectwire = rai.RectWire((0, 0), (0, 20), 10)
         self.assertIsNone(np.testing.assert_array_almost_equal(
             rectwire.geoms['root'][0],
@@ -38,6 +49,73 @@ class TestPolys(unittest.TestCase):
                 [5, 20],
                 [-5, 20]
             ]))
+
+    def test_rectwire_polar(self):
+        rectwire = rai.RectWire(
+            (0, 0),
+            angle=rai.quartercircle,
+            length=20,
+            width=10,
+            )
+        self.assertIsNone(np.testing.assert_array_almost_equal(
+            rectwire.geoms['root'][0],
+            [
+                [-5, 0],
+                [5, 0],
+                [5, 20],
+                [-5, 20]
+            ]))
+
+    def test_rectwire_both(self):
+        """
+        Test that an error is raised if
+        both endpoint and length/width specified
+        """
+        with self.assertRaises(rai.err.RectWireError):
+            rai.RectWire(
+                (0, 0),
+                (0, 20),
+                angle=rai.quartercircle,
+                length=20,
+                width=10,
+                )
+
+        with self.assertRaises(rai.err.RectWireError):
+            rai.RectWire(
+                (0, 0),
+                (0, 20),
+                angle=rai.quartercircle,
+                width=10,
+                )
+
+        with self.assertRaises(rai.err.RectWireError):
+            rai.RectWire(
+                (0, 0),
+                (0, 20),
+                length=20,
+                width=10,
+                )
+
+    def test_rectwire_notenough(self):
+        """
+        Test that an error is raised if
+        only angle or only length is given
+        """
+        with self.assertRaises(rai.err.RectWireError):
+            rai.RectWire(
+                (0, 0),
+                (0, 20),
+                angle=rai.quartercircle,
+                width=10,
+                )
+
+        with self.assertRaises(rai.err.RectWireError):
+            rai.RectWire(
+                (0, 0),
+                (0, 20),
+                length=20,
+                width=10,
+                )
 
     def test_ansec(self):
         same = [
