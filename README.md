@@ -4,9 +4,9 @@ RAIMAD Astronomical Instrument MAsk Designer
 
 ![RAIMAD banner](img/raimad-banner.png)
 
-Read the documentation at [RAIDOC](https://exp-ast.github.io/raidoc/).
+Read the documentation at [RAIDOC](https://tifuun.github.io/raidoc/).
 
-Browse RAIMAD packages at [RAIDEX](https://exp-ast.github.io/raidex/).
+Browse RAIMAD packages at [RAIDEX](https://tifuun.github.io/raidex/).
 
 PyPI page: <https://pypi.org/project/raimad/>
 
