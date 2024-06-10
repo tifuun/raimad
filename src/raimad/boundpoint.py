@@ -1,4 +1,11 @@
-from typing import Any, Self
+from typing import Any
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.10 and lower
+    from typing_extensions import Self
+
 import numpy as np
 
 import raimad as rai

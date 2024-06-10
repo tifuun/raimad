@@ -1,10 +1,16 @@
 from typing import (
         Callable,
         Generator,
-        ParamSpec,
-        TypeAlias,
         TypeVar,
         )
+
+try:
+    from typing import ParamSpec, TypeAlias
+except:
+    # py3.9 and lower
+    from typing_extensions import ParamSpec, TypeAlias
+
+
 from enum import Enum
 import functools
 

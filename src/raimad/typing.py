@@ -3,7 +3,13 @@ typing.py
 A collection of type hints
 """
 
-from typing import TypeAlias, Sequence, Any
+from typing import Sequence, Any
+try:
+    from typing import TypeAlias
+except ImportError:
+    #py3.9 and lower
+    from typing_extensions import TypeAlias
+    
 import numpy as np
 import raimad as rai
 

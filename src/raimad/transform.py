@@ -1,5 +1,10 @@
 from copy import deepcopy
-from typing import Self
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.10 and lower
+    from typing_extensions import Self
 
 import numpy as np
 import raimad as rai

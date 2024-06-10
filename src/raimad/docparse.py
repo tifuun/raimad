@@ -1,9 +1,9 @@
 """
 docparse.py: utilities for parsing docstrings
 """
+
 from typing import NamedTuple
 import inspect
-
 
 class SplitDocstring(NamedTuple):
     heading: str

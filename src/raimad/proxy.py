@@ -1,4 +1,11 @@
-from typing import Self, Iterator, Any
+from typing import Iterator, Any
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.10 and lower
+    from typing_extensions import Self
+
 from copy import copy
 
 import raimad as rai

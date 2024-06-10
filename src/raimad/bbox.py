@@ -1,6 +1,12 @@
 """BBox.py: contains BBox class and relevant Exceptions."""
 
-from typing import List, Self
+from typing import List
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.10 and lower
+    from typing_extensions import Self
 
 import numpy as np
 

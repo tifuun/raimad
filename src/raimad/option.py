@@ -1,4 +1,11 @@
-from typing import Self, ClassVar
+from typing import ClassVar
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.10 and lower
+    from typing_extensions import Self
+
 import raimad as rai
 
 class Option:
