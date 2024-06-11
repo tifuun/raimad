@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "raimad"
-version = "1.0.3"
+version = "1.0.4"
 description = """RAIMAD Astronomical Instrument MAsk Designer"""
 authors = [
 	{name = "maybetree", email = "maybetree48@proton.me"}
@@ -20,9 +20,10 @@ readme = "README.md"
 classifiers = [
 	'Programming Language :: Python :: 3',
 	]
-requires-python = ">=3"
+requires-python = ">=3.10"
 dependencies = [
 	'numpy',
+    'typing-extensions',
 	]
 
 [project.entry-points."flake8.extension"]
