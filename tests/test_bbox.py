@@ -38,8 +38,8 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
             circle.bbox,
             np.array([-5, -5, 5, 5])
             )
+        self.assertAlmostEqual(circle.bbox.length, 10)
         self.assertAlmostEqual(circle.bbox.width, 10)
-        self.assertAlmostEqual(circle.bbox.height, 10)
         self.assertAlmostEqual(circle.bbox.top, 5)
         self.assertAlmostEqual(circle.bbox.bottom, -5)
         self.assertAlmostEqual(circle.bbox.left, -5)
@@ -88,8 +88,8 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
             circles.bbox,
             np.array([-10, -5, 10, 5])
             )
-        self.assertAlmostEqual(circles.bbox.width, 20)
-        self.assertAlmostEqual(circles.bbox.height, 10)
+        self.assertAlmostEqual(circles.bbox.length, 20)
+        self.assertAlmostEqual(circles.bbox.width, 10)
         self.assertAlmostEqual(circles.bbox.top, 5)
         self.assertAlmostEqual(circles.bbox.bottom, -5)
         self.assertAlmostEqual(circles.bbox.left, -10)
@@ -138,8 +138,8 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
             circles.bbox,
             np.array([-5, -10, 5, 10])
             )
-        self.assertAlmostEqual(circles.bbox.width, 10)
-        self.assertAlmostEqual(circles.bbox.height, 20)
+        self.assertAlmostEqual(circles.bbox.length, 10)
+        self.assertAlmostEqual(circles.bbox.width, 20)
         self.assertAlmostEqual(circles.bbox.top, 10)
         self.assertAlmostEqual(circles.bbox.bottom, -10)
         self.assertAlmostEqual(circles.bbox.left, -5)

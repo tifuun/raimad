@@ -21,7 +21,7 @@ class EmptyBBoxError(Exception):
     EmptyBBoxError: attempted operation on an empty bbox.
 
     An empty bbox is one that does not contain any points.
-    Most properties of an empty bbox (width, height, specific corners, etc.)
+    Most properties of an empty bbox (length, width, specific corners, etc.)
     do not make sense, and attempting to query them will raise this exception.
     """
 
@@ -166,7 +166,25 @@ class BBox(object):
             self.min_y = point[1]
 
     @property
-    def width(self) -> float:
+    def length(self) -> float:
+        """
+        Get length of the bbox.
+
+        Raises
+        ------
+        EmptyBBoxError
+            if the bbox is empty
+
+        Returns
+        -------
+        float
+            length of the bbox
+        """
+        self.assert_nonempty("Tried to get length of empty bbox.")
+        return self.max_x - self.min_x
+
+    @property
+    def width(self):
         """
         Get width of the bbox.
 
@@ -181,24 +199,6 @@ class BBox(object):
             width of the bbox
         """
         self.assert_nonempty("Tried to get width of empty bbox.")
-        return self.max_x - self.min_x
-
-    @property
-    def height(self):
-        """
-        Get height of the bbox.
-
-        Raises
-        ------
-        EmptyBBoxError
-            if the bbox is empty
-
-        Returns
-        -------
-        float
-            height of the bbox
-        """
-        self.assert_nonempty("Tried to get height of empty bbox.")
         return self.max_y - self.min_y
 
     @property
@@ -307,8 +307,8 @@ class BBox(object):
             A regular rai.Point for unbound bboxes,
             and a rai.BoundPoint for bound bboxes.
         """
-        x = self.min_x + self.width * x_ratio
-        y = self.min_y + self.height * y_ratio
+        x = self.min_x + self.length * x_ratio
+        y = self.min_y + self.width * y_ratio
 
         if self._proxy is None:
             return np.array([x, y])

@@ -45,6 +45,8 @@ fortunes = [
     "We have two-factor authentication. "
     "The first factor is your username, and second factor is your password. ",
 
+    "Unix: full of Daemons, ELFs and DWARFs",
+
     # Education #
 
     '"The doors are wide open, '
@@ -182,7 +184,17 @@ fortunes = [
 
     "Don't delay, despair today! ",
 
-    # Misc "
+    '''Pessimism: "It's only gonna get worse"\n'''
+    '''Optimism: "It *can't* get any worse"''',
+
+    "Cheer up! Things are getting worse at a slower rate! ",
+
+    "Everything is going worryingly well. ",
+
+    "This year's harvest is nearly half of last year's, "
+    "but, on the other hand, it's *three times* more then next year's!",
+
+    # Misc #
 
     "The best storytellers are those who have a story to tell. ",
 
@@ -213,6 +225,15 @@ fortunes = [
     "I hope this email finds you before I do. ",
 
     "To whom it WILL concern: ",
+
+    "Bipartisan approval of medical cannabis for arthritis patients:\n"
+    "joint support for joint support for joint support",
+
+    "The bar is so low that it is practically on the ground, "
+    "yet here you are, shovels in hand. ",
+
+    "Every triangle is a love triangle if you love triangles\n"
+    " -- Pythagoras",
 
     ]
 

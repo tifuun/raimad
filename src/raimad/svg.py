@@ -7,8 +7,8 @@ def yield_svg(compo):
 
     yield (
         '<svg xmlns="http://www.w3.org/2000/svg" '
-        f'width="{bbox.width}" '
-        f'height="{bbox.height}" '
+        f'width="{bbox.length}" '
+        f'height="{bbox.width}" '
         '>\n'
         '\n'
         f'<g transform="translate({-bbox.left},{bbox.top})">\n'
