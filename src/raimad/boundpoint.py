@@ -68,5 +68,26 @@ class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
         self.proxy.transform.move(x, y)
         return self.proxy
 
+    def flip(self) -> 'rai.typing.Proxy':
+        """
+        TODO add tests
+        """
+        self.proxy.transform.flip(self[0], self[1])
+        return self.proxy
+
+    def hflip(self) -> 'rai.typing.Proxy':
+        """
+        TODO add tests
+        """
+        self.proxy.transform.flip(self[0])
+        return self.proxy
+
+    def vflip(self) -> 'rai.typing.Proxy':
+        """
+        TODO add tests
+        """
+        self.proxy.transform.flip(self[1])
+        return self.proxy
+
     # TODO the rest of the functions
 

@@ -28,4 +28,8 @@ module_browser
 # Misc files
 *.log
 
+# coverage.py files
+.coverage
+htmlcov
+
 
