@@ -6,9 +6,9 @@ from .utils import ArrayAlmostEqual
 
 class Compo_direct(rai.Compo):
     def _make(self):
-        self.subcompos.beam = rai.RectLW(2, 20)
-        self.subcompos.coup_top = rai.RectLW(10, 2)
-        self.subcompos.coup_bot = rai.RectLW(8, 2)
+        self.subcompos.beam = rai.RectLW(2, 20).proxy()
+        self.subcompos.coup_top = rai.RectLW(10, 2).proxy()
+        self.subcompos.coup_bot = rai.RectLW(8, 2).proxy()
 
         self.subcompos.beam.bbox.mid.to((0, 0))
 

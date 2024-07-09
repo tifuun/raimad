@@ -66,6 +66,34 @@ class TestCompo(unittest.TestCase):
         # Test two polys on the top lyaer
         self.assertEqual(len(geom['lower']), 2)
 
+    def test_add_invalid_subcompo(self):
+        """
+        Test that adding anything other than a Proxy
+        as a subcomponent raises an error
+        """
+        class MyCompo(rai.Compo):
+            def _make(self):
+                self.subcompos.invalid = 'invalid'
+
+        with self.assertRaises(rai.err.InvalidSubcompoError):
+            MyCompo()
+
+    def test_add_invalid_compo_as_subcompo(self):
+        """
+        Test that adding a Compo as a subcompo
+        (instead of a Proxy) raises an error
+        """
+        class MyCompo(rai.Compo):
+            def _make(self):
+                self.subcompos.invalid = rai.Snowman()
+
+        with self.assertRaises(rai.err.CompoInsteadOfProxyAsSubcompoError):
+            MyCompo()
+
+        # This tests the inheritance relationship between the two error types
+        with self.assertRaises(rai.err.InvalidSubcompoError):
+            MyCompo()
+
 
 if __name__ == '__main__':
     unittest.main()

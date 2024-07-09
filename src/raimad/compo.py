@@ -10,6 +10,20 @@ from copy import deepcopy
 
 import raimad as rai
 
+class InvalidSubcompoError(TypeError):
+    """
+    Error for when you try to add
+    something weird as a subcompo instead of a proxy
+    """
+    pass
+
+class CompoInsteadOfProxyAsSubcompoError(InvalidSubcompoError):
+    """
+    Special case of InvalidSubcompoError for when you try to add
+    a Compo instead of a Proxy as a subcompo
+    """
+    pass
+
 class MarksContainer(rai.DictList):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,12 +46,22 @@ class MarksContainer(rai.DictList):
 class SubcompoContainer(rai.DictList):
     def _filter(self, item):
         if isinstance(item, rai.Compo):
-            return rai.Proxy(item, _autogen=True)
-        elif isinstance(item, rai.Proxy):
-            return item
-        else:
-            raise Exception  # TODO actual exception
-        # TODO generally need to standardize runtime checks.
+            raise CompoInsteadOfProxyAsSubcompoError(
+                f"Tried to add object `{item}` of type `{type(item)}` "
+                f"as a subcompo of `{self}`. "
+                "All subcompos must be of type `raimad.Proxy`."
+                "You can call the `.proxy()` method of a `raimad.Compo` "
+                "in order to get a proxy that points to it."
+                )
+
+        if not isinstance(item, rai.Proxy):
+            raise InvalidSubcompoError(
+                f"Tried to add object `{item}` of type `{type(item)}` "
+                f"as a subcompo of `{self}`. "
+                "All subcompos must be of type `raimad.Proxy`."
+                )
+
+        return item
 
 class Compo:
     marks: MarksContainer

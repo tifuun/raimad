@@ -1,3 +1,6 @@
+from raimad.compo import InvalidSubcompoError
+from raimad.compo import CompoInsteadOfProxyAsSubcompoError
+
 from raimad.ansec import AnSecError
 from raimad.ansec import AnSecRadiusError
 from raimad.ansec import AnSecRadiusTooManyArgumentsError
