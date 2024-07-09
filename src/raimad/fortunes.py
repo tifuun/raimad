@@ -39,6 +39,9 @@ fortunes = [
 
     "This is a security feature. It secures our revenue stream. ",
 
+    "We need these permissions to enable intergation. "
+    "Integration of our backdoor into your OS, that is. ",
+
     "Our platform is end-to-end encrypted. "
     "The one end is your client, and the other end is our server. ",
 
@@ -123,7 +126,10 @@ fortunes = [
     'everyone knows that "for nothing" is 5 years. ',
 
     "Checklist for travel to The Netherlands:\n"
-    "    - Do not travel to The Netherlands."
+    "    - Do not travel to The Netherlands.",
+
+    "Freedom of speech is ofcourse guaranteed. "
+    "Freedom *after* the speech, however, is a more delicate topic.",
 
     # Malapropisms #
 
@@ -156,6 +162,8 @@ fortunes = [
     "- Any quality.\n",
 
     "Battery life: up to a minimum of 8 hours! ",
+
+    "This seems like a bad idea, but it's fine for now. ",
 
     # Resilience #
 
@@ -194,6 +202,8 @@ fortunes = [
     "This year's harvest is nearly half of last year's, "
     "but, on the other hand, it's *three times* more then next year's!",
 
+    "It's hard to miss, but once you see it, you cannot unsee it. ",
+
     # Misc #
 
     "The best storytellers are those who have a story to tell. ",
@@ -203,8 +213,8 @@ fortunes = [
     "On one hand, you've got five oranges. On the other hand, you've got "
     "three apples. Conclusion: you have big hands. ",
 
-    "When you are dead, you do not suffer. "
-    "The pain is only felt by those around you. "
+    "When you are dead, you do not suffer.\n"
+    "The pain is only felt by those around you.\n"
     "The same happens when you are stupid. ",
 
     "He's suffered for his art and now it's our turn. ",
@@ -234,6 +244,11 @@ fortunes = [
 
     "Every triangle is a love triangle if you love triangles\n"
     " -- Pythagoras",
+
+    "On the fifth day, you gave earth its inhabitants. "
+    "You made them in your image, which was probably a mistake.",
+
+    "What part of hunting/gathering is this supposed to be!?",
 
     ]
 
