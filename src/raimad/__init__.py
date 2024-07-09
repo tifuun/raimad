@@ -59,20 +59,6 @@ from raimad.svg import export_svg
 from raimad import err
 from raimad import debug
 
-from raimad.checker.violations import (
-    Viol,
-    MarksViol,
-    LenientViol,
-    RAI412,
-    RAI442
-    )
-
-from raimad.checker.checker import (
-    check_compo,
-    check_module,
-    Flake8Checker
-    )
-
 from raimad.snowman import Snowman
 
 # Mypy really wants __all__ to be present

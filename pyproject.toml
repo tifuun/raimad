@@ -26,6 +26,3 @@ dependencies = [
     'typing-extensions',
 	]
 
-[project.entry-points."flake8.extension"]
-RAI = "raimad.checker.checker:Flake8Checker"
-
