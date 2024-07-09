@@ -19,3 +19,5 @@ from raimad.cif.shorthand import InvalidDestinationError
 #from raimad.cif import CIFExportError
 #from raimad.cif import CannotCompileTransformError
 
+from raimad.string_import import StringImportError
+
