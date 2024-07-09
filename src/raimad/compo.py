@@ -15,14 +15,33 @@ class InvalidSubcompoError(TypeError):
     Error for when you try to add
     something weird as a subcompo instead of a proxy
     """
-    pass
 
-class CompoInsteadOfProxyAsSubcompoError(InvalidSubcompoError):
+class ProxyCompoConfusionError(TypeError):
+    """
+    Error for when you try to do something to a compo
+    that should be done to a proxy instead
+    """
+
+class CompoInsteadOfProxyAsSubcompoError(
+        InvalidSubcompoError,
+        ProxyCompoConfusionError
+        ):
     """
     Special case of InvalidSubcompoError for when you try to add
     a Compo instead of a Proxy as a subcompo
     """
-    pass
+
+class TransformCompoError(ProxyCompoConfusionError):
+    """
+    Error for when you try to use transformation function on a compo
+    instead of its proxy
+    """
+
+class CopyCompoError(ProxyCompoConfusionError):
+    """
+    Error for when you try to copy a compo
+    instead of its proxy
+    """
 
 class MarksContainer(rai.DictList):
     def __init__(self, *args, **kwargs):
@@ -108,42 +127,84 @@ class Compo:
     def proxy(self):
         return rai.Proxy(self)
 
-    def copy(*args, **kwargs):
-        """
-        Don't copy components, copy proxies
-        """
-        return NotImplemented
+    @property
+    def copy(self):
+        raise CopyCompoError(
+            f"`{self}` is a Compo, not a Proxy! "
+            "Don't copy compos; instead, "
+            "create a Proxy using the `.proxy()` method "
+            "and copy that instead."
+            )
 
     def walk_hier(self):
         yield self
         for subcompo in self.subcompos.values():
             yield from subcompo.walk_hier()
 
-    # Transform functions #
-    # TODO for all transforms
-    #def scale(self, factor):
-    #    return rai.Proxy(
-    #        self,
-    #        transform=rai.Transform().scale(factor)
-    #        )
 
-    #def movex(self, factor):
-    #    return rai.Proxy(
-    #        self,
-    #        transform=rai.Transform().movex(factor)
-    #        )
+    @property
+    def scale(self):
+        raise TransformCompoError(
+            f"Tried to scale `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
 
-    #def movey(self, factor):
-    #    return rai.Proxy(
-    #        self,
-    #        transform=rai.Transform().movey(factor)
-    #        )
+    @property
+    def move(self):
+        raise TransformCompoError(
+            f"Tried to move `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
 
-    #def rotate(self, angle):
-    #    return rai.Proxy(
-    #        self,
-    #        transform=rai.Transform().rotate(angle)
-    #        )
+    @property
+    def movex(self):
+        raise TransformCompoError(
+            f"Tried to move `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
+
+    @property
+    def movey(self):
+        raise TransformCompoError(
+            f"Tried to move `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
+
+    @property
+    def rotate(self):
+        raise TransformCompoError(
+            f"Tried to rotate `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
+
+    @property
+    def flip(self):
+        raise TransformCompoError(
+            f"Tried to flip `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
+
+    @property
+    def hflip(self):
+        raise TransformCompoError(
+            f"Tried to hflip `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
+
+    @property
+    def vflip(self):
+        raise TransformCompoError(
+            f"Tried to vflip `{self}`, which is a Compo. "
+            "Compos are not transformable; call the `.proxy()` method "
+            "to get a Proxy pointing to this compo and transform that instead."
+            )
 
     # lmap function #
     #def __matmul__(self, what):

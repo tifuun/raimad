@@ -94,6 +94,52 @@ class TestCompo(unittest.TestCase):
         with self.assertRaises(rai.err.InvalidSubcompoError):
             MyCompo()
 
+    def test_fail_transform_compo(self):
+        """
+        Test that trying to use transformation methods on a compo
+        (move, scale, etc)
+        raises an error telling you to transform a Proxy of it instead
+        """
+        compo = rai.Snowman()
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.move(10, 10)
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.movex(10)
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.movey(10)
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.scale(10, 10)
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.rotate(10)
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.hflip()
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.vflip()
+
+        with self.assertRaises(rai.err.TransformCompoError):
+            compo.flip()
+
+    def test_fail_copy_compo(self):
+        """
+        Test that trying to copy a compo
+        raises an error telling you to copy a Proxy of it instead
+        """
+        compo = rai.Snowman()
+
+        with self.assertRaises(rai.err.CopyCompoError):
+            compo.copy()
+
+        # Test the inheritance relationship between the error types
+        with self.assertRaises(rai.err.ProxyCompoConfusionError):
+            compo.copy()
+
 
 if __name__ == '__main__':
     unittest.main()
