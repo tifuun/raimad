@@ -6,7 +6,8 @@ import raimad as rai
 
 from .utils import GeomsEqual
 
-class TestPolys(GeomsEqual, unittest.TestCase):
+# The `decimal` is for GeomsEqual
+class TestPolys(GeomsEqual, unittest.TestCase, decimal=7):
 
     def test_rectlw(self):
         rect = rai.RectLW(10, 20)
@@ -245,6 +246,58 @@ class TestPolys(GeomsEqual, unittest.TestCase):
                 dtheta=rai.semicircle,
                 orientation=rai.Orientation.NEG
                 ),
+
+    def test_custompoly(self):
+        """
+        Test CustomPoly
+        """
+        poly = rai.CustomPoly([
+            [10, 10],
+            [20, 10],
+            [20, 30],
+            ])
+        self.assertGeomsEqual(
+            poly.geoms,
+            {
+                'root': [
+                    [
+                        [10, 10],
+                        [20, 10],
+                        [20, 30],
+                        ],
+                    ]
+                }
+            )
+
+    def test_custompoly_marks(self):
+        """
+        Test CustomPoly with dynamic marks
+        """
+        poly = rai.CustomPoly([
+            ['start', [10, 10]],
+            [20, 10],
+            ['end', [20, 30]],
+            ])
+        self.assertGeomsEqual(
+            poly.geoms,
+            {
+                'root': [
+                    [
+                        [10, 10],
+                        [20, 10],
+                        [20, 30],
+                        ],
+                    ]
+                }
+            )
+        self.assertEqual(
+            poly.marks.start,
+            [10, 10]
+            )
+        self.assertEqual(
+            poly.marks.end,
+            [20, 30]
+            )
 
 
 if __name__ == '__main__':

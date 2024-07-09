@@ -3,7 +3,6 @@ import raimad as rai
 class CustomPolyException(Exception):
     pass
 
-# TODO tests
 class CustomPoly(rai.Compo):
     """
     Custom Polygon

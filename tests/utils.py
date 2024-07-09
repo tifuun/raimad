@@ -54,6 +54,11 @@ class GeomsEqual():
     of the order of polys in each layer,
     or the order of points in each poly
     """
+
+    def __init_subclass__(cls, *args, decimal=7, **kwargs) -> None:
+        cls.decimal = decimal
+        super().__init_subclass__(*args, **kwargs)
+
     def assertGeomsEqual(self, actual: rait.Geoms, desired: rait.Geoms):
         self.assertEqual(set(actual.keys()), set(desired.keys()))
         for layer_name in actual.keys():
@@ -84,7 +89,8 @@ class GeomsEqual():
                             poly_actual,
                             comparison=lambda poly1, poly2:
                                 all(
-                                    abs(coord1 - coord2) < 0.01  # TODO epsilon
+                                    round(abs(coord1 - coord2), self.decimal)
+                                        == 0
                                     for point1, point2 in
                                     zip(poly1, poly2, strict=True)
                                     for coord1, coord2 in
