@@ -5,6 +5,8 @@ iters.py -- iteration-related helpers
 from collections.abc import Iterable, Callable, Sequence
 from itertools import chain
 
+import numpy as np
+
 
 def overlap(n: int, seq: Sequence) -> Iterable:
     """
@@ -107,6 +109,7 @@ def is_rotated(first, second, comparison=lambda a, b: a == b) -> bool:
     :second: the other iterable
     :returns: Whether or not one can be obtained by rotating the other
     """
+
     if len(first) != len(second):
         return False
 
@@ -118,6 +121,7 @@ def is_rotated(first, second, comparison=lambda a, b: a == b) -> bool:
     for x in range(0, length):
         rotated = (*second[x:], *second[:x])
         assert len(rotated) == length
+        print(rotated)
         if comparison(first_as_tuple, rotated):
             return True
     return False

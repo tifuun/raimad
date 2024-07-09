@@ -50,7 +50,7 @@ class ArrayAlmostEqual():
 
 class GeomsEqual():
     """
-    Mixing for comparing geoms, regardless
+    Mixin for comparing geoms, regardless
     of the order of polys in each layer,
     or the order of points in each poly
     """
@@ -58,7 +58,19 @@ class GeomsEqual():
         self.assertEqual(set(actual.keys()), set(desired.keys()))
         for layer_name in actual.keys():
 
-            polys_actual = actual[layer_name]
+            # TODO TODO horrible awful no-good dynamic brainrot hack
+            # to filter out points that are represented as arrays
+            # rather than lists
+            # we really need to just grind through everything with mypy
+            # to make sure things are always what we expect them to be
+            polys_actual = [
+                [
+                    point.tolist() if isinstance(point, np.ndarray)
+                    else point
+                    for point in poly
+                    ]
+                for poly in actual[layer_name]
+                ]
             polys_desired = desired[layer_name]
 
             self.assertEqual(len(polys_actual), len(polys_desired))
@@ -70,6 +82,15 @@ class GeomsEqual():
                     num_equal += rai.iters.is_rotated(
                             poly_desired,
                             poly_actual,
+                            comparison=lambda poly1, poly2:
+                                all(
+                                    abs(coord1 - coord2) < 0.01  # TODO epsilon
+                                    for point1, point2 in
+                                    zip(poly1, poly2, strict=True)
+                                    for coord1, coord2 in
+                                    zip(point1, point2, strict=True)
+                                    )
+                                # TODO omg this is borderline incomprehensible
                             )
 
             try:

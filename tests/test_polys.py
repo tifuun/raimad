@@ -4,19 +4,25 @@ import numpy as np
 
 import raimad as rai
 
+from .utils import GeomsEqual
 
-class TestPolys(unittest.TestCase):
+class TestPolys(GeomsEqual, unittest.TestCase):
 
     def test_rectlw(self):
         rect = rai.RectLW(10, 20)
-        self.assertIsNone(np.testing.assert_array_almost_equal(
-            rect.geoms['root'][0],
-            [
-                [-5, -10],
-                [5, -10],
-                [5, 10],
-                [-5, 10]
-            ]))
+        self.assertGeomsEqual(
+            rect.geoms,
+            {
+                'root': [
+                    [
+                        [-5, -10],
+                        [5, -10],
+                        [5, 10],
+                        [-5, 10]
+                        ],
+                    ]
+                }
+            )
 
     def test_circle(self):
         circle = rai.Circle(69)
@@ -30,25 +36,35 @@ class TestPolys(unittest.TestCase):
 
     def test_rectwire(self):
         rectwire = rai.RectWire((0, 0), (0, 20), width=10)
-        self.assertIsNone(np.testing.assert_array_almost_equal(
-            rectwire.geoms['root'][0],
-            [
-                [-5, 0],
-                [5, 0],
-                [5, 20],
-                [-5, 20]
-            ]))
+        self.assertGeomsEqual(
+            rectwire.geoms,
+            {
+                'root': [
+                    [
+                        [-5, 0],
+                        [5, 0],
+                        [5, 20],
+                        [-5, 20]
+                        ],
+                    ]
+                }
+            )
 
     def test_rectwire_shortsyntax(self):
         rectwire = rai.RectWire((0, 0), (0, 20), 10)
-        self.assertIsNone(np.testing.assert_array_almost_equal(
-            rectwire.geoms['root'][0],
-            [
-                [-5, 0],
-                [5, 0],
-                [5, 20],
-                [-5, 20]
-            ]))
+        self.assertGeomsEqual(
+            rectwire.geoms,
+            {
+                'root': [
+                    [
+                        [-5, 0],
+                        [5, 0],
+                        [5, 20],
+                        [-5, 20]
+                        ],
+                    ]
+                }
+            )
 
     def test_rectwire_polar(self):
         rectwire = rai.RectWire(
@@ -57,14 +73,19 @@ class TestPolys(unittest.TestCase):
             length=20,
             width=10,
             )
-        self.assertIsNone(np.testing.assert_array_almost_equal(
-            rectwire.geoms['root'][0],
-            [
-                [-5, 0],
-                [5, 0],
-                [5, 20],
-                [-5, 20]
-            ]))
+        self.assertGeomsEqual(
+            rectwire.geoms,
+            {
+                'root': [
+                    [
+                        [-5, 0],
+                        [5, 0],
+                        [5, 20],
+                        [-5, 20]
+                        ],
+                    ]
+                }
+            )
 
     def test_rectwire_both(self):
         """

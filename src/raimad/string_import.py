@@ -10,7 +10,6 @@ import raimad as rai
 class StringImportError(ImportError):
     pass
 
-# TODO test
 def string_import(import_str, multiple=False):
     module_str, _, attr_str = import_str.partition(':')
 
