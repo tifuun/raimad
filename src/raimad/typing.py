@@ -22,12 +22,15 @@ Point: TypeAlias = \
         np.typing.NDArray[np.float64] | \
         rai.BoundPoint
 Poly: TypeAlias = Sequence[Point]
-PolyArray: TypeAlias = np.typing.NDArray[np.float64]
 Polys: TypeAlias = Sequence[Poly]
 Geoms: TypeAlias = dict[str, Polys]
 Transform: TypeAlias = rai.Transform
 BBox: TypeAlias = rai.BBox
-Affine: TypeAlias = np.typing.NDArray[np.float64]
+Affine: TypeAlias = tuple[
+    tuple[float, float, float],
+    tuple[float, float, float],
+    tuple[float, float, float],
+    ]
 
 LMapShorthand: TypeAlias = None | str | dict[str, str]
 #XYarray: TypeAlias = np.ndarray[Any, Point]

@@ -22,7 +22,7 @@ fortunes = [
     'We built our world without walls and fences, '
     "so naturally we don't need Windows and Gates. ",
 
-    "object: v. to feel strong distaste; to oppose firmly.\n"
+    "object: v. to feel strong distaste for; to oppose firmly.\n"
     "See also: object-oriented programming. ",
 
     "Just a few hours of trial and error can save "
@@ -89,7 +89,7 @@ fortunes = [
     "Elect a clown, expect a circus. ",
 
     "Points of discussion: "
-    "construction of a shed, and construction of communism. "
+    "building a new shed, and building communism.\n"
     "Due to lumber shortages, it was decided to skip "
     "straight to the second point. ",
 
@@ -126,10 +126,10 @@ fortunes = [
     'everyone knows that "for nothing" is 5 years. ',
 
     "Checklist for travel to The Netherlands:\n"
-    "    - Do not travel to The Netherlands.",
+    "    - Do not travel to The Netherlands. ",
 
     "Freedom of speech is ofcourse guaranteed. "
-    "Freedom *after* the speech, however, is a more delicate topic.",
+    "Freedom *after* the speech, however, is a more delicate topic. ",
 
     # Malapropisms #
 
@@ -165,6 +165,8 @@ fortunes = [
 
     "This seems like a bad idea, but it's fine for now. ",
 
+    "This was a problem for future me, and now I am future me. ",
+
     # Resilience #
 
     "Even with everyone's help, you still have to do everything on your own. ",
@@ -188,6 +190,9 @@ fortunes = [
     "Just because you can survive in harsh conditions "
     "doesn't mean you should have to. ",
 
+    "Even if you're a freak of nature, it doesn't mean that you deserve "
+    "to be treated like one. ",
+
     "Tip: spice up your panic attack with a harmonica. ",
 
     "Don't delay, despair today! ",
@@ -203,6 +208,9 @@ fortunes = [
     "but, on the other hand, it's *three times* more then next year's!",
 
     "It's hard to miss, but once you see it, you cannot unsee it. ",
+
+    "You can't solve problems with the same "
+    "type of thinking that created them. ",
 
     # Misc #
 
@@ -246,9 +254,12 @@ fortunes = [
     " -- Pythagoras",
 
     "On the fifth day, you gave earth its inhabitants. "
-    "You made them in your image, which was probably a mistake.",
+    "You made them in your image, which was probably a mistake. ",
 
     "What part of hunting/gathering is this supposed to be!?",
+
+    "- I'm telling the truth, I swear! You can just read my mind, can't you?\n"
+    "- Heh. Only an idiot would think the truth on Kin Dza Dza!",
 
     ]
 
