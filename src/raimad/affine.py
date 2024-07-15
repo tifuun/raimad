@@ -2,13 +2,21 @@
 Operations on affine matrices
 """
 
-from math import sin, cos
+from math import sin, cos, sqrt
 from functools import reduce
+from typing import Sequence
 
 import numpy as np
 import numpy.typing as _
 
 import raimad as rai
+
+def identity():
+    return (
+        (1, 0, 0),
+        (0, 1, 0),
+        (0, 0, 1)
+        )
 
 def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
     if len(arrays) == 1:
@@ -41,6 +49,32 @@ def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
             )
 
     return matmul(matmul(arrays[0], arrays[1]), *arrays[2:])
+
+def norm(vec: Sequence[float]) -> float:
+    """
+    Calculate the norm of a vector (aka equclidean distance)
+    """
+
+    # Hardcoding the special cases for vectors of length 0, 1, 2 and 3
+    # seems to save a bit of time,
+    # see benchmarks/norm.py
+    if len(vec) == 0:
+        return 0
+
+    if len(vec) == 1:
+        return vec[0]
+
+    if len(vec) == 2:
+        # `sqrt` is the tiniest bit faster than `** (1/2)`,
+        # at least on my machine
+        return sqrt(vec[0] ** 2 + vec[1] ** 2)
+
+    if len(vec) == 3:
+        return sqrt(vec[0] ** 2 + vec[1] ** 2 + vec[2] ** 2)
+
+    # This is around three times faster than
+    # numpy.linalg.norm for small vectors
+    return sqrt(sum((coord ** 2 for coord in vec)))
 
 
 def rotate(angle: float) -> 'rai.typing.Affine':
@@ -82,8 +116,8 @@ def get_scale(matrix: 'rai.typing.Affine') -> tuple[float, float]:
     """
     Given an affine matrix, return the corresponding scale.
     """
-    scale_x = np.linalg.norm((matrix[0][0], matrix[1][0], matrix[2][0]))
-    scale_y = np.linalg.norm((matrix[0][1], matrix[1][1], matrix[2][1]))
+    scale_x = norm((matrix[0][0], matrix[1][0], matrix[2][0]))
+    scale_y = norm((matrix[0][1], matrix[1][1], matrix[2][1]))
     return float(scale_x), float(scale_y)
 
 def get_shear(matrix: 'rai.typing.Affine') -> float:

@@ -20,18 +20,18 @@ class Transform:
         self.reset()
 
     def reset(self) -> None:
-        self._affine = np.identity(3)
+        self._affine = rai.affine.identity()
 
     def transform_xyarray(
             self,
-            poly: 'rai.typing.Poly | pc.typing.PolyArray'
-            ) -> 'rai.typing.Poly | pc.typing.PolyArray':
+            poly: 'rai.typing.Poly'
+            ) -> 'rai.typing.Poly':
         """
         Apply transformation to xyarray and return new transformed xyarray
         """
         return rai.affine.transform_xyarray(self._affine, poly)
 
-    def transform_point(self, point: 'rai.typing.Point') -> 'pc.typing.Point':
+    def transform_point(self, point: 'rai.typing.Point') -> 'rai.typing.Point':
         """
         Apply transformation to point and return new transformed point
         """
@@ -42,10 +42,10 @@ class Transform:
         Apply a transform to this transform
         """
         if transform is not None:
-            self._affine = transform._affine @ self._affine
+            self._affine = rai.affine.matmul(transform._affine, self._affine)
         return self
 
-    def get_translation(self) -> np.typing.NDArray[np.float64]:
+    def get_translation(self) -> tuple[float, float]:
         return rai.affine.get_translation(self._affine)
 
     def get_rotation(self) -> float:
@@ -54,11 +54,11 @@ class Transform:
     def get_shear(self) -> float:
         return rai.affine.get_shear(self._affine)
 
-    def get_scale(self) -> tuple[np.float64, np.float64]:
+    def get_scale(self) -> tuple[float, float]:
         return rai.affine.get_scale(self._affine)
 
     def does_translate(self) -> bool:
-        norm = np.linalg.norm(self.get_translation())
+        norm = rai.affine.norm(self.get_translation())
         return norm > 0.001  # TODO epsilon
 
     def does_rotate(self) -> 'rai.typing.Bool':
@@ -110,37 +110,21 @@ class Transform:
     def move(self, x=0, y: float = 0):
         if isinstance(x, rai.Point):
             x, y = x
-        self._affine = rai.affine.move(x, y) @ self._affine
+        self._affine = rai.affine.matmul(rai.affine.move(x, y), self._affine)
         return self
 
     def movex(self, x: float = 0) -> Self:
-        self._affine = rai.affine.move(x, 0) @ self._affine
+        self._affine = rai.affine.matmul(rai.affine.move(x, 0), self._affine)
         return self
 
     def movey(self, y: float = 0) -> Self:
-        self._affine = rai.affine.move(0, y) @ self._affine
+        self._affine = rai.affine.matmul(rai.affine.move(0, y), self._affine)
         return self
 
-    #def scale(
-    #        self,
-    #        x: float | rai.Point,  # TODO typing.point
-    #        y: float | None = None,
-    #        cx: float = 0,
-    #        cy: float = 0,
-    #        ) -> Self:
-
-    #    if isinstance(x, rai.Point):
-    #        x, y = x
-
-    #    elif y is None:
-    #        y = x
-
-    #    self._affine = rai.affine.around(pc.affine.scale(x, y), cx, cy) @ self._affine
-    #    return self
     def scale(self, x: float, y: float | None = None) -> Self:
         if y is None:
             y = x
-        self._affine = rai.affine.scale(x, y) @ self._affine
+        self._affine = rai.affine.matmul(rai.affine.scale(x, y), self._affine)
         return self
 
     def rotate(
@@ -153,20 +137,33 @@ class Transform:
         if isinstance(x, rai.Point):
             x, y = x
 
-        self._affine = rai.affine.around(rai.affine.rotate(angle), x, y) @ self._affine
+        self._affine = rai.affine.matmul(
+            # TODO what is this weird float cast on the line below!?
+            rai.affine.around(rai.affine.rotate(angle), float(x), float(y)),
+            self._affine
+            )
 
         return self
 
     def hflip(self, x: float = 0) -> Self:
-        self._affine = rai.affine.around(rai.affine.scale(1, -1), 0, x) @ self._affine
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.scale(1, -1), 0, x),
+            self._affine
+            )
         return self
 
     def vflip(self, y: float = 0) -> Self:
-        self._affine = rai.affine.around(rai.affine.scale(-1, 1), y, 0) @ self._affine
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.scale(-1, 1), y, 0),
+            self._affine
+            )
         return self
 
     def flip(self, x: float = 0, y: float = 0) -> Self:
-        self._affine = rai.affine.around(rai.affine.scale(-1, -1), x, y) @ self._affine
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.scale(-1, -1), x, y),
+            self._affine
+            )
         return self
 
     def inverse(self):
