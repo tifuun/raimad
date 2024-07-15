@@ -4,10 +4,12 @@ from typing import (
         TypeVar,
         )
 
-try:
+import sys
+
+# see https://github.com/python/mypy/issues/16903
+if sys.version_info >= (3, 10):
     from typing import ParamSpec, TypeAlias
-except:
-    # py3.9 and lower
+else:
     from typing_extensions import ParamSpec, TypeAlias
 
 

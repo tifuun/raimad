@@ -72,7 +72,7 @@ class Transform:
         # TODO epsilon
         return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         does_translate = self.does_translate()
         does_rotate = self.does_rotate()
         does_shear = self.does_shear()
@@ -107,9 +107,7 @@ class Transform:
     # types defined in own files
     # then mergen in rai.typing
     # or just PointType, CompoClassType, etc
-    def move(self, x=0, y: float = 0):
-        if isinstance(x, rai.Point):
-            x, y = x
+    def move(self, x: float, y: float) -> Self:
         self._affine = rai.affine.matmul(rai.affine.move(x, y), self._affine)
         return self
 
@@ -130,16 +128,12 @@ class Transform:
     def rotate(
             self,
             angle: float,
-            x: float | rai.Point = 0,
+            x: float = 0,
             y: float = 0
             ) -> Self:
 
-        if isinstance(x, rai.Point):
-            x, y = x
-
         self._affine = rai.affine.matmul(
-            # TODO what is this weird float cast on the line below!?
-            rai.affine.around(rai.affine.rotate(angle), float(x), float(y)),
+            rai.affine.around(rai.affine.rotate(angle), x, y),
             self._affine
             )
 
@@ -166,7 +160,7 @@ class Transform:
             )
         return self
 
-    def inverse(self):
-        self._affine = np.linalg.inv(self._affine)
-        return self
+    #def inverse(self) -> Self:
+    #    self._affine = np.linalg.inv(self._affine)
+    #    return self
 

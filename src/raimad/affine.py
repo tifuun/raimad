@@ -11,7 +11,7 @@ import numpy.typing as _
 
 import raimad as rai
 
-def identity():
+def identity() -> 'rai.typing.Affine':
     return (
         (1, 0, 0),
         (0, 1, 0),
@@ -102,8 +102,6 @@ def around(matrix: 'rai.typing.Affine', x: float, y: float) -> 'rai.typing.Affin
     to_origin = move(-x, -y)
     from_origin = move(x, y)
 
-    print('a')
-    print(matmul(from_origin, matrix, to_origin))
     return matmul(from_origin, matrix, to_origin)
 
 def get_translation(matrix: 'rai.typing.Affine') -> tuple[float, float]:
