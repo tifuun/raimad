@@ -39,22 +39,38 @@ def angspace(
         num_steps: int = 50,
         orientation: Orientation = Orientation.POS,
         endpoint: bool = True,
-        ) -> np.ndarray[float]:
+        ) -> list[float]:
     """
     Angular space:
     construct an array of angles going from `start` to `end`
-    in the positive orientation (counterclockwise).
+    in the positive orientation (counterclockwise)
+    or negative orientation (clockwise)
     """
+    #if orientation is Orientation.NEG:
+    #    start, end = end, start
+
+    if start == end:
+        return []
+
+    if num_steps <= 0:
+        return []
+
+    if orientation is Orientation.POS:
+        while end < start:
+            end += fullcircle
+
     if orientation is Orientation.NEG:
-        start, end = end, start
+        while end > start:
+            end -= fullcircle
 
-    while start < 0:
-        start += fullcircle
+    step = (end - start) / (num_steps - endpoint)
 
-    while end < start:
-        end += fullcircle
+    #if orientation is Orientation.NEG:
+    #    step = -step
 
-    return np.linspace(start, end, num_steps, endpoint=endpoint)
+    points = [start + i * step for i in range(num_steps)]
+
+    return points
 
 def angle_between(p1, p2):
     """

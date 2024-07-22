@@ -212,6 +212,8 @@ fortunes = [
     "You can't solve problems with the same "
     "type of thinking that created them. ",
 
+    "This is informative and unfortunate. ",
+
     # Misc #
 
     "The best storytellers are those who have a story to tell. ",
@@ -260,6 +262,11 @@ fortunes = [
 
     "- I'm telling the truth, I swear! You can just read my mind, can't you?\n"
     "- Heh. Only an idiot would think the truth on Kin Dza Dza!",
+
+    "The birds are singing, the sun is shining, my koi fish pond no longer "
+    "has algae in it, and I didn't need to use a single chemical, "
+    "and thermaltake is screwing over their customers, "
+    "and we're gonna make sure they never get a sale again. ",
 
     ]
 
