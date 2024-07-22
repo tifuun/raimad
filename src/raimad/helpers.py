@@ -2,6 +2,7 @@ from typing import (
         Callable,
         Generator,
         TypeVar,
+        Iterator,
         )
 
 import sys
@@ -15,41 +16,41 @@ else:
 
 from enum import Enum
 import functools
-
-import numpy as np
+import math
 
 import raimad as rai
 
-fullcircle = np.deg2rad(360)
-halfcircle = np.deg2rad(180)
-quartercircle = np.deg2rad(90)
-eigthcircle = np.deg2rad(45)
+fullcircle = math.radians(360)
+halfcircle = math.radians(180)
+quartercircle = math.radians(90)
+eigthcircle = math.radians(45)
 
-semicircle = np.deg2rad(180)
-demisemicircle = np.deg2rad(90)
-hemidemisemicircle = np.deg2rad(45)
+semicircle = math.radians(180)
+demisemicircle = math.radians(90)
+hemidemisemicircle = math.radians(45)
 
-def angle_between(p1, p2):
+def angle_between(p1: 'rai.typing.Point', p2: 'rai.typing.Point') -> float:
     """
     Angle between two points
     """
-    x, y = np.array(p2) - np.array(p1)
-    return np.arctan2(y, x)
+    x = p2[0] - p1[0]
+    y = p2[1] - p1[1]
+    return math.atan2(y, x)
 
-def polar(arg, mod=1):
+def polar(arg: float, mod: float = 1) -> tuple[float, float]:
     return (
-        np.cos(arg) * mod,
-        np.sin(arg) * mod
+        math.cos(arg) * mod,
+        math.sin(arg) * mod
         )
 
-def is_compo_class(obj):
+def is_compo_class(obj: type) -> bool:
     return (
         isinstance(obj, type)
         and issubclass(obj, rai.Compo)
         and obj is not rai.Compo
         )
 
-def _custom_base(value: int, glyphs: list[str]):
+def _custom_base(value: int, glyphs: list[str]) -> Iterator[str]:
     """
     Convert an int into a base-n number
     (generator)
@@ -59,9 +60,8 @@ def _custom_base(value: int, glyphs: list[str]):
         yield from _custom_base(div, glyphs)
     yield glyphs[mod]
 
-def custom_base(value: int, glyphs: list[str]):
+def custom_base(value: int, glyphs: list[str]) -> str:
     return ''.join(_custom_base(value, glyphs))
-
 
 WINGDINGS = [
     f"\033[0;{color}m{symbol} "
@@ -69,7 +69,7 @@ WINGDINGS = [
     for symbol in r"●■◀▶▲▼▚x╚╔╝═╩╗╦╵╷┴┬╰/\╭╮╯∞o8:"
     ]
 
-def wingdingify(value: int):
+def wingdingify(value: int) -> str:
     """
     Encode an integer with a bunch of symbols.
     """
@@ -78,50 +78,21 @@ def wingdingify(value: int):
         '\033[0m',
         ))
 
-def preload_generator(factory=tuple):
-    def preload_generator_inner(generator):
-        @functools.wraps(generator)
-        def wrapper(*args, **kwargs):
-            return factory(generator(*args, **kwargs))
-        return wrapper
-    return preload_generator_inner
-
-
-T = TypeVar('T')
-P = ParamSpec('P')
-Undecorated: TypeAlias = Callable[P, Generator[str, None, None]]
-Decorated: TypeAlias = Callable[P, T]
-Inner_Decorator: TypeAlias = Callable[[Undecorated], Decorated]
-# ARGHHHHH I feel like a C++ programmer
-
-def join_generator(
-        string: str,
-        post: Callable[[str], T] = lambda x: x,
-        ) -> Inner_Decorator:
-    def join_generator_inner(
-            generator: Undecorated
-            ) -> Decorated:
-
-        @functools.wraps(generator)
-        def wrapper(
-                *args: P.args,
-                **kwargs: P.kwargs
-                ) -> T:
-            return post(string.join(generator(*args, **kwargs)))
-
-        return wrapper
-
-    return join_generator_inner
-
-def midpoint(p1, p2):
+def midpoint(
+        p1: 'rai.typing.Point',
+        p2: 'rai.typing.Point'
+        ) -> 'rai.typing.Point':
     """
     Midpoint between two points
     """
-    return (p1 + p2) / 2
+    return (
+        (p1[0] + p2[0]) / 2,
+        (p1[1] + p2[1]) / 2,
+        )
 
 # TODO chaining boundpoint actions?
 
-def klay(cifstring):
+def klay(cifstring: str) -> None:
     """
     Do not use this function.
     This is a helper for me to debug the CIF export process
