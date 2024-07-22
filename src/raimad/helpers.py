@@ -29,49 +29,6 @@ semicircle = np.deg2rad(180)
 demisemicircle = np.deg2rad(90)
 hemidemisemicircle = np.deg2rad(45)
 
-class Orientation(Enum):
-    POS = 1
-    NEG = -1
-
-def angspace(
-        start: float,
-        end: float,
-        num_steps: int = 50,
-        orientation: Orientation = Orientation.POS,
-        endpoint: bool = True,
-        ) -> list[float]:
-    """
-    Angular space:
-    construct an array of angles going from `start` to `end`
-    in the positive orientation (counterclockwise)
-    or negative orientation (clockwise)
-    """
-    #if orientation is Orientation.NEG:
-    #    start, end = end, start
-
-    if start == end:
-        return []
-
-    if num_steps <= 0:
-        return []
-
-    if orientation is Orientation.POS:
-        while end < start:
-            end += fullcircle
-
-    if orientation is Orientation.NEG:
-        while end > start:
-            end -= fullcircle
-
-    step = (end - start) / (num_steps - endpoint)
-
-    #if orientation is Orientation.NEG:
-    #    step = -step
-
-    points = [start + i * step for i in range(num_steps)]
-
-    return points
-
 def angle_between(p1, p2):
     """
     Angle between two points
@@ -80,10 +37,10 @@ def angle_between(p1, p2):
     return np.arctan2(y, x)
 
 def polar(arg, mod=1):
-    return np.array([
-        np.cos(arg),
-        np.sin(arg)
-        ]) * mod
+    return (
+        np.cos(arg) * mod,
+        np.sin(arg) * mod
+        )
 
 def is_compo_class(obj):
     return (

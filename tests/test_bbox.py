@@ -29,7 +29,7 @@ class RotatedCircles(rai.Compo):
             TwoCircles().proxy().rotate(np.deg2rad(90))
             )
 
-class TestBBox(ArrayAlmostEqual, unittest.TestCase, decimal=2):
+class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
     def test_bbox_basic(self):
         circle = rai.Circle(5)

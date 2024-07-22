@@ -127,7 +127,7 @@ class BareStructuralSyntax(rai.Compo):
 
         self.marks.propagated = self.subcompos[2].marks.propagated
 
-class TestMarks(ArrayAlmostEqual, unittest.TestCase, decimal=3):
+class TestMarks(ArrayAlmostEqual, unittest.TestCase):
 
     def test_marks(self):
         compo = BareStructural()

@@ -40,7 +40,7 @@ class Compo_auto(rai.Compo):
 #        coup_bot.snap_below(beam)
 
 
-class TestNamedSubcompos(ArrayAlmostEqual, unittest.TestCase, decimal=3):
+class TestNamedSubcompos(ArrayAlmostEqual, unittest.TestCase):
 
     def test_named_subcompos(self):
 

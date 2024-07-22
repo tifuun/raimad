@@ -19,7 +19,6 @@ RealCompo: TypeAlias = rai.Compo
 Proxy: TypeAlias = rai.Proxy
 Point: TypeAlias = \
         tuple[float, float] | \
-        np.typing.NDArray[np.float64] | \
         rai.BoundPoint
 Poly: TypeAlias = Sequence[Point]
 Polys: TypeAlias = Sequence[Poly]

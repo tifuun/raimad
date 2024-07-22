@@ -55,7 +55,6 @@ class AnSec(rai.Compo):
             theta2=None,
             thetamid=None,
             dtheta=None,
-            orientation=None,
             ):
 
         r1, r2 = self.interpret_radius(r1, r2, rmid, dr)
@@ -70,18 +69,20 @@ class AnSec(rai.Compo):
             self.geoms.update({'root': [[]]})
             return
 
-        angspace = rai.angspace(theta1, theta2, orientation=orientation)
+        num_points = 100 # TODO
+        theta_step = (theta2 - theta1) / num_points
+        angles = [theta1 + theta_step * i for i in range(num_points)]
 
         self.geoms.update({
             'root': [
-                np.array([
+                [
                     rai.polar(arg=angle, mod=radius)
                     for radius, angles in [
-                        [r1, angspace],
-                        [r2, reversed(angspace)],
+                        [r1, angles],
+                        [r2, reversed(angles)],
                         ]
                     for angle in angles
-                    ])
+                    ]
                 ]
             })
 

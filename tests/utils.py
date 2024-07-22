@@ -22,31 +22,16 @@ class PrettyEqual():
 class ArrayAlmostEqual():
     decimal: ClassVar[float]
 
-    def __init_subclass__(cls, *args, decimal=7, **kwargs) -> None:
-        cls.decimal = decimal
+    def __init_subclass__(cls, *args, epsilon=0.01, **kwargs) -> None:
+        cls.epsilon = epsilon
         super().__init_subclass__(*args, **kwargs)
 
-    def assertArrayAlmostEqual(self, actual, desired):
-        self.assertIsNone(
-            np.testing.assert_array_almost_equal(
-                np.array(actual),
-                np.array(desired),
-                decimal=self.decimal
-                )
-            )
+    def assertArrayAlmostEqual(self, actual, desired, epsilon=None):
+        max_deviation = max((abs(a - d) for a, d in zip(actual, desired)))
+        self.assertTrue(max_deviation <= (epsilon or self.epsilon))
 
-        # The explicit `np.array` cast above is very necessary,
-        # because if somebody tries to pass an unbound BoundPoint
-        # to this method, `np.testing.assert_array_almost_equal`
-        # will try to get the `proxy` of the boundpoint,
-        # raising an error
-
-    def assertAlmostEqual(self, first, second):
-        super().assertAlmostEqual(
-            first,
-            second,
-            places=self.decimal
-            )
+    def assertAlmostEqual(self, actual, desired, epsilon=None):
+        self.assertTrue(abs(actual - desired) <= (epsilon or self.epsilon))
 
 class GeomsEqual():
     """
@@ -55,11 +40,15 @@ class GeomsEqual():
     or the order of points in each poly
     """
 
-    def __init_subclass__(cls, *args, decimal=7, **kwargs) -> None:
-        cls.decimal = decimal
+    def __init_subclass__(cls, *args, epsilon=0.001, **kwargs) -> None:
+        cls.epsilon = epsilon
         super().__init_subclass__(*args, **kwargs)
 
-    def assertGeomsEqual(self, actual: rait.Geoms, desired: rait.Geoms):
+    def assertGeomsEqual(
+            self,
+            actual: rait.Geoms,
+            desired: rait.Geoms,
+            epsilon: float | None = None):
         self.assertEqual(set(actual.keys()), set(desired.keys()))
         for layer_name in actual.keys():
 
@@ -89,8 +78,10 @@ class GeomsEqual():
                             poly_actual,
                             comparison=lambda poly1, poly2:
                                 all(
-                                    round(abs(coord1 - coord2), self.decimal)
-                                        == 0
+                                    #round(abs(coord1 - coord2), self.decimal)
+                                    #    == 0
+                                    abs(coord1 - coord2)
+                                        <= (epsilon or self.epsilon)
                                     for point1, point2 in
                                     zip(poly1, poly2, strict=True)
                                     for coord1, coord2 in

@@ -51,7 +51,11 @@ class RectWire(rai.Compo):
                 )
 
         if passed == 0b011:
-            p2 = p1 + rai.polar(angle, length)
+            s = rai.polar(angle, length)
+            p2 = (
+                p1[0] + s[0],
+                p1[1] + s[1],
+                )
 
         if passed == 0b100:
             angle = rai.angle_between(p1, p2)
@@ -64,15 +68,16 @@ class RectWire(rai.Compo):
 
         step = rai.polar(
             arg=angle + rai.quartercircle,
-            mod=width / 2)
+            mod=width / 2
+            )
 
         self.geoms.update({
             'root': [
                 [
-                    p1 + step,
-                    p1 - step,
-                    p2 - step,
-                    p2 + step,
+                    (p1[0] + step[0], p1[1] + step[1]),
+                    (p1[0] - step[0], p1[1] - step[1]),
+                    (p2[0] - step[0], p2[1] - step[1]),
+                    (p2[0] + step[0], p2[1] + step[1]),
                     ]
                 ]
             })
