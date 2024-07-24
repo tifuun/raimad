@@ -5,7 +5,7 @@ Namespace flattening for RAIMAD.
 import numpy as np
 Point = np.ndarray  # TODO
 
-from raimad.empty import Empty
+from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
 from raimad.helpers import *
 from raimad import affine
@@ -32,6 +32,7 @@ from raimad.docparse import split_docstring
 
 from raimad.dictlist import DictList
 
+from raimad.annotation import Annotation
 from raimad.mark import Mark
 from raimad.layer import Layer
 from raimad.option import Option
@@ -44,6 +45,7 @@ from raimad.proxy import Proxy
 from raimad.proxy import LMap
 from raimad.partial import Partial
 from raimad.bbox import BBox
+from raimad.boundbbox import BoundBBox
 
 from raimad.rectlw import RectLW
 from raimad.rectwire import RectWire
@@ -52,6 +54,7 @@ from raimad.ansec import AnSec
 from raimad.custompoly import CustomPoly
 
 from raimad import typing
+t = typing
 
 from raimad import cif
 from raimad.cif.shorthand import export_cif
@@ -72,8 +75,19 @@ __all__ = [
     'MarksContainer',
     'SubcompoContainer',
     'BBox',
+    'BoundBBox',
     'Partial',
     'LMap',
+    'export_cif',
+    'string_import',
+    'Annotation',
+    'Mark',
+    'Layer',
+    'Option',
+    'Empty',
+    'EmptyType',
+    't',
+    'typing'
     ]
 
 

@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, Any
 
 try:
     from typing import Self
@@ -8,7 +8,11 @@ except ImportError:
 
 import raimad as rai
 
-class Option:
+
+class Option(rai.Annotation):
+    annot: str | rai.EmptyType
+    default: Any | rai.EmptyType
+
     def __init__(self, desc: str, browser_default=rai.Empty):
         self.desc = desc
         self.category = type(self)

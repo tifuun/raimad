@@ -10,21 +10,26 @@ except ImportError:
     #py3.9 and lower
     from typing_extensions import TypeAlias
     
-import numpy as np
 import raimad as rai
 
-CompoClass: TypeAlias = type[rai.Compo] | rai.Partial
+CompoType: TypeAlias = type[rai.Compo]
+Partial: TypeAlias = rai.Partial
+CompoTypeLike: TypeAlias = type[rai.Compo] | rai.Partial
+
 Compo: TypeAlias = rai.Compo | rai.Proxy
-RealCompo: TypeAlias = rai.Compo
 Proxy: TypeAlias = rai.Proxy
-Point: TypeAlias = \
-        tuple[float, float] | \
-        rai.BoundPoint
-Poly: TypeAlias = Sequence[Point]
-Polys: TypeAlias = Sequence[Poly]
+CompoLike: TypeAlias = rai.Compo | rai.Proxy
+
+Point: TypeAlias = tuple[float, float]
+BoundPoint: TypeAlias = rai.BoundPoint
+PointLike: TypeAlias = Point | rai.BoundPoint
+
+Poly: TypeAlias = list[Point]
+Polys: TypeAlias = list[Poly]
 Geoms: TypeAlias = dict[str, Polys]
 Transform: TypeAlias = rai.Transform
 BBox: TypeAlias = rai.BBox
+BoundBBox: TypeAlias = rai.BoundBBox
 Affine: TypeAlias = tuple[
     tuple[float, float, float],
     tuple[float, float, float],
@@ -35,8 +40,5 @@ LMapShorthand: TypeAlias = None | str | dict[str, str]
 #XYarray: TypeAlias = np.ndarray[Any, Point]
 #Geoms: TypeAlias = dict[str, list[XYarray]]
 LMap: TypeAlias = rai.LMap
-
-# Well, isn't this lovely?
-Bool: TypeAlias = bool | np.bool_
 
 

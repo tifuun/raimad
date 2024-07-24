@@ -288,6 +288,21 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
         self.assertArrayAlmostEqual(c2.bbox.mid, (-10 - 5, 0))
         self.assertArrayAlmostEqual(c3.bbox.mid, (10, -2))
 
+    def test_bbox_bound(self):
+        c1 = rai.Proxy(rai.Circle(10))
+        bound = c1.bbox
+        unbound = bound.copy()
+
+        bound.mid.to((0, 0))
+        with self.assertRaises(AttributeError):
+            unbound.mid.to((0, 0))
+
+        # TODO there's no easy way here to write an error message like
+        # "hey, you tried to do a transform through an unbound bbox,
+        # you need to do it through a bound bbox"
+        # All you get is a cryptic "tuple has no attribute 'to'"
+        # Maybe we need a raidoc page with common errors?
+
 
 if __name__ == '__main__':
     unittest.main()

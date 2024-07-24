@@ -14,12 +14,12 @@ class InvalidDestinationError(ValueError):
     pass
 
 def export_cif(
-        compo,
+        compo: 'rai.typing.Compo',
         dest: str | Path | TextIO | None = None,
-        exporter=None,
+        exporter=None,  # TODO protocol
         *args,
         **kwargs
-        ):
+        ) -> str:
     exporter_instance = (exporter or rai.cif.NoReuse)(compo, *args, **kwargs)
     cif_string = exporter_instance.cif_string
 
@@ -37,3 +37,4 @@ def export_cif(
             )
 
     return cif_string
+

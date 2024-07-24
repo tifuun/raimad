@@ -5,6 +5,7 @@ RAIMAD Command-line interface (CLI)
 import argparse
 from pathlib import Path
 from sys import stdout
+from typing import Sequence
 
 import raimad as rai
 
@@ -14,10 +15,13 @@ FILE_STDOUT = '-'
 class UnknownFormatError(Exception):
     pass
 
-def cli(custom_args=None):
+def cli(custom_args: Sequence[str] | None = None) -> None:
 
     parser = _setup_parser()
-    args = parser.parse_args(*[custom_args])
+    if custom_args is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(custom_args)
 
     if args.action == ACTION_EXPORT:
         _process_args(args)
@@ -30,7 +34,7 @@ def cli(custom_args=None):
         # argparse validates this.
         parser.error('Unknown action')
 
-def _setup_parser():
+def _setup_parser() -> argparse.ArgumentParser:
     """
     Create the root parser for the CLI interface.
     """
@@ -48,7 +52,9 @@ def _setup_parser():
 
     return parser
 
-def _add_export_action(subparsers):
+def _add_export_action(
+        subparsers: argparse._SubParsersAction
+        ) -> None:
     """
     Add the export action to the root parser.
     For now, this is the only action
@@ -83,7 +89,7 @@ def _add_export_action(subparsers):
         )
 
 
-def _process_args(args):
+def _process_args(args: argparse.Namespace) -> None:
     args.output_file = args.output_file.replace(
         '{name}',
         args.component.__name__

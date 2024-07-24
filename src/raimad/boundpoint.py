@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 try:
     from typing import Self
@@ -10,53 +10,51 @@ import numpy as np
 
 import raimad as rai
 
-# see
-# https://numpy.org/doc/stable/user/basics.subclassing.html
-class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
+class BoundPoint():
+    def __init__(self, x: float, y: float, proxy: 'rai.typing.Proxy'):
+        self._x = x
+        self._y = y
+        self._proxy = proxy
 
-    _proxy: 'rai.typing.Proxy | None'
+    def __getitem__(self, index: Literal[0, 1]) -> float:
+        if index == 0:
+            return self._x
 
-    def __new__(
-            cls,
-            input_array: 'rai.typing.Point',
-            proxy: 'rai.typing.Proxy'
-            ) -> Self:
-        # Input array is an already formed ndarray instance
-        # We first cast to be our class type
-        obj = np.asarray(input_array).view(cls)
-        # add the new attribute to the created instance
-        obj._proxy = proxy
-        # Finally, we must return the newly created object:
-        return obj
+        elif index == 1:
+            return self._y
 
-    @property
-    def proxy(self) -> 'rai.typing.Proxy':
-        if self._proxy is None:
-            # TODO exception type
-            raise Exception('Unbound BoundPoint')
+        raise IndexError(
+            "BoundPoint has only x and y coordinates, "
+            "so the index must be either 0 or 1"
+            )
 
-        return self._proxy
+    def __iter__(self):
+        return iter((self._x, self._y))
+    
+    def __eq__(self, other):
+        return (
+            self._x == other[0]
+            and
+            self._y == other[1]
+            )
 
-    def __array_finalize__(self, obj: np.typing.NDArray[np.float64] | None) -> None:
-        # see InfoArray.__array_finalize__ for comments
-        if obj is None:
-            return
-        self._proxy = getattr(obj, 'proxy', None)
+    def __repr__(self) -> str:
+        return f'<({self._x}, {self._y}) bound to {self._proxy}>'
 
     def to(self, point: 'rai.typing.Point') -> 'pc.typing.Proxy':
-        self.proxy.transform.move(
-            point[0] - self[0],
-            point[1] - self[1],
+        self._proxy.transform.move(
+            point[0] - self._x,
+            point[1] - self._y,
             )
-        return self.proxy
+        return self._proxy
 
     def rotate(self, angle: float) -> 'rai.typing.Proxy':
-        self.proxy.transform.rotate(
+        self._proxy.transform.rotate(
             angle,
-            self[0],
-            self[1]
+            self._x,
+            self._y
             )
-        return self.proxy
+        return self._proxy
 
     def move(self, x: float, y: float) -> 'rai.typing.Proxy':
         """
@@ -65,29 +63,29 @@ class BoundPoint(np.ndarray[Any, np.dtype[np.float64]]):
         However, this function is still defined, so that you can use
         `move` in a chain of actions on a boundpoint
         """
-        self.proxy.transform.move(x, y)
-        return self.proxy
+        self._proxy.transform.move(x, y)
+        return self._proxy
 
     def flip(self) -> 'rai.typing.Proxy':
         """
         TODO add tests
         """
-        self.proxy.transform.flip(self[0], self[1])
-        return self.proxy
+        self._proxy.transform.flip(self._x, self._y)
+        return self._proxy
 
     def hflip(self) -> 'rai.typing.Proxy':
         """
         TODO add tests
         """
-        self.proxy.transform.flip(self[0])
-        return self.proxy
+        self._proxy.transform.flip(self._x)
+        return self._proxy
 
     def vflip(self) -> 'rai.typing.Proxy':
         """
         TODO add tests
         """
-        self.proxy.transform.flip(self[1])
-        return self.proxy
+        self._proxy.transform.flip(self._y)
+        return self._proxy
 
     # TODO the rest of the functions
 

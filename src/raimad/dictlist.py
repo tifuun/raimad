@@ -1,12 +1,14 @@
 from typing import (
     ItemsView,
-     KeysView,
-     ValuesView,
-     Iterable,
-     TypeVar,
-     Generic,
-     Any,
-     )
+    KeysView,
+    ValuesView,
+    Iterable,
+    Iterator,
+    TypeVar,
+    Generic,
+    Any,
+    Never,
+    )
 
 # This class could also be implemented by deriving from `dict`
 # instead of encapsulating it
@@ -23,53 +25,123 @@ class DictList(Generic[T]):
     """
     _dict: dict[str | int, T]
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._dict = dict(*args, **kwargs)
+    def __init__(
+            self,
+            dict_: dict | None = None,
+            *,
+            copy: bool | None = None
+            ) -> None:
 
-    def __setattr__(self, name: str, value: T) -> None:
+        if dict_ is None:
+            self._dict = dict()
+
+        elif isinstance(dict_, dict):
+            if copy is True:
+                self._dict = dict(dict_)
+
+            elif copy is False:
+                self._dict = dict_
+
+            elif copy is None:
+                raise TypeError("Must specify `copy` (bool) if passing `dict_`")
+
+            else:
+                raise TypeError('`copy` must be a bool')
+
+        else:
+            raise TypeError('`dict_` must be a dict')
+
+        self._post_init()
+
+    def __setitem__(self, key: int | str, val: T) -> None:
+        if isinstance(key, int):
+            self._dict[tuple(self._dict.keys())[key]] = self._filter_set(val)
+
+        elif isinstance(key, str):
+            if key.startswith('_'):
+                raise KeyError(
+                    "Keys cannot start with underscore; "
+                    "underscores are reserved for custom attributes. "
+                    )
+
+            if hasattr(self.__class__, key):
+                raise KeyError(
+                    f"Key cannot be the same as an existing class attribute. "
+                    )
+
+            self._dict.__setitem__(key, self._filter_set(val))
+
+        else:
+            raise TypeError("key must be int or str")
+
+        self._sanitycheck()
+
+    def __getitem__(self, key: int | str) -> T:
+        if isinstance(key, int):
+            val = list(self._dict.values())[key]
+        elif isinstance(key, str):
+            val = self._dict.__getitem__(key)
+        else:
+            raise KeyError("Key must be int or str")
+
+        return self._filter_get(val)
+
+    def __setattr__(self, name: str, val: T) -> None:
 
         if name.startswith('_'):
-            super().__setattr__(name, value)
-            return
+            super().__setattr__(name, val)
 
-        if hasattr(self.__class__, name):
-            raise Exception  # TODO actual exception
+        elif hasattr(self.__class__, name):
+            self._sanitycheck()
+            raise AttributeError(
+                f"Cannot override class attribute {name}"
+                )
+
         else:
-            self._dict[name] = self._filter(value)
+            self._dict[name] = self._filter_set(val)
+
+        self._sanitycheck()
 
     def __getattr__(self, name: str) -> T:
-        return self._dict[name]
+        if name.startswith('_'):
+            return super().__getattribute__(name)
 
-    def __getitem__(self, key: str | int) -> T:
-        if isinstance(key, int):
-            return list(self._dict.values())[key]
-        return self._dict.__getitem__(key)
+        return self._filter_get(self._dict[name])
 
-    def __setitem__(self, key: str | int, value: T) -> None:
-        if isinstance(key, int):
-            list(self._dict.values())[key] = value
-        self._dict.__setitem__(key, value)
-
-    def append(self, item: T) -> None:
-        self._dict[len(self._dict)] = self._filter(item)
+    def append(self, val: T) -> None:
+        self._sanitycheck()
+        self._dict[len(self)] = self._filter_set(val)
 
     def extend(self, items: Iterable[T]) -> None:
         for item in items:
             self.append(item)
 
+    def _sanitycheck(self) -> None:
+        assert all((isinstance(key, (int, str)) for key in self._dict.keys()))
+
+        int_keys = [key for key in self._dict.keys() if isinstance(key, int)]
+        if int_keys:
+            assert max(int_keys) <= len(self)
+
     # TODO update method
 
-    def __iter__(self) -> None:
+    def __iter__(self) -> Never:
         raise NotImplementedError(
             "Iterating over dictlist is ambiguous. "
             "Please use `.keys()`, `.values()`, or `.items()`."
             )
 
-    def items(self) -> ItemsView[str | int, T]:
-        return self._dict.items()
+    def items(self) -> Iterator[tuple[str | int, T]]:
+        return (
+            (key, self._filter_get(val))
+            for key, val in self._dict.items()
+            )
 
     def values(self) -> ValuesView[T]:
-        return self._dict.values()
+        return (
+            self._filter_get(val)
+            for val in self._dict.values()
+            )
 
     def keys(self) -> KeysView[str | int]:
         return self._dict.keys()
@@ -77,12 +149,31 @@ class DictList(Generic[T]):
     def __len__(self) -> int:
         return self._dict.__len__()
 
-    def _filter(self, item: T) -> T:
+    def _filter_set(self, val: T) -> T:
         """
-        This method is run on every item that gets added to the dictlist.
-        This method is intended to be overridden by deriving classes.
-        For example, SubcompoContainer uses this to wrap every
-        raw compo that gets added in a proxy.
+        Child classes may override this method if they wish
+        to transform or do validation on every value
+        that gets added to the dictlist.
+
+        This is similar to `_filter_get`,
+        but it runs when the val is added, not when it is queried.
         """
-        return item
+        return val
+
+    def _filter_get(self, val: T) -> T:
+        """
+        Child classes may override this method if they wish
+        to transform every item that gets queries from the dictlist
+
+        This is similar to `_filter_set`,
+        but it runs when the val is queried, not when it is added.
+        """
+        return val
+
+    def _post_init(self) -> None:
+        """
+        Child classes may override this method to add more code
+        after running __init__ without having to remember
+        __init__'s signature.
+        """
 

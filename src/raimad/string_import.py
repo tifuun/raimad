@@ -4,13 +4,15 @@ string_import -- given a string specifying module and object, import it.
 This code is ~~stolen from~~ heavily inspired by uvicorn.
 """
 
+from typing import Any
+
 import importlib
 import raimad as rai
 
 class StringImportError(ImportError):
     pass
 
-def string_import(import_str, multiple=False):
+def string_import(import_str: str, multiple: bool = False) -> Any:
     module_str, _, attr_str = import_str.partition(':')
 
     try:

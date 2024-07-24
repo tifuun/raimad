@@ -23,7 +23,7 @@ class BareGeometric(rai.Compo):
                     ]),
                 ]
             })
-        self.set_mark('triangle_corner', (20, 40))
+        self.marks.triangle_corner = (20, 40)
 
 class Intermid(rai.Compo):
     def _make(self):
@@ -34,10 +34,7 @@ class Intermid(rai.Compo):
                 rai.Transform().movex(-3)
                 )
             )
-        self.set_mark(
-            'propagated',
-            self.subcompos[0].get_mark('triangle_corner')
-            )
+        self.marks.propagated = self.subcompos[0].marks.triangle_corner
 
 class BareStructural(rai.Compo):
     def _make(self):
@@ -63,10 +60,7 @@ class BareStructural(rai.Compo):
                 )
             )
 
-        self.set_mark(
-            'propagated',
-            self.subcompos[2].get_mark('propagated')
-            )
+        self.marks.propagated = self.subcompos[2].marks.propagated
 
 class BareGeometricSyntax(rai.Compo):
     def _make(self):
@@ -96,10 +90,7 @@ class IntermidSyntax(rai.Compo):
                 rai.Transform().movex(-3)
                 )
             )
-        self.set_mark(
-            'propagated',
-            self.subcompos[0].marks.triangle_corner
-            )
+        self.marks.propagated = self.subcompos[0].marks.triangle_corner
 
 class BareStructuralSyntax(rai.Compo):
     def _make(self):
@@ -133,17 +124,17 @@ class TestMarks(ArrayAlmostEqual, unittest.TestCase):
         compo = BareStructural()
 
         self.assertArrayAlmostEqual(
-            compo.get_mark('propagated'),
+            compo.marks.propagated,
             (20 - 3, 40 - 3)
             )
 
         self.assertArrayAlmostEqual(
-            compo.subcompos[2].subcompos[0].get_mark('triangle_corner'),
+            compo.subcompos[2].subcompos[0].marks.triangle_corner,
             (20 - 3, 40 - 3)
             )
 
         self.assertArrayAlmostEqual(
-            compo.subcompos[2].get_mark('propagated'),
+            compo.subcompos[2].marks.propagated,
             (20 - 3, 40 - 3)
             )
 

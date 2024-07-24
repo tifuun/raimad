@@ -1,4 +1,5 @@
 import inspect
+from typing import Any, Never, Iterator, TypeVar, ClassVar
 
 try:
     from typing import Self
@@ -43,27 +44,47 @@ class CopyCompoError(ProxyCompoConfusionError):
     instead of its proxy
     """
 
-class MarksContainer(rai.DictList):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+T = TypeVar('T')
+class ProxyableDictList(rai.DictList[T]):
+    _proxy: 'None | rai.typing.Proxy'
+
+    def _post_init(self) -> None:
         self._proxy = None
 
-    def __getattr__(self, name):
-
-        if self._proxy is None:
-            return self[name]
-
-        return self._proxy.get_mark(name)
-
-    def _proxy_copy(self, proxy: 'rai.typing.Proxy') -> Self:
-        new = type(self)({
-            key: val for key, val in self.items()
-            })
+    def _get_proxy_view(self, proxy: 'rai.t.Proxy') -> Self:
+        new = type(self)(self._dict, copy=False)
         new._proxy = proxy
         return new
 
-class SubcompoContainer(rai.DictList):
-    def _filter(self, item):
+
+class MarksContainer(ProxyableDictList['rai.typing.Point']):
+    def _filter_set(self, val: 'rai.typing.Point') -> 'rai.typing.Point':
+        """
+        set filter for markscontainer:
+        make sure that no matter what creature gets passed in
+        (regular tuple or boundpoint or whatever),
+        what gets stored is a simple regular tuple.
+        """
+        return (val[0], val[1])
+
+    def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.Point':
+
+        assert not isinstance(val, rai.BoundPoint)
+        assert isinstance(val, tuple)
+        assert type(val) is tuple
+        assert len(val) == 2
+
+        if self._proxy is not None:
+            boundpoint = rai.BoundPoint(
+                *self._proxy.transform_point(val),
+                self._proxy
+                )
+            return boundpoint
+
+        return val
+
+class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
+    def _filter_set(self, item: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if isinstance(item, rai.Compo):
             raise CompoInsteadOfProxyAsSubcompoError(
                 f"Tried to add object `{item}` of type `{type(item)}` "
@@ -81,23 +102,36 @@ class SubcompoContainer(rai.DictList):
                 )
 
         return item
+    
+    def _filter_get(self, val: T) -> T:
+        if self._proxy is not None:
+            return self._proxy.copy_reassign(val, _autogen=True)
+        return val
 
 class Compo:
+    geoms: 'rai.typing.Geoms'
     marks: MarksContainer
     subcompos: SubcompoContainer
 
-    def __init__(self, *args, **kwargs):
+    Marks: rai.DictList[rai.Mark]
+    Layers: rai.DictList[rai.Layer]
+    Options: rai.DictList[rai.Option]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.geoms = {}
         self.subcompos = SubcompoContainer()
         self.marks = MarksContainer()
 
         self._make(*args, **kwargs)
 
+    def _make(self, *args: Any, **kwargs: Any) -> None:
+        raise NotImplementedError()
+
     @classmethod
-    def partial(cls, **kwargs):
+    def partial(cls, **kwargs: Any) -> 'rai.typing.Partial':
         return rai.Partial(cls, **kwargs)
 
-    def steamroll(self) -> dict:
+    def steamroll(self) -> 'rai.typing.Geoms':
         """
         Steamroll the entire compo hierarchy into one Geoms dict
         TODO more informative
@@ -111,24 +145,24 @@ class Compo:
                 geoms[layer_name].extend(layer_geoms)
         return geoms
 
-    def final(self):
+    def final(self) -> Self:
         return self
 
-    def depth(self):
+    def depth(self) -> int:
         return 0
 
-    def descend(self):
+    def descend(self) -> Iterator[Self]:
         yield self
 
-    def descend_p(self):
+    def descend_p(self) -> Iterator[None]:
         return
         yield
 
-    def proxy(self):
+    def proxy(self) -> 'rai.typing.Proxy':
         return rai.Proxy(self)
 
     @property
-    def copy(self):
+    def copy(self) -> Never:
         raise CopyCompoError(
             f"`{self}` is a Compo, not a Proxy! "
             "Don't copy compos; instead, "
@@ -136,14 +170,16 @@ class Compo:
             "and copy that instead."
             )
 
-    def walk_hier(self):
+    def walk_hier(self) -> Iterator['rai.typing.Compo']:
         yield self
         for subcompo in self.subcompos.values():
             yield from subcompo.walk_hier()
 
+    def transform_point(self, point):
+        return point
 
     @property
-    def scale(self):
+    def scale(self) -> Never:
         raise TransformCompoError(
             f"Tried to scale `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -151,7 +187,7 @@ class Compo:
             )
 
     @property
-    def move(self):
+    def move(self) -> Never:
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -159,7 +195,7 @@ class Compo:
             )
 
     @property
-    def movex(self):
+    def movex(self) -> Never:
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -167,7 +203,7 @@ class Compo:
             )
 
     @property
-    def movey(self):
+    def movey(self) -> Never:
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -175,7 +211,7 @@ class Compo:
             )
 
     @property
-    def rotate(self):
+    def rotate(self) -> Never:
         raise TransformCompoError(
             f"Tried to rotate `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -183,7 +219,7 @@ class Compo:
             )
 
     @property
-    def flip(self):
+    def flip(self) -> Never:
         raise TransformCompoError(
             f"Tried to flip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -191,7 +227,7 @@ class Compo:
             )
 
     @property
-    def hflip(self):
+    def hflip(self) -> Never:
         raise TransformCompoError(
             f"Tried to hflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -199,7 +235,7 @@ class Compo:
             )
 
     @property
-    def vflip(self):
+    def vflip(self) -> Never:
         raise TransformCompoError(
             f"Tried to vflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -221,24 +257,16 @@ class Compo:
     #    else:
     #        raise Exception()  # TODO
 
-    # mark functions #
-    def set_mark(self, name, point):
-        # TODO this is a boundpoint but not actually a boundpoint?
-        self.marks[name] = rai.BoundPoint(point, None)
-
-    def get_mark(self, name):
-        return self.marks[name]
-
     # bbox functions #
     @property
-    def bbox(self):
-        bbox = rai.BBox()
+    def bbox(self) -> 'rai.BoundBBox':
+        bbox = rai.BoundBBox()
         for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)
         return bbox
 
-    def __init_subclass__(cls):
+    def __init_subclass__(cls) -> None:
         _class_to_dictlist(cls, 'Marks', rai.Mark)
         _class_to_dictlist(cls, 'Layers', rai.Layer)
         _class_to_dictlist(cls, 'Options', rai.Option)
@@ -270,7 +298,7 @@ class Compo:
     #        self.subcompos[name] = proxy
     #    return proxy
 
-    def auto_subcompos(self, locs=None):
+    def auto_subcompos(self, locs=None) -> None:
         """
         Automatically add all proxies defined in whatever function you
         call this from as subcompos using some arcane stack inspection
@@ -289,29 +317,35 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             "<"
             f"{type(self).__name__} at {rai.wingdingify(id(self))} "
             ">"
             )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
-    def _repr_svg_(self):
+    def _repr_svg_(self) -> str:
         """
         Make svg representation of component.
         This is called by jupyter and raimark
         """
         return rai.export_svg(self)
 
-def _class_to_dictlist(cls, attr, wanted_type):
+T = TypeVar('T', bound=rai.Annotation)
+def _class_to_dictlist(
+        cls: type,
+        attr: str,
+        wanted_type: type[T]
+        ) -> None:
+
     if not hasattr(cls, attr):
         setattr(cls, attr, rai.DictList())
         return
 
-    new_list = rai.DictList()
+    new_list: rai.DictList[T] = rai.DictList()
     for name, annot in getattr(cls, attr).__dict__.items():
         if not isinstance(annot, wanted_type):
             continue

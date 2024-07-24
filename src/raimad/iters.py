@@ -83,7 +83,6 @@ def flatten(iterable: Iterable) -> Iterable:
         for item in flatten(sub)
         ]
 
-
 def braid(*iterables) -> Iterable:
     return list(chain(*zip(*iterables)))
 

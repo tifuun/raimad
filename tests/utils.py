@@ -7,15 +7,15 @@ import raimad as rai
 import raimad.typing as rait
 
 class PrettyEqual():
-    def assertPrettyEqual(self, actual, desired):
+    def assertPrettyEqual(self, actual, expected):
         try:
-            self.assertEqual(actual, desired)
+            self.assertEqual(actual, expected)
 
         except AssertionError as err:
             pprint("ACTUAL: ", stream=stderr)
             pprint(actual, stream=stderr)
-            pprint("DESIRED: ", stream=stderr)
-            pprint(desired, stream=stderr)
+            pprint("EXPECTED: ", stream=stderr)
+            pprint(expected, stream=stderr)
             raise err
 
 
@@ -26,12 +26,20 @@ class ArrayAlmostEqual():
         cls.epsilon = epsilon
         super().__init_subclass__(*args, **kwargs)
 
-    def assertArrayAlmostEqual(self, actual, desired, epsilon=None):
-        max_deviation = max((abs(a - d) for a, d in zip(actual, desired)))
-        self.assertTrue(max_deviation <= (epsilon or self.epsilon))
+    def assertArrayAlmostEqual(self, actual, expected, epsilon=None):
+        max_deviation = max((abs(a - d) for a, d in zip(actual, expected)))
 
-    def assertAlmostEqual(self, actual, desired, epsilon=None):
-        self.assertTrue(abs(actual - desired) <= (epsilon or self.epsilon))
+        try:
+            self.assertTrue(max_deviation <= (epsilon or self.epsilon))
+        except AssertionError as err:
+            print("ACTUAL: ", file=stderr)
+            pprint(actual, stream=stderr)
+            print("EXPECTED: ", file=stderr)
+            pprint(expected, stream=stderr)
+            raise err
+
+    def assertAlmostEqual(self, actual, expected, epsilon=None):
+        self.assertTrue(abs(actual - expected) <= (epsilon or self.epsilon))
 
 class GeomsEqual():
     """
@@ -47,9 +55,9 @@ class GeomsEqual():
     def assertGeomsEqual(
             self,
             actual: rait.Geoms,
-            desired: rait.Geoms,
+            expected: rait.Geoms,
             epsilon: float | None = None):
-        self.assertEqual(set(actual.keys()), set(desired.keys()))
+        self.assertEqual(set(actual.keys()), set(expected.keys()))
         for layer_name in actual.keys():
 
             # TODO TODO horrible awful no-good dynamic brainrot hack
@@ -65,16 +73,16 @@ class GeomsEqual():
                     ]
                 for poly in actual[layer_name]
                 ]
-            polys_desired = desired[layer_name]
+            polys_expected = expected[layer_name]
 
-            self.assertEqual(len(polys_actual), len(polys_desired))
+            self.assertEqual(len(polys_actual), len(polys_expected))
             length = len(polys_actual)
 
             num_equal = 0
             for poly_actual in polys_actual:
-                for poly_desired in polys_desired:
+                for poly_expected in polys_expected:
                     num_equal += rai.iters.is_rotated(
-                            poly_desired,
+                            poly_expected,
                             poly_actual,
                             comparison=lambda poly1, poly2:
                                 all(
@@ -96,8 +104,8 @@ class GeomsEqual():
                 print(f'ON LAYER {layer_name}', file=stderr)
                 print("ACTUAL: ", file=stderr)
                 pprint(polys_actual, stream=stderr)
-                print("DESIRED: ", file=stderr)
-                pprint(polys_desired, stream=stderr)
+                print("expected: ", file=stderr)
+                pprint(polys_expected, stream=stderr)
                 raise err
 
         return True

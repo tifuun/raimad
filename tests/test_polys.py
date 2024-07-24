@@ -302,11 +302,11 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
             )
         self.assertEqual(
             poly.marks.start,
-            [10, 10]
+            (10, 10)
             )
         self.assertEqual(
             poly.marks.end,
-            [20, 30]
+            (20, 30)
             )
 
 

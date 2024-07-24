@@ -121,12 +121,7 @@ class Proxy:
 
     @property
     def subcompos(self) -> rai.SubcompoContainer:
-        # TODO FrozenSubcompoContainer?
-        return rai.SubcompoContainer({
-            name: self.copy_reassign(subcompo, _autogen=True)
-            for name, subcompo in self.compo.subcompos.items()
-            })
-        return self.compo.subcompos
+        return self.compo.subcompos._get_proxy_view(self)
 
     def final(self) -> 'rai.typing.RealCompo':
         return self.compo.final()
@@ -202,6 +197,11 @@ class Proxy:
         #    self.transform.copy(),
         #    )
 
+    def transform_point(self, point):
+        return self.transform.transform_point(
+            self.compo.transform_point(point)
+            )
+
     def __str__(self) -> str:
         stack = ''.join([
             'ma'[proxy._autogen]
@@ -253,37 +253,19 @@ class Proxy:
         self.transform.rotate(angle, x, y)
         return self
 
-    ## lmap function #
-    #def __matmul__(self, lmap):
-    #    # TODO warn on override lmap?
-    #    self.lmap = LMap(lmap)
-    #    return self
-    #    #return rai.Proxy(
-    #    #    self,
-    #    #    lmap=lmap
-    #    #    )
     def map(self, lmap_shorthand: 'rai.typing.LMapShorthand') -> Self:
         self.lmap = LMap(lmap_shorthand)
         return self
 
-    # mark functions #
-    def get_mark(self, name: str) -> rai.BoundPoint:
-        return rai.BoundPoint(
-            self.transform.transform_point(
-                self.compo.get_mark(name)
-                ),
-            self
-            )
-
     @property
     def marks(self) -> rai.MarksContainer:
-        return self.compo.marks._proxy_copy(self)
+        return self.compo.marks._get_proxy_view(self)
 
     # bbox functions #
     # TODO same as compo -- some sort of reuse?
     @property
-    def bbox(self) -> 'rai.typing.BBox':
-        bbox = rai.BBox(proxy=self)
+    def bbox(self) -> 'rai.BoundBBox':
+        bbox = rai.BoundBBox(proxy=self)
         for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)

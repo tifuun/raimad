@@ -126,6 +126,47 @@ class TestPolys(unittest.TestCase):
             [10],
             )
 
+    #def test_force_evaluate(self):
+    #    # We define it here as a factory, because
+    #    # the various checks, etc.
+    #    # alter the state of a generator
+    #    def generator_of_maps():
+    #        return (
+    #            map(lambda x: x ** 2, range(x))
+    #            for x in range(5)
+    #            )
+
+    #    self.assertTrue(isinstance(generator_of_maps(), types.GeneratorType))
+    #    self.assertTrue(isinstance(
+    #        next(generator_of_maps()),
+    #        map
+    #        ))
+
+    #    evaluated_as_lists = rai.force_evaluate(generator_of_maps(), list)
+    #    evaluated_as_tuples = rai.force_evaluate(generator_of_maps(), tuple)
+
+    #    self.assertEqual(
+    #        evaluated_as_lists,
+    #        [
+    #            [0, ],
+    #            [0, 1, ],
+    #            [0, 1, 2, ],
+    #            [0, 1, 4, 9,],
+    #            [0, 1, 4, 9, 16, ],
+    #            ]
+    #        )
+
+    #    self.assertEqual(
+    #        evaluated_as_tuples,
+    #        (
+    #            (0, ),
+    #            (0, 1, ),
+    #            (0, 1, 2, ),
+    #            (0, 1, 4, 9,),
+    #            (0, 1, 4, 9, 16, ),
+    #            )
+    #        )
+
 
 if __name__ == '__main__':
     unittest.main()
