@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Any, Literal, Iterator
 
 try:
     from typing import Self
@@ -23,25 +23,28 @@ class BoundPoint():
         elif index == 1:
             return self._y
 
+        # This error is here not only for users,
+        # but to make sure the unpacking operator works
+        # on boundpoints.
         raise IndexError(
             "BoundPoint has only x and y coordinates, "
             "so the index must be either 0 or 1"
             )
 
-    def __iter__(self):
-        return iter((self._x, self._y))
-    
-    def __eq__(self, other):
-        return (
-            self._x == other[0]
+    def __eq__(self, other: object) -> bool:
+        if not hasattr(other, "__getitem__"):
+            return False
+
+        return bool(
+            (self._x == other[0])
             and
-            self._y == other[1]
+            (self._y == other[1])
             )
 
     def __repr__(self) -> str:
         return f'<({self._x}, {self._y}) bound to {self._proxy}>'
 
-    def to(self, point: 'rai.typing.Point') -> 'pc.typing.Proxy':
+    def to(self, point: 'rai.typing.Point') -> 'rai.typing.Proxy':
         self._proxy.transform.move(
             point[0] - self._x,
             point[1] - self._y,

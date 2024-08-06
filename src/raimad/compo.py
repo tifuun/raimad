@@ -259,8 +259,8 @@ class Compo:
 
     # bbox functions #
     @property
-    def bbox(self) -> 'rai.BoundBBox':
-        bbox = rai.BoundBBox()
+    def bbox(self) -> 'rai.BBox':
+        bbox = rai.BBox()
         for geoms in self.steamroll().values():
             for geom in geoms:
                 bbox.add_xyarray(geom)

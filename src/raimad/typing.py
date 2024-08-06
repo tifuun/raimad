@@ -16,7 +16,7 @@ CompoType: TypeAlias = type[rai.Compo]
 Partial: TypeAlias = rai.Partial
 CompoTypeLike: TypeAlias = type[rai.Compo] | rai.Partial
 
-Compo: TypeAlias = rai.Compo | rai.Proxy
+Compo: TypeAlias = rai.Compo
 Proxy: TypeAlias = rai.Proxy
 CompoLike: TypeAlias = rai.Compo | rai.Proxy
 

@@ -1,11 +1,13 @@
 import raimad as rai
 
 class BoundBBox(rai.BBox):
+    _proxy: 'rai.typing.Proxy'
+
     def __init__(
             self,
+            proxy: 'rai.typing.Proxy',
             xyarray: 'rai.typing.Poly | None' = None,
-            proxy=None,
-            ):
+            ) -> None:
         """
         Create a new BBox.
 
@@ -25,7 +27,7 @@ class BoundBBox(rai.BBox):
             self,
             x_ratio: float,
             y_ratio: float,
-            ):
+            ) -> 'rai.typing.BoundPoint':
         """
         Find a point inside (or outside) the bbox given X and Y ratios.
 
@@ -55,8 +57,10 @@ class BoundBBox(rai.BBox):
             A regular rai.Point for unbound bboxes,
             and a rai.BoundPoint for bound bboxes.
         """
+        point = super().interpolate(x_ratio, y_ratio)
         return rai.BoundPoint(
-            *super().interpolate(x_ratio, y_ratio),
+            point[0],
+            point[1],
             self._proxy
             )
 

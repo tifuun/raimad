@@ -1,6 +1,7 @@
 """BBox.py: contains BBox class and relevant Exceptions."""
 
-from typing import List
+from typing import Iterator
+from copy import copy
 
 try:
     from typing import Self
@@ -58,11 +59,11 @@ class BBox(object):
         if xyarray is not None:
             self.add_xyarray(xyarray)
 
-    def as_list(self) -> List[float]:
+    def as_list(self) -> list[float]:
         """Return as list of [min_x, min_y, max_x, max_y]."""
         return [self.min_x, self.min_y, self.max_x, self.max_y]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[float]:
         """Return as iter of [min_x, min_y, max_x, max_y]."""
         return iter(self.as_list())
 
@@ -91,16 +92,14 @@ class BBox(object):
             self.min_y == float('inf')
             )
 
-    def assert_nonempty(self, *args, **kwargs) -> None:
+    def assert_nonempty(self, message: str | None = None) -> None:
         """
         Throw EmptyBBoxError is the bbox is empty, do nothing otherwise.
 
         Parameters
         ----------
-        *args : tuple
-            Additional arguments passed to the EmptyBBoxError constructor.
-        **kwargs : dict, optional
-            Additional arguments passed to the EmptyBBoxError constructor.
+        message : str
+            Message to pass to EmptyBBoxError
 
         Raises
         ------
@@ -111,18 +110,15 @@ class BBox(object):
         BBox.is_empty()
         """
         if self.is_empty():
-            raise EmptyBBoxError(*args, **kwargs)
+            if message is None:
+                raise EmptyBBoxError()
+            raise EmptyBBoxError()
 
-    def copy(self):
+    def copy(self) -> Self:
         """Copy bbox."""
         # TODO read up on how to properly do copies
         # in Python
-        new_bbox = BBox()
-        new_bbox.max_x = self.max_x
-        new_bbox.max_y = self.max_y
-        new_bbox.min_x = self.min_x
-        new_bbox.min_y = self.min_y
-        return new_bbox
+        return copy(self)
 
     def add_xyarray(self, xyarray: 'rai.typing.Poly') -> None:
         """
@@ -136,7 +132,7 @@ class BBox(object):
         for point in xyarray:
             self.add_point(point)
 
-    def add_point(self, point):
+    def add_point(self, point: 'rai.typing.PointLike') -> None:
         """
         Add a new point to the bounding box.
 
@@ -175,7 +171,7 @@ class BBox(object):
         return self.max_x - self.min_x
 
     @property
-    def width(self):
+    def width(self) -> float:
         """
         Get width of the bbox.
 
@@ -193,7 +189,7 @@ class BBox(object):
         return self.max_y - self.min_y
 
     @property
-    def left(self):
+    def left(self) -> float:
         """
         Get the X coordinate of the left wall of the bbox.
 
@@ -211,7 +207,7 @@ class BBox(object):
         return self.min_x
 
     @property
-    def top(self):
+    def top(self) -> float:
         """
         Get the Y coordinate of the top wall of the bbox.
 
@@ -229,7 +225,7 @@ class BBox(object):
         return self.max_y if MATHEMATIC_Y_AXIS else self.min_y
 
     @property
-    def right(self):
+    def right(self) -> float:
         """
         Get the X coorinate of the right wall of the bbox.
 
@@ -247,7 +243,7 @@ class BBox(object):
         return self.max_x
 
     @property
-    def bottom(self):
+    def bottom(self) -> float:
         """
         Get the Y coordinate of the bottom of the bbox.
 
@@ -268,7 +264,7 @@ class BBox(object):
             self,
             x_ratio: float,
             y_ratio: float,
-            ):
+            ) -> 'rai.typing.PointLike':
         """
         Find a point inside (or outside) the bbox given X and Y ratios.
 
@@ -299,7 +295,7 @@ class BBox(object):
         return (x, y)
 
     @property
-    def mid(self):
+    def mid(self) -> 'rai.typing.PointLike':
         """
         Get the point in the MIDDLE of the bbox.
 
@@ -320,7 +316,7 @@ class BBox(object):
         return self.interpolate(0.5, 0.5)
 
     @property
-    def top_mid(self):
+    def top_mid(self) -> 'rai.typing.PointLike':
         """
         Get the point in the TOP MIDDLE of the bbox.
 
@@ -341,7 +337,7 @@ class BBox(object):
         return self.interpolate(0.5, MATHEMATIC_Y_AXIS)
 
     @property
-    def bot_mid(self):
+    def bot_mid(self) -> 'rai.typing.PointLike':
         """
         Get the point in the BOTTOM MIDDLE of the bbox.
 
@@ -362,7 +358,7 @@ class BBox(object):
         return self.interpolate(0.5, not MATHEMATIC_Y_AXIS)
 
     @property
-    def mid_left(self):
+    def mid_left(self) -> 'rai.typing.PointLike':
         """
         Get the point in the MIDDLE LEFT of the bbox.
 
@@ -383,7 +379,7 @@ class BBox(object):
         return self.interpolate(0, 0.5)
 
     @property
-    def mid_right(self):
+    def mid_right(self) -> 'rai.typing.PointLike':
         """
         Get the point in the MIDDLE RIGHT of the bbox.
 
@@ -404,7 +400,7 @@ class BBox(object):
         return self.interpolate(1, 0.5)
 
     @property
-    def top_left(self):
+    def top_left(self) -> 'rai.typing.PointLike':
         """
         Get the point in the TOP LEFT of the bbox.
 
@@ -425,7 +421,7 @@ class BBox(object):
         return self.interpolate(0, MATHEMATIC_Y_AXIS)
 
     @property
-    def top_right(self):
+    def top_right(self) -> 'rai.typing.PointLike':
         """
         Get the point in the TOP RIGHT of the bbox.
 
@@ -446,7 +442,7 @@ class BBox(object):
         return self.interpolate(1, MATHEMATIC_Y_AXIS)
 
     @property
-    def bot_left(self):
+    def bot_left(self) -> 'rai.typing.PointLike':
         """
         Get the point in the BOTTOM LEFT of the bbox.
 
@@ -467,7 +463,7 @@ class BBox(object):
         return self.interpolate(0, not MATHEMATIC_Y_AXIS)
 
     @property
-    def bot_right(self):
+    def bot_right(self) -> 'rai.typing.PointLike':
         """
         Get the point in the middle of the bbox.
 

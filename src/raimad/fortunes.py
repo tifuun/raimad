@@ -131,6 +131,10 @@ fortunes = [
     "Freedom of speech is ofcourse guaranteed. "
     "Freedom *after* the speech, however, is a more delicate topic. ",
 
+    'When I commit violence, it is called "crime", '
+    'but when you commit violence, it is called "law". '
+    "That doesn't seem fair at all! ",
+
     # Malapropisms #
 
     "Whatever bloats your goat! ",
@@ -204,15 +208,17 @@ fortunes = [
 
     "Everything is going worryingly well. ",
 
-    "This year's harvest is nearly half of last year's, "
-    "but, on the other hand, it's *three times* more then next year's!",
-
-    "It's hard to miss, but once you see it, you cannot unsee it. ",
+    "It's easy to miss, but once you see it, you cannot unsee it. ",
 
     "You can't solve problems with the same "
     "type of thinking that created them. ",
 
     "This is informative and unfortunate. ",
+
+    '''You're not being "represented", you're being marketed to. ''',
+
+    "You have to laugh about these kinds of things, "
+    "because otherwise you will cry. ",
 
     # Misc #
 
@@ -267,6 +273,9 @@ fortunes = [
     "has algae in it, and I didn't need to use a single chemical, "
     "and thermaltake is screwing over their customers, "
     "and we're gonna make sure they never get a sale again. ",
+
+    'This is an "A Condition" item. '
+    "That is to say, it's definitely in a condition. ",
 
     ]
 

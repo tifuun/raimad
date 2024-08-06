@@ -289,11 +289,9 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
         self.assertArrayAlmostEqual(c3.bbox.mid, (10, -2))
 
     def test_bbox_bound(self):
-        c1 = rai.Proxy(rai.Circle(10))
-        bound = c1.bbox
-        unbound = bound.copy()
+        c1 = rai.Circle(10)
+        unbound = c1.bbox
 
-        bound.mid.to((0, 0))
         with self.assertRaises(AttributeError):
             unbound.mid.to((0, 0))
 
@@ -302,6 +300,16 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
         # you need to do it through a bound bbox"
         # All you get is a cryptic "tuple has no attribute 'to'"
         # Maybe we need a raidoc page with common errors?
+
+    def test_bbox_copy_transform(self):
+        c1 = rai.Circle(10).proxy()
+
+        c1.bbox.pad(5).mid_left.to((0, 0))
+
+        self.assertArrayAlmostEqual(
+            c1.bbox.mid,
+            (15, 0)
+            )
 
 
 if __name__ == '__main__':
