@@ -31,6 +31,9 @@ class BoundPoint():
             "so the index must be either 0 or 1"
             )
 
+    def __iter__(self) -> Iterator[float]:
+        return iter((self._x, self._y))
+
     def __eq__(self, other: object) -> bool:
         if not hasattr(other, "__getitem__"):
             return False

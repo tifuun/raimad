@@ -146,7 +146,7 @@ class Compo:
     def descend(self) -> Iterator[Self]:
         yield self
 
-    def descend_p(self) -> Iterator:
+    def descend_p(self) -> 'Iterator[rai.typing.Proxy]':
         return
         yield
 

@@ -6,19 +6,30 @@ function that uses whatever cif exporter is stable in this version of raimad
 """
 
 from pathlib import Path
-from typing import TextIO
+from typing import TextIO, Protocol, Any
 
 import raimad as rai
 
 class InvalidDestinationError(ValueError):
     pass
 
+class ExporterProto(Protocol):
+    def __init__(
+            self,
+            compo: 'rai.typing.CompoLike',
+            *args: Any,
+            **kwargs: Any
+            ) -> None:
+        ...
+
+    cif_string: str
+
 def export_cif(
-        compo: 'rai.typing.Compo',
+        compo: 'rai.typing.CompoLike',
         dest: str | Path | TextIO | None = None,
-        exporter=None,  # TODO protocol
-        *args,
-        **kwargs
+        exporter: type[ExporterProto] | None = None,
+        *args: Any,
+        **kwargs: Any,
         ) -> str:
     exporter_instance = (exporter or rai.cif.NoReuse)(compo, *args, **kwargs)
     cif_string = exporter_instance.cif_string

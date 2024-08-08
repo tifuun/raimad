@@ -142,10 +142,10 @@ def transform_xyarray(
     """
     Apply transformation to xyarray and return new transformed xyarray
     """
-    return tuple(
+    return [
         transform_point(matrix, point)
         for point in xyarray
-        )
+        ]
 
 def transform_point(
         matrix: 'rai.typing.Affine',
