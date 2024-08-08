@@ -89,7 +89,12 @@ __all__ = [
     'Empty',
     'EmptyType',
     't',
-    'typing'
+    'typing',
+    'AnSec',
+    'Circle',
+    'RectLW',
+    'RectWire',
+    'CustomPoly',
     ]
 
 

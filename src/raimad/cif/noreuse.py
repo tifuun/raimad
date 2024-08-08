@@ -1,15 +1,24 @@
+from typing import Iterator
+
+import raimad as rai
+
 class NoReuse:
-    def __init__(self, compo, multiplier=1e3):
+    def __init__(
+            self,
+            compo: 'rai.typing.CompoLike',
+            multiplier: float = 1e3
+            ) -> None:
+
         self.compo = compo
         self.rout_num = 1
         self.multiplier = multiplier
 
         self.cif_string = self._export_cif()
 
-    def _export_cif(self):
+    def _export_cif(self) -> str:
         return ''.join(self._yield_cif())
 
-    def _yield_cif(self):
+    def _yield_cif(self) -> Iterator[str]:
         """
         Yield lines of cif file
         """
@@ -18,7 +27,7 @@ class NoReuse:
         yield f'C {first_rout};\n'
         yield 'E'
 
-    def yield_cif_bare(self, compo):
+    def yield_cif_bare(self, compo: 'rai.typing.CompoLike') -> Iterator[str]:
         """
         Yield lines of CIF of a particular component,
         without calling it
@@ -50,17 +59,17 @@ class NoReuse:
         # the routine number
         subcompos = []
         for subcompo in compo.subcompos.values():
-            subcompos.append([
+            subcompos.append((
                 self.rout_num,
                 list(self.yield_cif_bare(subcompo))
-                ])
+                ))
 
         # Call subcomponent procedures
-        for i, subcompo in subcompos:
+        for i, _ in subcompos:
             yield f'\tC {i};\n'
         yield 'DF;\n'
 
         # Define those procedures
-        for i, subcompo in subcompos:
-            yield from subcompo
+        for _, this_subcompo in subcompos:
+            yield from this_subcompo
 

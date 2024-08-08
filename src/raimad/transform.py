@@ -61,13 +61,13 @@ class Transform:
         norm = rai.affine.norm(self.get_translation())
         return norm > 0.001  # TODO epsilon
 
-    def does_rotate(self) -> 'rai.typing.Bool':
+    def does_rotate(self) -> bool:
         return abs(self.get_rotation()) > 0.001  # TODO epsilon
 
-    def does_shear(self) -> 'rai.typing.Bool':
+    def does_shear(self) -> bool:
         return abs(self.get_shear()) > 0.001  # TODO epsilon
 
-    def does_scale(self) -> 'rai.typing.Bool':
+    def does_scale(self) -> bool:
         scale_x, scale_y = self.get_scale()
         # TODO epsilon
         return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001

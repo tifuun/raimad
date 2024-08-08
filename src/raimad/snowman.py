@@ -30,7 +30,7 @@ class Snowman(rai.Compo):
             self,
             nose_length: float = 10,
             eye_size: float = 2,
-            ):
+            ) -> None:
 
         base = rai.Circle(50).proxy().map('snow')
         torso = rai.Circle(40).proxy().map('snow')

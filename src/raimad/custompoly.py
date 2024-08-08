@@ -1,5 +1,7 @@
 import raimad as rai
 
+from typing import Sequence
+
 class CustomPolyException(Exception):
     pass
 
@@ -23,7 +25,14 @@ class CustomPoly(rai.Compo):
                 ]
             )
 
-    def _make(self, points):
+    def _make(
+            self,
+            points: Sequence[
+                tuple[float, float]
+                |
+                tuple[str, tuple[float, float]]
+                ]
+            ) -> None:
         processed_points = []
         for point in points:
             match point:
