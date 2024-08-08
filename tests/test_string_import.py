@@ -82,6 +82,11 @@ class TestStringImport(unittest.TestCase):
         """
         with tempfile.TemporaryDirectory(delete=True) as folder:
             os.chdir(folder)
+            # This test will break pycoverage,
+            # because pycoverage will think that `mymodule`
+            # is a real module that needs evaluating,
+            # but can't find its source.
+            # Run pycoverage with `-i` flag.
             Path('mymodule.py').write_text(
                 "import raimad as rai\n"
                 "\n"
