@@ -53,7 +53,9 @@ def _setup_parser() -> argparse.ArgumentParser:
     return parser
 
 def _add_export_action(
-        subparsers: argparse._SubParsersAction
+        # Can someone explain to me what this generic actually does
+        # and why it crashes if it's not quoted?
+        subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
         ) -> None:
     """
     Add the export action to the root parser.

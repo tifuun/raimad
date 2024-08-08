@@ -60,7 +60,6 @@ from raimad import cif
 from raimad.cif.shorthand import export_cif
 from raimad.svg import export_svg
 from raimad import err
-from raimad import debug
 
 from raimad.snowman import Snowman
 
