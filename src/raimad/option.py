@@ -10,7 +10,7 @@ import raimad as rai
 
 
 class Option(rai.Annotation):
-    annot: str | rai.EmptyType
+    annot: str | rai.EmptyType | type
     default: Any | rai.EmptyType
 
     def __init__(self, desc: str, browser_default=rai.Empty):

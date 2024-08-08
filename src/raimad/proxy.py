@@ -58,12 +58,55 @@ class LMap:
             assert False
 
         return self
+    
+
+class ProxiedMarksContainer(
+        rai.FilteredDictList[
+            'rai.typing.Point',
+            'rai.typing.PointLike',
+            'rai.typing.BoundPoint',
+            ]):
+
+    def __init__(
+            self,
+            proxy: 'rai.typing.Proxy',
+            dict_: dict[int | str, 'rai.typing.Point'] | None = None,
+            *,
+            copy: bool | None = None
+            ):
+        super().__init__(dict_, copy=copy)
+        self._proxy = proxy
+
+    def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
+        """
+        set filter for markscontainer:
+        make sure that no matter what creature gets passed in
+        (regular tuple or boundpoint or whatever),
+        what gets stored is a simple regular tuple.
+        """
+        return (val[0], val[1])
+
+    def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.BoundPoint':
+
+        assert not isinstance(val, rai.BoundPoint)
+        assert isinstance(val, tuple)
+        assert type(val) is tuple
+        assert len(val) == 2
+
+        point = self._proxy.transform_point(val)
+        boundpoint = rai.BoundPoint(
+            point[0],
+            point[1],
+            self._proxy
+            )
+        return boundpoint
+
 
 class Proxy:
-    compo: 'rai.typing.Compo'
+    compo: 'rai.typing.CompoLike'
 
     def __init__(self,
-                 compo: 'rai.typing.Compo',
+                 compo: 'rai.typing.CompoLike',
                  lmap: 'rai.typing.LMapShorthand' = None,
                  transform: 'rai.typing.Transform | None' = None,
                  _cif_link: bool = False,
@@ -123,13 +166,13 @@ class Proxy:
     def subcompos(self) -> rai.SubcompoContainer:
         return self.compo.subcompos._get_proxy_view(self)
 
-    def final(self) -> 'rai.typing.RealCompo':
+    def final(self) -> 'rai.typing.Compo':
         return self.compo.final()
 
     def depth(self) -> int:
         return self.compo.depth() + 1
 
-    def descend(self) -> 'Iterator[rai.typing.Compo]':
+    def descend(self) -> 'Iterator[rai.typing.CompoLike]':
         yield self
         yield from self.compo.descend()
 
@@ -171,7 +214,7 @@ class Proxy:
 
     def copy_reassign(
             self,
-            new_subcompo: 'rai.typing.Compo',
+            new_subcompo: 'rai.typing.CompoLike',
             _autogen: bool = False,
             ) -> 'rai.typing.Proxy':
 
@@ -197,7 +240,7 @@ class Proxy:
         #    self.transform.copy(),
         #    )
 
-    def transform_point(self, point):
+    def transform_point(self, point: 'rai.typing.PointLike') -> 'rai.typing.PointLike':
         return self.transform.transform_point(
             self.compo.transform_point(point)
             )
@@ -258,8 +301,13 @@ class Proxy:
         return self
 
     @property
-    def marks(self) -> rai.MarksContainer:
-        return self.compo.marks._get_proxy_view(self)
+    def marks(self) -> ProxiedMarksContainer:
+        return ProxiedMarksContainer(
+            self,
+            self.compo.marks._dict,
+            copy=False
+            )
+        #return self.compo.marks._get_proxy_view(self)
 
     # bbox functions #
     # TODO same as compo -- some sort of reuse?

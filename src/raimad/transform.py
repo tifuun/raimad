@@ -31,7 +31,7 @@ class Transform:
         """
         return rai.affine.transform_xyarray(self._affine, poly)
 
-    def transform_point(self, point: 'rai.typing.Point') -> 'rai.typing.Point':
+    def transform_point(self, point: 'rai.typing.PointLike') -> 'rai.typing.Point':
         """
         Apply transformation to point and return new transformed point
         """

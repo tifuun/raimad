@@ -30,7 +30,7 @@ from raimad.iters import (
 from raimad.string_import import string_import
 from raimad.docparse import split_docstring
 
-from raimad.dictlist import DictList
+from raimad.dictlist import FilteredDictList, DictList
 
 from raimad.annotation import Annotation
 from raimad.mark import Mark
@@ -44,7 +44,7 @@ from raimad.compo import SubcompoContainer
 from raimad.proxy import Proxy
 from raimad.proxy import LMap
 from raimad.partial import Partial
-from raimad.bbox import BBox
+from raimad.bbox import AbstractBBox, BBox
 from raimad.boundbbox import BoundBBox
 
 from raimad.rectlw import RectLW
@@ -69,11 +69,13 @@ __all__ = [
     'export_svg',
     'Transform',
     'Compo',
+    'FilteredDictList',
     'DictList',
     'Proxy',
     'BoundPoint',
     'MarksContainer',
     'SubcompoContainer',
+    'AbstractBBox',
     'BBox',
     'BoundBBox',
     'Partial',

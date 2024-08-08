@@ -1,6 +1,8 @@
+from typing import Callable, ClassVar
+
 import raimad as rai
 
-class BoundBBox(rai.BBox):
+class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
     _proxy: 'rai.typing.Proxy'
 
     def __init__(
@@ -63,4 +65,6 @@ class BoundBBox(rai.BBox):
             point[1],
             self._proxy
             )
+
+    mid_left: 'rai.typing.BoundPoint'
 

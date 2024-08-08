@@ -149,7 +149,7 @@ def transform_xyarray(
 
 def transform_point(
         matrix: 'rai.typing.Affine',
-        point: 'rai.typing.Point'
+        point: 'rai.typing.PointLike'
         ) -> 'rai.typing.Point':
     """
     Apply transformation to point and return transformed point

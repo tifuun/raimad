@@ -1,6 +1,6 @@
 """BBox.py: contains BBox class and relevant Exceptions."""
 
-from typing import Iterator
+from typing import Iterator, Generic, TypeVar
 from copy import copy
 
 try:
@@ -26,7 +26,8 @@ class EmptyBBoxError(Exception):
     do not make sense, and attempting to query them will raise this exception.
     """
 
-class BBox(object):
+T = TypeVar('T', 'rai.typing.Point', 'rai.typing.BoundPoint', )
+class AbstractBBox(Generic[T]):
     """
     """
 
@@ -264,7 +265,7 @@ class BBox(object):
             self,
             x_ratio: float,
             y_ratio: float,
-            ) -> 'rai.typing.PointLike':
+            ) -> T:
         """
         Find a point inside (or outside) the bbox given X and Y ratios.
 
@@ -289,13 +290,10 @@ class BBox(object):
             if the bbox is empty
 
         """
-        x = self.min_x + self.length * x_ratio
-        y = self.min_y + self.width * y_ratio
-
-        return (x, y)
+        raise NotImplemented
 
     @property
-    def mid(self) -> 'rai.typing.PointLike':
+    def mid(self) -> T:
         """
         Get the point in the MIDDLE of the bbox.
 
@@ -316,7 +314,7 @@ class BBox(object):
         return self.interpolate(0.5, 0.5)
 
     @property
-    def top_mid(self) -> 'rai.typing.PointLike':
+    def top_mid(self) -> T:
         """
         Get the point in the TOP MIDDLE of the bbox.
 
@@ -337,7 +335,7 @@ class BBox(object):
         return self.interpolate(0.5, MATHEMATIC_Y_AXIS)
 
     @property
-    def bot_mid(self) -> 'rai.typing.PointLike':
+    def bot_mid(self) -> T:
         """
         Get the point in the BOTTOM MIDDLE of the bbox.
 
@@ -358,7 +356,7 @@ class BBox(object):
         return self.interpolate(0.5, not MATHEMATIC_Y_AXIS)
 
     @property
-    def mid_left(self) -> 'rai.typing.PointLike':
+    def mid_left(self) -> T:
         """
         Get the point in the MIDDLE LEFT of the bbox.
 
@@ -379,7 +377,7 @@ class BBox(object):
         return self.interpolate(0, 0.5)
 
     @property
-    def mid_right(self) -> 'rai.typing.PointLike':
+    def mid_right(self) -> T:
         """
         Get the point in the MIDDLE RIGHT of the bbox.
 
@@ -400,7 +398,7 @@ class BBox(object):
         return self.interpolate(1, 0.5)
 
     @property
-    def top_left(self) -> 'rai.typing.PointLike':
+    def top_left(self) -> T:
         """
         Get the point in the TOP LEFT of the bbox.
 
@@ -421,7 +419,7 @@ class BBox(object):
         return self.interpolate(0, MATHEMATIC_Y_AXIS)
 
     @property
-    def top_right(self) -> 'rai.typing.PointLike':
+    def top_right(self) -> T:
         """
         Get the point in the TOP RIGHT of the bbox.
 
@@ -442,7 +440,7 @@ class BBox(object):
         return self.interpolate(1, MATHEMATIC_Y_AXIS)
 
     @property
-    def bot_left(self) -> 'rai.typing.PointLike':
+    def bot_left(self) -> T:
         """
         Get the point in the BOTTOM LEFT of the bbox.
 
@@ -463,7 +461,7 @@ class BBox(object):
         return self.interpolate(0, not MATHEMATIC_Y_AXIS)
 
     @property
-    def bot_right(self) -> 'rai.typing.PointLike':
+    def bot_right(self) -> T:
         """
         Get the point in the middle of the bbox.
 
@@ -544,4 +542,14 @@ class BBox(object):
         return new
 
 
+class BBox(AbstractBBox['rai.typing.Point']):
+    def interpolate(
+            self,
+            x_ratio: float,
+            y_ratio: float,
+            ) -> 'rai.typing.Point':
+        x = self.min_x + self.length * x_ratio
+        y = self.min_y + self.width * y_ratio
+
+        return (x, y)
 

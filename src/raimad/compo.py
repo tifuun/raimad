@@ -57,8 +57,13 @@ class ProxyableDictList(rai.DictList[T]):
         return new
 
 
-class MarksContainer(ProxyableDictList['rai.typing.Point']):
-    def _filter_set(self, val: 'rai.typing.Point') -> 'rai.typing.Point':
+class MarksContainer(
+        rai.FilteredDictList[
+            'rai.typing.Point',
+            'rai.typing.PointLike',
+            'rai.typing.Point',
+            ]):
+    def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
         """
         set filter for markscontainer:
         make sure that no matter what creature gets passed in
@@ -68,19 +73,6 @@ class MarksContainer(ProxyableDictList['rai.typing.Point']):
         return (val[0], val[1])
 
     def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.Point':
-
-        assert not isinstance(val, rai.BoundPoint)
-        assert isinstance(val, tuple)
-        assert type(val) is tuple
-        assert len(val) == 2
-
-        if self._proxy is not None:
-            boundpoint = rai.BoundPoint(
-                *self._proxy.transform_point(val),
-                self._proxy
-                )
-            return boundpoint
-
         return val
 
 class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
@@ -103,7 +95,7 @@ class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
 
         return item
     
-    def _filter_get(self, val: T) -> T:
+    def _filter_get(self, val: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if self._proxy is not None:
             return self._proxy.copy_reassign(val, _autogen=True)
         return val
@@ -154,7 +146,7 @@ class Compo:
     def descend(self) -> Iterator[Self]:
         yield self
 
-    def descend_p(self) -> Iterator[None]:
+    def descend_p(self) -> Iterator:
         return
         yield
 
@@ -170,12 +162,12 @@ class Compo:
             "and copy that instead."
             )
 
-    def walk_hier(self) -> Iterator['rai.typing.Compo']:
+    def walk_hier(self) -> Iterator['rai.typing.CompoLike']:
         yield self
         for subcompo in self.subcompos.values():
             yield from subcompo.walk_hier()
 
-    def transform_point(self, point):
+    def transform_point(self, point: 'rai.typing.PointLike') -> 'rai.typing.PointLike':
         return point
 
     @property
@@ -298,13 +290,9 @@ class Compo:
     #        self.subcompos[name] = proxy
     #    return proxy
 
-    def auto_subcompos(self, locs=None) -> None:
+    def auto_subcompos(self, locs: dict[Any, Any] | None = None) -> None:
         """
-        Automatically add all proxies defined in whatever function you
-        call this from as subcompos using some arcane stack inspection
-        hackery.
         """
-        # Get all local variables in the above frame
         locs = locs or inspect.stack()[1].frame.f_locals
 
         for name, obj in locs.items():
@@ -334,18 +322,18 @@ class Compo:
         """
         return rai.export_svg(self)
 
-T = TypeVar('T', bound=rai.Annotation)
+K = TypeVar('K', bound=rai.Annotation)
 def _class_to_dictlist(
         cls: type,
         attr: str,
-        wanted_type: type[T]
+        wanted_type: type[K]
         ) -> None:
 
     if not hasattr(cls, attr):
         setattr(cls, attr, rai.DictList())
         return
 
-    new_list: rai.DictList[T] = rai.DictList()
+    new_list: rai.DictList[K] = rai.DictList()
     for name, annot in getattr(cls, attr).__dict__.items():
         if not isinstance(annot, wanted_type):
             continue

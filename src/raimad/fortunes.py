@@ -50,6 +50,8 @@ fortunes = [
 
     "Unix: full of Daemons, ELFs and DWARFs",
 
+    "Step one: solve the problem. Step two: become the problem. "
+
     # Education #
 
     '"The doors are wide open, '

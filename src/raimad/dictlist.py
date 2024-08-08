@@ -18,16 +18,18 @@ from typing import (
 
 # TODO tests for this class!
 
-T = TypeVar('T')
-class DictList(Generic[T]):
+T_STORED = TypeVar('T_STORED')
+T_ADDED = TypeVar('T_ADDED')
+T_RETURNED = TypeVar('T_RETURNED')
+class FilteredDictList(Generic[T_STORED, T_ADDED, T_RETURNED]):
     """
     A dict that is also a list and is accesible with attribute syntax!
     """
-    _dict: dict[str | int, T]
+    _dict: dict[str | int, T_STORED]
 
     def __init__(
             self,
-            dict_: dict | None = None,
+            dict_: dict[int | str, T_STORED] | None = None,
             *,
             copy: bool | None = None
             ) -> None:
@@ -53,7 +55,7 @@ class DictList(Generic[T]):
 
         self._post_init()
 
-    def __setitem__(self, key: int | str, val: T) -> None:
+    def __setitem__(self, key: int | str, val: T_ADDED) -> None:
         if isinstance(key, int):
             self._dict[tuple(self._dict.keys())[key]] = self._filter_set(val)
 
@@ -76,7 +78,7 @@ class DictList(Generic[T]):
 
         self._sanitycheck()
 
-    def __getitem__(self, key: int | str) -> T:
+    def __getitem__(self, key: int | str) -> T_RETURNED:
         if isinstance(key, int):
             val = list(self._dict.values())[key]
         elif isinstance(key, str):
@@ -86,7 +88,7 @@ class DictList(Generic[T]):
 
         return self._filter_get(val)
 
-    def __setattr__(self, name: str, val: T) -> None:
+    def __setattr__(self, name: str, val: T_ADDED) -> None:
 
         if name.startswith('_'):
             super().__setattr__(name, val)
@@ -102,17 +104,17 @@ class DictList(Generic[T]):
 
         self._sanitycheck()
 
-    def __getattr__(self, name: str) -> T:
+    def __getattr__(self, name: str) -> T_RETURNED | Any:
         if name.startswith('_'):
             return super().__getattribute__(name)
 
         return self._filter_get(self._dict[name])
 
-    def append(self, val: T) -> None:
+    def append(self, val: T_ADDED) -> None:
         self._sanitycheck()
         self._dict[len(self)] = self._filter_set(val)
 
-    def extend(self, items: Iterable[T]) -> None:
+    def extend(self, items: Iterable[T_ADDED]) -> None:
         for item in items:
             self.append(item)
 
@@ -131,13 +133,13 @@ class DictList(Generic[T]):
             "Please use `.keys()`, `.values()`, or `.items()`."
             )
 
-    def items(self) -> Iterator[tuple[str | int, T]]:
+    def items(self) -> Iterator[tuple[str | int, T_RETURNED]]:
         return (
             (key, self._filter_get(val))
             for key, val in self._dict.items()
             )
 
-    def values(self) -> ValuesView[T]:
+    def values(self) -> Iterator[T_RETURNED]:
         return (
             self._filter_get(val)
             for val in self._dict.values()
@@ -149,31 +151,25 @@ class DictList(Generic[T]):
     def __len__(self) -> int:
         return self._dict.__len__()
 
-    def _filter_set(self, val: T) -> T:
-        """
-        Child classes may override this method if they wish
-        to transform or do validation on every value
-        that gets added to the dictlist.
-
-        This is similar to `_filter_get`,
-        but it runs when the val is added, not when it is queried.
-        """
-        return val
-
-    def _filter_get(self, val: T) -> T:
-        """
-        Child classes may override this method if they wish
-        to transform every item that gets queries from the dictlist
-
-        This is similar to `_filter_set`,
-        but it runs when the val is queried, not when it is added.
-        """
-        return val
-
     def _post_init(self) -> None:
         """
         Child classes may override this method to add more code
         after running __init__ without having to remember
         __init__'s signature.
         """
+
+    def _filter_set(self, val: T_ADDED) -> T_STORED:
+        raise NotImplementedError
+
+    def _filter_get(self, val: T_STORED) -> T_RETURNED:
+        raise NotImplementedError
+
+
+T = TypeVar('T')
+class DictList(FilteredDictList[T, T, T]):
+    def _filter_set(self, val: T) -> T:
+        return val
+
+    def _filter_get(self, val: T) -> T:
+        return val
 
