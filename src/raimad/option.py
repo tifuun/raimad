@@ -13,7 +13,10 @@ class Option(rai.Annotation):
     annot: str | rai.EmptyType | type
     default: Any | rai.EmptyType
 
-    def __init__(self, desc: str, browser_default=rai.Empty):
+    def __init__(
+            self,
+            desc: str,
+            browser_default: Any | rai.EmptyType = rai.Empty) -> None:
         self.desc = desc
         self.category = type(self)
         self.name = 'this should be set in compo.__init_subclass_'

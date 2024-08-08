@@ -59,7 +59,7 @@ class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
             A regular rai.Point for unbound bboxes,
             and a rai.BoundPoint for bound bboxes.
         """
-        point = super().interpolate(x_ratio, y_ratio)
+        point = super()._interpolate(x_ratio, y_ratio)
         return rai.BoundPoint(
             point[0],
             point[1],

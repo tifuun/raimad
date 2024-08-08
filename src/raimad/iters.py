@@ -2,13 +2,15 @@
 iters.py -- iteration-related helpers
 """
 
+from typing import TypeVar, Any
 from collections.abc import Iterable, Callable, Sequence
 from itertools import chain
 
 import numpy as np
 
 
-def overlap(n: int, seq: Sequence) -> Iterable:
+T = TypeVar('T')
+def overlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
     """
     Iterate n items at a time, with overlap:
 
@@ -21,7 +23,7 @@ def overlap(n: int, seq: Sequence) -> Iterable:
     return zip(*[seq[offset:] for offset in range(n)])
 
 
-def nonoverlap(n: int, seq: Sequence) -> Iterable:
+def nonoverlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
     """
     Iterate n items at a time, without overlap.
     Truncates the iterable such that it is a multiple of n.
@@ -42,10 +44,10 @@ def nonoverlap(n: int, seq: Sequence) -> Iterable:
 
 def _make_alias(
         name: str,
-        iterator: Callable[[int, Sequence], Iterable],
-        n:int) -> Callable[[Sequence], Iterable]:
+        iterator: Callable[[int, Sequence[T]], Iterable[Iterable[T]]],
+        n:int) -> Callable[[Sequence[T]], Iterable[Iterable[T]]]:
 
-    def iterator_alias(seq: Sequence) -> Iterable:
+    def iterator_alias(seq: Sequence[T]) -> Iterable[Iterable[T]]:
         return iterator(n, seq)
 
     iterator_alias.__doc__ = (
@@ -68,7 +70,7 @@ triples = _make_alias('triples', nonoverlap, 3)
 quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
 
-def flatten(iterable: Iterable) -> Iterable:
+def flatten(iterable: Iterable[Any]) -> Iterable[Any]:
     """
     Recursively flatten a nested iterable
     """
@@ -83,17 +85,21 @@ def flatten(iterable: Iterable) -> Iterable:
         for item in flatten(sub)
         ]
 
-def braid(*iterables) -> Iterable:
+def braid(*iterables: Iterable[T]) -> Iterable[T]:
     return list(chain(*zip(*iterables)))
 
-def is_distinct(iterable) -> bool:
+def is_distinct(iterable: Iterable[Any]) -> bool:
     """
     Return true if no two items in `iterable` are the same
     """
     raise NotImplementedError()
     return len(iterable) == len(set(iterable))
 
-def is_rotated(first, second, comparison=lambda a, b: a == b) -> bool:
+def is_rotated(
+        first: Sequence[T],
+        second: Sequence[T],
+        comparison: Callable[[Sequence[T], Sequence[T]], bool] =
+                lambda a, b: a == b) -> bool:
     """
     Given two iterables, figure out whether they are "rotated"
     versions of each other.

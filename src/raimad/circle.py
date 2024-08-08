@@ -1,4 +1,4 @@
-import numpy as np
+from math import pi
 import raimad as rai
 
 class Circle(rai.Compo):
@@ -14,15 +14,15 @@ class Circle(rai.Compo):
         radius = rai.Option('Circle radius', browser_default=15)
         num_points = rai.Option('Number of points')
 
-    def _make(self, radius: float, num_points: int = 200):
+    def _make(self, radius: float, num_points: int = 200) -> None:
 
         self.geoms.update({
             'root': [
-                np.array([
-                    rai.polar(angle, radius)
+                [
+                    rai.polar(angle / num_points * 2 * pi, radius)
                     for angle
-                    in np.linspace(0, 2 * np.pi, num_points)
-                    ])
+                    in range(0, num_points)
+                    ]
                 ]
             })
 

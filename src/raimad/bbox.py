@@ -261,6 +261,16 @@ class AbstractBBox(Generic[T]):
         self.assert_nonempty("Tried to get bottom of empty bbox.")
         return self.min_y if MATHEMATIC_Y_AXIS else self.max_y
 
+    def _interpolate(
+            self,
+            x_ratio: float,
+            y_ratio: float,
+            ) -> 'rai.typing.Point':
+        x = self.min_x + self.length * x_ratio
+        y = self.min_y + self.width * y_ratio
+
+        return (x, y)
+
     def interpolate(
             self,
             x_ratio: float,
@@ -548,8 +558,5 @@ class BBox(AbstractBBox['rai.typing.Point']):
             x_ratio: float,
             y_ratio: float,
             ) -> 'rai.typing.Point':
-        x = self.min_x + self.length * x_ratio
-        y = self.min_y + self.width * y_ratio
-
-        return (x, y)
+        return super()._interpolate(x_ratio, y_ratio)
 

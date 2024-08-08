@@ -44,7 +44,7 @@ class BoundPoint():
     def __repr__(self) -> str:
         return f'<({self._x}, {self._y}) bound to {self._proxy}>'
 
-    def to(self, point: 'rai.typing.Point') -> 'rai.typing.Proxy':
+    def to(self, point: 'rai.typing.PointLike') -> 'rai.typing.Proxy':
         self._proxy.transform.move(
             point[0] - self._x,
             point[1] - self._y,

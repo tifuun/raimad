@@ -1,8 +1,11 @@
+from typing import Iterator
 
-def export_svg(compo: 'rai.typing.Compo') -> str:
+import raimad as rai
+
+def export_svg(compo: 'rai.typing.CompoLike') -> str:
     return ''.join(yield_svg(compo))
 
-def yield_svg(compo):
+def yield_svg(compo: 'rai.typing.CompoLike') -> Iterator[str]:
     bbox = compo.bbox.pad(10)
 
     yield (
