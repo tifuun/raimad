@@ -16,42 +16,76 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name:  install apt dependencies
+      run: sudo apt install jq
+
     - name: Set up Python 3.12
       uses: actions/setup-python@v3
       with:
         python-version: "3.12"
 
-    - name:  install apt dependencies
-      run: sudo apt install jq
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
 
-    - name: Install pip dependencies
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Install pip dependencies for 3.12
       run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest mypy coverage
-        pip install -e .
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python3.12 -m pip install mypy coverage
+        python3.12 -m pip install -e .
+        python3.12 -m pip install -r requirements.txt
 
-#    - name: Lint with flake8
-#
-#      run: |
-#        # stop the build if there are Python syntax errors or undefined names
-#        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-#        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-#        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    - name: Test with pytest
+    - name: Install pip dependencies for 3.11
       run: |
-        pytest && {
-          echo 'BADGE_PYTEST=Passing' >> $GITHUB_ENV
-          echo 'BADGE_PYTEST_VAL=100' >> $GITHUB_ENV
+        python3.11 -m pip install mypy coverage
+        python3.11 -m pip install -e .
+        python3.11 -m pip install -r requirements.txt
+
+    - name: Install pip dependencies for 3.10
+      run: |
+        python3.10 -m pip install mypy coverage
+        python3.10 -m pip install -e .
+        python3.10 -m pip install -r requirements.txt
+
+    - name: unittest for python 3.12
+      run: |
+        python3.12 -m unittest && {
+          echo 'BADGE_TESTS312=Tests Passing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS312_VAL=100' >> $GITHUB_ENV
         } || {
-          echo 'BADGE_PYTEST=Failing' >> $GITHUB_ENV
-          echo 'BADGE_PYTEST_VAL=0' >> $GITHUB_ENV
+          echo 'BADGE_TESTS312=Tests Failing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS312_VAL=0' >> $GITHUB_ENV
+        }
+
+    - name: unittest for python 3.11
+      run: |
+        python3.11 -m unittest && {
+          echo 'BADGE_TESTS311=Tests Passing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS311_VAL=100' >> $GITHUB_ENV
+        } || {
+          echo 'BADGE_TESTS311=Tests Failing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS311_VAL=0' >> $GITHUB_ENV
+        }
+
+    - name: unittest for python 3.10
+      run: |
+        python3.10 -m unittest && {
+          echo 'BADGE_TESTS310=Tests Passing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS310_VAL=100' >> $GITHUB_ENV
+        } || {
+          echo 'BADGE_TESTS310=Tests Failing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS310_VAL=0' >> $GITHUB_ENV
         }
 
     - name: Test with mypy
       run: |
-        mypy --strict src/raimad && {
+        python3.12 -m mypy --strict src/raimad && {
           echo 'BADGE_MYPY=No Issues' >> $GITHUB_ENV
           echo 'BADGE_MYPY_VAL=100' >> $GITHUB_ENV
         } || {
@@ -61,7 +95,7 @@ jobs:
 
     - name: Get test coverage
       run: |
-        coverage run -m unittest && {
+        python3.12 -m coverage run -m unittest && {
           coverage_percent=$(coverage json -q -o /dev/stdout -i | jq '.totals.percent_covered_display' -r)
           echo "BADGE_COVERAGE=$coverage_percent%" >> $GITHUB_ENV
           echo "BADGE_COVERAGE_VAL=$coverage_percent" >> $GITHUB_ENV
@@ -70,15 +104,39 @@ jobs:
           echo 'BADGE_COVERAGE_VAL=0' >> $GITHUB_ENV
         }
 
-    - name: Create pytest Badge
+    - name: Create test 3.12 Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: pytest.svg
-        label: tests
-        message: ${{ env.BADGE_PYTEST }}
-        valColorRange: ${{ env.BADGE_PYTEST_VAL }}
+        filename: tests312.svg
+        label: Python 3.12
+        message: ${{ env.BADGE_TESTS312 }}
+        valColorRange: ${{ env.BADGE_TEST312_VAL }}
+        maxColorRange: 100
+        minColorRange: 0
+
+    - name: Create test 3.11 Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 767d80027892395f1cc61e4829810985
+        filename: tests311.svg
+        label: Python 3.11
+        message: ${{ env.BADGE_TESTS311 }}
+        valColorRange: ${{ env.BADGE_TEST311_VAL }}
+        maxColorRange: 100
+        minColorRange: 0
+
+    - name: Create test 3.10 Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 767d80027892395f1cc61e4829810985
+        filename: tests310.svg
+        label: Python 3.10
+        message: ${{ env.BADGE_TESTS310 }}
+        valColorRange: ${{ env.BADGE_TEST310_VAL }}
         maxColorRange: 100
         minColorRange: 0
 
