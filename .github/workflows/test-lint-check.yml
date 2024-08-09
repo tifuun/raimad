@@ -133,10 +133,10 @@ jobs:
 
   badges:
 
-    needs: test-python310
-    needs: test-python311
-    needs: test-check-python312
     runs-on: ubuntu-latest
+    needs: py310
+    needs: py311
+    needs: py312
 
     - name: Create test 3.12 Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
