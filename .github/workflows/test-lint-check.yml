@@ -1,200 +1,200 @@
 name: Test-Lint-Check
 
 on:
-  push:
-    branches: [ "joss" ]
-  pull_request:
-    branches: [ "joss" ]
+	push:
+		branches: [ "joss" ]
+	pull_request:
+		branches: [ "joss" ]
 
 permissions:
-  contents: read
+	contents: read
 
 jobs:
-  py310:
+	py310:
 
-    runs-on: ubuntu-latest
+		runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+		steps:
+		- uses: actions/checkout@v4
 
-    - name: get python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
+		- name: get python
+			uses: actions/setup-python@v3
+			with:
+				python-version: "3.10"
 
-    - name: pip deps
-      run: |
-        pip install -e .
-        pip install -r requirements.txt
+		- name: pip deps
+			run: |
+				pip install -e .
+				pip install -r requirements.txt
 
-    - name: unittest
-      run: |
-        python -m unittest && {
-          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
-        } || {
-          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
-        }
+		- name: unittest
+			run: |
+				python -m unittest && {
+					echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
+					echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
+				} || {
+					echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
+					echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
+				}
 
-    outputs:
-      badge_tests: ${{ env.BADGE_TESTS }}
-      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+		outputs:
+			badge_tests: ${{ env.BADGE_TESTS }}
+			badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
 
-  py311:
+	py311:
 
-    runs-on: ubuntu-latest
+		runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+		steps:
+		- uses: actions/checkout@v4
 
-    - name: get python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.11"
+		- name: get python
+			uses: actions/setup-python@v3
+			with:
+				python-version: "3.11"
 
-    - name: pip deps
-      run: |
-        pip install -e .
-        pip install -r requirements.txt
+		- name: pip deps
+			run: |
+				pip install -e .
+				pip install -r requirements.txt
 
-    - name: unittest
-      run: |
-        python -m unittest && {
-          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
-        } || {
-          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
-        }
+		- name: unittest
+			run: |
+				python -m unittest && {
+					echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
+					echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
+				} || {
+					echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
+					echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
+				}
 
-    outputs:
-      badge_tests: ${{ env.BADGE_TESTS }}
-      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+		outputs:
+			badge_tests: ${{ env.BADGE_TESTS }}
+			badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
 
-  py312:
+	py312:
 
-    runs-on: ubuntu-latest
+		runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+		steps:
+		- uses: actions/checkout@v4
 
-    - name: get python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.12"
+		- name: get python
+			uses: actions/setup-python@v3
+			with:
+				python-version: "3.12"
 
-    - name: apt deps
-      run: sudo apt install jq
+		- name: apt deps
+			run: sudo apt install jq
 
-    - name: pip deps
-      run: |
-        pip install -e .
-        pip install -r requirements.txt
+		- name: pip deps
+			run: |
+				pip install -e .
+				pip install -r requirements.txt
 
-    - name: unittest
-      run: |
-        python -m unittest && {
-          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
-        } || {
-          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
-        }
+		- name: unittest
+			run: |
+				python -m unittest && {
+					echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
+					echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
+				} || {
+					echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
+					echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
+				}
 
-    - name: Test with mypy
-      run: |
-        mypy --strict src/raimad && {
-          echo 'BADGE_MYPY=No Issues' >> $GITHUB_ENV
-          echo 'BADGE_MYPY_VAL=100' >> $GITHUB_ENV
-        } || {
-          echo 'BADGE_MYPY=Issues Found' >> $GITHUB_ENV
-          echo 'BADGE_MYPY_VAL=0' >> $GITHUB_ENV
-        }
+		- name: Test with mypy
+			run: |
+				mypy --strict src/raimad && {
+					echo 'BADGE_MYPY=No Issues' >> $GITHUB_ENV
+					echo 'BADGE_MYPY_VAL=100' >> $GITHUB_ENV
+				} || {
+					echo 'BADGE_MYPY=Issues Found' >> $GITHUB_ENV
+					echo 'BADGE_MYPY_VAL=0' >> $GITHUB_ENV
+				}
 
-    - name: Get test coverage
-      run: |
-        coverage run -m unittest && {
-          coverage_percent=$(coverage json -q -o /dev/stdout -i | jq '.totals.percent_covered_display' -r)
-          echo "BADGE_COVERAGE=$coverage_percent%" >> $GITHUB_ENV
-          echo "BADGE_COVERAGE_VAL=$coverage_percent" >> $GITHUB_ENV
-        } || {
-          echo 'BADGE_COVERAGE=Error' >> $GITHUB_ENV
-          echo 'BADGE_COVERAGE_VAL=0' >> $GITHUB_ENV
-        }
+		- name: Get test coverage
+			run: |
+				coverage run -m unittest && {
+					coverage_percent=$(coverage json -q -o /dev/stdout -i | jq '.totals.percent_covered_display' -r)
+					echo "BADGE_COVERAGE=$coverage_percent%" >> $GITHUB_ENV
+					echo "BADGE_COVERAGE_VAL=$coverage_percent" >> $GITHUB_ENV
+				} || {
+					echo 'BADGE_COVERAGE=Error' >> $GITHUB_ENV
+					echo 'BADGE_COVERAGE_VAL=0' >> $GITHUB_ENV
+				}
 
-    outputs:
-      badge_tests: ${{ env.BADGE_TESTS }}
-      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
-      badge_mypy: ${{ env.BADGE_MYPY }}
-      badge_mypy_val: ${{ env.BADGE_MYPY_VAL }}
-      badge_coverage: ${{ env.BADGE_COVERAGE }}
-      badge_coverage_val: ${{ env.BADGE_COVERAGE_VAL }}
+		outputs:
+			badge_tests: ${{ env.BADGE_TESTS }}
+			badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+			badge_mypy: ${{ env.BADGE_MYPY }}
+			badge_mypy_val: ${{ env.BADGE_MYPY_VAL }}
+			badge_coverage: ${{ env.BADGE_COVERAGE }}
+			badge_coverage_val: ${{ env.BADGE_COVERAGE_VAL }}
 
-  badges:
+	badges:
 
-    runs-on: ubuntu-latest
-    needs: py310
-    needs: py311
-    needs: py312
+		runs-on: ubuntu-latest
+		needs: py310
+		needs: py311
+		needs: py312
 
-    - name: Create test 3.12 Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 767d80027892395f1cc61e4829810985
-        filename: tests312.svg
-        label: Python 3.12
-        message: ${{ needs.py312.outputs.badge_tests_msg }}
-        valColorRange: ${{ needs.py312.outputs.badge_tests_val }}
-        maxColorRange: 100
-        minColorRange: 0
+		- name: Create test 3.12 Badge
+			uses: schneegans/dynamic-badges-action@v1.7.0
+			with:
+				auth: ${{ secrets.GIST_SECRET }}
+				gistID: 767d80027892395f1cc61e4829810985
+				filename: tests312.svg
+				label: Python 3.12
+				message: ${{ needs.py312.outputs.badge_tests_msg }}
+				valColorRange: ${{ needs.py312.outputs.badge_tests_val }}
+				maxColorRange: 100
+				minColorRange: 0
 
-    - name: Create test 3.11 Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 767d80027892395f1cc61e4829810985
-        filename: tests311.svg
-        label: Python 3.11
-        message: ${{ needs.py311.outputs.badge_tests_msg }}
-        valColorRange: ${{ needs.py311.outputs.badge_tests_val }}
-        maxColorRange: 100
-        minColorRange: 0
+		- name: Create test 3.11 Badge
+			uses: schneegans/dynamic-badges-action@v1.7.0
+			with:
+				auth: ${{ secrets.GIST_SECRET }}
+				gistID: 767d80027892395f1cc61e4829810985
+				filename: tests311.svg
+				label: Python 3.11
+				message: ${{ needs.py311.outputs.badge_tests_msg }}
+				valColorRange: ${{ needs.py311.outputs.badge_tests_val }}
+				maxColorRange: 100
+				minColorRange: 0
 
-    - name: Create test 3.10 Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 767d80027892395f1cc61e4829810985
-        filename: tests310.svg
-        label: Python 3.10
-        message: ${{ needs.py310.outputs.badge_tests_msg }}
-        valColorRange: ${{ needs.py310.outputs.badge_tests_val }}
-        maxColorRange: 100
-        minColorRange: 0
+		- name: Create test 3.10 Badge
+			uses: schneegans/dynamic-badges-action@v1.7.0
+			with:
+				auth: ${{ secrets.GIST_SECRET }}
+				gistID: 767d80027892395f1cc61e4829810985
+				filename: tests310.svg
+				label: Python 3.10
+				message: ${{ needs.py310.outputs.badge_tests_msg }}
+				valColorRange: ${{ needs.py310.outputs.badge_tests_val }}
+				maxColorRange: 100
+				minColorRange: 0
 
-    - name: Create mypy Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 767d80027892395f1cc61e4829810985
-        filename: mypy.svg
-        label: mypy --strict
-        message: ${{ needs.py312.outputs.badge_mypy_msg }}
-        valColorRange: ${{ needs.py312.outputs.badge_mypy_val }}
-        maxColorRange: 100
-        minColorRange: 0
+		- name: Create mypy Badge
+			uses: schneegans/dynamic-badges-action@v1.7.0
+			with:
+				auth: ${{ secrets.GIST_SECRET }}
+				gistID: 767d80027892395f1cc61e4829810985
+				filename: mypy.svg
+				label: mypy --strict
+				message: ${{ needs.py312.outputs.badge_mypy_msg }}
+				valColorRange: ${{ needs.py312.outputs.badge_mypy_val }}
+				maxColorRange: 100
+				minColorRange: 0
 
-    - name: Create coverage Badge
-      uses: schneegans/dynamic-badges-action@v1.7.0
-      with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 767d80027892395f1cc61e4829810985
-        filename: coverage.svg
-        label: Test Coverage
-        message: ${{ needs.py312.outputs.badge_coverage_msg }}
-        valColorRange: ${{ needs.py312.outputs.badge_coverage_val }}
-        maxColorRange: 100
-        minColorRange: 0
+		- name: Create coverage Badge
+			uses: schneegans/dynamic-badges-action@v1.7.0
+			with:
+				auth: ${{ secrets.GIST_SECRET }}
+				gistID: 767d80027892395f1cc61e4829810985
+				filename: coverage.svg
+				label: Test Coverage
+				message: ${{ needs.py312.outputs.badge_coverage_msg }}
+				valColorRange: ${{ needs.py312.outputs.badge_coverage_val }}
+				maxColorRange: 100
+				minColorRange: 0
 
