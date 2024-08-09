@@ -80,7 +80,7 @@ class TestStringImport(unittest.TestCase):
         and the string imports all components from a module,
         but the module has only one component.
         """
-        with tempfile.TemporaryDirectory(delete=True) as folder:
+        with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             # This test will break pycoverage,
             # because pycoverage will think that `mymodule`

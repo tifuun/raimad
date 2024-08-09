@@ -16,7 +16,7 @@ class TestCLI(unittest.TestCase):
         self.snowman_cif = rai.export_cif(rai.Snowman())
 
     def test_cli_export_cif_noargs(self):
-        with tempfile.TemporaryDirectory(delete=True) as folder:
+        with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             subprocess.run(shlex.split(
                 'python -m raimad export raimad:Snowman'
@@ -27,7 +27,7 @@ class TestCLI(unittest.TestCase):
         self.assertEqual(self.snowman_cif, cif_string)
 
     def test_cli_export_cif_file(self):
-        with tempfile.TemporaryDirectory(delete=True) as folder:
+        with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             subprocess.run(shlex.split(
                 'python -m raimad export raimad:Snowman -o compo.cif'
