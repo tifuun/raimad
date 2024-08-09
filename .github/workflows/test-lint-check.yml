@@ -10,82 +10,101 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  py310:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
 
-    - name:  install apt dependencies
-      run: sudo apt install jq
-
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.12"
-
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.11"
-
-    - name: Set up Python 3.10
+    - name: get python
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
 
-    - name: Install pip dependencies for 3.12
+    - name: pip deps
       run: |
-        python3.12 -m pip install mypy coverage
-        python3.12 -m pip install -e .
-        python3.12 -m pip install -r requirements.txt
+        pip install -e .
+        pip install -r requirements.txt
 
-    - name: Install pip dependencies for 3.11
+    - name: unittest
       run: |
-        python3.11 -m pip install mypy coverage
-        python3.11 -m pip install -e .
-        python3.11 -m pip install -r requirements.txt
-
-    - name: Install pip dependencies for 3.10
-      run: |
-        python3.10 -m pip install mypy coverage
-        python3.10 -m pip install -e .
-        python3.10 -m pip install -r requirements.txt
-
-    - name: unittest for python 3.12
-      run: |
-        python3.12 -m unittest && {
-          echo 'BADGE_TESTS312=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS312_VAL=100' >> $GITHUB_ENV
+        python -m unittest && {
+          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
         } || {
-          echo 'BADGE_TESTS312=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS312_VAL=0' >> $GITHUB_ENV
+          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
         }
 
-    - name: unittest for python 3.11
+    outputs:
+      badge_tests: ${{ env.BADGE_TESTS }}
+      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+
+  py311:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: get python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+
+    - name: pip deps
       run: |
-        python3.11 -m unittest && {
-          echo 'BADGE_TESTS311=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS311_VAL=100' >> $GITHUB_ENV
+        pip install -e .
+        pip install -r requirements.txt
+
+    - name: unittest
+      run: |
+        python -m unittest && {
+          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
         } || {
-          echo 'BADGE_TESTS311=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS311_VAL=0' >> $GITHUB_ENV
+          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
         }
 
-    - name: unittest for python 3.10
+    outputs:
+      badge_tests: ${{ env.BADGE_TESTS }}
+      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+
+  py312:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: get python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+
+    - name: apt deps
+      run: sudo apt install jq
+
+    - name: pip deps
       run: |
-        python3.10 -m unittest && {
-          echo 'BADGE_TESTS310=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS310_VAL=100' >> $GITHUB_ENV
+        pip install -e .
+        pip install -r requirements.txt
+
+    - name: unittest
+      run: |
+        python -m unittest && {
+          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
         } || {
-          echo 'BADGE_TESTS310=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS310_VAL=0' >> $GITHUB_ENV
+          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
+          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
         }
 
     - name: Test with mypy
       run: |
-        python3.12 -m mypy --strict src/raimad && {
+        mypy --strict src/raimad && {
           echo 'BADGE_MYPY=No Issues' >> $GITHUB_ENV
           echo 'BADGE_MYPY_VAL=100' >> $GITHUB_ENV
         } || {
@@ -95,7 +114,7 @@ jobs:
 
     - name: Get test coverage
       run: |
-        python3.12 -m coverage run -m unittest && {
+        coverage run -m unittest && {
           coverage_percent=$(coverage json -q -o /dev/stdout -i | jq '.totals.percent_covered_display' -r)
           echo "BADGE_COVERAGE=$coverage_percent%" >> $GITHUB_ENV
           echo "BADGE_COVERAGE_VAL=$coverage_percent" >> $GITHUB_ENV
@@ -104,6 +123,21 @@ jobs:
           echo 'BADGE_COVERAGE_VAL=0' >> $GITHUB_ENV
         }
 
+    outputs:
+      badge_tests: ${{ env.BADGE_TESTS }}
+      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+      badge_mypy: ${{ env.BADGE_MYPY }}
+      badge_mypy_val: ${{ env.BADGE_MYPY_VAL }}
+      badge_coverage: ${{ env.BADGE_COVERAGE }}
+      badge_coverage_val: ${{ env.BADGE_COVERAGE_VAL }}
+
+  badges:
+
+    needs: test-python310
+    needs: test-python311
+    needs: test-check-python312
+    runs-on: ubuntu-latest
+
     - name: Create test 3.12 Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
@@ -111,8 +145,8 @@ jobs:
         gistID: 767d80027892395f1cc61e4829810985
         filename: tests312.svg
         label: Python 3.12
-        message: ${{ env.BADGE_TESTS312 }}
-        valColorRange: ${{ env.BADGE_TEST312_VAL }}
+        message: ${{ needs.py312.outputs.badge_tests_msg }}
+        valColorRange: ${{ needs.py312.outputs.badge_tests_val }}
         maxColorRange: 100
         minColorRange: 0
 
@@ -123,8 +157,8 @@ jobs:
         gistID: 767d80027892395f1cc61e4829810985
         filename: tests311.svg
         label: Python 3.11
-        message: ${{ env.BADGE_TESTS311 }}
-        valColorRange: ${{ env.BADGE_TEST311_VAL }}
+        message: ${{ needs.py311.outputs.badge_tests_msg }}
+        valColorRange: ${{ needs.py311.outputs.badge_tests_val }}
         maxColorRange: 100
         minColorRange: 0
 
@@ -135,8 +169,8 @@ jobs:
         gistID: 767d80027892395f1cc61e4829810985
         filename: tests310.svg
         label: Python 3.10
-        message: ${{ env.BADGE_TESTS310 }}
-        valColorRange: ${{ env.BADGE_TEST310_VAL }}
+        message: ${{ needs.py310.outputs.badge_tests_msg }}
+        valColorRange: ${{ needs.py310.outputs.badge_tests_val }}
         maxColorRange: 100
         minColorRange: 0
 
@@ -147,8 +181,8 @@ jobs:
         gistID: 767d80027892395f1cc61e4829810985
         filename: mypy.svg
         label: mypy --strict
-        message: ${{ env.BADGE_MYPY }}
-        valColorRange: ${{ env.BADGE_MYPY_VAL }}
+        message: ${{ needs.py312.outputs.badge_mypy_msg }}
+        valColorRange: ${{ needs.py312.outputs.badge_mypy_val }}
         maxColorRange: 100
         minColorRange: 0
 
@@ -159,8 +193,8 @@ jobs:
         gistID: 767d80027892395f1cc61e4829810985
         filename: coverage.svg
         label: Test Coverage
-        message: ${{ env.BADGE_COVERAGE }}
-        valColorRange: ${{ env.BADGE_COVERAGE_VAL }}
+        message: ${{ needs.py312.outputs.badge_coverage_msg }}
+        valColorRange: ${{ needs.py312.outputs.badge_coverage_val }}
         maxColorRange: 100
         minColorRange: 0
 
