@@ -7,7 +7,7 @@ from typing import (
     TypeVar,
     Generic,
     Any,
-    Never,
+    NoReturn,
     )
 
 # This class could also be implemented by deriving from `dict`
@@ -127,7 +127,7 @@ class FilteredDictList(Generic[T_STORED, T_ADDED, T_RETURNED]):
 
     # TODO update method
 
-    def __iter__(self) -> Never:
+    def __iter__(self) -> NoReturn:
         raise NotImplementedError(
             "Iterating over dictlist is ambiguous. "
             "Please use `.keys()`, `.values()`, or `.items()`."

@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, Never, Iterator, TypeVar, ClassVar
+from typing import Any, NoReturn, Iterator, TypeVar, ClassVar
 
 try:
     from typing import Self
@@ -154,7 +154,7 @@ class Compo:
         return rai.Proxy(self)
 
     @property
-    def copy(self) -> Never:
+    def copy(self) -> NoReturn:
         raise CopyCompoError(
             f"`{self}` is a Compo, not a Proxy! "
             "Don't copy compos; instead, "
@@ -171,7 +171,7 @@ class Compo:
         return point
 
     @property
-    def scale(self) -> Never:
+    def scale(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to scale `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -179,7 +179,7 @@ class Compo:
             )
 
     @property
-    def move(self) -> Never:
+    def move(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -187,7 +187,7 @@ class Compo:
             )
 
     @property
-    def movex(self) -> Never:
+    def movex(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -195,7 +195,7 @@ class Compo:
             )
 
     @property
-    def movey(self) -> Never:
+    def movey(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -203,7 +203,7 @@ class Compo:
             )
 
     @property
-    def rotate(self) -> Never:
+    def rotate(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to rotate `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -211,7 +211,7 @@ class Compo:
             )
 
     @property
-    def flip(self) -> Never:
+    def flip(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to flip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -219,7 +219,7 @@ class Compo:
             )
 
     @property
-    def hflip(self) -> Never:
+    def hflip(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to hflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -227,7 +227,7 @@ class Compo:
             )
 
     @property
-    def vflip(self) -> Never:
+    def vflip(self) -> NoReturn:
         raise TransformCompoError(
             f"Tried to vflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
