@@ -27,19 +27,20 @@ jobs:
         pip install -e .
         pip install -r requirements.txt
 
-    - name: unittest
+    - name: tests
+      id: tests
       run: |
         python -m unittest && {
-          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
+          echo 'badge_tests_msg=Tests Passing' >> $GITHUB_OUTPUT
+          echo 'badge_tests_val=100' >> $GITHUB_OUTPUT
         } || {
-          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
+          echo 'badge_tests_msg=Tests Failing' >> $GITHUB_OUTPUT
+          echo 'badge_tests_val=0' >> $GITHUB_OUTPUT
         }
 
     outputs:
-      badge_tests: ${{ env.BADGE_TESTS }}
-      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+      badge_tests_msg: ${{ steps.tests.outputs.badge_tests_msg }}
+      badge_tests_val: ${{ steps.tests.outputs.badge_tests_val }}
 
   py311:
 
@@ -89,6 +90,7 @@ jobs:
 
     - name: pip deps
       run: |
+        pip install mypy coverage
         pip install -e .
         pip install -r requirements.txt
 
