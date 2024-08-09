@@ -38,20 +38,20 @@ jobs:
     - name: Test with pytest
       run: |
         pytest && {
-          echo 'BADGE_PYTEST="Passing"' >> $GITHUB_ENV
+          echo 'BADGE_PYTEST=Passing' >> $GITHUB_ENV
           echo 'BADGE_PYTEST_VAL=100' >> $GITHUB_ENV
         } || {
-          echo 'BADGE_PYTEST=Failing"' >> $GITHUB_ENV
+          echo 'BADGE_PYTEST=Failing' >> $GITHUB_ENV
           echo 'BADGE_PYTEST_VAL=0' >> $GITHUB_ENV
         }
 
     - name: Test with mypy
       run: |
         mypy --strict src/raimad && {
-          echo 'BADGE_MYPY="No Issues"' >> $GITHUB_ENV
+          echo 'BADGE_MYPY=No Issues' >> $GITHUB_ENV
           echo 'BADGE_MYPY_VAL=100' >> $GITHUB_ENV
         } || {
-          echo 'BADGE_MYPY="Issues Found"' >> $GITHUB_ENV
+          echo 'BADGE_MYPY=Issues Found' >> $GITHUB_ENV
           echo 'BADGE_MYPY_VAL=0' >> $GITHUB_ENV
         }
 
@@ -72,7 +72,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: pytest.svg
+        filename: mypy.svg
         label: mypy --strict
         message: ${{ env.BADGE_MYPY }}
         valColorRange: ${{ env.BADGE_MYPY_VAL }}
