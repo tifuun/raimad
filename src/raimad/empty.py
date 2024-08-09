@@ -25,7 +25,7 @@ class EmptyType:
 
     This is a singleton class.
     """
-    instance: ClassVar[Self]
+    instance: ClassVar['EmptyType']
 
     def __new__(cls) -> 'EmptyType':
         if not hasattr(cls, 'instance'):

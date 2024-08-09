@@ -72,7 +72,7 @@ class AnSec(rai.Compo):
 
         num_points = 100 # TODO
         theta_step = (theta2 - theta1) / num_points
-        angles = [theta1 + theta_step * i for i in range(num_points)]
+        angles = tuple(theta1 + theta_step * i for i in range(num_points))
 
         self.geoms.update({
             'root': [
@@ -80,7 +80,7 @@ class AnSec(rai.Compo):
                     rai.polar(arg=angle, mod=radius)
                     for radius, angles in (
                         (r1, angles),
-                        (r2, reversed(angles)),
+                        (r2, angles[::-1]),
                         # Fun exercise: change the above two tuples to lists
                         # and see what mypy has to say about that
                         )
