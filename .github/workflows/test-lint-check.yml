@@ -134,9 +134,7 @@ jobs:
   badges:
 
     runs-on: ubuntu-latest
-    needs: py310
-    needs: py311
-    needs: py312
+    needs: [ py310, py311, py312 ]
 
     steps:
     - name: Create test 3.12 Badge
