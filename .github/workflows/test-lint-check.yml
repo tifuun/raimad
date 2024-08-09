@@ -24,10 +24,10 @@ jobs:
     - name:  install apt dependencies
       run: sudo apt install jq
 
-    - name: Install dependencies
+    - name: Install pip dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest mypy
+        pip install flake8 pytest mypy coverage
         pip install -e .
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
