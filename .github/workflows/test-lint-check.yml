@@ -20,6 +20,10 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.12"
+
+    - name:  install apt dependencies
+      run: apt install jq
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -55,6 +59,17 @@ jobs:
           echo 'BADGE_MYPY_VAL=0' >> $GITHUB_ENV
         }
 
+    - name: Get test coverage
+      run: |
+        coverage run -m unittest && {
+          coverage_percent=$(coverage json -q -o /dev/stdout -i | jq '.totals.percent_covered_display' -r)
+          echo "BADGE_COVERAGE=$coverage_percent%" >> $GITHUB_ENV
+          echo "BADGE_COVERAGE_VAL=$coverage_percent" >> $GITHUB_ENV
+        } || {
+          echo 'BADGE_COVERAGE=Error' >> $GITHUB_ENV
+          echo 'BADGE_COVERAGE_VAL=0' >> $GITHUB_ENV
+        }
+
     - name: Create pytest Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
@@ -76,6 +91,18 @@ jobs:
         label: mypy --strict
         message: ${{ env.BADGE_MYPY }}
         valColorRange: ${{ env.BADGE_MYPY_VAL }}
+        maxColorRange: 100
+        minColorRange: 0
+
+    - name: Create coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 767d80027892395f1cc61e4829810985
+        filename: coverage.svg
+        label: Test Coverage
+        message: ${{ env.BADGE_COVERAGE }}
+        valColorRange: ${{ env.BADGE_COVERAGE_VAL }}
         maxColorRange: 100
         minColorRange: 0
 

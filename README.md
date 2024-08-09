@@ -6,6 +6,7 @@ RAIMAD Astronomical Instrument MAsk Designer
 
 ![Pytest badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/pytest.svg)
 ![MyPy badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/mypy.svg)
+![Coverage badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/coverage.svg)
 
 Read the documentation at [RAIDOC](https://tifuun.github.io/raidoc/).
 
