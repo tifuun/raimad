@@ -22,7 +22,7 @@ jobs:
         python-version: "3.12"
 
     - name:  install apt dependencies
-      run: apt install jq
+      run: sudo apt install jq
 
     - name: Install dependencies
       run: |
