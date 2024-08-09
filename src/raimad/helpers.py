@@ -1,21 +1,4 @@
-from typing import (
-        Callable,
-        Generator,
-        TypeVar,
-        Iterator,
-        )
-
-import sys
-
-# see https://github.com/python/mypy/issues/16903
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec, TypeAlias
-else:
-    from typing_extensions import ParamSpec, TypeAlias
-
-
-from enum import Enum
-import functools
+from typing import Iterator
 import math
 
 import raimad as rai
@@ -63,6 +46,7 @@ def _custom_base(value: int, glyphs: list[str]) -> Iterator[str]:
 def custom_base(value: int, glyphs: list[str]) -> str:
     return ''.join(_custom_base(value, glyphs))
 
+
 WINGDINGS = [
     f"\033[0;{color}m{symbol} "
     for color in [31, 32, 34, 35, 36]
@@ -91,18 +75,4 @@ def midpoint(
         )
 
 # TODO chaining boundpoint actions?
-
-def klay(cifstring: str) -> None:
-    """
-    Do not use this function.
-    This is a helper for me to debug the CIF export process
-    until I come up with something better
-    """
-    import subprocess
-    with open('/home/maybetree/tmp/raimad.cif', 'w') as cif:
-        cif.write(cifstring)
-    #subprocess.Popen(
-    #    'flatpak run de.klayout.KLayout /home/maybetree/tmp/raimad.cif'
-    #    .split(' '))
-
 

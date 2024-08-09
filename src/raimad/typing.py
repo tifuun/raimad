@@ -3,13 +3,12 @@ typing.py
 A collection of type hints
 """
 
-from typing import Sequence, Any
 try:
     from typing import TypeAlias
 except ImportError:
-    #py3.9 and lower
+    # py3.9 and lower
     from typing_extensions import TypeAlias
-    
+
 import raimad as rai
 
 CompoType: TypeAlias = type[rai.Compo]
@@ -37,8 +36,5 @@ Affine: TypeAlias = tuple[
     ]
 
 LMapShorthand: TypeAlias = None | str | dict[str, str]
-#XYarray: TypeAlias = np.ndarray[Any, Point]
-#Geoms: TypeAlias = dict[str, list[XYarray]]
 LMap: TypeAlias = rai.LMap
-
 

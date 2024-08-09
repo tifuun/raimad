@@ -1,12 +1,4 @@
-from typing import Any, Literal, Iterator
-
-try:
-    from typing import Self
-except ImportError:
-    # py3.10 and lower
-    from typing_extensions import Self
-
-import numpy as np
+from typing import Literal, Iterator
 
 import raimad as rai
 

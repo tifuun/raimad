@@ -6,8 +6,6 @@ from typing import TypeVar, Any
 from collections.abc import Iterable, Callable, Sequence
 from itertools import chain
 
-import numpy as np
-
 
 T = TypeVar('T')
 def overlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
@@ -45,7 +43,7 @@ def nonoverlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
 def _make_alias(
         name: str,
         iterator: Callable[[int, Sequence[T]], Iterable[Iterable[T]]],
-        n:int) -> Callable[[Sequence[T]], Iterable[Iterable[T]]]:
+        n: int) -> Callable[[Sequence[T]], Iterable[Iterable[T]]]:
 
     def iterator_alias(seq: Sequence[T]) -> Iterable[Iterable[T]]:
         return iterator(n, seq)

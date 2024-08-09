@@ -1,5 +1,3 @@
-from typing import Callable, ClassVar
-
 import raimad as rai
 
 class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):

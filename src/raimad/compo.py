@@ -1,13 +1,11 @@
 import inspect
-from typing import Any, NoReturn, Iterator, TypeVar, ClassVar
+from typing import Any, NoReturn, Iterator, TypeVar
 
 try:
     from typing import Self
 except ImportError:
     # py3.10 and lower
     from typing_extensions import Self
-
-from copy import deepcopy
 
 import raimad as rai
 
@@ -43,6 +41,7 @@ class CopyCompoError(ProxyCompoConfusionError):
     Error for when you try to copy a compo
     instead of its proxy
     """
+
 
 T = TypeVar('T')
 class ProxyableDictList(rai.DictList[T]):
@@ -94,7 +93,7 @@ class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
                 )
 
         return item
-    
+
     def _filter_get(self, val: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if self._proxy is not None:
             return self._proxy.copy_reassign(val, _autogen=True)
@@ -167,7 +166,10 @@ class Compo:
         for subcompo in self.subcompos.values():
             yield from subcompo.walk_hier()
 
-    def transform_point(self, point: 'rai.typing.PointLike') -> 'rai.typing.PointLike':
+    def transform_point(
+            self,
+            point: 'rai.typing.PointLike'
+            ) -> 'rai.typing.PointLike':
         return point
 
     @property
@@ -234,21 +236,6 @@ class Compo:
             "to get a Proxy pointing to this compo and transform that instead."
             )
 
-    # lmap function #
-    #def __matmul__(self, what):
-    #    if isinstance(what, dict | str):  # TODO lmap shorthand type
-    #        return rai.Proxy(
-    #            self,
-    #            lmap=what
-    #            )
-    #    elif isinstance(what, rai.Transform):
-    #        return rai.Proxy(
-    #            self,
-    #            transform=what
-    #            )
-    #    else:
-    #        raise Exception()  # TODO
-
     # bbox functions #
     @property
     def bbox(self) -> 'rai.BBox':
@@ -279,16 +266,6 @@ class Compo:
                     cls.Options[param.name].annot = type(param.default)
             else:
                 cls.Options[param.name].annot = param.annotation
-
-    # Condemned method, I don't like it
-    #def subcompo(self, compo, name: str | None = None):
-    #    proxy = rai.Proxy(compo)
-    #    if name is None:
-    #        self.subcompos.append(proxy)
-    #    else:
-    #        # TODO runtime check for subcompo reassignment?
-    #        self.subcompos[name] = proxy
-    #    return proxy
 
     def auto_subcompos(self, locs: dict[Any, Any] | None = None) -> None:
         """
@@ -321,6 +298,7 @@ class Compo:
         This is called by jupyter and raimark
         """
         return rai.export_svg(self)
+
 
 K = TypeVar('K', bound=rai.Annotation)
 def _class_to_dictlist(

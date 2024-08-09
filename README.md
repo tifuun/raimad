@@ -17,6 +17,28 @@ Browse RAIMAD packages at [RAIDEX](https://tifuun.github.io/raidex/).
 
 PyPI page: <https://pypi.org/project/raimad/>
 
+## Development
+
+### tooling
+
+We use flake8, mypy, unit tests, and coverage.py to ensure code quality.
+
+- Unit tests can be run with `python -m unittest` from the root of this
+    repo.
+    Unit tests MUST PASS in all supported python versions.
+
+- Running `mypy --strict src/raimad` from the root of this repo
+    with the latest supported version of Python must report no problems.
+    mypy problems detected under older versions of Python can be ignored.
+
+    - Only `src/raimad` files need to pass mypy checks.
+        Tests and benchmarks are exempt.
+
+- coverage.py can be a good tool for estimating how much of the codebase
+    is covered by unit tests. We are aiming for 100% coverage,
+    but it is not yet a requirement.
+    
+
 ## License
 
 RAIMAD is free software: you can redistribute it and/or modify it under

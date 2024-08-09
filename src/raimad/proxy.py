@@ -58,7 +58,6 @@ class LMap:
             assert False
 
         return self
-    
 
 class ProxiedMarksContainer(
         rai.FilteredDictList[
@@ -133,10 +132,10 @@ class Proxy:
         if maxdepth == 0 or isinstance(self.compo, rai.Compo):
             return self.transform.copy()
 
-        #return (
-        #    self.compo.get_flat_transform(maxdepth - 1)
-        #    .compose(self.transform)
-        #    )
+        # return (
+        #     self.compo.get_flat_transform(maxdepth - 1)
+        #     .compose(self.transform)
+        #     )
 
         # TODO huh? copy?
         return self.transform.copy().compose(
@@ -198,20 +197,6 @@ class Proxy:
             self.transform.copy(),
             )
 
-    #def cifcopy(self):
-    #    if self.depth() > 1:
-    #        # TODO think about why someone would want to do this
-    #        raise Exception("Copying proxy of depth more than 1")
-
-    #    self._cif_linked = True
-
-    #    return type(self)(
-    #        self.compo,
-    #        copy(self.lmap),
-    #        self.transform.copy(),
-    #        _cif_link=True
-    #        )
-
     def copy_reassign(
             self,
             new_subcompo: 'rai.typing.CompoLike',
@@ -230,17 +215,12 @@ class Proxy:
         No clue what this is supposed to do
         """
         return NotImplemented
-        #return type(self)(
-        #    (
-        #        self.compo
-        #        if isinstance(self.compo, rai.Compo)
-        #        else self.compo.copy()
-        #        ),
-        #    copy(self.lmap),
-        #    self.transform.copy(),
-        #    )
 
-    def transform_point(self, point: 'rai.typing.PointLike') -> 'rai.typing.PointLike':
+    def transform_point(
+            self,
+            point: 'rai.typing.PointLike'
+            ) -> 'rai.typing.PointLike':
+
         return self.transform.transform_point(
             self.compo.transform_point(point)
             )
@@ -307,7 +287,6 @@ class Proxy:
             self.compo.marks._dict,
             copy=False
             )
-        #return self.compo.marks._get_proxy_view(self)
 
     # bbox functions #
     # TODO same as compo -- some sort of reuse?

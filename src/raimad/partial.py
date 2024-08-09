@@ -5,7 +5,12 @@ import raimad as rai
 class Partial:
     compo_cls: 'rai.typing.CompoType'
 
-    def __init__(self, compo_cls: 'rai.typing.CompoType', **kwargs: Any) -> None:
+    def __init__(
+            self,
+            compo_cls: 'rai.typing.CompoType',
+            **kwargs: Any
+            ) -> None:
+
         self.kwargs = kwargs
         self.compo_cls = compo_cls
 

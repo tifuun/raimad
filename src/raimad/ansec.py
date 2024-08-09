@@ -70,7 +70,7 @@ class AnSec(rai.Compo):
             self.geoms.update({'root': [[]]})
             return
 
-        num_points = 100 # TODO
+        num_points = 100  # TODO
         theta_step = (theta2 - theta1) / num_points
         angles = tuple(theta1 + theta_step * i for i in range(num_points))
 
@@ -129,7 +129,8 @@ class AnSec(rai.Compo):
                 "What do you want me to do??"
                 )
 
-        if r1 is None and r2 is not None and rmid is not None and dr is not None:
+        if r1 is None and r2 is not None and rmid is not None and \
+                dr is not None:
             raise AnSecRadiusTooManyArgumentsError(
                 "r2, midradius, and radius delta specified. "
                 "You need only two of these!"
@@ -150,7 +151,8 @@ class AnSec(rai.Compo):
                 "What do you want me to do??"
                 )
 
-        if r1 is not None and r2 is None and rmid is not None and dr is not None:
+        if r1 is not None and r2 is None and rmid is not None and \
+                dr is not None:
             raise AnSecRadiusTooManyArgumentsError(
                 "r1, midradius, and radius delta specified. "
                 "You need only two of these!"
@@ -159,13 +161,15 @@ class AnSec(rai.Compo):
         if r1 is not None and r2 is not None and rmid is None and dr is None:
             return r1, r2
 
-        if r1 is not None and r2 is not None and rmid is None and dr is not None:
+        if r1 is not None and r2 is not None and rmid is None and dr \
+                is not None:
             raise AnSecRadiusTooManyArgumentsError(
                 "r1, r2, and radius delta specified. "
                 "What do you want me to do??"
                 )
 
-        if r1 is not None and r2 is not None and rmid is not None and dr is None:
+        if r1 is not None and r2 is not None and rmid is not None and \
+                dr is None:
             raise AnSecRadiusTooManyArgumentsError(
                 "r1, r2, and midradius specified. "
                 "What do you want me to do??"
@@ -215,7 +219,8 @@ class AnSec(rai.Compo):
                 "What do you want me to do??"
                 )
 
-        if t1 is None and t2 is not None and tmid is not None and dt is not None:
+        if t1 is None and t2 is not None and tmid is not None and \
+                dt is not None:
             raise AnSecThetaTooManyArgumentsError(
                 "t2, midTheta, and Theta delta specified. "
                 "You need only two of these!"
@@ -236,7 +241,8 @@ class AnSec(rai.Compo):
                 "What do you want me to do??"
                 )
 
-        if t1 is not None and t2 is None and tmid is not None and dt is not None:
+        if t1 is not None and t2 is None and tmid is not None and \
+                dt is not None:
             raise AnSecThetaTooManyArgumentsError(
                 "t1, midTheta, and Theta delta specified. "
                 "You need only two of these!"
@@ -245,13 +251,15 @@ class AnSec(rai.Compo):
         if t1 is not None and t2 is not None and tmid is None and dt is None:
             return t1, t2
 
-        if t1 is not None and t2 is not None and tmid is None and dt is not None:
+        if t1 is not None and t2 is not None and tmid is None and \
+                dt is not None:
             raise AnSecThetaTooManyArgumentsError(
                 "t1, t2, and Theta delta specified. "
                 "What do you want me to do??"
                 )
 
-        if t1 is not None and t2 is not None and tmid is not None and dt is None:
+        if t1 is not None and t2 is not None and tmid is not None and \
+                dt is None:
             raise AnSecThetaTooManyArgumentsError(
                 "t1, t2, and midTheta specified. "
                 "What do you want me to do??"

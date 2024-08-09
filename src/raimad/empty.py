@@ -5,13 +5,6 @@ This file contains the EmptyType class and the Empty object
 
 from typing import ClassVar
 
-try:
-    from typing import Self
-
-except ImportError:
-    # py3.10 and lower
-    from typing_extensions import Self
-
 class EmptyType:
     """
     Empty: an object representing an empty field.

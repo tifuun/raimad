@@ -9,8 +9,6 @@ except ImportError:
     # py3.10 and lower
     from typing_extensions import Self
 
-import numpy as np
-
 import raimad as rai
 
 # Disable to use computer-style Y axis (increases downwards)
@@ -25,6 +23,7 @@ class EmptyBBoxError(Exception):
     Most properties of an empty bbox (length, width, specific corners, etc.)
     do not make sense, and attempting to query them will raise this exception.
     """
+
 
 T = TypeVar('T', 'rai.typing.Point', 'rai.typing.BoundPoint', )
 class AbstractBBox(Generic[T]):
@@ -300,7 +299,7 @@ class AbstractBBox(Generic[T]):
             if the bbox is empty
 
         """
-        raise NotImplemented
+        raise NotImplementedError()
 
     @property
     def mid(self) -> T:

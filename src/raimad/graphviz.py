@@ -10,6 +10,7 @@ class DOTString(str):
     def _repr_dot_(self) -> str:
         return self
 
+
 AdjList: TypeAlias = Sequence[tuple[Any, Any]]
 
 def _adjlist2dot(adjlist: AdjList) -> Iterator[str]:

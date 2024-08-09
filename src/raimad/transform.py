@@ -31,7 +31,10 @@ class Transform:
         """
         return rai.affine.transform_xyarray(self._affine, poly)
 
-    def transform_point(self, point: 'rai.typing.PointLike') -> 'rai.typing.Point':
+    def transform_point(
+            self,
+            point: 'rai.typing.PointLike'
+            ) -> 'rai.typing.Point':
         """
         Apply transformation to point and return new transformed point
         """
@@ -159,8 +162,4 @@ class Transform:
             self._affine
             )
         return self
-
-    #def inverse(self) -> Self:
-    #    self._affine = np.linalg.inv(self._affine)
-    #    return self
 

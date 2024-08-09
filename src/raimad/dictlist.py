@@ -1,7 +1,5 @@
 from typing import (
-    ItemsView,
     KeysView,
-    ValuesView,
     Iterable,
     Iterator,
     TypeVar,
@@ -45,7 +43,9 @@ class FilteredDictList(Generic[T_STORED, T_ADDED, T_RETURNED]):
                 self._dict = dict_
 
             elif copy is None:
-                raise TypeError("Must specify `copy` (bool) if passing `dict_`")
+                raise TypeError(
+                    "Must specify `copy` (bool) if passing `dict_`"
+                    )
 
             else:
                 raise TypeError('`copy` must be a bool')
@@ -68,7 +68,8 @@ class FilteredDictList(Generic[T_STORED, T_ADDED, T_RETURNED]):
 
             if hasattr(self.__class__, key):
                 raise KeyError(
-                    f"Key cannot be the same as an existing class attribute. "
+                    "Key cannot be the same as "
+                    "an existing class attribute. "
                     )
 
             self._dict.__setitem__(key, self._filter_set(val))

@@ -3,8 +3,6 @@ RAIMAD Command-line interface (CLI)
 """
 
 import argparse
-from pathlib import Path
-from sys import stdout
 from typing import Sequence
 
 import raimad as rai

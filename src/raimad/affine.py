@@ -2,12 +2,8 @@
 Operations on affine matrices
 """
 
-from math import sin, cos, sqrt
-from functools import reduce
+from math import sin, cos, sqrt, atan2
 from typing import Sequence
-
-import numpy as np
-import numpy.typing as _
 
 import raimad as rai
 
@@ -26,7 +22,7 @@ def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
         a, b = arrays
         # This is faster than both numpy and comprehensions,
         # see benchamrks/matmul.py
-        # Also has the benefit of not needing a PhD
+        # Also, not using numpy has the benefit of not needing a PhD
         # in type gymnastics to get mypy to stop complaining
         return (
             (
@@ -34,13 +30,11 @@ def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
                 a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1],
                 a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2]
                 ),
-            
             (
                 a[1][0] * b[0][0] + a[1][1] * b[1][0] + a[1][2] * b[2][0],
                 a[1][0] * b[0][1] + a[1][1] * b[1][1] + a[1][2] * b[2][1],
                 a[1][0] * b[0][2] + a[1][1] * b[1][2] + a[1][2] * b[2][2]
                 ),
-                
             (
                 a[2][0] * b[0][0] + a[2][1] * b[1][0] + a[2][2] * b[2][0],
                 a[2][0] * b[0][1] + a[2][1] * b[1][1] + a[2][2] * b[2][1],
@@ -98,7 +92,12 @@ def scale(x: float, y: float) -> 'rai.typing.Affine':
         (0, 0, 1),
         )
 
-def around(matrix: 'rai.typing.Affine', x: float, y: float) -> 'rai.typing.Affine':
+def around(
+        matrix: 'rai.typing.Affine',
+        x: float,
+        y: float
+        ) -> 'rai.typing.Affine':
+
     to_origin = move(-x, -y)
     from_origin = move(x, y)
 
@@ -133,7 +132,7 @@ def get_rotation(matrix: 'rai.typing.Affine') -> float:
     """
     Given an affine matrix, return the corresponding rotation
     """
-    return float(np.arctan2(matrix[1][0], matrix[0][0]))
+    return float(atan2(matrix[1][0], matrix[0][0]))
 
 def transform_xyarray(
         matrix: 'rai.typing.Affine',
@@ -158,10 +157,10 @@ def transform_point(
     x, y = point
     a, b, c = matrix[0]
     d, e, f = matrix[1]
-    
+
     # Apply the transformation
     new_x = a * x + b * y + c
     new_y = d * x + e * y + f
-    
+
     return (new_x, new_y)
 
