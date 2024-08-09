@@ -31,16 +31,16 @@ jobs:
       id: tests
       run: |
         python -m unittest && {
-          echo 'badge_tests_msg=Tests Passing' >> $GITHUB_OUTPUT
-          echo 'badge_tests_val=100' >> $GITHUB_OUTPUT
+          echo 'badge_msg=Tests Passing' >> $GITHUB_OUTPUT
+          echo 'badge_val=100' >> $GITHUB_OUTPUT
         } || {
-          echo 'badge_tests_msg=Tests Failing' >> $GITHUB_OUTPUT
-          echo 'badge_tests_val=0' >> $GITHUB_OUTPUT
+          echo 'badge_msg=Tests Failing' >> $GITHUB_OUTPUT
+          echo 'badge_val=0' >> $GITHUB_OUTPUT
         }
 
     outputs:
-      badge_tests_msg: ${{ steps.tests.outputs.badge_tests_msg }}
-      badge_tests_val: ${{ steps.tests.outputs.badge_tests_val }}
+      badge_tests_msg: ${{ steps.tests.outputs.badge_msg }}
+      badge_tests_val: ${{ steps.tests.outputs.badge_val }}
 
   py311:
 
@@ -59,19 +59,20 @@ jobs:
         pip install -e .
         pip install -r requirements.txt
 
-    - name: unittest
+    - name: tests
+      id: tests
       run: |
         python -m unittest && {
-          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
+          echo 'badge_msg=Tests Passing' >> $GITHUB_OUTPUT
+          echo 'badge_val=100' >> $GITHUB_OUTPUT
         } || {
-          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
+          echo 'badge_msg=Tests Failing' >> $GITHUB_OUTPUT
+          echo 'badge_val=0' >> $GITHUB_OUTPUT
         }
 
     outputs:
-      badge_tests: ${{ env.BADGE_TESTS }}
-      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
+      badge_tests_msg: ${{ steps.tests.outputs.badge_msg }}
+      badge_tests_val: ${{ steps.tests.outputs.badge_val }}
 
   py312:
 
@@ -94,44 +95,48 @@ jobs:
         pip install -e .
         pip install -r requirements.txt
 
-    - name: unittest
+    - name: tests
+      id: tests
       run: |
         python -m unittest && {
-          echo 'BADGE_TESTS=Tests Passing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=100' >> $GITHUB_ENV
+        python -m unittest && {
+          echo 'badge_msg=Tests Passing' >> $GITHUB_OUTPUT
+          echo 'badge_val=100' >> $GITHUB_OUTPUT
         } || {
-          echo 'BADGE_TESTS=Tests Failing' >> $GITHUB_ENV
-          echo 'BADGE_TESTS_VAL=0' >> $GITHUB_ENV
+          echo 'badge_msg=Tests Failing' >> $GITHUB_OUTPUT
+          echo 'badge_val=0' >> $GITHUB_OUTPUT
         }
 
     - name: Test with mypy
+      id: mypy
       run: |
         mypy --strict src/raimad && {
-          echo 'BADGE_MYPY=No Issues' >> $GITHUB_ENV
-          echo 'BADGE_MYPY_VAL=100' >> $GITHUB_ENV
+          echo 'badge_msg=No Issues' >> $GITHUB_OUTPUT
+          echo 'badge_val=100' >> $GITHUB_OUTPUT
         } || {
-          echo 'BADGE_MYPY=Issues Found' >> $GITHUB_ENV
-          echo 'BADGE_MYPY_VAL=0' >> $GITHUB_ENV
+          echo 'badge_msg=Issues Found' >> $GITHUB_OUTPUT
+          echo 'badge_val=0' >> $GITHUB_OUTPUT
         }
 
     - name: Get test coverage
+      id: coverage
       run: |
         coverage run -m unittest && {
           coverage_percent=$(coverage json -q -o /dev/stdout -i | jq '.totals.percent_covered_display' -r)
-          echo "BADGE_COVERAGE=$coverage_percent%" >> $GITHUB_ENV
-          echo "BADGE_COVERAGE_VAL=$coverage_percent" >> $GITHUB_ENV
+          echo "badge_msg=$coverage_percent%" >> $GITHUB_OUTPUT
+          echo "badge_val=$coverage_percent" >> $GITHUB_OUTPUT
         } || {
-          echo 'BADGE_COVERAGE=Error' >> $GITHUB_ENV
-          echo 'BADGE_COVERAGE_VAL=0' >> $GITHUB_ENV
+          echo "badge_msg=Error" >> $GITHUB_OUTPUT
+          echo "badge_val=0" >> $GITHUB_OUTPUT
         }
 
     outputs:
-      badge_tests: ${{ env.BADGE_TESTS }}
-      badge_tests_val: ${{ env.BADGE_TESTS_VAL }}
-      badge_mypy: ${{ env.BADGE_MYPY }}
-      badge_mypy_val: ${{ env.BADGE_MYPY_VAL }}
-      badge_coverage: ${{ env.BADGE_COVERAGE }}
-      badge_coverage_val: ${{ env.BADGE_COVERAGE_VAL }}
+      badge_tests_msg: ${{ steps.tests.outputs.badge_msg }}
+      badge_tests_val: ${{ steps.tests.outputs.badge_val }}
+      badge_mypy_msg: ${{ steps.mypy.outputs.badge_msg }}
+      badge_mypy_val: ${{ steps.mypy.outputs.badge_val }}
+      badge_coverage_msg: ${{ steps.coverage.outputs.badge_msg }}
+      badge_coverage_val: ${{ steps.coverage.outputs.badge_val }}
 
   badges:
 
