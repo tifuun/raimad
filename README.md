@@ -4,7 +4,7 @@ RAIMAD Astronomical Instrument MAsk Designer
 
 ![RAIMAD banner](img/raimad-banner.png)
 
-![Badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/)
+![Badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/f981cda4c4cdb8af31f2dc70a14a7b019cc5c6fd/answer.svg)
 
 Read the documentation at [RAIDOC](https://tifuun.github.io/raidoc/).
 
