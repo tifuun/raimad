@@ -99,7 +99,6 @@ jobs:
       id: tests
       run: |
         python -m unittest && {
-        python -m unittest && {
           echo 'badge_msg=Tests Passing' >> $GITHUB_OUTPUT
           echo 'badge_val=100' >> $GITHUB_OUTPUT
         } || {
