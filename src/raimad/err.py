@@ -25,3 +25,27 @@ from raimad.cif.shorthand import InvalidDestinationError
 
 from raimad.string_import import StringImportError
 
+__all__ = [
+    "InvalidSubcompoError",
+    "CompoInsteadOfProxyAsSubcompoError",
+    "TransformCompoError",
+    "CopyCompoError",
+    "ProxyCompoConfusionError",
+    "AnSecError",
+    "AnSecRadiusError",
+    "AnSecRadiusTooManyArgumentsError",
+    "AnSecRadiusNotEnoughArgumentsError",
+    "AnSecRadiusIncorrectArgumentsError",
+    "AnSecThetaError",
+    "AnSecThetaTooManyArgumentsError",
+    "AnSecThetaNotEnoughArgumentsError",
+    "AnSecThetaIncorrectArgumentsError",
+    "RectWireError",
+    "RectWireTooManyArgumentsError",
+    "RectWireNotEnoughArgumentsError",
+    "RectWireIncorrectArgumentsError",
+    "EmptyBBoxError",
+    "InvalidDestinationError",
+    "StringImportError",
+    ]
+

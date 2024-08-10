@@ -2,12 +2,24 @@
 Namespace flattening for RAIMAD.
 """
 
-import numpy as np
-Point = np.ndarray  # TODO
-
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
-from raimad.helpers import *
+from raimad.helpers import (
+    fullcircle,
+    halfcircle,
+    quartercircle,
+    eigthcircle,
+    semicircle,
+    demisemicircle,
+    hemidemisemicircle,
+    angle_between,
+    polar,
+    is_compo_class,
+    custom_base,
+    WINGDINGS,
+    wingdingify,
+    midpoint,
+    )
 from raimad import affine
 import raimad.iters as iters
 from raimad.iters import (
@@ -54,7 +66,7 @@ from raimad.ansec import AnSec
 from raimad.custompoly import CustomPoly
 
 from raimad import typing
-t = typing
+from raimad import typing as t
 
 from raimad import cif
 from raimad.cif.shorthand import export_cif
@@ -63,7 +75,11 @@ from raimad import err
 
 from raimad.snowman import Snowman
 
-# Mypy really wants __all__ to be present
+# The function of __all__ is to specify which things get imported
+# when someone does `from raimad import *`,
+# but it also lets tools like ruff and mypy know that we're
+# importing these things for the purpose of namespace flattening,
+# so they don't complain that these are "unused" imports
 __all__ = [
     'export_svg',
     'Transform',
@@ -94,6 +110,39 @@ __all__ = [
     'RectLW',
     'RectWire',
     'CustomPoly',
+    'Snowman',
+    'err',
+    'cif',
+    'split_docstring',  # TODO is needed?
+    'braid',
+    'flatten',
+    'quintles',
+    'quadles',
+    'triples',
+    'couples',
+    'quintlets',
+    'quadlets',
+    'triplets',
+    'duplets',
+    'overlap',
+    'nonoverlap',
+    'iters',
+    'affine',
+    'fullcircle',
+    'halfcircle',
+    'quartercircle',
+    'eigthcircle',
+    'semicircle',
+    'demisemicircle',
+    'hemidemisemicircle',
+    'angle_between',
+    'polar',
+    'is_compo_class',
+    'custom_base',
+    'WINGDINGS',
+    'wingdingify',
+    'midpoint',
+    'gv',
     ]
 
 

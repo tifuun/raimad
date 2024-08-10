@@ -137,6 +137,8 @@ fortunes = [
     'but when you commit violence, it is called "law". '
     "That doesn't seem fair at all! ",
 
+    "Our enemy is weak and pathetic, but also a deadly threat. ",
+
     # Malapropisms #
 
     "Whatever bloats your goat! ",
@@ -278,6 +280,10 @@ fortunes = [
 
     'This is an "A Condition" item. '
     "That is to say, it's definitely in a condition. ",
+
+    "I know writers who use subtext, and they're all cowards.",
+
+    "Two-word horror: Medical Entrepreneur",
 
     ]
 
