@@ -26,3 +26,20 @@ dependencies = [
     'typing-extensions',
 	]
 
+[tool.ruff.lint]
+exclude = [
+    "tests/*",
+    "benchmarks/*",
+    ]
+select = [
+    "E",
+    "F",
+    "D",
+    ]
+ignore = [
+    "D106",
+    # Allow no docstring in nested classes
+    # (e.g. Layers, Options, Marks classes)
+    ]
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"

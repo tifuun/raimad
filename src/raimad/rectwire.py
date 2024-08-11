@@ -1,23 +1,22 @@
+"""rectwire.py: home to RectWire compo and relevant exceptions."""
+
 import raimad as rai
 
 class RectWireError(Exception):
-    pass
+    """Generic error when creating RectWire."""
 
 class RectWireTooManyArgumentsError(RectWireError):
-    pass
+    """Too many arguments passed to RectWire."""
 
 class RectWireNotEnoughArgumentsError(RectWireError):
-    pass
+    """Not enough arguments passed to RectWire."""
 
 class RectWireIncorrectArgumentsError(RectWireError):
-    pass
+    """Incorrect combination of arguments passed to RectWire."""
 
 class RectWire(rai.Compo):
-    """
-    RectWire
+    """A rectangle defined by two points and a thickness."""
 
-    A rectangle defined by two points and a thickness.
-    """
     browser_tags = ["builtin", "polygon"]
 
     class Options:

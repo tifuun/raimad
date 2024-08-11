@@ -1,3 +1,5 @@
+"""proxy.py: home to Proxy class and supporting classes."""
+
 from typing import Iterator, Any
 
 try:
@@ -300,25 +302,112 @@ class Proxy:
 
     # snapping functions #
     def snap_left(self, other: Self) -> Self:
+        """
+        Move this proxy so its bbox is to the left of the target proxy.
+
+         ________
+        |        |
+        |        |________
+        |        |        |
+        |  self  | target |
+        |        |________|
+        |        |
+        |________|
+
+        Parameters
+        ----------
+        The target proxy
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
+        """
         self.bbox.mid_right.to(other.bbox.mid_left)
         return self
 
     def snap_right(self, other: Self) -> Self:
+        """
+        Move this proxy so its bbox is to the right of the target proxy.
+
+                  ________
+                 |        |
+         ________|        |
+        |        |        |
+        | target |  self  |
+        |________|        |
+                 |        |
+                 |________|
+
+        Parameters
+        ----------
+        The target proxy
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
+        """
         self.bbox.mid_left.to(other.bbox.mid_right)
         return self
 
     def snap_above(self, other: Self) -> Self:
+        """
+        Move this proxy so its bbox is directly above the target proxy.
+
+         ________________ 
+        |                |
+        |      self      |
+        |________________|
+            |        |
+            | target |
+            |________|
+
+        Parameters
+        ----------
+        The target proxy
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
+        """
         self.bbox.bot_mid.to(other.bbox.top_mid)
         return self
 
+    # TODO other should be CompoLike not Proxy, Right??
     def snap_below(self, other: Self) -> Self:
+        """
+        Move this proxy so its bbox is directly below the target proxy.
+
+             ________ 
+            |        |
+            | target |
+         ___|________|___ 
+        |                |
+        |      self      |
+        |________________|
+
+        Parameters
+        ----------
+        The target proxy
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
+        """
         self.bbox.top_mid.to(other.bbox.bot_mid)
         return self
 
     def _repr_svg_(self) -> str:
         """
         Make svg representation of component.
-        This is called by jupyter and raimark
+
+        This is not an official magic method specified by Python,
+        but rather a convention used by Jupyter Notebook
+        and related tools.
+        We also use it in RAIMARK.
         """
         return rai.export_svg(self)
 

@@ -10,9 +10,27 @@ import importlib
 import raimad as rai
 
 class StringImportError(ImportError):
-    pass
+    """Error type for errors raised by `string_import()`."""
 
+# TODO Any is not appropriate here
 def string_import(import_str: str, multiple: bool = False) -> Any:
+    """
+    Import a compo, specified by a string.
+
+    Parameters
+    ----------
+    import_str : str
+        A string representing a component or an entire module.
+        The string is the the format
+        `module.module.module.[...].compo` to import a specific
+        compo,
+        or 
+        `module.module.module.[...]` to import all compos
+        in an entire module
+
+    TODO finish this docstring
+
+    """
     module_str, _, attr_str = import_str.partition(':')
 
     try:

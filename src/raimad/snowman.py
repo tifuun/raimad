@@ -1,11 +1,11 @@
+"""snowman.py: home to Snowman compo."""
+
 import raimad as rai
 
 class Snowman(rai.Compo):
-    """
-    Snowman
+    """A sample component."""
 
-    A sample component with three layers, two options, and one mark.
-    """
+    browser_name = "Snowman"  # TODO actually use this field
     browser_tags = ["builtin", "example"]
 
     class Marks:

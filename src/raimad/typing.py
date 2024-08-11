@@ -1,6 +1,7 @@
-"""
-typing.py
-A collection of type hints
+"""Type hints for RAIMAD.
+
+These are used internally,
+and you may also use them to annotate your RAIMAD packages.
 """
 
 try:

@@ -1,11 +1,11 @@
+"""rectlw.py: home to RectLW compo."""
+
 import raimad as rai
 
 class RectLW(rai.Compo):
-    """
-    RectLW
+    """A rectangle defined by length and width."""
 
-    A rectangle defined by length (horizontal) and width (vertical).
-    """
+    browser_name = "RectLW"
     browser_tags = ["builtin", "polygon"]
 
     class Options:
