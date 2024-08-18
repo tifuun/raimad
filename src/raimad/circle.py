@@ -1,13 +1,11 @@
+"""circle.py: home to Circle builtin component."""
+
 from math import pi
 import raimad as rai
 
 class Circle(rai.Compo):
-    """
-    Circle
+    """A polygon that approximates a circle."""
 
-    A polygon that approximates a circle,
-    defined by the radius and number of points.
-    """
     browser_tags = ["builtin", "polygon"]
 
     class Options:

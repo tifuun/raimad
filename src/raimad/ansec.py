@@ -38,6 +38,7 @@ class AnSec(rai.Compo):
     There are many possible ways to define an AnSec;
     # TODO examples
     """
+
     browser_tags = ["builtin", "polygon"]
 
     class Options:

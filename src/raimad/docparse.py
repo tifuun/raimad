@@ -1,6 +1,4 @@
-"""
-docparse.py: utilities for parsing docstrings
-"""
+"""docparse.py: utilities for parsing docstrings"""
 
 from typing import NamedTuple
 import inspect

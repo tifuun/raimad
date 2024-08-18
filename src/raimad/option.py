@@ -1,3 +1,4 @@
+"""option.py: home to the Option class and its subclasses."""
 from typing import ClassVar, Any
 
 try:
@@ -10,6 +11,17 @@ import raimad as rai
 
 
 class Option(rai.Annotation):
+    """
+    Option: an annotation for an option.
+
+    Option objects are meant to be declared inside the `Options`
+    nested class of every Compo.
+    They serve as annotations for the options that the `_make`
+    method takes that better explain what those options do.
+
+    TODO explain that its better to use the subclasses
+    """
+
     annot: str | rai.EmptyType | type
     default: Any | rai.EmptyType
 
@@ -33,16 +45,47 @@ class Option(rai.Annotation):
     Environmental: ClassVar[type[Self]]
 
 class Geometric(Option):
-    pass
+    """
+    Geometric option annotation.
+
+    This subclass of Option is meant for options that directly
+    correspond to physical dimensions in the compo:
+    lengths, widths, angles.
+    """
 
 class Functional(Option):
-    pass
+    """
+    Functional option annotation.
+
+    This subclass of Option is meant for options that correspond
+    to functional properties of a compo:
+    frequencies, impedances, etc.
+    The idea is that Functional options are used to derive
+    the geometry of a Compo
+    """
 
 class Debug(Option):
-    pass
+    """
+    Debug option annotation.
+
+    This subclass of Option is meant for options that
+    are useful for debugging, but not production use.
+    They can control whether extra info is printed to stderr,
+    whether parts of the compo are ommitted for faster compilation,
+    etc.
+    """
 
 class Environmental(Option):
-    pass
+    """
+    Environmental option annotation.
+
+    This subclass of Option is meant for options that
+    prescribe envrionmental constants like temperature
+    of absolute zero,
+    planck length,
+    and so forth,
+    that you don't feel like hardcoding.
+    """
 
 
 Option.Functional = Functional

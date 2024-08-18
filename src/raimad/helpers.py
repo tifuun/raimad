@@ -1,3 +1,5 @@
+"""helpers.py: misc helper functions."""
+
 from typing import Iterator
 import math
 
@@ -13,20 +15,25 @@ demisemicircle = math.radians(90)
 hemidemisemicircle = math.radians(45)
 
 def angle_between(p1: 'rai.typing.Point', p2: 'rai.typing.Point') -> float:
-    """
-    Angle between two points
-    """
+    """Angle between two points."""
     x = p2[0] - p1[0]
     y = p2[1] - p1[1]
     return math.atan2(y, x)
 
-def polar(arg: float, mod: float = 1) -> tuple[float, float]:
+def polar(arg: float, mod: float = 1) -> 'rai.typing.Point':
+    """Construct an XY point from an argument and modulus."""
     return (
         math.cos(arg) * mod,
         math.sin(arg) * mod
         )
 
 def is_compo_class(obj: type) -> bool:
+    """
+    Check whether an object is a CompoType.
+
+    Note that this returns False on the `rai.Compo`
+    abstract base class.
+    """
     return (
         isinstance(obj, type)
         and issubclass(obj, rai.Compo)
@@ -35,8 +42,21 @@ def is_compo_class(obj: type) -> bool:
 
 def _custom_base(value: int, glyphs: list[str]) -> Iterator[str]:
     """
-    Convert an int into a base-n number
-    (generator)
+    Encode an integer into base-N using a custom set of glyphs (generator).
+
+    Parameters
+    ----------
+    value: int
+        The integer to encode
+    glyphs: list[str]
+        A list of N strings representing the glyphs
+        in your custom base.
+        TODO low to high or high to low? I forgot.
+
+    Yields
+    ------
+    str
+        Your encoded integer is yielded, glyph by glyph
     """
     div, mod = divmod(value, len(glyphs))
     if div > 0:
@@ -44,6 +64,23 @@ def _custom_base(value: int, glyphs: list[str]) -> Iterator[str]:
     yield glyphs[mod]
 
 def custom_base(value: int, glyphs: list[str]) -> str:
+    """
+    Encode an integer into base-N using a custom set of glyphs.
+
+    Parameters
+    ----------
+    value: int
+        The integer to encode
+    glyphs: list[str]
+        A list of N strings representing the glyphs
+        in your custom base.
+        TODO low to high or high to low? I forgot.
+
+    Returns
+    -------
+    str
+        A string with your encoded integer.
+    """
     return ''.join(_custom_base(value, glyphs))
 
 
@@ -54,21 +91,17 @@ WINGDINGS = [
     ]
 
 def wingdingify(value: int) -> str:
-    """
-    Encode an integer with a bunch of symbols.
-    """
+    """Encode an integer with a bunch of symbols."""
     return ''.join((
         custom_base(value, WINGDINGS),
         '\033[0m',
         ))
 
 def midpoint(
-        p1: 'rai.typing.Point',
-        p2: 'rai.typing.Point'
-        ) -> 'rai.typing.Point':
-    """
-    Midpoint between two points
-    """
+        p1: 'rai.typing.PointLike',
+        p2: 'rai.typing.PointLike'
+        ) -> 'rai.typing.PointLike':
+    """Midpoint between two points."""
     return (
         (p1[0] + p2[0]) / 2,
         (p1[1] + p2[1]) / 2,

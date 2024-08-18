@@ -1,4 +1,4 @@
-"""BBox.py: contains BBox class and relevant Exceptions."""
+"""bbox.py: contains BBox class and relevant Exceptions."""
 
 from typing import Iterator, Generic, TypeVar
 from copy import copy
@@ -82,7 +82,8 @@ class AbstractBBox(Generic[T]):
             Whether or not the bbox is empty.
 
         See Also
-.5        -------
+        --------
+        .5        -------
         BBox.assert_nonempty()
         """
         return (
@@ -505,7 +506,9 @@ class AbstractBBox(Generic[T]):
         Create a copy of this bbox with extra padding.
 
         Bound bboxes will be turned into unbound ones (Or will they O_O ).
-        Examples:
+
+        Examples
+        --------
         bbox.pad(5)  # Pad evenly on every side
         bbox.pad(5, 10)  # Pad 5 units horizontally and 10 units vertically
         bbox.pad(left=10)  # Pad 10 units on the left side only

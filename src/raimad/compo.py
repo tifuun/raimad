@@ -1,3 +1,4 @@
+"""compo.py: home of Compo class and supporting constructs."""
 import inspect
 from typing import Any, NoReturn, Iterator, TypeVar
 
@@ -11,46 +12,52 @@ import raimad as rai
 
 class InvalidSubcompoError(TypeError):
     """
-    Error for when you try to add
-    something weird as a subcompo instead of a proxy
+    Error for when you try to add something weird as a subcompo.
+
+    Subcompos must be proxies, nothing else.
     """
 
 class ProxyCompoConfusionError(TypeError):
-    """
-    Error for when you try to do something to a compo
-    that should be done to a proxy instead
-    """
+    """(abstract) error for performing operations on compo instead of proxy."""
 
 class CompoInsteadOfProxyAsSubcompoError(
         InvalidSubcompoError,
         ProxyCompoConfusionError
         ):
     """
-    Special case of InvalidSubcompoError for when you try to add
-    a Compo instead of a Proxy as a subcompo
+    Error for when you try to add a Compo instead of a Proxy as a subcompo.
+
+    TODO example
     """
 
 class TransformCompoError(ProxyCompoConfusionError):
     """
-    Error for when you try to use transformation function on a compo
-    instead of its proxy
+    Error for when you try to use transformation function on a compo.
+
+    Compos are supposed to be immutable, you should transform
+    a proxy pointing to the compo instead.
     """
 
 class CopyCompoError(ProxyCompoConfusionError):
     """
-    Error for when you try to copy a compo
-    instead of its proxy
+    Error for when you try to copy a compo instead of its proxy.
+
+    Compos are supposed to be fungible, you should probably
+    be copying a proxy pointing to the compo instead.
     """
 
 
 T = TypeVar('T')
 class ProxyableDictList(rai.DictList[T]):
+    """TODO document this."""
+
     _proxy: 'None | rai.typing.Proxy'
 
     def _post_init(self) -> None:
         self._proxy = None
 
     def _get_proxy_view(self, proxy: 'rai.t.Proxy') -> Self:
+        """TODO document this."""
         new = type(self)(self._dict, copy=False)
         new._proxy = proxy
         return new
@@ -62,10 +69,17 @@ class MarksContainer(
             'rai.typing.PointLike',
             'rai.typing.Point',
             ]):
+    """
+    Specialized container that implements Compo.marks.
+
+    TODO explain.
+    """
+
     def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
         """
-        set filter for markscontainer:
-        make sure that no matter what creature gets passed in
+        Set filter for markscontainer.
+
+        Make sure that no matter what creature gets passed in
         (regular tuple or boundpoint or whatever),
         what gets stored is a simple regular tuple.
         """
@@ -75,6 +89,12 @@ class MarksContainer(
         return val
 
 class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
+    """
+    Specialized container that implements Compo.subcompos.
+
+    TODO explain.
+    """
+
     def _filter_set(self, item: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if isinstance(item, rai.Compo):
             raise CompoInsteadOfProxyAsSubcompoError(
@@ -100,6 +120,12 @@ class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
         return val
 
 class Compo:
+    """
+    Compos: the building blocks of RAIMAD.
+
+    TODO explain
+    """
+
     geoms: 'rai.typing.Geoms'
     marks: MarksContainer
     subcompos: SubcompoContainer
@@ -120,11 +146,25 @@ class Compo:
 
     @classmethod
     def partial(cls, **kwargs: Any) -> 'rai.typing.Partial':
+        """
+        Return a Partial of this component class.
+
+        Parameters
+        ----------
+        kwargs: Any
+            Options to store in the Partial
+
+        Returns
+        -------
+        rai.typing.Partial
+            The new Partial
+        """
         return rai.Partial(cls, **kwargs)
 
     def steamroll(self) -> 'rai.typing.Geoms':
         """
-        Steamroll the entire compo hierarchy into one Geoms dict
+        Steamroll the entire compo hierarchy into one Geoms dict.
+
         TODO more informative
         """
         geoms = self.geoms.copy()
@@ -137,23 +177,45 @@ class Compo:
         return geoms
 
     def final(self) -> Self:
+        """
+        Return self.
+
+        This method exists for uniformity with Proxy.final
+        """
         return self
 
     def depth(self) -> int:
+        """
+        Return the number zero.
+
+        This method exists for uniformity with Proxy.depth
+        """
         return 0
 
     def descend(self) -> Iterator[Self]:
+        """
+        Yield self.
+
+        This method exists for uniformity with Proxy.descend
+        """
         yield self
 
     def descend_p(self) -> 'Iterator[rai.typing.Proxy]':
+        """
+        Yield nothing.
+
+        This method exists for uniformity with Proxy.descend_p
+        """
         return
         yield
 
     def proxy(self) -> 'rai.typing.Proxy':
+        """Return new Proxy pointing to this Compo."""
         return rai.Proxy(self)
 
     @property
     def copy(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.copy()."""
         raise CopyCompoError(
             f"`{self}` is a Compo, not a Proxy! "
             "Don't copy compos; instead, "
@@ -162,6 +224,12 @@ class Compo:
             )
 
     def walk_hier(self) -> Iterator['rai.typing.CompoLike']:
+        """
+        Traverse the subcomponent hierarchy of this compo.
+
+        This method will recursively walk through the entire
+        subcompo hierarchy of this compo, including self.
+        """
         yield self
         for subcompo in self.subcompos.values():
             yield from subcompo.walk_hier()
@@ -170,10 +238,16 @@ class Compo:
             self,
             point: 'rai.typing.PointLike'
             ) -> 'rai.typing.PointLike':
+        """
+        Do nothing to `point` and return as-is.
+
+        This method exists for uniformity with Proxy.transform_point.
+        """
         return point
 
     @property
     def scale(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.scale."""
         raise TransformCompoError(
             f"Tried to scale `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -182,6 +256,7 @@ class Compo:
 
     @property
     def move(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.move."""
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -190,6 +265,7 @@ class Compo:
 
     @property
     def movex(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.movex."""
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -198,6 +274,7 @@ class Compo:
 
     @property
     def movey(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.movey."""
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -206,6 +283,7 @@ class Compo:
 
     @property
     def rotate(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.rotate."""
         raise TransformCompoError(
             f"Tried to rotate `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -214,6 +292,7 @@ class Compo:
 
     @property
     def flip(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.flip."""
         raise TransformCompoError(
             f"Tried to flip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -222,6 +301,7 @@ class Compo:
 
     @property
     def hflip(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.hflip."""
         raise TransformCompoError(
             f"Tried to hflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -230,15 +310,19 @@ class Compo:
 
     @property
     def vflip(self) -> NoReturn:
+        """Deliberately unimplemented -- see Proxy.vflip."""
         raise TransformCompoError(
             f"Tried to vflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
             "to get a Proxy pointing to this compo and transform that instead."
             )
+        # TODO tests to make sure the transform functions are all the same
+        # in transform, proxy, and compo
 
     # bbox functions #
     @property
     def bbox(self) -> 'rai.BBox':
+        """Get bbox of this compo."""
         bbox = rai.BBox()
         for geoms in self.steamroll().values():
             for geom in geoms:
@@ -246,6 +330,7 @@ class Compo:
         return bbox
 
     def __init_subclass__(cls) -> None:
+        """Bookkeeping for creating new Compo classes."""
         _class_to_dictlist(cls, 'Marks', rai.Mark)
         _class_to_dictlist(cls, 'Layers', rai.Layer)
         _class_to_dictlist(cls, 'Options', rai.Option)
@@ -269,6 +354,18 @@ class Compo:
 
     def auto_subcompos(self, locs: dict[Any, Any] | None = None) -> None:
         """
+        Dirty hack for use in `_make` to quickly add all proxies as subcompos.
+
+        Simply call `self.auto_subcompos(locals())` at the
+        end of your `_make()` function, and all of the
+        proxies in the scope of `_make()` will be added as
+        subcompos.
+        If you do no provide `locals()`, this function
+        will instead use arcane `inspect` magic
+        to traverse the stack and extract them automatically.
+
+        ...or, better yet, do not use this function and
+        add subcompos explicitly.
         """
         locs = locs or inspect.stack()[1].frame.f_locals
 
@@ -283,6 +380,7 @@ class Compo:
                 self.subcompos[name] = obj
 
     def __str__(self) -> str:
+        """Get string representation of compo."""
         return (
             "<"
             f"{type(self).__name__} at {rai.wingdingify(id(self))} "
@@ -290,12 +388,14 @@ class Compo:
             )
 
     def __repr__(self) -> str:
+        """Get string representation of compo."""
         return self.__str__()
 
     def _repr_svg_(self) -> str:
         """
         Make svg representation of component.
-        This is called by jupyter and raimark
+
+        This is called by jupyter and raimark.
         """
         return rai.export_svg(self)
 

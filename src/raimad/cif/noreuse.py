@@ -1,8 +1,12 @@
+"""noreuse.py: home to the NoReuse CIF exporter."""
+
 from typing import Iterator
 
 import raimad as rai
 
 class NoReuse:
+    """CIF Exporter that doesn't reuse subroutines."""
+
     def __init__(
             self,
             compo: 'rai.typing.CompoLike',
@@ -19,20 +23,14 @@ class NoReuse:
         return ''.join(self._yield_cif())
 
     def _yield_cif(self) -> Iterator[str]:
-        """
-        Yield lines of cif file
-        """
+        """Yield lines of cif file."""
         first_rout = self.rout_num
         yield from self.yield_cif_bare(self.compo)
         yield f'C {first_rout};\n'
         yield 'E'
 
     def yield_cif_bare(self, compo: 'rai.typing.CompoLike') -> Iterator[str]:
-        """
-        Yield lines of CIF of a particular component,
-        without calling it
-        """
-
+        """Yield lines of CIF of a particular component, without calling it."""
         # Opening line, define the routine
         yield f'DS {self.rout_num} 1 1;\n'
 

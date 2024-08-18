@@ -1,6 +1,4 @@
-"""
-Namespace flattening for RAIMAD.
-"""
+"""__init__.py: Namespace flattening for RAIMAD."""
 
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv

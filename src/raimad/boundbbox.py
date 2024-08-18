@@ -1,6 +1,17 @@
+"""boundbbox.py: contains BBox class."""
 import raimad as rai
 
 class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
+    """
+    BoundBBox: a BBox bound to a Proxy.
+
+    A BoundBBox is just like a BBox, except the points
+    returned by its attributes are BoundPoints,
+    thus allowing you to perform transformations around
+    bbox points of a proxy, for example like this:
+    `someproxy.bbox.mid_right.to(somepoint)`
+    """
+
     _proxy: 'rai.typing.Proxy'
 
     def __init__(
@@ -8,18 +19,6 @@ class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
             proxy: 'rai.typing.Proxy',
             xyarray: 'rai.typing.Poly | None' = None,
             ) -> None:
-        """
-        Create a new BBox.
-
-        Parameters
-        ----------
-        xyarray: np.ndarray | None
-            A N x 2 numpy array containing points to initialize the bbox with.
-            This is optional.
-        proxy: rai.Proxy | None
-            The proxy that this bbox should be bound to.
-            This is optional.
-        """
         super().__init__(xyarray)
         self._proxy = proxy
 
@@ -53,9 +52,8 @@ class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
 
         Returns
         -------
-        rai.Point | pc.BoundPoint
-            A regular rai.Point for unbound bboxes,
-            and a rai.BoundPoint for bound bboxes.
+        rai.typing.BoundPoint
+            The interpolated point.
         """
         point = super()._interpolate(x_ratio, y_ratio)
         return rai.BoundPoint(
@@ -63,6 +61,4 @@ class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
             point[1],
             self._proxy
             )
-
-    mid_left: 'rai.typing.BoundPoint'
 

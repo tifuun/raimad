@@ -1,3 +1,5 @@
+"""err.py: All of RAIMAD errors in one conveniet module."""
+
 from raimad.compo import InvalidSubcompoError
 from raimad.compo import CompoInsteadOfProxyAsSubcompoError
 from raimad.compo import TransformCompoError

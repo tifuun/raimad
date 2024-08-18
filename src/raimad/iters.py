@@ -1,6 +1,4 @@
-"""
-iters.py -- iteration-related helpers
-"""
+"""iters.py: iteration-related helpers."""
 
 from typing import TypeVar, Any
 from collections.abc import Iterable, Callable, Sequence
@@ -10,7 +8,7 @@ from itertools import chain
 T = TypeVar('T')
 def overlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
     """
-    Iterate n items at a time, with overlap:
+    Iterate n items at a time, with overlap.
 
     overlap(3, [1,2,3,4,5]) = [
         [1,2,3],
@@ -24,6 +22,7 @@ def overlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
 def nonoverlap(n: int, seq: Sequence[T]) -> Iterable[Iterable[T]]:
     """
     Iterate n items at a time, without overlap.
+
     Truncates the iterable such that it is a multiple of n.
 
     overlap(2, [1,2,3,4,5,6]) = [
@@ -69,10 +68,7 @@ quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
 
 def flatten(iterable: Iterable[Any]) -> Iterable[Any]:
-    """
-    Recursively flatten a nested iterable
-    """
-
+    """Recursively flatten a nested iterable."""
     if not isinstance(iterable, Iterable) or isinstance(iterable, str):
         # This terminates the recursion
         return [iterable]
@@ -84,12 +80,15 @@ def flatten(iterable: Iterable[Any]) -> Iterable[Any]:
         ]
 
 def braid(*iterables: Iterable[T]) -> Iterable[T]:
+    """
+    Honestly no clue what this does.
+
+    TODO document and test.
+    """
     return list(chain(*zip(*iterables)))
 
 def is_distinct(iterable: Iterable[Any]) -> bool:
-    """
-    Return true if no two items in `iterable` are the same
-    """
+    """Return true if no two items in `iterable` are the same."""
     raise NotImplementedError()
     return len(iterable) == len(set(iterable))
 
@@ -99,8 +98,8 @@ def is_rotated(
         comparison: Callable[[Sequence[T], Sequence[T]], bool] =
                 lambda a, b: a == b) -> bool:
     """
-    Given two iterables, figure out whether they are "rotated"
-    versions of each other.
+    Given two iterables, figure out whether they are "rotated" versions of each other.
+
     Type of the iterables is not taken into account.
 
     'abcd', 'bcda' -> True
@@ -112,7 +111,6 @@ def is_rotated(
     :second: the other iterable
     :returns: Whether or not one can be obtained by rotating the other
     """
-
     if len(first) != len(second):
         return False
 

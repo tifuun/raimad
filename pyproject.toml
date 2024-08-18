@@ -30,6 +30,10 @@ dependencies = [
 exclude = [
     "tests/*",
     "benchmarks/*",
+    "docparse.py",  # TODO finish docstrings
+    "boundpoint.py",  # TODO finish docstrings
+    "bbox.py",  # TODO finish docstrings
+    "ansec.py",  # TODO finish docstrings
     ]
 select = [
     "E",
@@ -40,6 +44,8 @@ ignore = [
     "D106",
     # Allow no docstring in nested classes
     # (e.g. Layers, Options, Marks classes)
+    "D401",  # don't complain about "imperative mood"
     ]
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+

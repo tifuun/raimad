@@ -1,17 +1,18 @@
+"""custompoly.py: home to CustomPoly builtin component."""
 import raimad as rai
 
 from typing import Sequence
 
 class CustomPolyException(Exception):
-    pass
+    """Error for when you incorrectly create a CustomPoly."""
 
 class CustomPoly(rai.Compo):
     """
-    Custom Polygon
+    A polygon that you can defined on-the fly.
 
-    A polygon that you can defined on-the fly!
     #TODO add example
     """
+
     browser_tags = ["builtin", "polygon"]
 
     class Options:

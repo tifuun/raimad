@@ -30,6 +30,7 @@ module_browser
 
 # coverage.py files
 .coverage
+coverage.json
 htmlcov
 
 

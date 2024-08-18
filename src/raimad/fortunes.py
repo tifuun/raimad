@@ -1,6 +1,4 @@
-"""
-Collection of one-size-fits-all wisdoms and questionable quotations
-"""
+"""Collection of one-size-fits-all wisdoms and questionable quotations."""
 
 fortunes = [
 
@@ -139,6 +137,13 @@ fortunes = [
 
     "Our enemy is weak and pathetic, but also a deadly threat. ",
 
+    "We pretend to work, and they pretend to pay us. ",
+
+    "The advent of communism will be announced "
+    "in the newspapers, over the radio, and perhaps even "
+    "on television -- provided the people can still "
+    "afford television sets, that is.",
+
     # Malapropisms #
 
     "Whatever bloats your goat! ",
@@ -257,7 +262,7 @@ fortunes = [
     "To whom it WILL concern: ",
 
     "Bipartisan approval of medical cannabis for arthritis patients:\n"
-    "joint support for joint support for joint support",
+    "joint support for joint support for joint support. ",
 
     "The bar is so low that it is practically on the ground, "
     "yet here you are, shovels in hand. ",
