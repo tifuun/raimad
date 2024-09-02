@@ -23,7 +23,7 @@ PyPI page: <https://pypi.org/project/raimad/>
 
 ### tooling
 
-We use flake8, mypy, unit tests, and coverage.py to ensure code quality.
+We use flake8, ruff, unit tests, and coverage.py to ensure code quality.
 
 - Unit tests can be run with `python -m unittest` from the root of this
     repo.
