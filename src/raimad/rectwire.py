@@ -1,18 +1,8 @@
 """rectwire.py: home to RectWire compo and relevant exceptions."""
 
+from typing import Self
+
 import raimad as rai
-
-class RectWireError(Exception):
-    """Generic error when creating RectWire."""
-
-class RectWireTooManyArgumentsError(RectWireError):
-    """Too many arguments passed to RectWire."""
-
-class RectWireNotEnoughArgumentsError(RectWireError):
-    """Not enough arguments passed to RectWire."""
-
-class RectWireIncorrectArgumentsError(RectWireError):
-    """Incorrect combination of arguments passed to RectWire."""
 
 class RectWire(rai.Compo):
     """A rectangle defined by two points and a thickness."""
@@ -26,16 +16,12 @@ class RectWire(rai.Compo):
 
     def _make(
             self,
-            /,
             p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point | None' = None,
-            width: float = 0,
-            *,
-            angle: float | None = None,
-            length: float | None = None
+            p2: 'rai.typing.Point',
+            width: float,
             ) -> None:
 
-        p2, angle = self._interpret_args(p1, p2, angle, length)
+        angle = rai.angle_between(p1, p2)
 
         step = rai.polar(
             arg=angle + rai.quartercircle,
@@ -53,61 +39,27 @@ class RectWire(rai.Compo):
                 ]
             })
 
-    def _interpret_args(
-            self,
+    @classmethod
+    def from_points(
+            cls,
             p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point | None',
-            angle: float | None,
-            length: float | None
-            ) -> tuple['rai.typing.Point', float]:
+            p2: 'rai.typing.Point',
+            width: float,
+            ) -> Self:
+        return cls(p1, p2, width)
 
-        if p2 is None and angle is None and length is None:
-            raise RectWireNotEnoughArgumentsError(
-                "You must specify either an endpoint or angle and bearing "
-                "in order to construct a RectWire."
-                )
-
-        if p2 is None and angle is None and length is not None:
-            raise RectWireNotEnoughArgumentsError(
-                "You passed a length, but not an angle. "
-                "You must specify angle."
-                )
-
-        if p2 is None and angle is not None and length is None:
-            raise RectWireNotEnoughArgumentsError(
-                "You passed an angle, but not a length. "
-                "You must specify length."
-                )
-
-        if p2 is None and angle is not None and length is not None:
-            s = rai.polar(angle, length)
-            p2 = (
-                p1[0] + s[0],
-                p1[1] + s[1],
-                )
-            return p2, angle
-
-        if p2 is not None and angle is None and length is None:
-            angle = rai.angle_between(p1, p2)
-            return p2, angle
-
-        if p2 is not None and angle is None and length is not None:
-            raise RectWireIncorrectArgumentsError(
-                "Pass either a startpoint and endpoint "
-                "or startpoint, length, and angle."
-                )
-
-        if p2 is not None and angle is not None and length is None:
-            raise RectWireIncorrectArgumentsError(
-                "Pass either a startpoint and endpoint "
-                "or startpoint, length, and angle."
-                )
-
-        if p2 is not None and angle is not None and length is not None:
-            raise RectWireIncorrectArgumentsError(
-                "Pass either a startpoint and endpoint "
-                "or startpoint, length, and angle."
-                )
-
-        assert False
+    @classmethod
+    def from_polar(
+            cls,
+            p1: 'rai.typing.Point',
+            angle: float,
+            length: float,
+            width: float,
+            ) -> Self:
+        step = rai.polar(angle, length)
+        p2 = (
+            p1[0] + step[0],
+            p1[1] + step[1],
+            )
+        return cls(p1, p2, width)
 

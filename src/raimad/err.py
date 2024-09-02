@@ -16,11 +16,6 @@ from raimad.ansec import AnSecThetaTooManyArgumentsError
 from raimad.ansec import AnSecThetaNotEnoughArgumentsError
 from raimad.ansec import AnSecThetaIncorrectArgumentsError
 
-from raimad.rectwire import RectWireError
-from raimad.rectwire import RectWireTooManyArgumentsError
-from raimad.rectwire import RectWireNotEnoughArgumentsError
-from raimad.rectwire import RectWireIncorrectArgumentsError
-
 from raimad.bbox import EmptyBBoxError
 
 from raimad.cif.shorthand import InvalidDestinationError
