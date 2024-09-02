@@ -29,10 +29,10 @@ dependencies = [
 exclude = [
     "tests/*",
     "benchmarks/*",
-    "docparse.py",  # TODO finish docstrings
-    "boundpoint.py",  # TODO finish docstrings
-    "ansec.py",  # TODO finish docstrings
-    "bbox.py",  # TODO finish docstrings
+    #"docparse.py",  # TODO finish docstrings
+    #"boundpoint.py",  # TODO finish docstrings
+    #"ansec.py",  # TODO finish docstrings
+    #"bbox.py",  # TODO finish docstrings
     ]
 select = [
     "E",

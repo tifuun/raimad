@@ -9,6 +9,7 @@ RAIMAD Astronomical Instrument MAsk Designer
 ![Python 3.10 tests badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/tests310.svg)
 
 ![MyPy badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/mypy.svg)
+![Ruff badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/ruff.svg)
 ![Coverage badge](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/coverage.svg)
 ![Number of TODOs and FIXMEs](https://raw.githubusercontent.com/gist/maybeetree/767d80027892395f1cc61e4829810985/raw/todo.svg)
 
