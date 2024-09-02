@@ -140,11 +140,11 @@ jobs:
       id: ruff
       run: |
         ruff_result=$(ruff check || true)
-        echo "$ruff_result" | grep 'All checked passed' && {
+        echo "$ruff_result" | grep 'All checks passed' && {
           echo "badge_msg=No Issues" >> $GITHUB_OUTPUT
           echo "badge_val=0" >> $GITHUB_OUTPUT
         } || {
-          ruff_issues=$(echo "$ruff_output" | grep Found | tr -cd [0-9])
+          ruff_issues=$(echo "$ruff_result" | grep Found | tr -cd [0-9])
           echo "badge_msg=$ruff_issues Issues" >> $GITHUB_OUTPUT
           echo "badge_val=$ruff_issues" >> $GITHUB_OUTPUT
         }
@@ -236,7 +236,7 @@ jobs:
         label: "TODOs and FIXMEs"
         message: ${{ needs.py312.outputs.badge_todo_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_todo_val }}
-        maxColorRange: 100
+        maxColorRange: 50
         minColorRange: 0
         invertColorRange: true
 
@@ -249,7 +249,7 @@ jobs:
         label: "Ruff"
         message: ${{ needs.py312.outputs.badge_ruff_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_ruff_val }}
-        maxColorRange: 100
+        maxColorRange: 70
         minColorRange: 0
         invertColorRange: true
 
