@@ -14,6 +14,13 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 theta1=rai.eigthcircle,
                 theta2=-rai.eigthcircle,
                 ),
+            rai.AnSec(
+                r1=10,
+                r2=20,
+                theta1=rai.eigthcircle,
+                theta2=-rai.eigthcircle,
+                num_points=300,
+                ),
             rai.AnSec.from_auto(
                 r1=10,
                 r2=20,

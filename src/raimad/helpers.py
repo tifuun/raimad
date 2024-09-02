@@ -160,6 +160,3 @@ class Eq(Infix):
 
 eq = Eq()
 
-
-# TODO chaining boundpoint actions?
-

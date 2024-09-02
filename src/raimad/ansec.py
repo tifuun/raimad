@@ -54,13 +54,13 @@ class AnSec(rai.Compo):
             r2: float | None = None,
             theta1: float | None = None,
             theta2: float | None = None,
+            num_points: int = 100,
             ) -> None:
 
-        if r1 == r2:  # TODO epsilon
+        if abs(r1 - r2) < rai.epsilon:
             self.geoms.update({'root': [[]]})
             return
 
-        num_points = 100  # TODO
         theta_step = (theta2 - theta1) / num_points
         angles = tuple(theta1 + theta_step * i for i in range(num_points))
 
@@ -90,6 +90,7 @@ class AnSec(rai.Compo):
             theta2: float | None = None,
             thetamid: float | None = None,
             dtheta: float | None = None,
+            num_points: int = 100,
             ) -> Self:
 
         r1, r2 = cls.interpret_radius(r1, r2, rmid, dr)
@@ -100,7 +101,7 @@ class AnSec(rai.Compo):
             dtheta,
             )
 
-        return cls(r1, r2, theta1, theta2)
+        return cls(r1, r2, theta1, theta2, num_points)
 
     @staticmethod
     def interpret_radius(

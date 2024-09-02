@@ -5,7 +5,6 @@ import raimad as rai
 class Snowman(rai.Compo):
     """A sample component."""
 
-    browser_name = "Snowman"  # TODO actually use this field
     browser_tags = ["builtin", "example"]
 
     class Marks:
