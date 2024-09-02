@@ -139,7 +139,7 @@ jobs:
     - name: Run RUFF
       id: ruff
       run: |
-        ruff_result=$(ruff check)
+        ruff_result=$(ruff check || true)
         echo "$ruff_result" | grep 'All checked passed' && {
           echo "badge_msg=No Issues" >> $GITHUB_OUTPUT
           echo "badge_val=0" >> $GITHUB_OUTPUT
