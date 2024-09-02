@@ -1,4 +1,5 @@
 from math import radians
+from typing import Self
 
 import raimad as rai
 
@@ -51,21 +52,9 @@ class AnSec(rai.Compo):
             self,
             r1: float | None = None,
             r2: float | None = None,
-            rmid: float | None = None,
-            dr: float | None = None,
             theta1: float | None = None,
             theta2: float | None = None,
-            thetamid: float | None = None,
-            dtheta: float | None = None,
             ) -> None:
-
-        r1, r2 = self.interpret_radius(r1, r2, rmid, dr)
-        theta1, theta2 = self.interpret_theta(
-            theta1,
-            theta2,
-            thetamid,
-            dtheta,
-            )
 
         if r1 == r2:  # TODO epsilon
             self.geoms.update({'root': [[]]})
@@ -89,6 +78,29 @@ class AnSec(rai.Compo):
                     ]
                 ]
             })
+
+    @classmethod
+    def from_auto(
+            cls,
+            r1: float | None = None,
+            r2: float | None = None,
+            rmid: float | None = None,
+            dr: float | None = None,
+            theta1: float | None = None,
+            theta2: float | None = None,
+            thetamid: float | None = None,
+            dtheta: float | None = None,
+            ) -> Self:
+
+        r1, r2 = cls.interpret_radius(r1, r2, rmid, dr)
+        theta1, theta2 = cls.interpret_theta(
+            theta1,
+            theta2,
+            thetamid,
+            dtheta,
+            )
+
+        return cls(r1, r2, theta1, theta2)
 
     @staticmethod
     def interpret_radius(
