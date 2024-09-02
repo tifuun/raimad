@@ -139,7 +139,7 @@ jobs:
     - name: Run RUFF
       id: ruff
       run: |
-        ruff check -o ruff-output.txt &&
+        ruff check -o ruff-output.txt && {
           echo "badge_msg=No Issues" >> $GITHUB_OUTPUT
           echo "badge_val=0" >> $GITHUB_OUTPUT
         } || {
