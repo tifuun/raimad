@@ -91,7 +91,7 @@ jobs:
 
     - name: pip deps
       run: |
-        pip install mypy coverage
+        pip install mypy coverage ruff
         pip install -e .
         pip install -r requirements.txt
 
