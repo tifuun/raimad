@@ -1,5 +1,9 @@
 """__init__.py: Namespace flattening for RAIMAD."""
 
+import sys
+
+epsilon = sys.float_info.epsilon
+
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
 from raimad.helpers import (
@@ -17,6 +21,9 @@ from raimad.helpers import (
     WINGDINGS,
     wingdingify,
     midpoint,
+    add,
+    eq,
+    sub,
     )
 from raimad import affine
 import raimad.iters as iters
@@ -141,6 +148,9 @@ __all__ = [
     'wingdingify',
     'midpoint',
     'gv',
+    'add',
+    'eq',
+    'epsilon'
     ]
 
 

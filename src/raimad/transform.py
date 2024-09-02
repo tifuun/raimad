@@ -148,7 +148,7 @@ class Transform:
             False otherwise.
         """
         norm = rai.affine.norm(self.get_translation())
-        return norm > 0.001  # TODO epsilon
+        return norm > rai.epsilon
 
     def does_rotate(self) -> bool:
         """
@@ -160,7 +160,7 @@ class Transform:
             True if the transform rotates.
             False otherwise.
         """
-        return abs(self.get_rotation()) > 0.001  # TODO epsilon
+        return abs(self.get_rotation()) > rai.epsilon
 
     def does_shear(self) -> bool:
         """
@@ -172,7 +172,7 @@ class Transform:
             True if the transform shears.
             False otherwise.
         """
-        return abs(self.get_shear()) > 0.001  # TODO epsilon
+        return abs(self.get_shear()) > rai.epsilon
 
     def does_scale(self) -> bool:
         """
@@ -185,8 +185,7 @@ class Transform:
             False otherwise.
         """
         scale_x, scale_y = self.get_scale()
-        # TODO epsilon
-        return abs(1 - scale_x) > 0.001 or abs(1 - scale_y) > 0.001
+        return abs(1 - scale_x) > rai.epsilon or abs(1 - scale_y) > rai.epsilon
 
     def __repr__(self) -> str:
         """

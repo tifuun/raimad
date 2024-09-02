@@ -2,6 +2,7 @@ import unittest
 from math import radians, sqrt
 
 import raimad as rai
+from raimad import add, eq, sub, midpoint
 
 from .utils import ArrayAlmostEqual
 
@@ -125,6 +126,54 @@ class TestPolys(ArrayAlmostEqual, unittest.TestCase):
         self.assertEqual(
             rai.flatten(10),
             [10],
+            )
+
+    def test_add_eq(self):
+        self.assertTrue(
+            rai.eq(
+                rai.add(
+                    (10, 12),
+                    (13, 14),
+                    ),
+                (23, 26)
+                )
+            )
+
+    def test_add_eq_infix(self):
+        self.assertTrue(
+            (23, 26) |eq| ( (10, 12) |add| (13, 14) )
+            )
+
+    def test_sub_eq(self):
+        self.assertTrue(
+            rai.eq(
+                rai.sub(
+                    (10, 12),
+                    (13, 14),
+                    ),
+                (-3, -2)
+                )
+            )
+
+    def test_sub_infix(self):
+        self.assertTrue(
+            (-3, -2) |eq| ( (10, 12) |sub| (13, 14) )
+            )
+
+    def test_midpoint(self):
+        self.assertTrue(
+            rai.eq(
+                rai.midpoint((10, 20), (20, 40)),
+                (15, 30)
+                )
+            )
+
+    def test_midpoint_infix(self):
+        self.assertTrue(
+            rai.eq(
+                (10, 20) |midpoint| (20, 40),
+                (15, 30)
+                )
             )
 
     #def test_force_evaluate(self):

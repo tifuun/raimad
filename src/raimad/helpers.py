@@ -97,15 +97,69 @@ def wingdingify(value: int) -> str:
         '\033[0m',
         ))
 
-def midpoint(
-        p1: 'rai.typing.PointLike',
-        p2: 'rai.typing.PointLike'
-        ) -> 'rai.typing.PointLike':
-    """Midpoint between two points."""
-    return (
-        (p1[0] + p2[0]) / 2,
-        (p1[1] + p2[1]) / 2,
-        )
+class Infix:
+    def __init__(self, func = None):
+        self.func = func or self.__call__
+
+    def __ror__(self, other):
+        return type(self)(lambda x, self=self, other=other: self.func(other, x))
+
+    def __or__(self, other):
+        return self.func(other)
+
+class Midpoint(Infix):
+    def __call__(
+            self,
+            p1: 'rai.typing.PointLike',
+            p2: 'rai.typing.PointLike'
+            ) -> 'rai.typing.PointLike':
+        """Midpoint between two points."""
+        return (
+            (p1[0] + p2[0]) / 2,
+            (p1[1] + p2[1]) / 2,
+            )
+
+midpoint = Midpoint()
+
+class Add(Infix):
+    def __call__(
+            self,
+            p1: 'rai.typing.Point',
+            p2: 'rai.typing.Point'
+            ) -> 'rai.typing.Point':
+        return (
+            p1[0] + p2[0],
+            p1[1] + p2[1],
+            )
+
+add = Add()
+
+class Sub(Infix):
+    def __call__(
+            self,
+            p1: 'rai.typing.Point',
+            p2: 'rai.typing.Point'
+            ) -> 'rai.typing.Point':
+        return (
+            p1[0] - p2[0],
+            p1[1] - p2[1],
+            )
+
+sub = Sub()
+
+class Eq(Infix):
+    def __call__(
+            self,
+            p1: 'rai.typing.Point',
+            p2: 'rai.typing.Point'
+            ) -> bool:
+        return rai.affine.norm((
+            p1[0] - p2[0],
+            p1[1] - p2[1],
+            )) < rai.epsilon
+
+eq = Eq()
+
 
 # TODO chaining boundpoint actions?
 
