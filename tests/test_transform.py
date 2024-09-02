@@ -1,24 +1,22 @@
 import unittest
 
-import numpy as np
-
 import raimad as rai
 
 class BareGeometric(rai.Compo):
     def _make(self):
         self.geoms.update({
             'root': [
-                np.array([
-                    [0, 0],
-                    [0, 10],
-                    [10, 10],
-                    [10, 0],
-                    ]),
-                np.array([
-                    [20, 20],
-                    [40, 20],
-                    [30, 40],
-                    ]),
+                [
+                    (0, 0),
+                    (0, 10),
+                    (10, 10),
+                    (10, 0),
+                    ],
+                [
+                    (20, 20),
+                    (40, 20),
+                    (30, 40),
+                    ],
                 ]
             })
 

@@ -3,6 +3,7 @@ transform.py: home to Transform class.
 
 See the docstring of Transform for more information.
 """
+from math import degrees
 
 from copy import deepcopy
 
@@ -12,7 +13,6 @@ except ImportError:
     # py3.10 and lower
     from typing_extensions import Self
 
-import numpy as np
 import raimad as rai
 
 class Transform:
@@ -215,7 +215,7 @@ class Transform:
             "<Transform ",
             f"Move ({move_x:+.2f}, {move_y:+.2f}) "
                 if does_translate else '',
-            f"Rotate {np.rad2deg(rotation):.2f}) "
+            f"Rotate {degrees(rotation):.2f}) "
                 if does_rotate else '',
             f"Shear {shear:.2f} "
                 if does_shear else '',

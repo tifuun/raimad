@@ -1,7 +1,6 @@
 from pprint import pprint
 from sys import stderr
 from typing import ClassVar
-import numpy as np
 
 import raimad as rai
 import raimad.typing as rait
@@ -60,19 +59,7 @@ class GeomsEqual():
         self.assertEqual(set(actual.keys()), set(expected.keys()))
         for layer_name in actual.keys():
 
-            # TODO TODO horrible awful no-good dynamic brainrot hack
-            # to filter out points that are represented as arrays
-            # rather than lists
-            # we really need to just grind through everything with mypy
-            # to make sure things are always what we expect them to be
-            polys_actual = [
-                [
-                    point.tolist() if isinstance(point, np.ndarray)
-                    else point
-                    for point in poly
-                    ]
-                for poly in actual[layer_name]
-                ]
+            polys_actual = actual[layer_name]
             polys_expected = expected[layer_name]
 
             self.assertEqual(len(polys_actual), len(polys_expected))

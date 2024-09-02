@@ -1,7 +1,5 @@
 import unittest
 
-import numpy as np
-
 import raimad as rai
 
 from .utils import GeomsEqual, ArrayAlmostEqual
@@ -30,7 +28,7 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
         self.assertGreaterEqual(len(points), 10)
         for point in points:
             self.assertAlmostEqual(
-                np.linalg.norm(point),
+                rai.affine.norm(point),
                 69
                 )
 

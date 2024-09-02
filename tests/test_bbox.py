@@ -1,6 +1,5 @@
 import unittest
-
-import numpy as np
+from math import radians
 
 import raimad as rai
 
@@ -26,7 +25,7 @@ class RotatedCircles(rai.Compo):
     """
     def _make(self):
         self.subcompos.append(
-            TwoCircles().proxy().rotate(np.deg2rad(90))
+            TwoCircles().proxy().rotate(radians(90))
             )
 
 class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
@@ -36,7 +35,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             circle.bbox,
-            np.array([-5, -5, 5, 5])
+            [-5, -5, 5, 5]
             )
         self.assertAlmostEqual(circle.bbox.length, 10)
         self.assertAlmostEqual(circle.bbox.width, 10)
@@ -86,7 +85,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             circles.bbox,
-            np.array([-10, -5, 10, 5])
+            [-10, -5, 10, 5]
             )
         self.assertAlmostEqual(circles.bbox.length, 20)
         self.assertAlmostEqual(circles.bbox.width, 10)
@@ -136,7 +135,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             circles.bbox,
-            np.array([-5, -10, 5, 10])
+            [-5, -10, 5, 10]
             )
         self.assertAlmostEqual(circles.bbox.length, 10)
         self.assertAlmostEqual(circles.bbox.width, 20)
@@ -187,17 +186,17 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             bbox,
-            np.array([-5, -10, 5, 10])
+            [-5, -10, 5, 10]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(.1),
-            np.array([-5.1, -10.1, 5.1, 10.1])
+            [-5.1, -10.1, 5.1, 10.1]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(.2, .3),
-            np.array([-5.2, -10.3, 5.2, 10.3])
+            [-5.2, -10.3, 5.2, 10.3]
             )
 
         with self.assertRaises(TypeError):
@@ -208,32 +207,32 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             bbox.pad(left=0.3),
-            np.array([-5.3, -10, 5, 10])
+            [-5.3, -10, 5, 10]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(bottom=0.4),
-            np.array([-5, -10.4, 5, 10])
+            [-5, -10.4, 5, 10]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(right=0.2, bottom=0.4),
-            np.array([-5, -10.4, 5.2, 10])
+            [-5, -10.4, 5.2, 10]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(right=0.3, bottom=0.4, left=0.1),
-            np.array([-5.1, -10.4, 5.3, 10])
+            [-5.1, -10.4, 5.3, 10]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(.2, top=0.3, bottom=0.4, left=0.1),
-            np.array([-5 - .2 - .1, -10 - .2 - .4, 5 + .2, 10 + .2 + .3])
+            [-5 - .2 - .1, -10 - .2 - .4, 5 + .2, 10 + .2 + .3]
             )
 
         self.assertArrayAlmostEqual(
             bbox.pad(.2, .1, top=0.3, bottom=0.4, left=0.1),
-            np.array([-5 - .2 - .1, -10 - .1 - .4, 5 + .2, 10 + .1 + .3])
+            [-5 - .2 - .1, -10 - .1 - .4, 5 + .2, 10 + .1 + .3]
             )
 
     def test_bbox_manual(self):
@@ -257,7 +256,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             bbox,
-            np.array([1, 1, 1, 1])
+            [1, 1, 1, 1]
             )
 
         self.assertFalse(bbox.is_empty())
@@ -272,7 +271,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         self.assertArrayAlmostEqual(
             bbox,
-            np.array([-2, -3, 1, 1])
+            [-2, -3, 1, 1]
             )
 
     def test_bbox_snapping(self):

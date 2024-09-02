@@ -22,7 +22,6 @@ classifiers = [
 	]
 requires-python = ">=3.10"
 dependencies = [
-	'numpy',
     'typing-extensions',
 	]
 
@@ -32,8 +31,8 @@ exclude = [
     "benchmarks/*",
     "docparse.py",  # TODO finish docstrings
     "boundpoint.py",  # TODO finish docstrings
-    "bbox.py",  # TODO finish docstrings
     "ansec.py",  # TODO finish docstrings
+    "bbox.py",  # TODO finish docstrings
     ]
 select = [
     "E",

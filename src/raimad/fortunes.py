@@ -229,6 +229,10 @@ fortunes = [
     "You have to laugh about these kinds of things, "
     "because otherwise you will cry. ",
 
+    "Why fall in love when you can just fall asleep? ",
+
+    "Why pass your exams when you can just pass away? ",
+
     # Misc #
 
     "The best storytellers are those who have a story to tell. ",
