@@ -157,8 +157,8 @@ jobs:
       badge_coverage_msg: ${{ steps.coverage.outputs.badge_msg }}
       badge_coverage_val: ${{ steps.coverage.outputs.badge_val }}
       badge_todo_msg: ${{ steps.todo.outputs.badge_msg }}
-      badge_todo_msg: ${{ steps.todo.outputs.badge_msg }}
-      badge_ruff_val: ${{ steps.ruff.outputs.badge_val }}
+      badge_todo_val: ${{ steps.todo.outputs.badge_val }}
+      badge_ruff_msg: ${{ steps.ruff.outputs.badge_msg }}
       badge_ruff_val: ${{ steps.ruff.outputs.badge_val }}
 
   badges:
