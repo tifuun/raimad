@@ -1,0 +1,304 @@
+src/raimad/ansec.py:1:1: D100 Missing docstring in public module
+src/raimad/ansec.py:5:7: D101 Missing docstring in public class
+  |
+3 | import raimad as rai
+4 | 
+5 | class AnSecError(Exception):
+  |       ^^^^^^^^^^ D101
+6 |     pass
+  |
+
+src/raimad/ansec.py:8:7: D101 Missing docstring in public class
+  |
+6 |     pass
+7 | 
+8 | class AnSecRadiusError(AnSecError):
+  |       ^^^^^^^^^^^^^^^^ D101
+9 |     pass
+  |
+
+src/raimad/ansec.py:11:7: D101 Missing docstring in public class
+   |
+ 9 |     pass
+10 | 
+11 | class AnSecRadiusTooManyArgumentsError(AnSecRadiusError):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D101
+12 |     pass
+   |
+
+src/raimad/ansec.py:14:7: D101 Missing docstring in public class
+   |
+12 |     pass
+13 | 
+14 | class AnSecRadiusNotEnoughArgumentsError(AnSecRadiusError):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D101
+15 |     pass
+   |
+
+src/raimad/ansec.py:17:7: D101 Missing docstring in public class
+   |
+15 |     pass
+16 | 
+17 | class AnSecRadiusIncorrectArgumentsError(AnSecRadiusError):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D101
+18 |     pass
+   |
+
+src/raimad/ansec.py:20:7: D101 Missing docstring in public class
+   |
+18 |     pass
+19 | 
+20 | class AnSecThetaError(AnSecError):
+   |       ^^^^^^^^^^^^^^^ D101
+21 |     pass
+   |
+
+src/raimad/ansec.py:23:7: D101 Missing docstring in public class
+   |
+21 |     pass
+22 | 
+23 | class AnSecThetaTooManyArgumentsError(AnSecThetaError):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D101
+24 |     pass
+   |
+
+src/raimad/ansec.py:26:7: D101 Missing docstring in public class
+   |
+24 |     pass
+25 | 
+26 | class AnSecThetaNotEnoughArgumentsError(AnSecThetaError):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D101
+27 |     pass
+   |
+
+src/raimad/ansec.py:29:7: D101 Missing docstring in public class
+   |
+27 |     pass
+28 | 
+29 | class AnSecThetaIncorrectArgumentsError(AnSecThetaError):
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D101
+30 |     pass
+   |
+
+src/raimad/ansec.py:33:5: D400 First line should end with a period
+   |
+32 |   class AnSec(rai.Compo):
+33 |       """
+   |  _____^
+34 | |     Annular Sector
+35 | | 
+36 | |     A polygon approximating an annular sector,
+37 | |     or, in working men's terms, a "pizza crust".
+38 | |     There are many possible ways to define an AnSec;
+39 | |     # TODO examples
+40 | |     """
+   | |_______^ D400
+41 |   
+42 |       browser_tags = ["builtin", "polygon"]
+   |
+   = help: Add period
+
+src/raimad/ansec.py:94:9: D102 Missing docstring in public method
+   |
+93 |     @staticmethod
+94 |     def interpret_radius(
+   |         ^^^^^^^^^^^^^^^^ D102
+95 |             r1: float | None,
+96 |             r2: float | None,
+   |
+
+src/raimad/ansec.py:184:9: D102 Missing docstring in public method
+    |
+183 |     @staticmethod
+184 |     def interpret_theta(
+    |         ^^^^^^^^^^^^^^^ D102
+185 |             t1: float | None,
+186 |             t2: float | None,
+    |
+
+src/raimad/bbox.py:30:5: D419 Docstring is empty
+   |
+28 |   T = TypeVar('T', 'rai.typing.Point', 'rai.typing.BoundPoint', )
+29 |   class AbstractBBox(Generic[T]):
+30 |       """
+   |  _____^
+31 | |     """
+   | |_______^ D419
+32 |   
+33 |       max_x: float
+   |
+
+src/raimad/bbox.py:557:7: D101 Missing docstring in public class
+    |
+557 | class BBox(AbstractBBox['rai.typing.Point']):
+    |       ^^^^ D101
+558 |     def interpolate(
+559 |             self,
+    |
+
+src/raimad/bbox.py:558:9: D102 Missing docstring in public method
+    |
+557 | class BBox(AbstractBBox['rai.typing.Point']):
+558 |     def interpolate(
+    |         ^^^^^^^^^^^ D102
+559 |             self,
+560 |             x_ratio: float,
+    |
+
+src/raimad/boundpoint.py:8:5: D204 [*] 1 blank line required after class docstring
+   |
+ 7 |   class BoundPoint():
+ 8 |       """
+   |  _____^
+ 9 | |     A point bound to a Proxy.
+10 | | 
+11 | |     There is often a desire to perform a certain transformation
+12 | |     of some proxy in reference to a given point at that proxy.
+13 | |     We might want to rotate a proxy around the top left corner
+14 | |     of its bbox,
+15 | |     or move a proxy such that one of its marks is at a given point.
+16 | | 
+17 | |     These things can be done with the following syntax in raimad:
+18 | |     - `someproxy.bbox.top_left.rotate(someangle)`
+19 | |     - `someproxy.marks.important_mark.to((x, y))`
+20 | | 
+21 | |     In the examples above, `top_left` and `important_mark` are both
+22 | |     BoundPoints.
+23 | |     They behave just like regular points (a tuple of x and y),
+24 | |     but they also define transformation methods like
+25 | |     `rotate`, `to`, `vflip`, and so forth
+26 | |     that perform the corresponding transformation
+27 | |     to the bound proxy, with the BoundPoint treated as the new origin
+28 | |     for the transformation.
+29 | |     """
+   | |_______^ D204
+30 |       def __init__(self, x: float, y: float, proxy: 'rai.typing.Proxy'):
+31 |           self._x = x
+   |
+   = help: Insert 1 blank line after class docstring
+
+src/raimad/boundpoint.py:192:9: D200 One-line docstring should fit on one line
+    |
+191 |       def flip(self) -> 'rai.typing.Proxy':
+192 |           """
+    |  _________^
+193 | |         TODO add tests
+194 | |         """
+    | |___________^ D200
+195 |           self._proxy.transform.flip(self._x, self._y)
+196 |           return self._proxy
+    |
+    = help: Reformat to one line
+
+src/raimad/boundpoint.py:192:9: D400 First line should end with a period
+    |
+191 |       def flip(self) -> 'rai.typing.Proxy':
+192 |           """
+    |  _________^
+193 | |         TODO add tests
+194 | |         """
+    | |___________^ D400
+195 |           self._proxy.transform.flip(self._x, self._y)
+196 |           return self._proxy
+    |
+    = help: Add period
+
+src/raimad/boundpoint.py:199:9: D200 One-line docstring should fit on one line
+    |
+198 |       def hflip(self) -> 'rai.typing.Proxy':
+199 |           """
+    |  _________^
+200 | |         TODO add tests
+201 | |         """
+    | |___________^ D200
+202 |           self._proxy.transform.flip(self._x)
+203 |           return self._proxy
+    |
+    = help: Reformat to one line
+
+src/raimad/boundpoint.py:199:9: D400 First line should end with a period
+    |
+198 |       def hflip(self) -> 'rai.typing.Proxy':
+199 |           """
+    |  _________^
+200 | |         TODO add tests
+201 | |         """
+    | |___________^ D400
+202 |           self._proxy.transform.flip(self._x)
+203 |           return self._proxy
+    |
+    = help: Add period
+
+src/raimad/boundpoint.py:206:9: D200 One-line docstring should fit on one line
+    |
+205 |       def vflip(self) -> 'rai.typing.Proxy':
+206 |           """
+    |  _________^
+207 | |         TODO add tests
+208 | |         """
+    | |___________^ D200
+209 |           self._proxy.transform.flip(self._y)
+210 |           return self._proxy
+    |
+    = help: Reformat to one line
+
+src/raimad/boundpoint.py:206:9: D400 First line should end with a period
+    |
+205 |       def vflip(self) -> 'rai.typing.Proxy':
+206 |           """
+    |  _________^
+207 | |         TODO add tests
+208 | |         """
+    | |___________^ D400
+209 |           self._proxy.transform.flip(self._y)
+210 |           return self._proxy
+    |
+    = help: Add period
+
+src/raimad/docparse.py:1:1: D400 First line should end with a period
+  |
+1 | """docparse.py: utilities for parsing docstrings"""
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ D400
+2 | 
+3 | from typing import NamedTuple
+  |
+  = help: Add period
+
+src/raimad/docparse.py:6:7: D101 Missing docstring in public class
+  |
+4 | import inspect
+5 | 
+6 | class SplitDocstring(NamedTuple):
+  |       ^^^^^^^^^^^^^^ D101
+7 |     heading: str
+8 |     description: str
+  |
+
+src/raimad/docparse.py:12:5: D200 One-line docstring should fit on one line
+   |
+11 |   def split_docstring(docstring: str | None) -> SplitDocstring:
+12 |       """
+   |  _____^
+13 | |     Split docstring by first line and other lines
+14 | |     """
+   | |_______^ D200
+15 |       if not docstring:
+16 |           return SplitDocstring('', '')
+   |
+   = help: Reformat to one line
+
+src/raimad/docparse.py:12:5: D400 First line should end with a period
+   |
+11 |   def split_docstring(docstring: str | None) -> SplitDocstring:
+12 |       """
+   |  _____^
+13 | |     Split docstring by first line and other lines
+14 | |     """
+   | |_______^ D400
+15 |       if not docstring:
+16 |           return SplitDocstring('', '')
+   |
+   = help: Add period
+
+Found 27 errors.
+[*] 1 fixable with the `--fix` option (10 hidden fixes can be enabled with the `--unsafe-fixes` option).
