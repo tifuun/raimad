@@ -129,6 +129,13 @@ jobs:
           echo "badge_val=0" >> $GITHUB_OUTPUT
         }
 
+    - name: Count number of TODOs and FIXMEs in codebase
+      id: todo
+      run: |
+        num_todos=$(find src tests -name '__pycache__' -prune -o -type f -exec grep -Eo "TODO|FIXME" {} \; | wc -l)
+        echo "badge_msg=$num_todos" >> $GITHUB_OUTPUT
+        echo "badge_val=$num_todos" >> $GITHUB_OUTPUT
+
     outputs:
       badge_tests_msg: ${{ steps.tests.outputs.badge_msg }}
       badge_tests_val: ${{ steps.tests.outputs.badge_val }}
@@ -136,6 +143,8 @@ jobs:
       badge_mypy_val: ${{ steps.mypy.outputs.badge_val }}
       badge_coverage_msg: ${{ steps.coverage.outputs.badge_msg }}
       badge_coverage_val: ${{ steps.coverage.outputs.badge_val }}
+      badge_todo_msg: ${{ steps.todo.outputs.badge_msg }}
+      badge_todo_val: ${{ steps.todo.outputs.badge_val }}
 
   badges:
 
@@ -202,4 +211,17 @@ jobs:
         valColorRange: ${{ needs.py312.outputs.badge_coverage_val }}
         maxColorRange: 100
         minColorRange: 0
+
+    - name: Create todo Badge
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 767d80027892395f1cc61e4829810985
+        filename: todo.svg
+        label: "grep -or TODO | wc -l"
+        message: ${{ needs.py312.outputs.badge_todo_msg }}
+        valColorRange: ${{ needs.py312.outputs.badge_todo_val }}
+        maxColorRange: 100
+        minColorRange: 0
+        invertColorRange: true
 
