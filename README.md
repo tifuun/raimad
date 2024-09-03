@@ -23,7 +23,7 @@ PyPI page: <https://pypi.org/project/raimad/>
 
 ### tooling
 
-We use flake8, ruff, unit tests, and coverage.py to ensure code quality.
+We use Ruff, MyPy, unit tests, and coverage.py to ensure code quality.
 
 - Unit tests can be run with `python -m unittest` from the root of this
     repo.
@@ -35,6 +35,11 @@ We use flake8, ruff, unit tests, and coverage.py to ensure code quality.
 
     - Only `src/raimad` files need to pass mypy checks.
         Tests and benchmarks are exempt.
+
+- Running `ruff check` should return no errors.
+    We're not there yet,
+    there are still some files with incorrectly formatted / 
+    missing docstrings.
 
 - coverage.py can be a good tool for estimating how much of the codebase
     is covered by unit tests. We are aiming for 100% coverage,
