@@ -1,6 +1,6 @@
 """helpers.py: misc helper functions."""
 
-from typing import Iterator
+from typing import Iterator, TypeVar, Callable, Self, Generic
 import math
 
 import raimad as rai
@@ -97,17 +97,29 @@ def wingdingify(value: int) -> str:
         '\033[0m',
         ))
 
-class Infix:
-    def __init__(self, func = None):
-        self.func = func or self.__call__
+T = TypeVar('T')
+R = TypeVar('R')
+class Infix(Generic[T, R]):
+    left: T | None
 
-    def __ror__(self, other):
-        return type(self)(lambda x, self=self, other=other: self.func(other, x))
+    def __init__(self) -> None:
+        self.left = None
 
-    def __or__(self, other):
-        return self.func(other)
+    def __ror__(self, left: T) -> Self:
+        self.left = left
+        return self
 
-class Midpoint(Infix):
+    def __or__(self, right: T) -> R:
+        assert \
+            self.left is not None, \
+            "Incorrect usage of infix operator"
+
+        return self(self.left, right)
+
+    def __call__(self, left: T, right: T) -> R:
+        raise NotImplemented
+
+class Midpoint(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
     def __call__(
             self,
             p1: 'rai.typing.PointLike',
@@ -121,12 +133,12 @@ class Midpoint(Infix):
 
 midpoint = Midpoint()
 
-class Add(Infix):
+class Add(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
     def __call__(
             self,
-            p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point'
-            ) -> 'rai.typing.Point':
+            p1: 'rai.typing.PointLike',
+            p2: 'rai.typing.PointLike'
+            ) -> 'rai.typing.PointLike':
         return (
             p1[0] + p2[0],
             p1[1] + p2[1],
@@ -134,12 +146,12 @@ class Add(Infix):
 
 add = Add()
 
-class Sub(Infix):
+class Sub(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
     def __call__(
             self,
-            p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point'
-            ) -> 'rai.typing.Point':
+            p1: 'rai.typing.PointLike',
+            p2: 'rai.typing.PointLike'
+            ) -> 'rai.typing.PointLike':
         return (
             p1[0] - p2[0],
             p1[1] - p2[1],
@@ -147,11 +159,11 @@ class Sub(Infix):
 
 sub = Sub()
 
-class Eq(Infix):
+class Eq(Infix['rai.typing.PointLike', bool]):
     def __call__(
             self,
-            p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point'
+            p1: 'rai.typing.PointLike',
+            p2: 'rai.typing.PointLike'
             ) -> bool:
         return rai.affine.norm((
             p1[0] - p2[0],
@@ -159,4 +171,14 @@ class Eq(Infix):
             )) < rai.epsilon
 
 eq = Eq()
+
+def distance_between(
+        p1: 'rai.typing.Point',
+        p2: 'rai.typing.Point'
+        ) -> float:
+
+    return rai.affine.norm((
+        p1[0] - p2[0],
+        p1[1] - p2[1],
+        ))
 

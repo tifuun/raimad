@@ -50,10 +50,10 @@ class AnSec(rai.Compo):
 
     def _make(
             self,
-            r1: float | None = None,
-            r2: float | None = None,
-            theta1: float | None = None,
-            theta2: float | None = None,
+            r1: float,
+            r2: float,
+            theta1: float,
+            theta2: float,
             num_points: int = 100,
             ) -> None:
 

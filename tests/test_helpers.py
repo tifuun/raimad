@@ -176,6 +176,13 @@ class TestPolys(ArrayAlmostEqual, unittest.TestCase):
                 )
             )
 
+    def distance_between(self):
+        self.assertEqual(
+            rai.distance_between((10, 9), (7, 5)),
+            5
+            )
+
+
     #def test_force_evaluate(self):
     #    # We define it here as a factory, because
     #    # the various checks, etc.
