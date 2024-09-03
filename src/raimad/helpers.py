@@ -1,7 +1,13 @@
 """helpers.py: misc helper functions."""
 
-from typing import Iterator, TypeVar, Callable, Self, Generic
+from typing import Iterator, TypeVar, Callable, Generic
 import math
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.10 and lower
+    from typing_extensions import Self
 
 import raimad as rai
 
