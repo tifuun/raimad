@@ -61,7 +61,7 @@ def is_klayout_running() -> bool:
             capture_output=True,
             text=True,
             check=True
-            ).stdout.count("kalyout_app.exe") > 0
+            ).stdout.count("klayout_app.exe") > 0
 
     raise NotImplementedError(
         "raimad.show() is not available on your platform yet. "
