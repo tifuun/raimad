@@ -90,10 +90,13 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
 
     custom_command = get_custom_cifview_command()
     if custom_command:
-        return tuple(
-            file if arg == '__FILE__' else arg
-            for arg in
-            shlex.split(custom_command)
+        return (
+            *(
+                file if arg == '__FILE__' else arg
+                for arg in
+                shlex.split(custom_command)
+                ),
+            *((file, ) * ('__FILE__' in custom_command))
             )
 
     if platform.system() == "Linux":
