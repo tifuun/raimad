@@ -25,6 +25,11 @@ dependencies = [
     'typing-extensions',
 	]
 
+# This lets people use `raimad` directly as a shell command
+# instead of `python -m raimad`
+[project.scripts]
+raimad = "raimad.cli:cli"
+
 [tool.ruff.lint]
 exclude = [
     "tests/*",
