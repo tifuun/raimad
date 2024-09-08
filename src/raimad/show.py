@@ -44,10 +44,26 @@ def get_custom_cifview_command() -> str | None:
         None
         )
 
+def get_klayout_app_mac():
+    result = subprocess.run(
+        [
+            "sh",
+            "-c",
+            """mdfind "kMDItemKind == 'Application'" | grep klayout"""
+            ],
+        capture_output=True,
+        text=True,
+        check=True
+        ).stdout.strip()
+
+    if result:
+        return result
+    return None
+
 def is_klayout_running() -> bool:
     """Check whether klayout is already running."""
 
-    if platform.system() == "Linux":
+    if platform.system() in {"Linux", "Darwin"}:
         return subprocess.run(
             ["ps", "aux"],
             capture_output=True,
@@ -123,6 +139,22 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
             'CIF_VIEWER="your_viewer_program __FILE__". '
             )
 
+    elif platform.system() == "Darwin":
+        app = get_klayout_app_mac()
+        if app:
+            return (
+                f"{app}/Contents/MacOS/klayout",
+                file
+                )
+
+        raise Exception(
+            'I could not figure out how to show you the CIF file. '
+            'Please install KLayout. '
+            'Is KLayout already installed at a non-standard path, '
+            'or would you like to use a different CIF viewer? '
+            'Then set the following environment variable: '
+            'CIF_VIEWER="your_viewer_program __FILE__". '
+            )
 
     raise NotImplementedError(
         "raimad.show() is not available on your platform yet. "
