@@ -93,20 +93,16 @@ def get_cifview_args(file):
         )
 
 def show(compo):
+
+    file = Path(tempfile.gettempdir()) / "RAIMAD-SHOW.cif"
+    rai.export_cif(compo, file)
+    print(f"Saved to {file}")
+
     if is_klayout_running():
         print("Klayout already running.")
         return
 
-    file = tempfile.NamedTemporaryFile(
-        'w',
-        suffix='.cif',
-        prefix='RAIMAD-SHOW',
-        delete=False
-        )
-
-    rai.export_cif(compo, file)
-
-    args = get_cifview_args(file.name)
+    args = get_cifview_args(file)
     print(f"Running {args}...")
 
     subprocess.Popen(args)
