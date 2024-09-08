@@ -46,20 +46,27 @@ def get_custom_cifview_command() -> str | None:
 
 def is_klayout_running() -> bool:
     """Check whether klayout is already running."""
-    if platform.system() != "Linux":
-        raise NotImplementedError(
-            "raimad.show() is not available on your platform yet. "
-            "Contact maybetree and request support."
-            )
 
-    result = subprocess.run(
-        ["ps", "aux"],
-        capture_output=True,
-        text=True,
-        check=True
-    )
+    if platform.system() == "Linux":
+        return subprocess.run(
+            ["ps", "aux"],
+            capture_output=True,
+            text=True,
+            check=True
+            ).stdout.count("klayout") > 0
 
-    return result.stdout.count("klayout") > 0
+    elif platform.system() == "Windows":
+        return subprocess.run(
+            ["tasklist"],
+            capture_output=True,
+            text=True,
+            check=True
+            ).stdout.count("kalyout_app.exe") > 0
+
+    raise NotImplementedError(
+        "raimad.show() is not available on your platform yet. "
+        "Contact maybetree and request support."
+        )
 
 
 def get_cifview_args(file: str) -> tuple[str, ...]:
