@@ -12,13 +12,13 @@ import sys
 
 import raimad as rai
 
-def is_linux() -> bool:
-    """Check whether we're running on Linux."""
-    return platform.system() == "Linux"
-
 def is_native_klayout_installed() -> bool:
     """Check whether KLayout is installed and available from the terminal."""
     return bool(shutil.which('klayout'))
+
+def is_klayout_installed_win() -> bool:
+    appdata = os.getenv('APPDATA')
+    return Path(rf"{appdata}\KLayout\klayout_app.exe").exists()
 
 def is_flatpak_installed() -> bool:
     """Check whether Flatpak is installed."""
@@ -64,11 +64,6 @@ def is_klayout_running() -> bool:
 
 def get_cifview_args(file: str) -> tuple[str, ...]:
     """Get a command to open `file` in a CIF viewer."""
-    if not is_linux():
-        raise NotImplementedError(
-            "raimad.show() is not available on your platform yet. "
-            "Contact maybetree and request support."
-            )
 
     custom_command = get_custom_cifview_command()
     if custom_command:
@@ -78,30 +73,55 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
             shlex.split(custom_command)
             )
 
-    if is_native_klayout_installed():
-        return ("klayout", file)
+    if platform.system() == "Linux":
+        if is_native_klayout_installed():
+            return ("klayout", file)
 
-    if is_flatpak_installed():
-        if is_flatpak_klayout_installed():
+        if is_flatpak_installed():
+            if is_flatpak_klayout_installed():
+                return (
+                    "flatpak",
+                    "run",
+                    "--file-forwarding",
+                    "de.klayout.KLayout",
+                    "@@",
+                    file,
+                    "@@"
+                    )
+
+        raise Exception(
+            'I could not figure out how to show you the CIF file. '
+            'Please install KLayout using your system package manager '
+            'or flatpak. '
+            'To use a different CIF viewer '
+            '(or KLayout installed at a custom path) '
+            'set the following environment variable: '
+            'CIF_VIEWER="your_viewer_program __FILE__". '
+            )
+
+    elif platform.system() == "Windows":
+        if is_klayout_installed_win():
+            appdata = os.getenv('APPDATA')
             return (
-                "flatpak",
-                "run",
-                "--file-forwarding",
-                "de.klayout.KLayout",
-                "@@",
+                rf"{appdata}\KLayout\klayout_app.exe",
                 file,
-                "@@"
                 )
 
-    raise Exception(
-        'I could not figure out how to show you the CIF file. '
-        'Please install KLayout using your system package manager '
-        'or flatpak. '
-        'To use a different CIF viewer "
-        "(or KLayout installed at a custom path) '
-        'set the following environment variable: '
-        'CIF_VIEWER="your_viewer_command __FILE__". '
+        raise Exception(
+            'I could not figure out how to show you the CIF file. '
+            'Please install KLayout. '
+            'Is KLayout already installed at a non-standard path, '
+            'or would you like to use a different CIF viewer? '
+            'Then set the following environment variable: '
+            'CIF_VIEWER="your_viewer_program __FILE__". '
+            )
+
+
+    raise NotImplementedError(
+        "raimad.show() is not available on your platform yet. "
+        "Contact maybetree and request support."
         )
+
 
 def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
     """Export `compo` and open it in a CIF viewer."""
