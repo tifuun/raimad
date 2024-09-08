@@ -126,10 +126,6 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
 def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
     """Export `compo` and open it in a CIF viewer."""
 
-    if hasattr(__main__, '__raimark_output__'):
-        __main__.show(compo)
-        return
-
     file = Path(tempfile.gettempdir()) / "RAIMAD-SHOW.cif"
     rai.export_cif(compo, file)
     print(f"Saved to {file}")
