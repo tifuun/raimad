@@ -92,13 +92,13 @@ def get_cifview_args(file):
         'CIF_VIEWER="your_viewer_command __FILE__"'
         )
 
-def show(compo):
+def show(compo, ignore_running=False):
 
     file = Path(tempfile.gettempdir()) / "RAIMAD-SHOW.cif"
     rai.export_cif(compo, file)
     print(f"Saved to {file}")
 
-    if is_klayout_running():
+    if not ignore_running and is_klayout_running():
         print("Klayout already running.")
         return
 

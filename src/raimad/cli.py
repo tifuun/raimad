@@ -6,6 +6,7 @@ from typing import Sequence
 import raimad as rai
 
 ACTION_EXPORT = 'export'
+ACTION_SHOW = 'show'
 FILE_STDOUT = '-'
 
 def cli(custom_args: Sequence[str] | None = None) -> None:
@@ -17,10 +18,13 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
         args = parser.parse_args(custom_args)
 
     if args.action == ACTION_EXPORT:
-        _process_args(args)
+        _process_args_export(args)
         compo = args.component()
 
         rai.export_cif(compo, args.output_file)
+
+    elif args.action == ACTION_SHOW:
+        rai.show(args.component(), args.ignore_running)
 
     else:
         # This should never happen, since
@@ -40,6 +44,7 @@ def _setup_parser() -> argparse.ArgumentParser:
         )
 
     _add_export_action(subparsers)
+    _add_show_action(subparsers)
 
     return parser
 
@@ -48,11 +53,7 @@ def _add_export_action(
         # and why it crashes if it's not quoted?
         subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
         ) -> None:
-    """
-    Add the export action to the root parser.
-
-    For now, this is the only action
-    """
+    """Add the export action to the root parser."""
     parser = subparsers.add_parser(
         ACTION_EXPORT,
         help=(
@@ -82,8 +83,36 @@ def _add_export_action(
         default='{name}.cif',
         )
 
+def _add_show_action(
+        subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
+        ) -> None:
+    """Add the show action to the root parser."""
+    parser = subparsers.add_parser(
+        ACTION_SHOW,
+        help=(
+            "Export a component and open it in a CIF viewer"
+            )
+        )
 
-def _process_args(args: argparse.Namespace) -> None:
+    parser.add_argument(
+        'component',
+        type=lambda string: rai.string_import(string, multiple=False),
+        help=(
+            'Component to export in the format '
+            '`{dot-separated path to module}:{class name}`. '
+            'For example, `raimad:Snowman`.'
+            )
+        )
+
+    parser.add_argument(
+        '--ignore-running',
+        '-i',
+        action='store_true',
+        help="Launch the CIF viewer again even if it is already running",
+        )
+
+
+def _process_args_export(args: argparse.Namespace) -> None:
     args.output_file = args.output_file.replace(
         '{name}',
         args.component.__name__
