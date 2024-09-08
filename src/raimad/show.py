@@ -1,4 +1,4 @@
-"""show.py: show() function implementation."""
+"""show.py: show() function and various related cross-platform hackery."""
 
 import tempfile
 import platform
@@ -13,19 +13,20 @@ import sys
 import raimad as rai
 
 def is_native_klayout_installed() -> bool:
-    """Check whether KLayout is installed and available from the terminal."""
+    """Check whether KLayout is installed natively (Linux)."""
     return bool(shutil.which('klayout'))
 
 def is_klayout_installed_win() -> bool:
+    """Check whether KLayout is installed (Windows)."""
     appdata = os.getenv('APPDATA')
     return Path(rf"{appdata}\KLayout\klayout_app.exe").exists()
 
 def is_flatpak_installed() -> bool:
-    """Check whether Flatpak is installed."""
+    """Check whether Flatpak is installed (Linux)."""
     return bool(shutil.which('flatpak'))
 
 def is_flatpak_klayout_installed() -> bool:
-    """Checked whether KLayout is installed via flatpak."""
+    """Checked whether KLayout is installed via flatpak (Linux)."""
     result = subprocess.run(
         ["flatpak", "list", "--app", "--columns=application"],
         capture_output=True,
@@ -44,7 +45,8 @@ def get_custom_cifview_command() -> str | None:
         None
         )
 
-def get_klayout_app_mac():
+def get_klayout_app_mac() -> str | None:
+    """Get path to klayout.app on Mac OS, None if not installed."""
     result = subprocess.run(
         [
             "sh",
