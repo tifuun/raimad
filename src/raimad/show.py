@@ -96,7 +96,7 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
                 for arg in
                 shlex.split(custom_command)
                 ),
-            *((file, ) * ('__FILE__' in custom_command))
+            *((file, ) * ('__FILE__' not in custom_command))
             )
 
     if platform.system() == "Linux":
