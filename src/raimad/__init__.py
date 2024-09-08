@@ -76,6 +76,7 @@ from raimad import typing as t
 from raimad import cif
 from raimad.cif.shorthand import export_cif
 from raimad.svg import export_svg
+from raimad.show import show
 from raimad import err
 
 from raimad.snowman import Snowman
@@ -150,7 +151,8 @@ __all__ = [
     'gv',
     'add',
     'eq',
-    'epsilon'
+    'epsilon',
+    'show'
     ]
 
 
