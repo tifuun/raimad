@@ -46,7 +46,7 @@ def get_custom_cifview_command() -> str | None:
 
 def is_klayout_running() -> bool:
     """Check whether klayout is already running."""
-    if not is_linux():
+    if platform.system() != "Linux":
         raise NotImplementedError(
             "raimad.show() is not available on your platform yet. "
             "Contact maybetree and request support."
