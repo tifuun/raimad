@@ -2,6 +2,8 @@
 
 import argparse
 from typing import Sequence
+import sys
+import os
 
 import raimad as rai
 
@@ -11,6 +13,12 @@ FILE_STDOUT = '-'
 
 def cli(custom_args: Sequence[str] | None = None) -> None:
     """Parse command line arguments and execute the desired action."""
+
+    ensure_pwd_in_path()
+
+    import sys
+    print(sys.path)
+
     parser = _setup_parser()
     if custom_args is None:
         args = parser.parse_args()
@@ -117,4 +125,9 @@ def _process_args_export(args: argparse.Namespace) -> None:
         '{name}',
         args.component.__name__
         )
+
+def ensure_pwd_in_path():
+    pwd = os.getcwd()
+    if pwd not in sys.path:
+        sys.path.insert(0, pwd)
 
