@@ -51,6 +51,19 @@ class GeomsEqual():
         cls.epsilon = epsilon
         super().__init_subclass__(*args, **kwargs)
 
+    def checkPolysEqual(
+            self,
+            actual: rait.Poly,
+            expected: rait.Poly,
+            epsilon: float | None = None
+            ):
+
+        return all(
+            rai.distance_between(point1, point2) <= (epsilon or self.epsilon)
+            for point1, point2 in
+            zip(actual, expected, strict=True)
+            )
+
     def assertGeomsEqual(
             self,
             actual: rait.Geoms,
@@ -65,28 +78,35 @@ class GeomsEqual():
             self.assertEqual(len(polys_actual), len(polys_expected))
             length = len(polys_actual)
 
+            num_equal_actual = sum(
+                self.checkPolysEqual(poly1, poly2)
+                for poly1 in polys_actual
+                for poly2 in polys_actual
+                )
+
+            num_equal_expected = sum(
+                self.checkPolysEqual(poly1, poly2)
+                for poly1 in polys_expected
+                for poly2 in polys_expected
+                )
+
+            self.assertEqual(num_equal_expected, num_equal_actual)
+
             num_equal = 0
             for poly_actual in polys_actual:
                 for poly_expected in polys_expected:
+                    print(poly_actual, poly_expected)
                     num_equal += rai.iters.is_rotated(
                             poly_expected,
                             poly_actual,
-                            comparison=lambda poly1, poly2:
-                                all(
-                                    #round(abs(coord1 - coord2), self.decimal)
-                                    #    == 0
-                                    abs(coord1 - coord2)
-                                        <= (epsilon or self.epsilon)
-                                    for point1, point2 in
-                                    zip(poly1, poly2, strict=True)
-                                    for coord1, coord2 in
-                                    zip(point1, point2, strict=True)
-                                    )
-                                # TODO omg this is borderline incomprehensible
+                            comparison=self.checkPolysEqual
+                            # TODO omg this is borderline incomprehensible
+                            # TODO pass epsilon
                             )
 
             try:
-                self.assertEqual(num_equal, length)
+                self.assertEqual(num_equal + num_equal_actual, length * 2)
+                # TODO What on earth!?
             except AssertionError as err:
                 print(f'ON LAYER {layer_name}', file=stderr)
                 print("ACTUAL: ", file=stderr)

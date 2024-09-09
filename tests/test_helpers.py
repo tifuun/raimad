@@ -53,8 +53,23 @@ class TestPolys(ArrayAlmostEqual, unittest.TestCase):
             ))
 
         self.assertFalse(rai.iters.is_rotated(
+            [1, 2],
+            [1, 1],
+            ))
+
+        self.assertFalse(rai.iters.is_rotated(
+            [1, 1],
+            [1, 2],
+            ))
+
+        self.assertFalse(rai.iters.is_rotated(
             'abc',
             'aabc',
+            ))
+
+        self.assertFalse(rai.iters.is_rotated(
+            'abc',
+            'ab',
             ))
 
         self.assertFalse(rai.iters.is_rotated(

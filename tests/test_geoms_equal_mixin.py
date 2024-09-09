@@ -262,6 +262,121 @@ class TestGeomsEqualMixin(GeomsEqual, unittest.TestCase):
                     },
                 )
 
+    def test_geoms_unequal_dup_diff(self):
+        with self.assertRaises(AssertionError):
+            self.assertGeomsEqual(
+                {
+                    'Lroot': [
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        ]
+                    },
+                {
+                    'Lroot': [
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5 + 5, -5),
+                            (5 + 5, -5),
+                            (5 + 5, 5),
+                            ],
+                        ]
+                    }
+                )
+
+    def test_geoms_unequal_dup(self):
+        with self.assertRaises(AssertionError):
+            self.assertGeomsEqual(
+                {
+                    'Lroot': [
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        ]
+                    },
+                {
+                    'Lroot': [
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5 + 5, -5),
+                            (5 + 5, -5),
+                            (5 + 5, 5),
+                            (-5 + 5, 5),
+                            ],
+                        ]
+                    }
+                )
+
+    def test_geoms_unequal_dup_dup(self):
+        with self.assertRaises(AssertionError):
+            self.assertGeomsEqual(
+                {
+                    'Lroot': [
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        ]
+                    },
+                {
+                    'Lroot': [
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        [
+                            (-5, -5),
+                            (5, -5),
+                            (5, 5),
+                            (-5, 5),
+                            ],
+                        ]
+                    }
+                )
 
 if __name__ == '__main__':
     unittest.main()

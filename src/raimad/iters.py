@@ -122,7 +122,6 @@ def is_rotated(
     for x in range(0, length):
         rotated = (*second[x:], *second[:x])
         assert len(rotated) == length
-        print(rotated)
         if comparison(first_as_tuple, rotated):
             return True
     return False

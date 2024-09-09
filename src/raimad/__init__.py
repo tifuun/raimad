@@ -24,6 +24,7 @@ from raimad.helpers import (
     add,
     eq,
     sub,
+    distance_between,
     )
 from raimad import affine
 import raimad.iters as iters
@@ -152,7 +153,8 @@ __all__ = [
     'add',
     'eq',
     'epsilon',
-    'show'
+    'show',
+    'distance_between'
     ]
 
 
