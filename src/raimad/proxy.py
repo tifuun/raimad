@@ -192,7 +192,7 @@ class Proxy:
         """
         return {
             self.lmap[layer]: [
-                self.transform.transform_xyarray(geom)
+                self.transform.transform_poly(geom)
                 for geom in geoms
                 ]
             for layer, geoms
@@ -235,7 +235,7 @@ class Proxy:
         """
         return {
             self.lmap[layer]: [
-                self.transform.transform_xyarray(geom)
+                self.transform.transform_poly(geom)
                 for geom in geoms
                 ]
             for layer, geoms
@@ -588,7 +588,7 @@ class Proxy:
         bbox = rai.BoundBBox(proxy=self)
         for geoms in self.steamroll().values():
             for geom in geoms:
-                bbox.add_xyarray(geom)
+                bbox.add_poly(geom)
         return bbox
 
     # snapping functions #

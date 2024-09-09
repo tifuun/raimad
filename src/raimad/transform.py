@@ -28,12 +28,12 @@ class Transform:
         """Reset this transform to be an identity transform."""
         self._affine = rai.affine.identity()
 
-    def transform_xyarray(
+    def transform_poly(
             self,
             poly: 'rai.typing.Poly'
-            ) -> 'rai.typing.Poly':  # TODO rename xyarray to polygon
+            ) -> 'rai.typing.Poly':
         """
-        Apply transformation to xyarray and return new transformed xyarray.
+        Apply transformation to poly and return new transformed poly.
 
         Parameters
         ----------
@@ -45,7 +45,7 @@ class Transform:
         rai.typing.Poly
             The new, transformed, Poly
         """
-        return rai.affine.transform_xyarray(self._affine, poly)
+        return rai.affine.transform_poly(self._affine, poly)
 
     def transform_point(
             self,

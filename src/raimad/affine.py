@@ -165,16 +165,16 @@ def get_rotation(matrix: 'rai.typing.Affine') -> float:
     """Given an affine matrix, return the corresponding rotation."""
     return float(atan2(matrix[1][0], matrix[0][0]))
 
-def transform_xyarray(
+def transform_poly(
         matrix: 'rai.typing.Affine',
-        xyarray: 'rai.typing.Poly'
+        poly: 'rai.typing.Poly'
         ) -> 'rai.typing.Poly':
-    """Apply transformation to xyarray and return new transformed xyarray."""
+    """Apply transformation to poly and return new transformed poly."""
     return [
         transform_point(matrix, point)
-        for point in xyarray
+        for point in poly
         ]
-    # TODO remove "xyarray name"
+    # TODO remove "poly name"
 
 def transform_point(
         matrix: 'rai.typing.Affine',

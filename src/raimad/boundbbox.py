@@ -17,9 +17,9 @@ class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
     def __init__(
             self,
             proxy: 'rai.typing.Proxy',
-            xyarray: 'rai.typing.Poly | None' = None,
+            poly: 'rai.typing.Poly | None' = None,
             ) -> None:
-        super().__init__(xyarray)
+        super().__init__(poly)
         self._proxy = proxy
 
     def interpolate(

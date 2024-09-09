@@ -326,7 +326,7 @@ class Compo:
         bbox = rai.BBox()
         for geoms in self.steamroll().values():
             for geom in geoms:
-                bbox.add_xyarray(geom)
+                bbox.add_poly(geom)
         return bbox
 
     def __init_subclass__(cls) -> None:

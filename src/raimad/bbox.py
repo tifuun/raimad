@@ -37,14 +37,14 @@ class AbstractBBox(Generic[T]):
 
     def __init__(
             self,
-            xyarray: 'rai.typing.Poly | None' = None,
+            poly: 'rai.typing.Poly | None' = None,
             ):
         """
         Create a new BBox.
 
         Parameters
         ----------
-        xyarray: np.ndarray | None
+        poly: np.ndarray | None
             A N x 2 numpy array containing points to initialize the bbox with.
             This is optional.
         proxy: rai.Proxy | None
@@ -56,8 +56,8 @@ class AbstractBBox(Generic[T]):
         self.min_x = float('inf')
         self.min_y = float('inf')
 
-        if xyarray is not None:
-            self.add_xyarray(xyarray)
+        if poly is not None:
+            self.add_poly(poly)
 
     def as_list(self) -> list[float]:
         """Return as list of [min_x, min_y, max_x, max_y]."""
@@ -72,9 +72,9 @@ class AbstractBBox(Generic[T]):
         Check if bbox is empty.
 
         An empoty bbox has no paints.
-        BBoxes created with no `xyarray` argument are empty
+        BBoxes created with no `poly` argument are empty
         until you manually add points to them with
-        `add_xyarray` or `add_point`.
+        `add_poly` or `add_point`.
 
         Returns
         -------
@@ -121,16 +121,16 @@ class AbstractBBox(Generic[T]):
         # in Python
         return copy(self)
 
-    def add_xyarray(self, xyarray: 'rai.typing.Poly') -> None:
+    def add_poly(self, poly: 'rai.typing.Poly') -> None:
         """
         Add new points to the bounding box.
 
         Parameters
         ----------
-        xyarray: np.ndarray
+        poly: np.ndarray
             A N x 2 numpy array containing points to add to the bbox.
         """
-        for point in xyarray:
+        for point in poly:
             self.add_point(point)
 
     def add_point(self, point: 'rai.typing.PointLike') -> None:
