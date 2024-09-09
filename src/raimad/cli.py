@@ -16,9 +16,6 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
 
     ensure_pwd_in_path()
 
-    import sys
-    print(sys.path)
-
     parser = _setup_parser()
     if custom_args is None:
         args = parser.parse_args()
