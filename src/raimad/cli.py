@@ -123,7 +123,7 @@ def _process_args_export(args: argparse.Namespace) -> None:
         args.component.__name__
         )
 
-def ensure_pwd_in_path():
+def ensure_pwd_in_path() -> None:
     pwd = os.getcwd()
     if pwd not in sys.path:
         sys.path.insert(0, pwd)

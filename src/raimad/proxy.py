@@ -344,14 +344,15 @@ class Proxy:
     def deep_copy(
             self,
             _autogenned: bool = False,
-            ):
-        if self.depth() == 1:
+            ) -> 'rai.typing.Proxy':
+
+        if isinstance(self.compo, rai.Compo):
             return self.shallow_copy(
                 _autogenned=_autogenned,
                 _deepcopied=True,
                 )
 
-        else:
+        elif isinstance(self.compo, rai.Proxy):
             return self.shallow_copy_reassign(
                 self.compo.deep_copy(
                     _autogenned = _autogenned,
@@ -360,20 +361,24 @@ class Proxy:
                 _deepcopied=True
                 )
 
+        else:
+            assert False
+
     def deep_copy_reassign(
             self,
             new_compo: 'rai.typing.CompoLike',
             _autogenned: bool = False,
             _deepcopied: bool = False,
             ) -> 'rai.typing.Proxy':
-        if self.depth() == 1:
+
+        if isinstance(self.compo, rai.Compo):
             return self.shallow_copy_reassign(
                 new_compo,
                 _autogenned=_autogenned,
                 _deepcopied=_deepcopied,
                 )
 
-        else:
+        elif isinstance(self.compo, rai.Proxy):
             return self.shallow_copy_reassign(
                 self.compo.deep_copy_reassign(
                     new_compo,
@@ -383,6 +388,9 @@ class Proxy:
                 _autogenned=_autogenned,
                 _deepcopied=_deepcopied,
                 )
+
+        else:
+            assert False
 
     def transform_point(
             self,
@@ -408,7 +416,7 @@ class Proxy:
             self.compo.transform_point(point)
             )
 
-    def str(self, depth: int = 0) -> str:
+    def _str(self, depth: int = 0) -> str:
         """Return string representation of this proxy."""
         return (
             f"{'<' * (depth == 0)}"
@@ -417,12 +425,12 @@ class Proxy:
             f"Proxy at {rai.wingdingify(id(self))} "
             f"with {str(self.transform)} "
             "of\n"
-            f"{self.compo.str(depth=1)}"
+            f"{self.compo._str(depth=1)}"
             f"{'>' * (depth == 0)}"
             )
 
     def __str__(self) -> str:
-        return self.str()
+        return self._str()
 
         #stack = ''.join([
         #    'ma'[proxy.autogenned]
@@ -434,18 +442,6 @@ class Proxy:
         #    f"stack `{stack}x`"
         #    ">"
         #    )
-
-    def __insane_str__(self) -> str:
-        INSANE_VARIABLE_NAME_DEBUGGING = True
-
-        if INSANE_VARIABLE_NAME_DEBUGGING:
-            from raimad.debugging import insane_variable_name_scanner
-            return (
-                "<"
-                f"Proxy of {str(self.compo)} at {rai.wingdingify(id(self))} "
-                f"Names {insane_variable_name_scanner(self)}"
-                ">"
-                )
 
     def __repr__(self) -> str:
         """Return string representation of this proxy."""

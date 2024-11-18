@@ -132,7 +132,6 @@ class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
 
     def _filter_get(self, val: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if self._proxy is not None:
-            #assert self._proxy.depth() == 1
             return self._proxy.deep_copy_reassign(val, _autogenned=True)
         return val
 
@@ -396,7 +395,7 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
-    def str(self, depth: int = 0) -> str:
+    def _str(self, depth: int = 0) -> str:
         """Get string representation of compo."""
         return (
             f"{'<' * (depth == 0)}"
@@ -405,7 +404,7 @@ class Compo:
             )
 
     def __str__(self) -> str:
-        return self.str()
+        return self._str()
 
     def __repr__(self) -> str:
         """Get string representation of compo."""
