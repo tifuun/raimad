@@ -59,6 +59,7 @@ from raimad.transform import Transform
 from raimad.compo import Compo
 from raimad.compo import MarksContainer
 from raimad.compo import SubcompoContainer
+from raimad.compo import ProxyableDictList
 from raimad.proxy import Proxy
 from raimad.proxy import LMap
 from raimad.partial import Partial

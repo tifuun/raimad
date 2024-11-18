@@ -58,17 +58,22 @@ class ProxyableDictList(rai.DictList[T]):
 
     def _get_proxy_view(self, proxy: 'rai.t.Proxy') -> Self:
         """TODO document this."""
+        assert False
         new = type(self)(self._dict, copy=False)
 
         #assert not isinstance(proxy.compo, rai.Proxy), str(proxy)
 
 
+        assert isinstance(proxy, rai.Proxy)
+        #assert proxy.depth() == 1
+        proxy = proxy.final_p()
         #assert self._proxy is None
         #if isinstance(self._proxy, rai.Proxy):
         #    print(self._proxy.__insane_str__())
         new._proxy = (
+            #proxy.deep_copy(_autogen=True) if self._proxy is None else
             proxy if self._proxy is None else
-            proxy.deep_copy_reassign(self._proxy, _autogen=True)
+            proxy.shallow_copy_reassign(self._proxy, _autogen=True)
             )
         # TODO just store lmap and transform
         return new
@@ -127,7 +132,9 @@ class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
 
     def _filter_get(self, val: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if self._proxy is not None:
-            return self._proxy.copy_reassign(val, _autogen=True)
+            #assert self._proxy.depth() == 1
+            print(self._proxy.depth())
+            return self._proxy.deep_copy_reassign(val, _autogen=True)
         return val
 
 class Compo:
@@ -224,15 +231,15 @@ class Compo:
         """Return new Proxy pointing to this Compo."""
         return rai.Proxy(self)
 
-    @property
-    def copy(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.copy()."""
-        raise CopyCompoError(
-            f"`{self}` is a Compo, not a Proxy! "
-            "Don't copy compos; instead, "
-            "create a Proxy using the `.proxy()` method "
-            "and copy that instead."
-            )
+    #@property
+    #def copy(self) -> NoReturn:
+    #    """Deliberately unimplemented -- see Proxy.copy()."""
+    #    raise CopyCompoError(
+    #        f"`{self}` is a Compo, not a Proxy! "
+    #        "Don't copy compos; instead, "
+    #        "create a Proxy using the `.proxy()` method "
+    #        "and copy that instead."
+    #        )
 
     def walk_hier(self) -> Iterator['rai.typing.CompoLike']:
         """

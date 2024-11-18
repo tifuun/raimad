@@ -124,19 +124,19 @@ class TestCompo(unittest.TestCase):
         with self.assertRaises(rai.err.TransformCompoError):
             compo.flip()
 
-    def test_fail_copy_compo(self):
-        """
-        Test that trying to copy a compo
-        raises an error telling you to copy a Proxy of it instead
-        """
-        compo = rai.Snowman()
+    #def test_fail_copy_compo(self):
+    #    """
+    #    Test that trying to copy a compo
+    #    raises an error telling you to copy a Proxy of it instead
+    #    """
+    #    compo = rai.Snowman()
 
-        with self.assertRaises(rai.err.CopyCompoError):
-            compo.copy()
+    #    with self.assertRaises(rai.err.CopyCompoError):
+    #        compo.copy()
 
-        # Test the inheritance relationship between the error types
-        with self.assertRaises(rai.err.ProxyCompoConfusionError):
-            compo.copy()
+    #    # Test the inheritance relationship between the error types
+    #    with self.assertRaises(rai.err.ProxyCompoConfusionError):
+    #        compo.copy()
 
 
 if __name__ == '__main__':

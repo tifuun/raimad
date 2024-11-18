@@ -44,7 +44,7 @@ We use Ruff, MyPy, unit tests, and coverage.py to ensure code quality.
 - coverage.py can be a good tool for estimating how much of the codebase
     is covered by unit tests. We are aiming for 100% coverage,
     but it is not yet a requirement.
-    
+
 
 ## License
 
