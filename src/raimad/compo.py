@@ -59,7 +59,18 @@ class ProxyableDictList(rai.DictList[T]):
     def _get_proxy_view(self, proxy: 'rai.t.Proxy') -> Self:
         """TODO document this."""
         new = type(self)(self._dict, copy=False)
-        new._proxy = proxy
+
+        #assert not isinstance(proxy.compo, rai.Proxy), str(proxy)
+
+
+        #assert self._proxy is None
+        #if isinstance(self._proxy, rai.Proxy):
+        #    print(self._proxy.__insane_str__())
+        new._proxy = (
+            proxy if self._proxy is None else
+            proxy.deep_copy_reassign(self._proxy, _autogen=True)
+            )
+        # TODO just store lmap and transform
         return new
 
 
@@ -379,13 +390,16 @@ class Compo:
                 # only proxy, instead of doing it automatically.
                 self.subcompos[name] = obj
 
-    def __str__(self) -> str:
+    def str(self, depth: int = 0) -> str:
         """Get string representation of compo."""
         return (
-            "<"
-            f"{type(self).__name__} at {rai.wingdingify(id(self))} "
-            ">"
+            f"{'<' * (depth == 0)}"
+            f"{'\t' * depth}{type(self).__name__} at {rai.wingdingify(id(self))} "
+            f"{'>' * (depth == 0)}"
             )
+
+    def __str__(self) -> str:
+        return self.str()
 
     def __repr__(self) -> str:
         """Get string representation of compo."""

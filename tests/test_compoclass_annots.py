@@ -29,9 +29,9 @@ class Annotated(rai.Compo):
         pass
 
 
-class TestClassIntrospection(unittest.TestCase):
+class TestClassAnnots(unittest.TestCase):
 
-    def test_class_introspection_marks(self):
+    def test_class_annots_marks(self):
 
         self.assertEqual(
             Annotated.Marks[0].name,
@@ -53,7 +53,7 @@ class TestClassIntrospection(unittest.TestCase):
             'center of the square'
             )
 
-    def test_class_introspection_layers(self):
+    def test_class_annots_layers(self):
 
         self.assertEqual(
             Annotated.Layers[2].name,
@@ -65,7 +65,7 @@ class TestClassIntrospection(unittest.TestCase):
             'Ground'
             )
 
-    def test_class_introspection_options(self):
+    def test_class_annots_options(self):
 
         self.assertEqual(
             Annotated.Options[3].name,
@@ -89,7 +89,7 @@ class TestClassIntrospection(unittest.TestCase):
             rai.Option
             )
 
-    def test_class_introspection_options_shorthands(self):
+    def test_class_annots_options_shorthands(self):
 
         self.assertTrue(Annotated.Options[3].default is True)
         self.assertTrue(Annotated.Options[4].default is False)

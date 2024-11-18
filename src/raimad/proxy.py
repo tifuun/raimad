@@ -258,6 +258,12 @@ class Proxy:
         """Return the compo at the bottom of a tower of proxies."""
         return self.compo.final()
 
+    def final_p(self) -> 'rai.typing.Proxy':
+        """Return the proxy at the bottom of a tower of proxies."""
+        if isinstance(self.proxy, rai.Compo):
+            return self
+        return self.compo.final_p()
+
     def depth(self) -> int:
         """
         Measure depth of a tower of proxies.
@@ -333,7 +339,7 @@ class Proxy:
 
     def copy_reassign(
             self,
-            new_subcompo: 'rai.typing.CompoLike',
+            new_compo: 'rai.typing.CompoLike',
             _autogen: bool = False,
             ) -> 'rai.typing.Proxy':
         """
@@ -348,7 +354,7 @@ class Proxy:
 
         Parameters
         ----------
-        new_subcompo: rai.typing.CompoLike
+        new_compo: rai.typing.CompoLike
             Proxy or Compo that the copied proxy should point to
 
         _autogen: bool
@@ -367,11 +373,46 @@ class Proxy:
             The new proxy is returned.
         """
         return type(self)(
-            new_subcompo,
+            new_compo,
             self.lmap.shorthand,
             self.transform.copy(),
             _autogen=_autogen,
             )
+
+    def deep_copy(self):
+        # TODO autogen flag!
+        if isinstance(self.compo, rai.Compo):
+            return self.copy()
+        elif isinstance(self.compo, rai.Proxy):
+            return self.copy_reassign(self.compo.deep_copy())
+        else:
+            assert False
+
+    def deep_copy_reassign(
+            self,
+            new_compo: 'rai.typing.CompoLike',
+            _autogen: bool = False,
+            ) -> 'rai.typing.Proxy':
+        # TODO this is a horrible mess!!!
+        # TODO autogen flag!!!!!!
+        if isinstance(self.compo, rai.Compo):
+            return type(self)(
+                new_compo,
+                self.lmap.shorthand,
+                self.transform.copy(),
+                _autogen=_autogen,
+                )
+
+        elif isinstance(self.compo, rai.Proxy):
+            return type(self.compo)(
+                self.compo.deep_copy_reassign(new_compo),
+                self.compo.lmap.shorthand,
+                self.compo.transform.copy(),
+                _autogen=_autogen,
+                )
+
+        else:
+            assert False
 
     def transform_point(
             self,
@@ -397,18 +438,45 @@ class Proxy:
             self.compo.transform_point(point)
             )
 
-    def __str__(self) -> str:
+    def str(self, depth: int = 0) -> str:
         """Return string representation of this proxy."""
-        stack = ''.join([
-            'ma'[proxy._autogen]
-            for proxy in self.descend_p()
-            ])
+
         return (
-            "<"
-            f"Proxy of {self.final()} at {rai.wingdingify(id(self))} "
-            f"stack `{stack}x`"
-            ">"
+            f"{'<' * (depth == 0)}"
+            f"{'\t' * depth}{['Manual', 'Automatic'][self._autogen]} "
+            f"Proxy at {rai.wingdingify(id(self))} "
+            f"with {str(self.transform)} "
+            "of\n"
+            f"{self.compo.str(depth=1)}"
+            f"{'>' * (depth == 0)}"
             )
+
+
+    def __str__(self) -> str:
+        return self.str()
+
+        #stack = ''.join([
+        #    'ma'[proxy._autogen]
+        #    for proxy in self.descend_p()
+        #    ])
+        #return (
+        #    "<"
+        #    f"Proxy of {self.final()} at {rai.wingdingify(id(self))} "
+        #    f"stack `{stack}x`"
+        #    ">"
+        #    )
+
+    def __insane_str__(self) -> str:
+        INSANE_VARIABLE_NAME_DEBUGGING = True
+
+        if INSANE_VARIABLE_NAME_DEBUGGING:
+            from raimad.debugging import insane_variable_name_scanner
+            return (
+                "<"
+                f"Proxy of {str(self.compo)} at {rai.wingdingify(id(self))} "
+                f"Names {insane_variable_name_scanner(self)}"
+                ">"
+                )
 
     def __repr__(self) -> str:
         """Return string representation of this proxy."""

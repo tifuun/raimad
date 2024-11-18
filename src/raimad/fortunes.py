@@ -38,7 +38,7 @@ fortunes = [
     "This is a security feature. It secures our revenue stream. ",
 
     "We need these permissions to enable intergation. "
-    "Integration of our backdoor into your OS, that is. ",
+    "Integration of our backdoor into your machine, that is. ",
 
     "Our platform is end-to-end encrypted. "
     "The one end is your client, and the other end is our server. ",
@@ -48,7 +48,13 @@ fortunes = [
 
     "Unix: full of Daemons, ELFs and DWARFs",
 
-    "Step one: solve the problem. Step two: become the problem. "
+    "Step one: solve the problem. Step two: become the problem. ",
+
+    "Give a man a place to store data, "
+    "and you will have a bug. "
+    "Give a man two places to store the same data, "
+    "that need to be kept in sync, "
+    "and you will have AN UNLIMITED NUMBER OF BUGS. ",
 
     # Education #
 
@@ -81,7 +87,10 @@ fortunes = [
 
     "Abuse of authority comes as no surprise. ",
 
-    "Money doesn't bring happiness, but neither does poverty. ",
+    "Money doesn't buy happiness, but neither does poverty. ",
+
+    "Money won't buy you happiness, "
+    "but it can vastly improve the quality of your misery. ",
 
     '"Somehow the potential to make a lot of money has become more valuable '
     'then making a lot of money lol. " -- u/h3J1e on shareholders',
@@ -143,6 +152,15 @@ fortunes = [
     "in the newspapers, over the radio, and perhaps even "
     "on television -- provided the people can still "
     "afford television sets, that is.",
+
+    "It's not about fixing the problem anymore.\n"
+    "It's about staying alive long enough to watch bad things "
+    "happen to the people who caused it.",
+
+    "Fair Use? More like Fairly Useless! ",
+
+    "Germany has the most environmentally-friendly trains, "
+    "because most of them are cancelled. ",
 
     # Malapropisms #
 
@@ -233,6 +251,16 @@ fortunes = [
 
     "Why pass your exams when you can just pass away? ",
 
+    "We do these things not because they're easy,\n"
+    "but because we were lead to believe that they would be easy. ",
+
+    "Hostage or not, sometimes it's nice being held. ",
+
+    "It gets better, way better. ",
+
+    "You've worked SO HARD and planted lots of trees. "
+    "And now it is time to harvest the fruit. ",
+
     # Misc #
 
     "The best storytellers are those who have a story to tell. ",
@@ -293,6 +321,11 @@ fortunes = [
     "I know writers who use subtext, and they're all cowards.",
 
     "Two-word horror: Medical Entrepreneur",
+
+    "Four-word horror: Unicode Consortium Paramilitary Division",
+
+    "His speech really struck a chord with me. "
+    "a B diminished seventh to be precise. "
 
     ]
 

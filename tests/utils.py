@@ -90,12 +90,9 @@ class GeomsEqual():
                 for poly2 in polys_expected
                 )
 
-            self.assertEqual(num_equal_expected, num_equal_actual)
-
             num_equal = 0
             for poly_actual in polys_actual:
                 for poly_expected in polys_expected:
-                    print(poly_actual, poly_expected)
                     num_equal += rai.iters.is_rotated(
                             poly_expected,
                             poly_actual,
@@ -105,6 +102,7 @@ class GeomsEqual():
                             )
 
             try:
+                self.assertEqual(num_equal_expected, num_equal_actual)
                 self.assertEqual(num_equal + num_equal_actual, length * 2)
                 # TODO What on earth!?
             except AssertionError as err:

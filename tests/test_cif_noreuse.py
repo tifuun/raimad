@@ -89,8 +89,10 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
             def _make(self):
                 self.subcompos.a = (Second().proxy())
 
+        compo = Third()
+
         exporter = rai.cif.NoReuse(
-            Third(),
+            compo,
             multiplier=1,
             )
 
@@ -108,10 +110,10 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
                         (-5, 5),
                         ],
                     [
-                        (-5 + 5, -5),
-                        (5 + 5, -5),
-                        (5 + 5, 5),
-                        (-5 + 5, 5),
+                        (5, -5),
+                        (15, -5),
+                        (15, 5),
+                        (5, 5),
                         ],
                     ]
                 }
