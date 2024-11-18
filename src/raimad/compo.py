@@ -73,7 +73,7 @@ class ProxyableDictList(rai.DictList[T]):
         new._proxy = (
             #proxy.deep_copy(_autogen=True) if self._proxy is None else
             proxy if self._proxy is None else
-            proxy.shallow_copy_reassign(self._proxy, _autogen=True)
+            proxy.shallow_copy_reassign(self._proxy, _autogenned=True)
             )
         # TODO just store lmap and transform
         return new
@@ -133,8 +133,7 @@ class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
     def _filter_get(self, val: 'rai.typing.Proxy') -> 'rai.typing.Proxy':
         if self._proxy is not None:
             #assert self._proxy.depth() == 1
-            print(self._proxy.depth())
-            return self._proxy.deep_copy_reassign(val, _autogen=True)
+            return self._proxy.deep_copy_reassign(val, _autogenned=True)
         return val
 
 class Compo:

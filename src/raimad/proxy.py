@@ -171,13 +171,13 @@ class Proxy:
                  lmap: 'rai.typing.LMapShorthand' = None,
                  transform: 'rai.typing.Transform | None' = None,
                  _cif_link: bool = False,
-                 _autogen: bool = False,
+                 _autogenned: bool = False,
                  _deepcopied: bool = False,
                  ):
         self._cif_linked = False
         self._cif_link = _cif_link
-        self._autogen = _autogen
-        self._deepcopied = _deepcopied
+        self.autogenned = _autogenned
+        self.deepcopied = _deepcopied
         self.compo = compo
         self.lmap = LMap(lmap)
         self.transform = transform or rai.Transform()
@@ -257,7 +257,7 @@ class Proxy:
             self.final().subcompos._dict,
             copy=False
             )
-        #new._proxy = self.deep_copy(_autogen = True)
+        #new._proxy = self.deep_copy(_autogenned = True)
         new._proxy = self
         return new
         #return self.compo.subcompos._get_proxy_view(self)
@@ -308,11 +308,11 @@ class Proxy:
         """
         # TODO test this?
         for subcompo in self.compo.walk_hier():
-            yield self.deep_copy_reassign(subcompo, _autogen=True)
+            yield self.deep_copy_reassign(subcompo, _autogenned=True)
 
     def shallow_copy(
             self,
-            _autogen: bool = False,
+            _autogenned: bool = False,
             _deepcopied: bool = False
             ) -> 'rai.typing.Proxy':
         """
@@ -321,14 +321,14 @@ class Proxy:
             self.compo,
             self.lmap.shorthand,
             self.transform.copy(),
-            _autogen=_autogen,
+            _autogenned=_autogenned,
             _deepcopied=_deepcopied
             )
 
     def shallow_copy_reassign(
             self,
             new_compo: 'rai.typing.CompoLike',
-            _autogen: bool = False,
+            _autogenned: bool = False,
             _deepcopied: bool = False,
             ) -> 'rai.typing.Proxy':
         """
@@ -337,38 +337,38 @@ class Proxy:
             new_compo,
             self.lmap.shorthand,
             self.transform.copy(),
-            _autogen=_autogen,
+            _autogenned=_autogenned,
             _deepcopied=_deepcopied
             )
 
     def deep_copy(
             self,
-            _autogen: bool = False,
+            _autogenned: bool = False,
             ):
         if self.depth() == 1:
             return self.shallow_copy(
-                _autogen=_autogen,
+                _autogenned=_autogenned,
                 _deepcopied=True,
                 )
 
         else:
             return self.shallow_copy_reassign(
                 self.compo.deep_copy(
-                    _autogen = _autogen,
+                    _autogenned = _autogenned,
                     ),
-                _autogen=_autogen,
+                _autogenned=_autogenned,
                 _deepcopied=True
                 )
 
     def deep_copy_reassign(
             self,
             new_compo: 'rai.typing.CompoLike',
-            _autogen: bool = False,
+            _autogenned: bool = False,
             ) -> 'rai.typing.Proxy':
         if self.depth() == 1:
             return self.shallow_copy_reassign(
                 new_compo,
-                _autogen=_autogen,
+                _autogenned=_autogenned,
                 _deepcopied=True
                 )
 
@@ -376,9 +376,9 @@ class Proxy:
             return self.shallow_copy_reassign(
                 self.compo.deep_copy_reassign(
                     new_compo,
-                    _autogen=_autogen,
+                    _autogenned=_autogenned,
                     ),
-                _autogen=_autogen,
+                _autogenned=_autogenned,
                 _deepcopied=True,
                 )
 
@@ -410,8 +410,8 @@ class Proxy:
         """Return string representation of this proxy."""
         return (
             f"{'<' * (depth == 0)}"
-            f"{'\t' * depth}{['Manual', 'Automatic'][self._autogen]} "
-            f"{'deepcopied ' * self._deepcopied}"
+            f"{'\t' * depth}{['Manual', 'Automatic'][self.autogenned]} "
+            f"{'deepcopied ' * self.deepcopied}"
             f"Proxy at {rai.wingdingify(id(self))} "
             f"with {str(self.transform)} "
             "of\n"
@@ -423,7 +423,7 @@ class Proxy:
         return self.str()
 
         #stack = ''.join([
-        #    'ma'[proxy._autogen]
+        #    'ma'[proxy.autogenned]
         #    for proxy in self.descend_p()
         #    ])
         #return (

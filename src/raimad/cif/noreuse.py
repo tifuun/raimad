@@ -32,7 +32,6 @@ class NoReuse:
     def yield_cif_bare(self, compo: 'rai.typing.CompoLike') -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
         # Opening line, define the routine
-        print(compo)
         yield f'DS {self.rout_num} 1 1;\n'
 
         # advance to next routine number
