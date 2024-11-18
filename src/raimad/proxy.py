@@ -364,12 +364,13 @@ class Proxy:
             self,
             new_compo: 'rai.typing.CompoLike',
             _autogenned: bool = False,
+            _deepcopied: bool = False,
             ) -> 'rai.typing.Proxy':
         if self.depth() == 1:
             return self.shallow_copy_reassign(
                 new_compo,
                 _autogenned=_autogenned,
-                _deepcopied=True
+                _deepcopied=_deepcopied,
                 )
 
         else:
@@ -377,9 +378,10 @@ class Proxy:
                 self.compo.deep_copy_reassign(
                     new_compo,
                     _autogenned=_autogenned,
+                    _deepcopied=True,
                     ),
                 _autogenned=_autogenned,
-                _deepcopied=True,
+                _deepcopied=_deepcopied,
                 )
 
     def transform_point(

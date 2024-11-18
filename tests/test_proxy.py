@@ -2,7 +2,27 @@ import unittest
 
 import raimad as rai
 
+
 class TestProxy(unittest.TestCase):
+
+    def check_tower(self, proxy, expected):
+        try:
+            tower_actual = tuple(proxy.descend_p())
+            self.assertEqual(len(tower_actual), len(expected))
+            for \
+                    this_proxy, (expected_autogenned, expected_deepcopied) \
+                    in zip(tower_actual, expected, strict=True):
+
+                #print(expected_autogenned, this_proxy.autogenned, expected_deepcopied, this_proxy.deepcopied)
+                self.assertEqual(expected_autogenned, this_proxy.autogenned)
+                self.assertEqual(expected_deepcopied, this_proxy.deepcopied)
+
+        except AssertionError as err:
+            print("EXPECTED: ")
+            print(expected)
+            print("ACTUAL: ")
+            print(proxy)
+            raise err
 
     def test_proxy_origin(self):
         """
@@ -19,8 +39,9 @@ class TestProxy(unittest.TestCase):
         compo = rai.Circle(10)
         p1 = compo.proxy()
 
-        self.assertFalse(p1.autogenned)
-        self.assertFalse(p1.deepcopied)
+        self.check_tower(p1, (
+            (False, False),
+            ))
 
         # The `.subcompos` of a component should return
         # directly the proxies that were assigned into it,
@@ -33,18 +54,47 @@ class TestProxy(unittest.TestCase):
 
         mycompo = MyCompo()
 
-        self.assertFalse(mycompo.subcompos.c.autogenned)
-        self.assertFalse(mycompo.subcompos.c.deepcopied)
+        self.check_tower(mycompo.subcompos.c, (
+            (False, False),
+            ))
 
         # `.subcompos` of a *proxy*, on the other hand,
         # should autogenerate proxies on top of the manual proxies.
-        # It should be a deepcopy, since we can do
-        # `.subcompos` on `.subcompos`.
+        # It should be created via Proxy.deep_copy_reassign, since we can do
+        # `.subcompos` on `.subcompos`,
+        # but it should not be marked a `deepcopied`,
+        # since it's the top of the tower
 
         mycompo_p = mycompo.proxy()
 
-        self.assertTrue(mycompo_p.subcompos.c.autogenned)
-        self.assertTrue(mycompo_p.subcompos.c.deepcopied)
+        self.check_tower(mycompo_p.subcompos.c, (
+            (True, False),
+            (False, False),
+            ))
+
+        # Okay, but now if the use `Proxy.subcompos.subcompos`,
+        # the result should be marked both autogenned and deepcopied,
+        # because it was created as the result of a deepcopy
+        class MyUpperCompo(rai.Compo):
+            def _make(self):
+                self.subcompos.m = MyCompo().proxy()
+
+        my_upper_compo = MyUpperCompo()
+
+        # TODO is this good?
+        self.check_tower(my_upper_compo.subcompos.m.subcompos.c, (
+            (True, False),
+            (False, False),
+            ))
+
+        # TODO is this good?
+        my_upper_compo_p = my_upper_compo.proxy()
+        self.check_tower(my_upper_compo_p.subcompos.m.subcompos.c, (
+            (True, False),
+            (True, True),
+            (False, False),
+            ))
+
 
 if __name__ == '__main__':
     unittest.main()
