@@ -352,6 +352,9 @@ fortunes_all = [
 
 def fortune(category: str | None = None) -> str:
 
+    if not category:
+        category = ''
+
     category = category.lower().strip()
 
     if not category or category in {'any', 'all'}:

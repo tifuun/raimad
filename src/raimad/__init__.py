@@ -165,7 +165,16 @@ __all__ = [
     'eq',
     'epsilon',
     'show',
-    'distance_between'
+    'distance_between',
+    'fortune',
+    'fortunes_technology',
+    'fortunes_economy',
+    'fortunes_education',
+    'fortunes_politics',
+    'fortunes_engineering',
+    'fortunes_resilience',
+    'fortunes_misc',
+    'fortunes_all',
     ]
 
 

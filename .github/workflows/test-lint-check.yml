@@ -2,9 +2,9 @@ name: Test-Lint-Check
 
 on:
   push:
-    branches: [ "joss", "main" ]
+    branches: [ "joss", "main", "fixes" ]
   pull_request:
-    branches: [ "joss", "main" ]
+    branches: [ "joss", "main", "fixes" ]
 
 permissions:
   contents: read
