@@ -418,6 +418,7 @@ class Proxy:
 
     def _str(self, depth: int = 0) -> str:
         """Return string representation of this proxy."""
+        # FIXME refactor this spaghetti
         return (
             f"{'<' * (depth == 0)}"
             f"{'\t' * depth}{['Manual', 'Automatic'][self.autogenned]} "

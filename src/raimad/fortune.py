@@ -1,9 +1,8 @@
 """Collection of one-size-fits-all wisdoms and questionable quotations."""
 
-fortunes = [
+from random import choice
 
-    # Technology #
-
+fortunes_technology = [
     'The plural of Regex is "Regrets". ',
 
     'Why make it simple and efficient, '
@@ -35,29 +34,37 @@ fortunes = [
     "Exorcising login daemon...\n"
     "System operational.",
 
-    "This is a security feature. It secures our revenue stream. ",
-
     "We need these permissions to enable intergation. "
     "Integration of our backdoor into your machine, that is. ",
-
-    "Our platform is end-to-end encrypted. "
-    "The one end is your client, and the other end is our server. ",
 
     "We have two-factor authentication. "
     "The first factor is your username, and second factor is your password. ",
 
-    "Unix: full of Daemons, ELFs and DWARFs",
+    "Our platform is end-to-end encrypted. "
+    "The one end is your client, and the other end is our server. ",
 
-    "Step one: solve the problem. Step two: become the problem. ",
+    "Unix: full of Daemons, ELFs and DWARFs",
 
     "Give a man a place to store data, "
     "and you will have a bug. "
     "Give a man two places to store the same data, "
     "that need to be kept in sync, "
     "and you will have AN UNLIMITED NUMBER OF BUGS. ",
+    ]
 
-    # Education #
+fortunes_economy = [
+    "Step one: solve the problem. Step two: become the problem. ",
 
+    "This is a security feature. It secures our revenue stream. ",
+
+    "Years of not using social media is finally paying off. ",
+
+    '"Somehow the potential to make a lot of money has become more valuable '
+    'then making a lot of money lol. " -- u/h3J1e on shareholders',
+    ]
+
+
+fortunes_education = [
     '"The doors are wide open, '
     'but we still see people crashing into the doorframe.\n" '
     '    -- NvdM on IC exams',
@@ -82,18 +89,15 @@ fortunes = [
 
     "There are no stupid questions, "
     "only stupid people. ",
+    ]
 
-    # Politics #
-
+fortunes_politics = [
     "Abuse of authority comes as no surprise. ",
 
     "Money doesn't buy happiness, but neither does poverty. ",
 
     "Money won't buy you happiness, "
     "but it can vastly improve the quality of your misery. ",
-
-    '"Somehow the potential to make a lot of money has become more valuable '
-    'then making a lot of money lol. " -- u/h3J1e on shareholders',
 
     "Elect a clown, expect a circus. ",
 
@@ -162,12 +166,11 @@ fortunes = [
     "Germany has the most environmentally-friendly trains, "
     "because most of them are cancelled. ",
 
-    # Malapropisms #
+    "They cannot understand it, and therefore cannot control it. "
+    "And that makes them furious. ",
+    ]
 
-    "Whatever bloats your goat! ",
-
-    # Engineering #
-
+fortunes_engineering = [
     "Instructions for use: do not. ",
 
     "Square peg. Round hole. Get it done. ",
@@ -197,9 +200,9 @@ fortunes = [
     "This seems like a bad idea, but it's fine for now. ",
 
     "This was a problem for future me, and now I am future me. ",
+    ]
 
-    # Resilience #
-
+fortunes_resilience = [
     "Even with everyone's help, you still have to do everything on your own. ",
 
     "YOU GOTTA BLAME SOMEONE, RIGHT? BLAME YOURSELF",
@@ -260,9 +263,9 @@ fortunes = [
 
     "You've worked SO HARD and planted lots of trees. "
     "And now it is time to harvest the fruit. ",
+    ]
 
-    # Misc #
-
+fortunes_misc = [
     "The best storytellers are those who have a story to tell. ",
 
     "CAUTION: Gate swings both ways HARD",
@@ -325,7 +328,48 @@ fortunes = [
     "Four-word horror: Unicode Consortium Paramilitary Division",
 
     "His speech really struck a chord with me. "
-    "a B diminished seventh to be precise. "
+    "a B diminished seventh to be precise. ",
 
+    "Whatever bloats your goat! ",
     ]
+
+fortunes_all = [
+    *fortunes_technology,
+    *fortunes_economy,
+    *fortunes_education,
+    *fortunes_politics,
+    *fortunes_engineering,
+    *fortunes_resilience,
+    *fortunes_misc,
+    ]
+
+def fortune(category: str | None = None) -> str:
+
+    category = category.lower().strip()
+
+    if not category or category in {'any', 'all'}:
+        return choice(fortunes_all)
+
+    if category.lower() == 'technology':
+        return choice(fortunes_technology)
+
+    if category.lower() == 'economy':
+        return choice(fortunes_economy)
+
+    if category.lower() == 'education':
+        return choice(fortunes_education)
+
+    if category.lower() == 'politics':
+        return choice(fortunes_politics)
+
+    if category.lower() == 'engineering':
+        return choice(fortunes_engineering)
+
+    if category.lower() == 'resilience':
+        return choice(fortunes_resilience)
+
+    if category.lower() == 'misc':
+        return choice(fortunes_misc)
+    
+    raise ValueError(f'Unknown category `{category}`')
 

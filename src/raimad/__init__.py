@@ -81,6 +81,15 @@ from raimad.svg import export_svg
 from raimad.show import show
 from raimad import err
 
+from raimad.fortune import fortune
+from raimad.fortune import fortunes_technology
+from raimad.fortune import fortunes_economy
+from raimad.fortune import fortunes_education
+from raimad.fortune import fortunes_politics
+from raimad.fortune import fortunes_engineering
+from raimad.fortune import fortunes_resilience
+from raimad.fortune import fortunes_misc
+
 from raimad.snowman import Snowman
 
 # The function of __all__ is to specify which things get imported

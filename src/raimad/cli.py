@@ -9,6 +9,7 @@ import raimad as rai
 
 ACTION_EXPORT = 'export'
 ACTION_SHOW = 'show'
+ACTION_FORTUNE = 'fortune'
 FILE_STDOUT = '-'
 
 def cli(custom_args: Sequence[str] | None = None) -> None:
@@ -17,6 +18,7 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
     ensure_pwd_in_path()
 
     parser = _setup_parser()
+
     if custom_args is None:
         args = parser.parse_args()
     else:
@@ -30,6 +32,9 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
 
     elif args.action == ACTION_SHOW:
         rai.show(args.component(), args.ignore_running)
+
+    elif args.action == ACTION_FORTUNE:
+        print(rai.fortune(args.category))
 
     else:
         # This should never happen, since
@@ -50,6 +55,7 @@ def _setup_parser() -> argparse.ArgumentParser:
 
     _add_export_action(subparsers)
     _add_show_action(subparsers)
+    _add_fortune_action(subparsers)
 
     return parser
 
@@ -116,6 +122,32 @@ def _add_show_action(
         help="Launch the CIF viewer again even if it is already running",
         )
 
+def _add_fortune_action(
+        subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
+        ) -> None:
+    """Add the fortune action to the root parser."""
+    parser = subparsers.add_parser(
+        ACTION_FORTUNE,
+        help=(
+            "Print a randomly chosen string from RAIMAD's collection "
+            "of maxims, one-size-fits-all wisdowms, and questionable "
+            "quotations. "
+            )
+        )
+
+    parser.add_argument(
+        'category',
+        type=str,
+        default='',
+        nargs='?',
+        help=(
+            "Category of fortune. Available categories: "
+            "technology, economy, education, politics, engineering, "
+            "resilience, misc. "
+            "Pass `any`, `all`, or emptystring to select from all "
+            "categories. "
+            )
+        )
 
 def _process_args_export(args: argparse.Namespace) -> None:
     args.output_file = args.output_file.replace(
