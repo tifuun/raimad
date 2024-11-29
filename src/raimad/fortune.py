@@ -111,6 +111,8 @@ fortunes_politics = [
 
     "We wanted the best, but it turned out like always. ",
 
+    "Мы хотели как лучше, а получилось как всегда. ",
+
     "No matter what we try to develop, we always end up with either "
     "the communist party or the Khalashnikov rifle.",
 
@@ -234,6 +236,9 @@ fortunes_resilience = [
     '''Pessimism: "It's only gonna get worse"\n'''
     '''Optimism: "It *can't* get any worse"''',
 
+    "Пессимизм: Будет еще хуже!\n"
+    "Оптимизм: Хуже уже некуда! ",
+
     "Cheer up! Things are getting worse at a slower rate! ",
 
     "Everything is going worryingly well. ",
@@ -263,6 +268,8 @@ fortunes_resilience = [
 
     "You've worked SO HARD and planted lots of trees. "
     "And now it is time to harvest the fruit. ",
+
+    "世界の全てに赦されたら愛の意味わかったの",
     ]
 
 fortunes_misc = [
@@ -281,7 +288,7 @@ fortunes_misc = [
 
     "i may be cringe but youre mean and thats worse",
 
-    "Qaulifications: former child",
+    "Qualifications: former child",
 
     '"Whenever a door closes, another one surely opens"\n'
     '    -- My uncle (wise man, but a terrible cabinet maker)',

@@ -5,6 +5,7 @@ import os
 import subprocess
 from io import StringIO
 import tempfile
+import random
 from pathlib import Path
 
 import raimad as rai
@@ -16,6 +17,7 @@ class TestCLI(unittest.TestCase):
         self.snowman_cif = rai.export_cif(rai.Snowman())
 
     def test_cli_export_cif_noargs(self):
+        pwd = os.getcwd()
         with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             subprocess.run(shlex.split(
@@ -23,10 +25,12 @@ class TestCLI(unittest.TestCase):
                 ), check=True)
 
             cif_string = Path('Snowman.cif').read_text()
+        os.chdir(pwd)
 
         self.assertEqual(self.snowman_cif, cif_string)
 
     def test_cli_export_cif_file(self):
+        pwd = os.getcwd()
         with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             subprocess.run(shlex.split(
@@ -34,8 +38,41 @@ class TestCLI(unittest.TestCase):
                 ), check=True)
 
             cif_string = Path('compo.cif').read_text()
+        os.chdir(pwd)
 
         self.assertEqual(self.snowman_cif, cif_string)
+
+    def test_cli_fortune(self):
+        result = subprocess.run(shlex.split(
+            'python -m raimad fortune'
+            ),
+            check=True,
+            capture_output=True,
+            )
+
+        fortune = result.stdout.decode('utf-8')
+        self.assertIn(
+            fortune.strip(),
+            map(lambda s: s.strip(), rai.fortunes_all)
+            )
+
+    def test_cli_fortune_category(self):
+        result = subprocess.run(shlex.split(
+            'python -m raimad fortune resilience'
+            ),
+            check=True,
+            capture_output=True,
+            )
+
+        fortune = result.stdout.decode('utf-8')
+        self.assertIn(
+            fortune.strip(),
+            map(lambda s: s.strip(), rai.fortunes_resilience)
+            )
+        self.assertNotIn(
+            fortune.strip(),
+            map(lambda s: s.strip(), rai.fortunes_politics)
+            )
 
 # TODO other formats? svg?
 

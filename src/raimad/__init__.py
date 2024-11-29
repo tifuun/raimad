@@ -89,6 +89,7 @@ from raimad.fortune import fortunes_politics
 from raimad.fortune import fortunes_engineering
 from raimad.fortune import fortunes_resilience
 from raimad.fortune import fortunes_misc
+from raimad.fortune import fortunes_all
 
 from raimad.snowman import Snowman
 
