@@ -1,4 +1,5 @@
 import unittest
+import re
 
 import raimad as rai
 
@@ -94,6 +95,27 @@ class TestProxy(unittest.TestCase):
             (True, True),
             (False, False),
             ))
+
+    def test_proxy_str(self):
+
+        compo = rai.Snowman()
+        p = compo.proxy().proxy().deep_copy()
+        p2 = p.subcompos.base.proxy()
+
+        self.assertTrue(
+            re.match(
+                r'^<Manual Proxy at .* with <.*> of\s*'
+                r'Automatic Proxy at .* with <.*> of\s*'
+                r'Automatic deepcopied Proxy at .* with <.*> of\s*'
+                r'Manual Proxy at .* with <.*> of\s*'
+                r'Circle at .*>'
+                ,
+                str(p2)
+                )
+            )
+        self.assertEqual(str(p2), repr(p2))
+
+
 
 
 if __name__ == '__main__':

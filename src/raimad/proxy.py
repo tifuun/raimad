@@ -419,16 +419,17 @@ class Proxy:
     def _str(self, depth: int = 0) -> str:
         """Return string representation of this proxy."""
         # FIXME refactor this spaghetti
-        return (
-            f"{'<' * (depth == 0)}"
-            f"{'\t' * depth}{['Manual', 'Automatic'][self.autogenned]} "
-            f"{'deepcopied ' * self.deepcopied}"
-            f"Proxy at {rai.wingdingify(id(self))} "
-            f"with {str(self.transform)} "
-            "of\n"
-            f"{self.compo._str(depth=1)}"
-            f"{'>' * (depth == 0)}"
-            )
+        return ''.join((
+            '<' * (depth == 0),
+            '\t' * depth,
+            'Automatic' if self.autogenned else 'Manual',
+            ' deepcopied' * self.deepcopied,
+            f" Proxy at {rai.wingdingify(id(self))} ",
+            f"with {str(self.transform)} ",
+            "of\n",
+            f"{self.compo._str(depth=1)}",
+            '>' * (depth == 0)
+            ))
 
     def __str__(self) -> str:
         return self._str()

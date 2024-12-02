@@ -1,4 +1,5 @@
 import unittest
+import re
 
 import raimad as rai
 
@@ -123,6 +124,18 @@ class TestCompo(unittest.TestCase):
 
         with self.assertRaises(rai.err.TransformCompoError):
             compo.flip()
+
+    def test_compo_str(self):
+
+        compo = rai.Circle(10)
+
+        self.assertTrue(
+            re.match(
+                r'<Circle at .*>',
+                str(compo)
+                )
+            )
+        self.assertEqual(str(compo), repr(compo))
 
     #def test_fail_copy_compo(self):
     #    """

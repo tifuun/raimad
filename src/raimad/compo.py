@@ -397,11 +397,12 @@ class Compo:
 
     def _str(self, depth: int = 0) -> str:
         """Get string representation of compo."""
-        return (
-            f"{'<' * (depth == 0)}"
-            f"{'\t' * depth}{type(self).__name__} at {rai.wingdingify(id(self))} "
-            f"{'>' * (depth == 0)}"
-            )
+        return ''.join((
+            '<' * (depth == 0),
+            '\t' * depth,
+            f"{type(self).__name__} at {rai.wingdingify(id(self))} ",
+            '>' * (depth == 0)
+            ))
 
     def __str__(self) -> str:
         return self._str()
