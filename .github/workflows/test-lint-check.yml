@@ -171,7 +171,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: tests312.svg
+        filename: tests312.json
         label: Python 3.12
         message: ${{ needs.py312.outputs.badge_tests_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_tests_val }}
@@ -183,7 +183,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: tests311.svg
+        filename: tests311.json
         label: Python 3.11
         message: ${{ needs.py311.outputs.badge_tests_msg }}
         valColorRange: ${{ needs.py311.outputs.badge_tests_val }}
@@ -195,7 +195,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: tests310.svg
+        filename: tests310.json
         label: Python 3.10
         message: ${{ needs.py310.outputs.badge_tests_msg }}
         valColorRange: ${{ needs.py310.outputs.badge_tests_val }}
@@ -207,7 +207,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: mypy.svg
+        filename: mypy.json
         label: mypy --strict
         message: ${{ needs.py312.outputs.badge_mypy_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_mypy_val }}
@@ -219,7 +219,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: coverage.svg
+        filename: coverage.json
         label: Test Coverage
         message: ${{ needs.py312.outputs.badge_coverage_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_coverage_val }}
@@ -231,7 +231,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: todo.svg
+        filename: todo.json
         label: "TODOs and FIXMEs"
         message: ${{ needs.py312.outputs.badge_todo_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_todo_val }}
@@ -244,7 +244,7 @@ jobs:
       with:
         auth: ${{ secrets.GIST_SECRET }}
         gistID: 767d80027892395f1cc61e4829810985
-        filename: ruff.svg
+        filename: ruff.json
         label: "Ruff"
         message: ${{ needs.py312.outputs.badge_ruff_msg }}
         valColorRange: ${{ needs.py312.outputs.badge_ruff_val }}
