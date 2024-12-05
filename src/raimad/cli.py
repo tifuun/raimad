@@ -26,7 +26,21 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
 
     if args.action == ACTION_EXPORT:
         _process_args_export(args)
-        compo = args.component()
+        Compo = args.component
+
+        if args.use_browser_defaults:
+            # TODO add a method for extracting browser defaults
+            # so this incantation does not have to be copy-pasted
+            opts = {
+                option.name: option.browser_default
+                for option in Compo.Options.values()
+                if option.browser_default is not rai.Empty
+                }
+            # TODO unit test!!!!!!!
+        else:
+            opts = {}
+
+        compo = Compo(**opts)
 
         rai.export_cif(compo, args.output_file)
 
@@ -94,6 +108,20 @@ def _add_export_action(
         default='{name}.cif',
         )
 
+    parser.add_argument(
+        '--use-browser-defaults',
+        '-b',
+        action="store_true",
+        help=(
+            "Instead of the default option values specified in the "
+            "compo's `_make()` function, "
+            "use the values specified for generating the component brwoser "
+            "(RAIDEX) preview. "
+            ),
+        default='{name}.cif',
+        )
+
+
 def _add_show_action(
         subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
         ) -> None:
@@ -156,7 +184,15 @@ def _process_args_export(args: argparse.Namespace) -> None:
         )
 
 def ensure_pwd_in_path() -> None:
-    pwd = os.getcwd()
+    try:
+        pwd = os.getcwd()
+    except FileNotFoundError:
+        printf(
+            "We're in a non-existent directory... WHAT is going on!?\n",
+            file=sys.stderr
+            )
+        return
+
     if pwd not in sys.path:
         sys.path.insert(0, pwd)
 

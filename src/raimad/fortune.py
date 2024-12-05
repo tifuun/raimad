@@ -61,6 +61,8 @@ fortunes_economy = [
 
     '"Somehow the potential to make a lot of money has become more valuable '
     'then making a lot of money lol. " -- u/h3J1e on shareholders',
+
+    'A g(r)ift from the gods!',
     ]
 
 
