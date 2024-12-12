@@ -63,6 +63,12 @@ fortunes_economy = [
     'then making a lot of money lol. " -- u/h3J1e on shareholders',
 
     'A g(r)ift from the gods!',
+
+    "It's always easier to promise a bright future "
+    "than to build a better present",
+
+    "When everyone is rushing to dig their own grave, "
+    "sell shovels. ",
     ]
 
 
@@ -172,6 +178,8 @@ fortunes_politics = [
 
     "They cannot understand it, and therefore cannot control it. "
     "And that makes them furious. ",
+
+    "Это было давно и неправда. "
     ]
 
 fortunes_engineering = [
@@ -342,6 +350,31 @@ fortunes_misc = [
     "Whatever bloats your goat! ",
     ]
 
+fortunes_nonsense = [
+    "IT'S TOO DANGEROUS TO GO ALONE! \n"
+    "TAKE THIS. \n"
+    "MASTER USING IT AND \n"
+    "MYOU CAN HAVE THIS. \n"
+    "TAKE ANY ROAD YOU WANT. \n"
+    "SECRET IS IN THE TREET \n"
+    "SELECT DEAD END. \n"
+    "EET. \n"
+    "SEAMAKING GAME.ONZE.EET. \n"
+    "SPAY ME FOR THE DOORET \n"
+    "SPAALONEBABAGUSCOOTIES \n"
+    ,
+
+    "It's the feeling of your veins \n"
+    "BURSTING \n"
+    "It's the feeling of a thousand knives \n"
+    "B U R S T I N G \n"
+    "It's the feeling of the THINGS. \n"
+    "You know the types of things -- the VI-KINGS. \n"
+    ,
+
+    "бНОПНЯ ВХРЮК?",
+    ]
+
 fortunes_all = [
     *fortunes_technology,
     *fortunes_economy,
@@ -349,6 +382,7 @@ fortunes_all = [
     *fortunes_politics,
     *fortunes_engineering,
     *fortunes_resilience,
+    *fortunes_nonsense,
     *fortunes_misc,
     ]
 
@@ -379,6 +413,9 @@ def fortune(category: str | None = None) -> str:
 
     if category.lower() == 'resilience':
         return choice(fortunes_resilience)
+
+    if category.lower() == 'nonsense':
+        return choice(fortunes_nonsense)
 
     if category.lower() == 'misc':
         return choice(fortunes_misc)

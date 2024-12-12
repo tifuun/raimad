@@ -453,7 +453,7 @@ class Proxy:
     # TODO for all transforms
     # TODO same implementation as in Compo
     # TODO stack another transform or modify self?
-    def scale(self, factor: float) -> Self:
+    def scale(self, x: float, y: float | None = None) -> Self:
         """
         Scale this proxy.
 
@@ -471,7 +471,7 @@ class Proxy:
         Self
             self is returned to allow chaining methods.
         """
-        self.transform.scale(factor)
+        self.transform.scale(x, y)
         return self
 
     def movex(self, factor: float) -> Self:

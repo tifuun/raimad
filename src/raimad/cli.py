@@ -171,7 +171,7 @@ def _add_fortune_action(
         help=(
             "Category of fortune. Available categories: "
             "technology, economy, education, politics, engineering, "
-            "resilience, misc. "
+            "resilience, nonsense, misc. "
             "Pass `any`, `all`, or emptystring to select from all "
             "categories. "
             )

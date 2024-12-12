@@ -3,8 +3,9 @@ import re
 
 import raimad as rai
 
+from .utils import GeomsEqual
 
-class TestProxy(unittest.TestCase):
+class TestProxy(GeomsEqual, unittest.TestCase):
 
     def check_tower(self, proxy, expected):
         try:
@@ -115,7 +116,38 @@ class TestProxy(unittest.TestCase):
             )
         self.assertEqual(str(p2), repr(p2))
 
+    def test_proxy_scale(self):
+        rect = rai.RectLW(10, 10).proxy().bbox.mid.to((0, 0))
 
+        horiz = rect.proxy().scale(2, 1)
+        vert = rect.proxy().scale(1, 2)
+        both = rect.proxy().scale(2, 2)
+        both_alt = rect.proxy().scale(2)
+
+        self.assertGeomsEqual(
+            rect.steamroll(),
+            {'root': [[(-5, -5), (5, -5), (5, 5), (-5, 5)]]}
+            )
+
+        self.assertGeomsEqual(
+            horiz.steamroll(),
+            {'root': [[(-10, -5), (10, -5), (10, 5), (-10, 5)]]}
+            )
+
+        self.assertGeomsEqual(
+            vert.steamroll(),
+            {'root': [[(-5, -10), (5, -10), (5, 10), (-5, 10)]]}
+            )
+
+        self.assertGeomsEqual(
+            both.steamroll(),
+            {'root': [[(-10, -10), (10, -10), (10, 10), (-10, 10)]]}
+            )
+
+        self.assertGeomsEqual(
+            both_alt.steamroll(),
+            {'root': [[(-10, -10), (10, -10), (10, 10), (-10, 10)]]}
+            )
 
 
 if __name__ == '__main__':
