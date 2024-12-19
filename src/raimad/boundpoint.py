@@ -117,7 +117,16 @@ class BoundPoint():
 
     def __repr__(self) -> str:
         """Return string representation of this BoundPoint."""
-        return f'<({self._x}, {self._y}) bound to {self._proxy}>'
+        return str(self)
+
+    def __str__(self) -> str:
+        """Return string representation of this BoundPoint."""
+        #FIXME brackets?
+        return ''.join((
+            f'<({self._x}, {self._y}) bound to <\n',
+            self._proxy._str(1),
+            '>'
+            ))
 
     def to(self, point: 'rai.typing.PointLike') -> 'rai.typing.Proxy':
         """
