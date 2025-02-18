@@ -186,6 +186,11 @@ fortunes_politics = [
 
     "Ваше мнение для меня очень важно,\n"
     "но не очень-то и нужно.",
+
+    "If history is written by the winners,\n"
+    "then I guess we'll just have to win. ",
+
+    "Forget dog whistles, they've been using bull horns for a while now. ",
     ]
 
 fortunes_engineering = [
@@ -218,6 +223,9 @@ fortunes_engineering = [
     "This seems like a bad idea, but it's fine for now. ",
 
     "This was a problem for future me, and now I am future me. ",
+
+    "The best case is O(n),\n"
+    "and the worst case is that someone checks why. ",
     ]
 
 fortunes_resilience = [

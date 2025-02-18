@@ -138,6 +138,7 @@ class Midpoint(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
             )
 
 midpoint = Midpoint()
+# TODO more than 1 input
 
 class Add(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
     def __call__(
