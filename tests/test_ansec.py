@@ -138,6 +138,36 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 dtheta=rai.semicircle,
                 ),
 
+    def test_ansec_extent_2025_02_19(self):
+        """
+        Isolates bug 2025_02_19: ansecs are not long enough
+
+        This test checks whether the bug is present
+        by making a quartercircle ansec,
+        and verifying that it has exactly four points
+        where one coordinate is close to zero
+        (i.e. two points on the x axis and
+        two points on the y axis).
+        """
+
+        ansec = rai.AnSec.from_auto(
+            rmid=10,
+            dr=2,
+            theta1=0,
+            theta2=rai.quartercircle
+            )
+
+        points = ansec.steamroll()['root'][0]
+        points_on_edges = tuple(
+            point for point in points
+            if any(
+                # FIXME epsilon
+                abs(coord) < 0.001
+                for coord in point
+                )
+            )
+
+        self.assertEqual(len(points_on_edges), 4)
 
 if __name__ == '__main__':
     unittest.main()

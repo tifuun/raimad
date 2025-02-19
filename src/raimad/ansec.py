@@ -67,7 +67,7 @@ class AnSec(rai.Compo):
             return
 
         theta_step = (theta2 - theta1) / num_points
-        angles = tuple(theta1 + theta_step * i for i in range(num_points))
+        angles = tuple(theta1 + theta_step * i for i in range(num_points + 1))
 
         self.geoms.update({
             'root': [
