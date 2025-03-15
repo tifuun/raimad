@@ -33,3 +33,13 @@ module_browser
 coverage.json
 htmlcov
 
+# Archives
+*.zip
+*.tar
+*.tar.*
+*.tzst
+*.tgz
+*.txz
+*.zst
+
+

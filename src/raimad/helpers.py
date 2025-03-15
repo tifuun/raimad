@@ -123,7 +123,7 @@ class Infix(Generic[T, R]):
         return self(self.left, right)
 
     def __call__(self, left: T, right: T) -> R:
-        raise NotImplemented
+        raise NotImplementedError() ## TODO undo
 
 class Midpoint(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
     def __call__(

@@ -6,6 +6,7 @@ import subprocess
 from io import StringIO
 import tempfile
 import random
+import sys
 from pathlib import Path
 
 import raimad as rai
@@ -21,7 +22,7 @@ class TestCLI(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             subprocess.run(shlex.split(
-                'python -m raimad export raimad:Snowman'
+                f'{sys.executable} -m raimad export raimad:Snowman'
                 ), check=True)
 
             cif_string = Path('Snowman.cif').read_text()
@@ -34,7 +35,7 @@ class TestCLI(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             os.chdir(folder)
             subprocess.run(shlex.split(
-                'python -m raimad export raimad:Snowman -o compo.cif'
+                f'{sys.executable} -m raimad export raimad:Snowman -o compo.cif'
                 ), check=True)
 
             cif_string = Path('compo.cif').read_text()
@@ -44,7 +45,7 @@ class TestCLI(unittest.TestCase):
 
     def test_cli_fortune(self):
         result = subprocess.run(shlex.split(
-            'python -m raimad fortune'
+            f'{sys.executable} -m raimad fortune'
             ),
             check=True,
             capture_output=True,
@@ -58,7 +59,7 @@ class TestCLI(unittest.TestCase):
 
     def test_cli_fortune_category(self):
         result = subprocess.run(shlex.split(
-            'python -m raimad fortune resilience'
+            f'{sys.executable} -m raimad fortune resilience'
             ),
             check=True,
             capture_output=True,
