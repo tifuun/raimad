@@ -181,7 +181,7 @@ def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
     """Export `compo` and open it in a CIF viewer."""
 
     if IS_NOTEBOOK:
-        IPython.show(compo)
+        IPython.display.display(compo)
         return
 
     file = Path(tempfile.gettempdir()) / "RAIMAD-SHOW.cif"
