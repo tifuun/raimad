@@ -15,7 +15,7 @@ description = """RAIMAD Astronomical Instrument MAsk Designer"""
 authors = [
 	{name = "maybetree", email = "maybetree48@proton.me"}
 	]
-license = { file = "LICENSE.md" }
+license = "GPL-3.0-only"
 readme = "README.md"
 classifiers = [
 	'Programming Language :: Python :: 3',
