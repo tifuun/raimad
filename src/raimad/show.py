@@ -12,6 +12,17 @@ import sys
 
 import raimad as rai
 
+try:
+    import IPython
+    if 'IPKernelApp' in IPython.get_ipython().config:
+        IS_NOTEBOOK = True
+    else:
+        IS_NOTEBOOK = False
+except ImportError:
+    IS_NOTEBOOK = False
+except AttributeError:
+    IS_NOTEBOOK = False
+
 def is_native_klayout_installed() -> bool:
     """Check whether KLayout is installed natively (Linux)."""
     return bool(shutil.which('klayout'))
@@ -166,9 +177,12 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
         "Contact maybetree and request support."
         )
 
-
 def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
     """Export `compo` and open it in a CIF viewer."""
+
+    if IS_NOTEBOOK:
+        IPython.show(compo)
+        return
 
     file = Path(tempfile.gettempdir()) / "RAIMAD-SHOW.cif"
     rai.export_cif(compo, file)
