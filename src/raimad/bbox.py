@@ -83,7 +83,6 @@ class AbstractBBox(Generic[T]):
 
         See Also
         --------
-        .5        -------
         BBox.assert_nonempty()
         """
         return (
