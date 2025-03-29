@@ -414,6 +414,24 @@ fortunes_all = [
     ]
 
 def fortune(category: str | None = None) -> str:
+    """
+    Choose a random entry from RAIMAD's repository of
+    one-size-fits-all wisdoms and questionable quotations.
+
+    Parameters
+    ----------
+    category
+        A category name. Use "any", "all" or None to choose
+        from all categories.
+        Available categories:
+        technology, economy, education, politics, engineering,
+        resilience, nonsense, misc
+
+    Returns
+    -------
+    str
+        A randomly chosen questionable quotation
+    """
 
     if not category:
         category = ''

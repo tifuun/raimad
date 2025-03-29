@@ -49,6 +49,7 @@ ignore = [
     # Allow no docstring in nested classes
     # (e.g. Layers, Options, Marks classes)
     "D401",  # don't complain about "imperative mood"
+    "D202",  # Allow blank line after docstring
     ]
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"

@@ -1,6 +1,6 @@
 """helpers.py: misc helper functions."""
 
-from typing import Iterator, TypeVar, Callable, Generic
+from typing import Iterator, TypeVar, Generic
 import math
 
 try:
@@ -21,13 +21,43 @@ demisemicircle = math.radians(90)
 hemidemisemicircle = math.radians(45)
 
 def angle_between(p1: 'rai.typing.Point', p2: 'rai.typing.Point') -> float:
-    """Angle between two points."""
+    """
+    Calculate angle between two points.
+
+    Parameters
+    ----------
+    p1
+        The first point
+    p2
+        The second point
+
+    Returns
+    -------
+    float
+        The angle, in [numpy convention](coords-transforms.md)
+
+    """
     x = p2[0] - p1[0]
     y = p2[1] - p1[1]
     return math.atan2(y, x)
 
 def polar(arg: float, mod: float = 1) -> 'rai.typing.Point':
-    """Construct an XY point from an argument and modulus."""
+    """
+    Construct an XY point from an argument and modulus.
+
+    Parameters
+    ----------
+    arg
+        The argument (angle) in
+        [numpy convention](coords-transforms.md)
+    mod
+        The modulus/magnitue/length
+
+    Returns
+    -------
+    rai.typing.Point
+        The constructed point
+    """
     return (
         math.cos(arg) * mod,
         math.sin(arg) * mod
@@ -37,8 +67,16 @@ def is_compo_class(obj: type) -> bool:
     """
     Check whether an object is a CompoType.
 
-    Note that this returns False on the `rai.Compo`
-    abstract base class.
+    Parameters
+    ----------
+    obj
+        The object to check
+
+    Returns
+    -------
+    bool
+        True if `obj` is a class that inherits from `raimad.Compo`.
+        False if class IS `raimad.Compo` and in all other cases.
     """
     return (
         isinstance(obj, type)
@@ -97,7 +135,28 @@ WINGDINGS = [
     ]
 
 def wingdingify(value: int) -> str:
-    """Encode an integer with a bunch of symbols."""
+    r"""
+    Encode an integer into a string of colorful symbols.
+
+    The symbols are given color using ANSI escape sequences
+    i.e. they will only be visible in the terminal.
+
+    Parameters
+    ----------
+    value
+        The integer to encode
+
+    Returns
+    -------
+    str
+        The encoded string.
+
+    Example
+    -------
+    raimad.wingdingify(id(None))
+        '\x1b[0;31m╝ \x1b[0;31m/ \x1b[0;31m┴ \x1b[0;31m▲ \
+        \x1b[0;34m╯ \x1b[0;34m╝ \x1b[0;31m╮ \x1b[0m'
+    """
     return ''.join((
         custom_base(value, WINGDINGS),
         '\033[0m',
@@ -105,7 +164,7 @@ def wingdingify(value: int) -> str:
 
 T = TypeVar('T')
 R = TypeVar('R')
-class Infix(Generic[T, R]):
+class _Infix(Generic[T, R]):
     left: T | None
 
     def __init__(self) -> None:
@@ -125,13 +184,33 @@ class Infix(Generic[T, R]):
     def __call__(self, left: T, right: T) -> R:
         raise NotImplementedError() ## TODO undo
 
-class Midpoint(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+class Midpoint(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+    """
+    Infix operator for calculating midpoint of points.
+
+    See docstring of __call__ for more info.
+    """
+
     def __call__(
             self,
             p1: 'rai.typing.PointLike',
             p2: 'rai.typing.PointLike'
             ) -> 'rai.typing.PointLike':
-        """Midpoint between two points."""
+        """
+        Get midpoint between two points.
+
+        Parameters
+        ----------
+        p1
+            The first point
+        p2
+            The second point
+
+        Returns
+        -------
+        rai.typing.Point
+            The midpoint
+        """
         return (
             (p1[0] + p2[0]) / 2,
             (p1[1] + p2[1]) / 2,
@@ -140,12 +219,33 @@ class Midpoint(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 midpoint = Midpoint()
 # TODO more than 1 input
 
-class Add(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+class Add(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+    """
+    Infix operator for adding points.
+
+    See docstring of __call__ for more info.
+    """
+
     def __call__(
             self,
             p1: 'rai.typing.PointLike',
             p2: 'rai.typing.PointLike'
             ) -> 'rai.typing.PointLike':
+        """
+        Add together two points.
+
+        Parameters
+        ----------
+        p1
+            One point
+        p2
+            Another point
+
+        Returns
+        -------
+        rai.typing.PointLike
+            The sum of p1 and p2
+        """
         return (
             p1[0] + p2[0],
             p1[1] + p2[1],
@@ -153,12 +253,33 @@ class Add(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
 add = Add()
 
-class Sub(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+class Sub(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+    """
+    Infix operator for subtracting points.
+
+    See docstring of __call__ for more info.
+    """
+
     def __call__(
             self,
             p1: 'rai.typing.PointLike',
             p2: 'rai.typing.PointLike'
             ) -> 'rai.typing.PointLike':
+        """
+        Subtract one point from another.
+
+        Parameters
+        ----------
+        p1
+            The point to be subtracted from
+        p2
+            The point to subtract
+
+        Returns
+        -------
+        rai.typing.PointLike
+            The resulting point.
+        """
         return (
             p1[0] - p2[0],
             p1[1] - p2[1],
@@ -166,12 +287,35 @@ class Sub(Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
 sub = Sub()
 
-class Eq(Infix['rai.typing.PointLike', bool]):
+class Eq(_Infix['rai.typing.PointLike', bool]):
+    """
+    Infix operator for testing point equality.
+
+    See docstring of __call__ for more info.
+    """
+
     def __call__(
             self,
             p1: 'rai.typing.PointLike',
             p2: 'rai.typing.PointLike'
             ) -> bool:
+        """
+        Check whether two points are the same.
+
+        Parameters
+        ----------
+        p1
+            The first point
+        p2
+            The second point
+
+        Returns
+        -------
+        bool
+            True if the euclidean distance between `p1` and `p2`
+            is less than `rai.epsilon`.
+            False otherwise.
+        """
         return rai.affine.norm((
             p1[0] - p2[0],
             p1[1] - p2[1],
@@ -183,6 +327,21 @@ def distance_between(
         p1: 'rai.typing.Point',
         p2: 'rai.typing.Point'
         ) -> float:
+    """
+    Get euclidean distance between two points.
+
+    Parameters
+    ----------
+    p1
+        The first point
+    p2
+        The second point
+
+    Returns
+    -------
+    float
+        Euclidean distance between two points
+    """
 
     return rai.affine.norm((
         p1[0] - p2[0],

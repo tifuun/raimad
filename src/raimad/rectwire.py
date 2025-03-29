@@ -25,6 +25,23 @@ class RectWire(rai.Compo):
             p2: 'rai.typing.Point',
             width: float,
             ) -> None:
+        """
+        Make RectWire betweent two points.
+
+        Parameters
+        ----------
+        p1
+            The first point
+        p2
+            The second point
+        width
+            Width of rectwire
+
+        Returns
+        -------
+        Self
+            The newly construct RectWire object
+        """
 
         angle = rai.angle_between(p1, p2)
 
@@ -51,6 +68,23 @@ class RectWire(rai.Compo):
             p2: 'rai.typing.Point',
             width: float,
             ) -> Self:
+        """
+        Make RectWire betweent two points.
+
+        Parameters
+        ----------
+        p1
+            The first point
+        p2
+            The second point
+        width
+            Width of rectwire
+
+        Returns
+        -------
+        Self
+            The newly construct RectWire object
+        """
         return cls(p1, p2, width)
 
     @classmethod
@@ -61,6 +95,26 @@ class RectWire(rai.Compo):
             length: float,
             width: float,
             ) -> Self:
+        """
+        Make RectWire from polar coordinates.
+
+        Parameters
+        ----------
+        p1
+            Point where the RectWire starts
+        angle
+            Angle of rectwire
+            in [numpy convention](coords-transforms.md)
+        length
+            Length of rectwire
+        width
+            Width of rectwire
+
+        Returns
+        -------
+        Self
+            The newly construct RectWire object
+        """
         step = rai.polar(angle, length)
         p2 = (
             p1[0] + step[0],

@@ -7,8 +7,7 @@ import subprocess
 import shutil
 import shlex
 from pathlib import Path
-
-import sys
+from typing import NoReturn
 
 import raimad as rai
 
@@ -23,20 +22,20 @@ except ImportError:
 except AttributeError:
     IS_NOTEBOOK = False
 
-def is_native_klayout_installed() -> bool:
+def _is_native_klayout_installed() -> bool:
     """Check whether KLayout is installed natively (Linux)."""
     return bool(shutil.which('klayout'))
 
-def is_klayout_installed_win() -> bool:
+def _is_klayout_installed_win() -> bool:
     """Check whether KLayout is installed (Windows)."""
     appdata = os.getenv('APPDATA')
     return Path(rf"{appdata}\KLayout\klayout_app.exe").exists()
 
-def is_flatpak_installed() -> bool:
+def _is_flatpak_installed() -> bool:
     """Check whether Flatpak is installed (Linux)."""
     return bool(shutil.which('flatpak'))
 
-def is_flatpak_klayout_installed() -> bool:
+def _is_flatpak_klayout_installed() -> bool:
     """Checked whether KLayout is installed via flatpak (Linux)."""
     result = subprocess.run(
         ["flatpak", "list", "--app", "--columns=application"],
@@ -46,7 +45,7 @@ def is_flatpak_klayout_installed() -> bool:
     )
     return "de.klayout.KLayout" in result.stdout
 
-def get_custom_cifview_command() -> str | None:
+def _get_custom_cifview_command() -> str | None:
     """Check if an env variable set that specifies a custom CIF viewer."""
     return (
         os.environ.get("RAIMAD_CIF_VIEWER")
@@ -56,7 +55,7 @@ def get_custom_cifview_command() -> str | None:
         None
         )
 
-def get_klayout_app_mac() -> str | None:
+def _get_klayout_app_mac() -> str | None:
     """Get path to klayout.app on Mac OS, None if not installed."""
     result = subprocess.run(
         [
@@ -73,7 +72,7 @@ def get_klayout_app_mac() -> str | None:
         return result
     return None
 
-def is_klayout_running() -> bool:
+def _is_klayout_running() -> bool:
     """Check whether klayout is already running."""
 
     if platform.system() in {"Linux", "Darwin"}:
@@ -97,11 +96,19 @@ def is_klayout_running() -> bool:
         "Contact maybetree and request support."
         )
 
+def _bail() -> NoReturn:
+    raise NotImplementedError(
+        'I could not figure out how to show you the CIF file. '
+        'Please install KLayout. '
+        'Is KLayout already installed at a non-standard path, '
+        'or would you like to use a different CIF viewer? '
+        'Then set the following environment variable: '
+        'CIF_VIEWER="your_viewer_program __FILE__". '
+        )
 
-def get_cifview_args(file: str) -> tuple[str, ...]:
+def _get_cifview_args(file: str) -> tuple[str, ...]:
     """Get a command to open `file` in a CIF viewer."""
-
-    custom_command = get_custom_cifview_command()
+    custom_command = _get_custom_cifview_command()
     if custom_command:
         return (
             *(
@@ -113,11 +120,11 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
             )
 
     if platform.system() == "Linux":
-        if is_native_klayout_installed():
+        if _is_native_klayout_installed():
             return ("klayout", file)
 
-        if is_flatpak_installed():
-            if is_flatpak_klayout_installed():
+        if _is_flatpak_installed():
+            if _is_flatpak_klayout_installed():
                 return (
                     "flatpak",
                     "run",
@@ -128,49 +135,27 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
                     "@@"
                     )
 
-        raise Exception(
-            'I could not figure out how to show you the CIF file. '
-            'Please install KLayout using your system package manager '
-            'or flatpak. '
-            'To use a different CIF viewer '
-            '(or KLayout installed at a custom path) '
-            'set the following environment variable: '
-            'CIF_VIEWER="your_viewer_program __FILE__". '
-            )
+        _bail()
 
     elif platform.system() == "Windows":
-        if is_klayout_installed_win():
+        if _is_klayout_installed_win():
             appdata = os.getenv('APPDATA')
             return (
                 rf"{appdata}\KLayout\klayout_app.exe",
                 file,
                 )
 
-        raise Exception(
-            'I could not figure out how to show you the CIF file. '
-            'Please install KLayout. '
-            'Is KLayout already installed at a non-standard path, '
-            'or would you like to use a different CIF viewer? '
-            'Then set the following environment variable: '
-            'CIF_VIEWER="your_viewer_program __FILE__". '
-            )
+        _bail()
 
     elif platform.system() == "Darwin":
-        app = get_klayout_app_mac()
+        app = _get_klayout_app_mac()
         if app:
             return (
                 f"{app}/Contents/MacOS/klayout",
                 file
                 )
 
-        raise Exception(
-            'I could not figure out how to show you the CIF file. '
-            'Please install KLayout. '
-            'Is KLayout already installed at a non-standard path, '
-            'or would you like to use a different CIF viewer? '
-            'Then set the following environment variable: '
-            'CIF_VIEWER="your_viewer_program __FILE__". '
-            )
+        _bail()
 
     raise NotImplementedError(
         "raimad.show() is not available on your platform yet. "
@@ -178,8 +163,28 @@ def get_cifview_args(file: str) -> tuple[str, ...]:
         )
 
 def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
-    """Export `compo` and open it in a CIF viewer."""
+    """
+    Export component and show it to the user.
 
+    If running inside a jupyter notebook, this will
+    render the component to SVG.
+    If running normally, this will try to open a CIF viewer.
+
+    Parameters
+    ----------
+    compo
+        The component instance to show
+    ignore_running
+        If true, export component and open cif viewer
+        regardless of whether or not it's already running.
+        If false, only export component if the
+        cif viewer is already running.
+
+    Raises
+    ------
+    NotImplementedError
+        if RAIMAD cannot figure out how to show you the component.
+    """
     if IS_NOTEBOOK:
         IPython.display.display(compo)
         return
@@ -188,11 +193,11 @@ def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
     rai.export_cif(compo, file)
     print(f"Saved to {file}")
 
-    if not ignore_running and is_klayout_running():
+    if not ignore_running and _is_klayout_running():
         print("Klayout already running.")
         return
 
-    args = get_cifview_args(str(file))
+    args = _get_cifview_args(str(file))
     print(f"Running {args}...")
 
     subprocess.Popen(args)

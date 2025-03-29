@@ -174,6 +174,22 @@ class Proxy:
                  _autogenned: bool = False,
                  _deepcopied: bool = False,
                  ):
+        """
+        Create new Proxy.
+
+        Do not instantiate Proxies directly
+        unless you have a good reason to.
+        Use `Compo.proxy()` instead.
+
+        Parameters
+        ----------
+        compo
+            The compo or proxy that the new proxy will point to
+        lmap
+            Layer map shorthand for the new proxy
+        transform:
+            Transformation for the new proxy (None for identity transform)
+        """
         self._cif_linked = False
         self._cif_link = _cif_link
         self.autogenned = _autogenned
@@ -186,10 +202,13 @@ class Proxy:
         """
         Get all geometries of this proxy.
 
-        This function returns all geometries
-        (i.e. all raw geometries as well as subcompos)
-        of the CompoLike pointed to by this proxy,
-        as seen through this proxy.
+        Returns
+        -------
+        rai.typing.Geoms
+            Returns all geometries
+            (i.e. all raw geometries as well as subcompos)
+            of the CompoLike pointed to by this proxy,
+            as seen through this proxy.
         """
         return {
             self.lmap[layer]: [
@@ -201,7 +220,20 @@ class Proxy:
             }
 
     def get_flat_transform(self, maxdepth: int = -1) -> 'rai.typing.Transform':
-        """Get flattened transform from tower of proxies."""
+        """
+        Get flattened transform from tower of proxies.
+
+        Parameters
+        ----------
+        maxdepth
+            Stop at this many proxies. -1 means no limit.
+
+        Returns
+        -------
+        rai.typing.Transform
+            A new transform that is eqiuivalent to applying
+            all transform in this proxy tower.
+        """
         if maxdepth == 0 or isinstance(self.compo, rai.Compo):
             return self.transform.copy()
 
@@ -216,7 +248,20 @@ class Proxy:
             )
 
     def get_flat_lmap(self, maxdepth: int = -1) -> LMap:
-        """Get flattened lmap from tower of proxies."""
+        """
+        Get flattened layermap from tower of proxies.
+
+        Parameters
+        ----------
+        maxdepth
+            Stop at this many proxies. -1 means no limit.
+
+        Returns
+        -------
+        LMap
+            A new layermap that is eqiuivalent to applying
+            all layermaps in this proxy tower successibely.
+        """
         if maxdepth == 0 or isinstance(self.compo, rai.Compo):
             return self.lmap.copy()
 
@@ -229,10 +274,13 @@ class Proxy:
         """
         Get the raw geometries as seen through this proxy.
 
-        This function returns the raw geometries
-        (i.e. NOT geometries defined in subcompos)
-        defined in the CompoLike pointed to by this Proxy,
-        as seen through this proxy.
+        Returns
+        -------
+        rai.typing.Geoms
+            Returns the raw geometries
+            (i.e. NOT geometries defined in subcompos)
+            defined in the CompoLike pointed to by this Proxy,
+            as seen through this proxy.
         """
         return {
             self.lmap[layer]: [
@@ -248,10 +296,13 @@ class Proxy:
         """
         Get subcompos of the CompoLike pointed to by this proxy.
 
-        A special `SubcompoContainer` is returned
-        that is aware that you're looking at it through a proxy,
-        so all of the subcompos
-        will be wrapped in copies of this proxy.
+        Returns
+        -------
+        SubcompoContainer
+            A special `SubcompoContainer` is returned
+            that is aware that you're looking at it through a proxy,
+            so all of the subcompos
+            will be wrapped in copies of this proxy.
         """
         new = rai.SubcompoContainer(
             self.final().subcompos._dict,
@@ -263,11 +314,26 @@ class Proxy:
         #return self.compo.subcompos._get_proxy_view(self)
 
     def final(self) -> 'rai.typing.Compo':
-        """Return the compo at the bottom of a tower of proxies."""
+        """
+        Return the compo at the bottom of a tower of proxies.
+
+        Returns
+        -------
+        rai.typing.Compo
+            The compo at the bottom of a tower of proxies
+        """
         return self.compo.final()
 
     def final_p(self) -> 'rai.typing.Proxy':
-        """Return the proxy at the bottom of a tower of proxies."""
+        """
+        Return the proxy at the bottom of a tower of proxies.
+
+        Returns
+        -------
+        rai.typing.Compo
+            The proxy at the bottom of a tower of proxies --
+            i.e. the second-to-last element in the tower of proxies.
+        """
         if isinstance(self.compo, rai.Compo):
             return self
         return self.compo.final_p()
@@ -276,25 +342,51 @@ class Proxy:
         """
         Measure depth of a tower of proxies.
 
-        The depth of a compo is 0,
-        a proxy pointing to a compo is 1,
-        a proxy pointing to a proxy pointing to a compo is 2,
-        and so forth.
+        Returns
+        -------
+        int
+            0 if called on a compo,
+            1 if called on a proxy of a compo,
+            2 if called on a proxy of a proxy of a compo,
+            and so on.
         """
         return self.compo.depth() + 1
 
     def descend(self) -> 'Iterator[rai.typing.CompoLike]':
-        """Descend a tower of proxies to the compo at the bottom."""
+        """
+        Descend a tower of proxies to the compo at the bottom.
+
+        Yields
+        ------
+        rai.typing.CompoLike
+            Yields all of the proxies in the tower,
+            and the compo at the very bottom.
+        """
         yield self
         yield from self.compo.descend()
 
     def descend_p(self) -> 'Iterator[rai.typing.Proxy]':
-        """Descend a tower of proxies to the lowest proxy."""
+        """
+        Descend a tower of proxies to the lowest proxy.
+
+        Yields
+        ------
+        rai.typing.Proxy
+            Yields all of the proxies in the tower,
+            but no the compo at the bottom.
+        """
         yield self
         yield from self.compo.descend_p()
 
     def proxy(self) -> 'rai.typing.Proxy':
-        """Return a new proxy pointing to this proxy."""
+        """
+        Return a new proxy pointing to this proxy.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The new proxy
+        """
         return rai.Proxy(self)
 
     def walk_hier(self) -> 'Iterator[rai.typing.Proxy]':
@@ -305,6 +397,13 @@ class Proxy:
         subcompo hierarchy of the CompoLike pointed to by
         this proxy.
         Each node is wrapped in a copy of this proxy.
+
+        Yields
+        ------
+        rai.typing.Proxy
+            For every subcomponent in the hierarchy,
+            a copy of this proxy tower (i.e. self.deep_copy_reassign)
+            is returned that points to the subcomponent.
         """
         # TODO test this?
         for subcompo in self.compo.walk_hier():
@@ -316,6 +415,26 @@ class Proxy:
             _deepcopied: bool = False
             ) -> 'rai.typing.Proxy':
         """
+        Make a shallow copy of this proxy.
+
+        This function returns a new proxy that is a copy of this proxy.
+        If this proxy points to a different proxy, the target
+        proxy is NOT coppied.
+
+        In other words,
+        if the current proxy is a proxy tower,
+        only the topmost proxy is copied.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            Copy of this proxy
+
+        SeeAlso
+        -------
+        self.shallow_copy_reassign,
+        self.deep_copy,
+        self.deep_copy_reassign
         """
         return type(self)(
             self.compo,
@@ -332,6 +451,27 @@ class Proxy:
             _deepcopied: bool = False,
             ) -> 'rai.typing.Proxy':
         """
+        Make a shallow copy of this proxy and reassign to a new CompoLike.
+
+        This function returns a new proxy that is a copy of this proxy,
+        but reassigned to `new_compo`.
+
+        if the current proxy is a proxy tower,
+        the proxies below this one are esentially ignored.
+        The returned proxy is always pointing directly to `new_compo`,
+        and the layermap and transform is exactly the same
+        as this proxy.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            Copy of this proxy reassigned to `new_compo`
+
+        SeeAlso
+        -------
+        self.shallow_copy,
+        self.deep_copy,
+        self.deep_copy_reassign
         """
         return type(self)(
             new_compo,
@@ -345,6 +485,25 @@ class Proxy:
             self,
             _autogenned: bool = False,
             ) -> 'rai.typing.Proxy':
+        """
+        Make a deep copy of this proxy.
+
+        If this proxy is pointing directly to a compo,
+        then this method is identical to `self.shallow_copy`.
+        If, however, this proxy is a proxy tower,
+        then all of the proxies in the tower are copied.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            Deep copy of this proxy
+
+        SeeAlso
+        -------
+        self.shallow_copy,
+        self.shallow_copy_reassign,
+        self.deep_copy_reassign
+        """
 
         if isinstance(self.compo, rai.Compo):
             return self.shallow_copy(
@@ -370,6 +529,26 @@ class Proxy:
             _autogenned: bool = False,
             _deepcopied: bool = False,
             ) -> 'rai.typing.Proxy':
+        """
+        Make a deep copy of this proxy and reassign to `new_compo`.
+
+        If this proxy is pointing directly to a compo,
+        then this method is identical to `self.shallow_copy_reassign`.
+        If, however, this proxy is a proxy tower,
+        then all of the proxies in the tower are copied,
+        and the bottom-most proxy is reassigned to `new_compo`.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            Deep copy of this proxy reassigned to `new_compo`.
+
+        SeeAlso
+        -------
+        self.shallow_copy,
+        self.shallow_copy_reassign,
+        self.deep_copy
+        """
 
         if isinstance(self.compo, rai.Compo):
             return self.shallow_copy_reassign(
@@ -417,7 +596,14 @@ class Proxy:
             )
 
     def _str(self, depth: int = 0) -> str:
-        """Return string representation of this proxy."""
+        """
+        Return string representation of proxy.
+
+        Returns
+        -------
+        str
+            TODO example string
+        """
         # FIXME refactor this spaghetti
         return ''.join((
             '<' * (depth == 0),
@@ -432,6 +618,14 @@ class Proxy:
             ))
 
     def __str__(self) -> str:
+        """
+        Return string representation of proxy.
+
+        Returns
+        -------
+        str
+            TODO example string
+        """
         return self._str()
 
         #stack = ''.join([
@@ -446,7 +640,14 @@ class Proxy:
         #    )
 
     def __repr__(self) -> str:
-        """Return string representation of this proxy."""
+        """
+        Return string representation of proxy.
+
+        Returns
+        -------
+        str
+            TODO example string
+        """
         return self.__str__()
 
     # Transform functions #
@@ -584,8 +785,8 @@ class Proxy:
         """
         Rotate this proxy, possibly around a point.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         angle : float
             Rotate by this many radians in the positive orientation
         x : float
@@ -602,13 +803,43 @@ class Proxy:
         return self
 
     def map(self, lmap_shorthand: 'rai.typing.LMapShorthand') -> Self:
-        """Apply layermap to proxy."""
+        """
+        Apply a layermap shorthand to a proxy.
+
+        Parameters
+        ----------
+        lmap_shorthand
+            The layermap shorthand to apply
+
+        Returns
+        -------
+        Self
+            self is returned to allow method chaining.
+
+        Examples
+        --------
+        TODO examples
+
+        SeeAlso
+        -------
+        TODO link to doc page
+        """
+
         self.lmap = LMap(lmap_shorthand)
         return self
 
     @property
     def marks(self) -> ProxiedMarksContainer:
-        """Get marks of proxy."""
+        """
+        Get the marks of the CompoLike pointed to by this proxy.
+
+        Returns
+        -------
+        ProxiedMarksContainer
+            A special `ProxiesMarksContainer` is returned
+            which can be used to query the underlying CompoLike's
+            marks as seen through this proxy.
+        """
         return ProxiedMarksContainer(
             self,
             self.compo.marks._dict,
@@ -619,7 +850,22 @@ class Proxy:
     # TODO same as compo -- some sort of reuse?
     @property
     def bbox(self) -> 'rai.BoundBBox':
-        """Get bbox of proxy."""
+        """
+        Get a BoundBBox pointing to this proxy.
+
+        Returns
+        -------
+        rai.BoundBBox
+            A BoundBBox pointing to this proxy
+
+        Examples
+        --------
+        TODO examples
+
+        SeeAlso
+        -------
+        TODO doc page link
+        """
         bbox = rai.BoundBBox(proxy=self)
         for geoms in self.steamroll().values():
             for geom in geoms:
@@ -631,6 +877,8 @@ class Proxy:
         """
         Move this proxy so its bbox is to the left of the target proxy.
 
+        Diagram
+        -------
          ________
         |        |
         |        |________
@@ -656,6 +904,8 @@ class Proxy:
         """
         Move this proxy so its bbox is to the right of the target proxy.
 
+        Diagram
+        -------
                   ________
                  |        |
          ________|        |
@@ -681,6 +931,8 @@ class Proxy:
         """
         Move this proxy so its bbox is directly above the target proxy.
 
+        Diagram
+        -------
          ________________ 
         |                |
         |      self      |
@@ -706,6 +958,8 @@ class Proxy:
         """
         Move this proxy so its bbox is directly below the target proxy.
 
+        Diagram
+        -------
              ________ 
             |        |
             | target |
@@ -734,6 +988,15 @@ class Proxy:
         but rather a convention used by Jupyter Notebook
         and related tools.
         We also use it in RAIMARK.
+
+        Returns
+        -------
+        str
+            String containing SVG representation of component.
+
+        SeeAlso
+        -------
+        rai.export_svg
         """
         return rai.export_svg(self)
 

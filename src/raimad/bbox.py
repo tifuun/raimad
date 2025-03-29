@@ -81,8 +81,8 @@ class AbstractBBox(Generic[T]):
         bool
             Whether or not the bbox is empty.
 
-        See Also
-        --------
+        SeeAlso
+        -------
         BBox.assert_nonempty()
         """
         return (
@@ -105,8 +105,8 @@ class AbstractBBox(Generic[T]):
         ------
         EmptyBBoxError
 
-        See Also
-        --------
+        SeeAlso
+        -------
         BBox.is_empty()
         """
         if self.is_empty():
@@ -306,12 +306,15 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the MIDDLE of the bbox.
 
-        Like this:
-        .-.-.
-        |   |
-        . X .
-        |   |
-        ._._.
+        Diagram
+        -------
+
+        +--+--+
+        |     |
+        +  o  +
+        |     |
+        +--+--+
+
 
         Raises
         ------
@@ -327,12 +330,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the TOP MIDDLE of the bbox.
 
-        Like this:
-        .-X-.
-        |   |
-        . . .
-        |   |
-        ._._.
+        Diagram
+        -------
+
+        +--o--+
+        |     |
+        +  +  +
+        |     |
+        +--+--+
 
         Raises
         ------
@@ -348,12 +353,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the BOTTOM MIDDLE of the bbox.
 
-        Like this:
-        .-.-.
-        |   |
-        . . .
-        |   |
-        ._X_.
+        Diagram
+        -------
+
+        +--+--+
+        |     |
+        +  +  +
+        |     |
+        +--o--+
 
         Raises
         ------
@@ -369,12 +376,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the MIDDLE LEFT of the bbox.
 
-        Like this:
-        .-.-.
-        |   |
-        X . .
-        |   |
-        ._._.
+        Diagram
+        -------
+
+        +--+--+
+        |     |
+        o  +  +
+        |     |
+        +--+--+
 
         Raises
         ------
@@ -390,12 +399,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the MIDDLE RIGHT of the bbox.
 
-        Like this:
-        .-.-.
-        |   |
-        . . X
-        |   |
-        ._._.
+        Diagram
+        -------
+
+        +--+--+
+        |     |
+        +  +  o
+        |     |
+        +--+--+
 
         Raises
         ------
@@ -411,12 +422,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the TOP LEFT of the bbox.
 
-        Like this:
-        X-.-.
-        |   |
-        . . .
-        |   |
-        ._._.
+        Diagram
+        -------
+
+        o--+--+
+        |     |
+        +  +  +
+        |     |
+        +--+--+
 
         Raises
         ------
@@ -432,12 +445,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the TOP RIGHT of the bbox.
 
-        Like this:
-        .-.-X
-        |   |
-        . . .
-        |   |
-        ._._.
+        Diagram
+        -------
+
+        +--+--o
+        |     |
+        +  +  +
+        |     |
+        +--+--+
 
         Raises
         ------
@@ -453,12 +468,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the BOTTOM LEFT of the bbox.
 
-        Like this:
-        .-.-.
-        |   |
-        . . .
-        |   |
-        X_._.
+        Diagram
+        -------
+
+        +--+--+
+        |     |
+        +  +  +
+        |     |
+        o--+--+
 
         Raises
         ------
@@ -474,12 +491,14 @@ class AbstractBBox(Generic[T]):
         """
         Get the point in the middle of the bbox.
 
-        Like this:
-        .-.-.
-        |   |
-        . . .
-        |   |
-        ._._X
+        Diagram
+        -------
+
+        +--+--+
+        |     |
+        +  +  +
+        |     |
+        +--+--o
 
         Raises
         ------
