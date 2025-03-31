@@ -415,8 +415,7 @@ fortunes_all = [
 
 def fortune(category: str | None = None) -> str:
     """
-    Choose a random entry from RAIMAD's repository of
-    one-size-fits-all wisdoms and questionable quotations.
+    Choose a random entry from RAIMAD's collection of fortunes.
 
     Parameters
     ----------
@@ -430,7 +429,8 @@ def fortune(category: str | None = None) -> str:
     Returns
     -------
     str
-        A randomly chosen questionable quotation
+        A randomly chosen one-size-fits-all wisdom or
+        questionable quotation.
     """
 
     if not category:
