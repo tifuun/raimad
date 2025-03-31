@@ -356,6 +356,28 @@ class Proxy:
         """
         Descend a tower of proxies to the compo at the bottom.
 
+        Diagram
+        -------
+
+        +-------+
+        |  self | ----> yield
+        +---+---+
+            |
+            v
+        +---+---+
+        | proxy | ----> yield
+        +---+---+
+            |
+            v
+        +---+---+
+        | proxy | ----> yield
+        +---+---+
+            |
+            v
+        +---+---+
+        | compo | ----> yield
+        +-------+
+
         Yields
         ------
         rai.typing.CompoLike
@@ -368,6 +390,28 @@ class Proxy:
     def descend_p(self) -> 'Iterator[rai.typing.Proxy]':
         """
         Descend a tower of proxies to the lowest proxy.
+
+        Diagram
+        -------
+
+        +-------+
+        |  self | ----> yield
+        +---+---+
+            |
+            v
+        +---+---+
+        | proxy | ----> yield
+        +---+---+
+            |
+            v
+        +---+---+
+        | proxy | ----> yield
+        +---+---+
+            |
+            v
+        +---+---+
+        | compo | -/--> dont yield
+        +-------+
 
         Yields
         ------
@@ -425,6 +469,30 @@ class Proxy:
         if the current proxy is a proxy tower,
         only the topmost proxy is copied.
 
+        Diagram
+        -------
+
+        +-------+        .----. 
+        |  self | ----> | copy | <-- this is returned
+        +---+---+        '--+-' 
+            |               |
+            |  .-----------' 
+            | |
+            v v
+        +---+---+
+        | proxy |
+        +---+---+
+            |
+            v
+        +---+---+
+        | proxy |
+        +---+---+
+            |
+            v
+        +---+---+
+        | compo |
+        +-------+
+
         Returns
         -------
         rai.typing.Proxy
@@ -462,6 +530,28 @@ class Proxy:
         and the layermap and transform is exactly the same
         as this proxy.
 
+        Diagram
+        -------
+
+        +-------+        .----. 
+        |  self | ----> | copy | <-- this is returned
+        +---+---+        '--+-' 
+            |               |               
+            v               |               
+        +---+---+           |               
+        | proxy |           |             
+        +---+---+           |              
+            |               |                
+            v               |            
+        +---+---+           |             
+        | proxy |           |             
+        +---+---+           |              
+            |               |               
+            v               v               
+        +---+---+      +----+------+
+        | compo |      | new_compo |
+        +-------+      +-----------+
+
         Returns
         -------
         rai.typing.Proxy
@@ -497,6 +587,31 @@ class Proxy:
         -------
         rai.typing.Proxy
             Deep copy of this proxy
+
+
+        Diagram
+        -------
+
+        +-------+        .----. 
+        |  self | ----> | copy | <-- this is returned
+        +---+---+        '--+-' 
+            |               |                        
+            v               v                        
+        +---+---+        .--+--.                     
+        | proxy | ----> | copy  |                  
+        +---+---+        '--+--'                    
+            |               |                         
+            v               v                     
+        +---+---+        .--+--.                   
+        | proxy | ----> | copy  |                  
+        +---+---+        '--+--'                    
+            |               |                        
+            |  .-----------'                         
+            | |                                       
+            v v                                      
+        +---+-+-+                   
+        | compo |                   
+        +-------+                   
 
         SeeAlso
         -------
@@ -537,6 +652,30 @@ class Proxy:
         If, however, this proxy is a proxy tower,
         then all of the proxies in the tower are copied,
         and the bottom-most proxy is reassigned to `new_compo`.
+
+        Diagram
+        -------
+
+        +-------+        .----. 
+        |  self | ----> | copy | <-- this is returned
+        +---+---+        '--+-' 
+            |               |                        
+            v               v                        
+        +---+---+        .--+--.                     
+        | proxy | ----> | copy  |                  
+        +---+---+        '--+--'                    
+            |               |                         
+            v               v                     
+        +---+---+        .--+--.                   
+        | proxy | ----> | copy  |                  
+        +---+---+        '--+--'                    
+            |               |                        
+            +               |                        
+            |               |                        
+            v               v                        
+        +---+---+      +----+------+
+        | compo |      | new_compo |
+        +-------+      +-----------+
 
         Returns
         -------
@@ -873,7 +1012,7 @@ class Proxy:
         return bbox
 
     # snapping functions #
-    def snap_left(self, other: Self) -> Self:
+    def snap_left(self, target: Self) -> Self:
         """
         Move this proxy so its bbox is to the left of the target proxy.
 
@@ -897,10 +1036,10 @@ class Proxy:
         Self
             This proxy is returned to allow method chaining.
         """
-        self.bbox.mid_right.to(other.bbox.mid_left)
+        self.bbox.mid_right.to(target.bbox.mid_left)
         return self
 
-    def snap_right(self, other: Self) -> Self:
+    def snap_right(self, target: Self) -> Self:
         """
         Move this proxy so its bbox is to the right of the target proxy.
 
@@ -924,10 +1063,10 @@ class Proxy:
         Self
             This proxy is returned to allow method chaining.
         """
-        self.bbox.mid_left.to(other.bbox.mid_right)
+        self.bbox.mid_left.to(target.bbox.mid_right)
         return self
 
-    def snap_above(self, other: Self) -> Self:
+    def snap_above(self, target: Self) -> Self:
         """
         Move this proxy so its bbox is directly above the target proxy.
 
@@ -950,11 +1089,11 @@ class Proxy:
         Self
             This proxy is returned to allow method chaining.
         """
-        self.bbox.bot_mid.to(other.bbox.top_mid)
+        self.bbox.bot_mid.to(target.bbox.top_mid)
         return self
 
-    # TODO other should be CompoLike not Proxy, Right??
-    def snap_below(self, other: Self) -> Self:
+    # TODO target should be CompoLike not Proxy, Right??
+    def snap_below(self, target: Self) -> Self:
         """
         Move this proxy so its bbox is directly below the target proxy.
 
@@ -977,7 +1116,7 @@ class Proxy:
         Self
             This proxy is returned to allow method chaining.
         """
-        self.bbox.top_mid.to(other.bbox.bot_mid)
+        self.bbox.top_mid.to(target.bbox.bot_mid)
         return self
 
     def _repr_svg_(self) -> str:
