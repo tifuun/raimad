@@ -151,6 +151,15 @@ class Compo:
     Options: rai.DictList[rai.Option]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Instantiate new Compo.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            All arguments and keyword arguments
+            are forwarded to `self._make()`
+        """
         self.geoms = {}
         self.subcompos = SubcompoContainer()
         self.marks = MarksContainer()
@@ -158,6 +167,11 @@ class Compo:
         self._make(*args, **kwargs)
 
     def _make(self, *args: Any, **kwargs: Any) -> None:
+        """
+        TODO doc conventions for virtual methods.
+
+        TODO
+        """
         raise NotImplementedError()
 
     @classmethod
@@ -174,6 +188,10 @@ class Compo:
         -------
         rai.typing.Partial
             The new Partial
+
+        SeeAlso
+        -------
+        TODO doc link for partial
         """
         return rai.Partial(cls, **kwargs)
 
@@ -197,6 +215,15 @@ class Compo:
         Return self.
 
         This method exists for uniformity with Proxy.final
+
+        Returns
+        -------
+        Self
+            `self` is returned
+
+        SeeAlso
+        -------
+        raimad.Proxy.final
         """
         return self
 
@@ -205,6 +232,15 @@ class Compo:
         Return the number zero.
 
         This method exists for uniformity with Proxy.depth
+
+        Returns
+        -------
+        int
+            The number 0 is returned.
+
+        SeeAlso
+        -------
+        raimad.Proxy.depth
         """
         return 0
 
@@ -212,7 +248,16 @@ class Compo:
         """
         Yield self.
 
-        This method exists for uniformity with Proxy.descend
+        This method exists for uniformity with Proxy.descend.
+
+        Yields
+        ------
+        Self
+            Yields `self`.
+
+        SeeAlso
+        -------
+        raimad.Proxy.descend
         """
         yield self
 
@@ -221,12 +266,28 @@ class Compo:
         Yield nothing.
 
         This method exists for uniformity with Proxy.descend_p
+
+        Yields
+        ------
+        None
+            Nothing is yielded.
+
+        SeeAlso
+        -------
+        raimad.Proxy.descend_p
         """
         return
         yield
 
     def proxy(self) -> 'rai.typing.Proxy':
-        """Return new Proxy pointing to this Compo."""
+        """
+        Return a new proxy pointing to this compo.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The new proxy
+        """
         return rai.Proxy(self)
 
     #@property
@@ -244,7 +305,16 @@ class Compo:
         Traverse the subcomponent hierarchy of this compo.
 
         This method will recursively walk through the entire
-        subcompo hierarchy of this compo, including self.
+        subcompo hierarchy of this compo.
+
+        Yields
+        ------
+        rai.typing.Proxy
+            TODO explain better
+
+        SeeAlso
+        -------
+        raimad.Proxy.walk_hier
         """
         yield self
         for subcompo in self.subcompos.values():
@@ -258,12 +328,37 @@ class Compo:
         Do nothing to `point` and return as-is.
 
         This method exists for uniformity with Proxy.transform_point.
+
+        Parameters
+        ----------
+        point : rai.typing.PointLike
+            A point
+
+        Returns
+        -------
+        rai.typing.Point
+            The same point
+
+        SeeAlso
+        -------
+        raimad.Proxy.transform_point
         """
         return point
 
     @property
     def scale(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.scale."""
+        """
+        Deliberately unimplemented -- see Proxy.scale.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.scale
+        """
         raise TransformCompoError(
             f"Tried to scale `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -272,7 +367,18 @@ class Compo:
 
     @property
     def move(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.move."""
+        """
+        Deliberately unimplemented -- see Proxy.move.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.move
+        """
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -281,7 +387,18 @@ class Compo:
 
     @property
     def movex(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.movex."""
+        """
+        Deliberately unimplemented -- see Proxy.movex.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.movex
+        """
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -290,7 +407,18 @@ class Compo:
 
     @property
     def movey(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.movey."""
+        """
+        Deliberately unimplemented -- see Proxy.movey.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.movey
+        """
         raise TransformCompoError(
             f"Tried to move `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -299,7 +427,18 @@ class Compo:
 
     @property
     def rotate(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.rotate."""
+        """
+        Deliberately unimplemented -- see Proxy.rotate.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.rotate
+        """
         raise TransformCompoError(
             f"Tried to rotate `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -308,7 +447,18 @@ class Compo:
 
     @property
     def flip(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.flip."""
+        """
+        Deliberately unimplemented -- see Proxy.flip.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.flip
+        """
         raise TransformCompoError(
             f"Tried to flip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -317,7 +467,18 @@ class Compo:
 
     @property
     def hflip(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.hflip."""
+        """
+        Deliberately unimplemented -- see Proxy.hflip.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.hflip
+        """
         raise TransformCompoError(
             f"Tried to hflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -326,7 +487,18 @@ class Compo:
 
     @property
     def vflip(self) -> NoReturn:
-        """Deliberately unimplemented -- see Proxy.vflip."""
+        """
+        Deliberately unimplemented -- see Proxy.vflip.
+
+        Raises
+        ------
+        TransformCompoError
+            always raised.
+
+        SeeAlso
+        -------
+        raimad.Proxy.vflip
+        """
         raise TransformCompoError(
             f"Tried to vflip `{self}`, which is a Compo. "
             "Compos are not transformable; call the `.proxy()` method "
@@ -338,7 +510,22 @@ class Compo:
     # bbox functions #
     @property
     def bbox(self) -> 'rai.BBox':
-        """Get bbox of this compo."""
+        """
+        Get a BBox pointing to this proxy.
+
+        Returns
+        -------
+        rai.BBox
+            A BBox which encompasses all geometry of this compo
+
+        Examples
+        --------
+        TODO examples
+
+        SeeAlso
+        -------
+        TODO doc page link
+        """
         bbox = rai.BBox()
         for geoms in self.steamroll().values():
             for geom in geoms:
@@ -376,12 +563,21 @@ class Compo:
         end of your `_make()` function, and all of the
         proxies in the scope of `_make()` will be added as
         subcompos.
-        If you do no provide `locals()`, this function
-        will instead use arcane `inspect` magic
-        to traverse the stack and extract them automatically.
 
-        ...or, better yet, do not use this function and
-        add subcompos explicitly.
+        Better yet, don't use this function and add subcompos
+        manually.
+
+        Parameters
+        ----------
+        locs
+            This should be set to the output of `locals()`.
+            The function will use this to see what proxies were
+            defined in the caller and add them as subcompos.
+            If `None` is passed,
+            this function will instead use
+            arcane `inspect` magic
+            to traverse the stack and find the proxies
+            defined in the caller.
         """
         locs = locs or inspect.stack()[1].frame.f_locals
 
@@ -396,7 +592,19 @@ class Compo:
                 self.subcompos[name] = obj
 
     def _str(self, depth: int = 0) -> str:
-        """Get string representation of compo."""
+        """
+        Get string representation of compo.
+
+        Parameters
+        ----------
+        depth
+            Used to control indentation
+
+        Returns
+        -------
+        str
+            TODO sample string
+        """
         return ''.join((
             '<' * (depth == 0),
             '\t' * depth,
@@ -405,17 +613,45 @@ class Compo:
             ))
 
     def __str__(self) -> str:
+        """
+        Get string representation of compo.
+
+        Returns
+        -------
+        str
+            TODO sample string
+        """
         return self._str()
 
     def __repr__(self) -> str:
-        """Get string representation of compo."""
+        """
+        Get string representation of compo.
+
+        Returns
+        -------
+        str
+            TODO sample string
+        """
         return self.__str__()
 
     def _repr_svg_(self) -> str:
         """
         Make svg representation of component.
 
-        This is called by jupyter and raimark.
+        This is not an official magic method specified by Python,
+        but rather a convention used by Jupyter Notebook
+        and related tools.
+        We also use it in RAIMARK.
+
+        Returns
+        -------
+        str
+            String containing SVG representation of component.
+
+        SeeAlso
+        -------
+        rai.export_svg
+        rai.Proxy._export_svg_
         """
         return rai.export_svg(self)
 

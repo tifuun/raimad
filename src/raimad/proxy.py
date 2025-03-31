@@ -441,6 +441,7 @@ class Proxy:
         subcompo hierarchy of the CompoLike pointed to by
         this proxy.
         Each node is wrapped in a copy of this proxy.
+        TODO explain better
 
         Yields
         ------
@@ -448,6 +449,10 @@ class Proxy:
             For every subcomponent in the hierarchy,
             a copy of this proxy tower (i.e. self.deep_copy_reassign)
             is returned that points to the subcomponent.
+
+        SeeAlso
+        -------
+        raimad.Proxy.walk_hier
         """
         # TODO test this?
         for subcompo in self.compo.walk_hier():
@@ -1136,6 +1141,7 @@ class Proxy:
         SeeAlso
         -------
         rai.export_svg
+        rai.Compo._export_svg_
         """
         return rai.export_svg(self)
 
