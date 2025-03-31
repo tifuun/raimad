@@ -2,8 +2,6 @@
 
 import sys
 
-epsilon = sys.float_info.epsilon
-
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
 from raimad.helpers import (
@@ -46,7 +44,6 @@ from raimad.iters import (
     braid
     )
 from raimad.string_import import string_import
-from raimad.docparse import split_docstring
 
 from raimad.dictlist import FilteredDictList, DictList
 
@@ -93,6 +90,9 @@ from raimad.fortune import fortunes_all
 
 from raimad.snowman import Snowman
 
+
+epsilon = sys.float_info.epsilon
+
 # The function of __all__ is to specify which things get imported
 # when someone does `from raimad import *`,
 # but it also lets tools like ruff and mypy know that we're
@@ -108,6 +108,7 @@ __all__ = [
     'BoundPoint',
     'MarksContainer',
     'SubcompoContainer',
+    'ProxyableDictList',
     'AbstractBBox',
     'BBox',
     'BoundBBox',
@@ -131,7 +132,6 @@ __all__ = [
     'Snowman',
     'err',
     'cif',
-    'split_docstring',  # TODO is needed?
     'braid',
     'flatten',
     'quintles',
@@ -163,6 +163,7 @@ __all__ = [
     'gv',
     'add',
     'eq',
+    'sub',
     'epsilon',
     'show',
     'distance_between',

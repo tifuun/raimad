@@ -1,5 +1,5 @@
 """
-This file is needed for python 3.10
+Backwards compatibility for python 3.10.
 
 See
 https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
