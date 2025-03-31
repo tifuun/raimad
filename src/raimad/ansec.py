@@ -97,6 +97,47 @@ class AnSec(rai.Compo):
             dtheta: float | None = None,
             num_points: int = 100,
             ) -> Self:
+        """
+        Initialize a new AnSec from any valid combination of parameters.
+
+        Parameters
+        ----------
+        r1
+            Inner radius or None
+        r2
+            Outter radius or None
+        rmid
+            Midradius or None
+        dr
+            Radius delta or None
+        theta1
+            Angle 1 or None
+        theta2
+            Angle 2 or None
+        tmid
+            middle angle or None
+        dt
+            angle delta or None
+        num_points:
+            numbe of points to use TODO is this correct?
+
+
+        Raises
+        ------
+        AnSecRadiusNotEnoughArgumentsError
+            If not enough parameters are given
+        AnSecRadiusTooManyArgumentsError
+            If too many parameters are given
+        AnSecRadiusIncorrectArgumentsError
+            If invalid combination of arguments is given
+            TODO
+        AnSecThetaNotEnoughArgumentsError
+            If not enough parameters are given
+        AnSecThetaTooManyArgumentsError
+            If too many parameters are given
+        AnSecThetaIncorrectArgumentsError
+            If invalid combination of arguments is given
+        """
 
         r1, r2 = cls.interpret_radius(r1, r2, rmid, dr)
         theta1, theta2 = cls.interpret_theta(
@@ -115,6 +156,35 @@ class AnSec(rai.Compo):
             rmid: float | None,
             dr: float | None,
             ) -> tuple[float, float]:
+        """
+        Convert any valid combination of r1, r2, rmid, dr into r1 and r2
+
+        Parameters
+        ----------
+        r1
+            Inner radius or None
+        r2
+            Outter radius or None
+        rmid
+            Midradius or None
+        dr
+            Radius delta or None
+
+        Returns
+        -------
+        tuple[float, float]
+            Values for r1 and r2 calculated from the given
+            data are returned.
+
+        Raises
+        ------
+        AnSecRadiusNotEnoughArgumentsError
+            If not enough parameters are given
+        AnSecRadiusTooManyArgumentsError
+            If too many parameters are given
+        AnSecRadiusIncorrectArgumentsError
+            If invalid combination of arguments is given
+        """
 
         if r1 is None and r2 is None and rmid is None and dr is None:
             raise AnSecRadiusNotEnoughArgumentsError(
@@ -205,6 +275,35 @@ class AnSec(rai.Compo):
             tmid: float | None,
             dt: float | None,
             ) -> tuple[float, float]:
+        """
+        Convert any valid combination of t1, t2, tmid, dt into t1 and t2
+
+        Parameters
+        ----------
+        t1
+            Angle 1 or None
+        t2
+            Angle 2 or None
+        tmid
+            middle angle or None
+        dt
+            angle delta or None
+
+        Returns
+        -------
+        tuple[float, float]
+            Values for Theta1 and Theta2 calculated from the given
+            data are returned.
+
+        Raises
+        ------
+        AnSecThetaNotEnoughArgumentsError
+            If not enough parameters are given
+        AnSecThetaTooManyArgumentsError
+            If too many parameters are given
+        AnSecThetaIncorrectArgumentsError
+            If invalid combination of arguments is given
+        """
 
         if t1 is None and t2 is None and tmid is None and dt is None:
             raise AnSecThetaNotEnoughArgumentsError(
