@@ -15,7 +15,7 @@ FILE_STDOUT = '-'
 def cli(custom_args: Sequence[str] | None = None) -> None:
     """Parse command line arguments and execute the desired action."""
 
-    ensure_pwd_in_path()
+    _ensure_pwd_in_path()
 
     parser = _setup_parser()
 
@@ -183,11 +183,11 @@ def _process_args_export(args: argparse.Namespace) -> None:
         args.component.__name__
         )
 
-def ensure_pwd_in_path() -> None:
+def _ensure_pwd_in_path() -> None:
     try:
         pwd = os.getcwd()
     except FileNotFoundError:
-        printf(
+        print(
             "We're in a non-existent directory... WHAT is going on!?\n",
             file=sys.stderr
             )

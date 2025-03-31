@@ -27,7 +27,24 @@ class BoundPoint():
     to the bound proxy, with the BoundPoint treated as the new origin
     for the transformation.
     """
+
     def __init__(self, x: float, y: float, proxy: 'rai.typing.Proxy'):
+        """
+        Initialize new boundpoint.
+
+        Note that in normal RAIMAD usage,
+        you should not have to create boundpoints
+        manually.
+
+        Parameters
+        ----------
+        x
+            The x coordinate of the point
+        y
+            The y coordinate of the point
+        proxy
+            The proxy this to bind to
+        """
         self._x = x
         self._y = y
         self._proxy = proxy
@@ -35,13 +52,6 @@ class BoundPoint():
     def __getitem__(self, index: Literal[0, 1]) -> float:
         """
         Get the X or Y coordinate of this BoundPoint.
-
-        BoundPoints behave just like regular Points
-        (tuple of x and y),
-        meaning that you can get the X and Y coordinates using
-        the square bracket syntax:
-            - `somepoint[0]` <-- x coordinate
-            - `somepoint[y]` <-- y coordinate
 
         Parameters
         ----------
@@ -55,7 +65,13 @@ class BoundPoint():
 
         Raises
         ------
+        IndexError
             IndexError is raised if `index` is anything other than 0 or 1.
+
+        Example
+        -------
+        somepoint[0]  # X coordinate
+        somepoint[1]  # Y coordinate
         """
         if index == 0:
             return self._x
@@ -72,12 +88,24 @@ class BoundPoint():
             )
 
     def __iter__(self) -> Iterator[float]:
-        """Return an iterator of the x and y coordinates of this BoundPoint."""
+        """
+        Return an iterator of the x and y coordinates of this BoundPoint.
+
+        Returns
+        -------
+        Iterator[float]
+            Iterator containing x and y coordinate.
+
+        """
         return iter((self._x, self._y))
 
     def __eq__(self, other: object) -> bool:
         """
         Check for equality of BoundPoint.
+
+        Comparing BoundPoints using the == operator
+        (i.e. this method) may be a bad idea for the same reason
+        that comparing floats in this way is a bad idea.
 
         Parameters
         ----------
@@ -98,13 +126,6 @@ class BoundPoint():
             True if this boundpoint is equal to `other`,
             False otherwise.
 
-        Notes
-        -----
-        Comparing BoundPoints using the == operator
-        (i.e. this method) may be a bad idea for the same reason
-        that comparing floats in this way is a bad idea.
-
-        TODO add a `distance_between` helper method?
         """
         if not hasattr(other, "__getitem__"):
             return False
@@ -116,11 +137,25 @@ class BoundPoint():
             )
 
     def __repr__(self) -> str:
-        """Return string representation of this BoundPoint."""
+        """
+        Return string representation of this BoundPoint.
+
+        Returns
+        -------
+        str
+            TODO sample string
+        """
         return str(self)
 
     def __str__(self) -> str:
-        """Return string representation of this BoundPoint."""
+        """
+        Return string representation of this BoundPoint.
+
+        Returns
+        -------
+        str
+            TODO sample string
+        """
         #FIXME brackets?
         return ''.join((
             f'<({self._x}, {self._y}) bound to <\n',
@@ -198,23 +233,41 @@ class BoundPoint():
         return self._proxy
 
     def flip(self) -> 'rai.typing.Proxy':
+        #TODO add tests
         """
-        TODO add tests
+        Flip the bound proxy around this boundpoint.
+
+        Returns
+        -------
+        Self
+            self is returned to allow chaining methods.
         """
         self._proxy.transform.flip(self._x, self._y)
         return self._proxy
 
     def hflip(self) -> 'rai.typing.Proxy':
         """
-        TODO add tests
+        Flip proxy along horizontal axis passing thru this boundpoint.
+
+        Returns
+        -------
+        Self
+            self is returned to allow chaining methods.
         """
+        #TODO add tests
         self._proxy.transform.flip(self._x)
         return self._proxy
 
     def vflip(self) -> 'rai.typing.Proxy':
         """
-        TODO add tests
+        Flip the bound proxy along vertical axis passing thru this boundpoint.
+
+        Returns
+        -------
+        Self
+            self is returned to allow chaining methods.
         """
+        #TODO add tests
         self._proxy.transform.flip(self._y)
         return self._proxy
 
