@@ -1,3 +1,4 @@
+"""ansec.py -- contains AnSec class and related errors."""
 from math import radians
 
 try:
@@ -9,35 +10,35 @@ except ImportError:
 import raimad as rai
 
 class AnSecError(Exception):
-    pass
+    """Base class for AnSec errors."""
 
 class AnSecRadiusError(AnSecError):
-    pass
+    """Base class for radius-related AnSec errors."""
 
 class AnSecRadiusTooManyArgumentsError(AnSecRadiusError):
-    pass
+    """Too many radius-related parameters specified in AnSec initialization."""
 
 class AnSecRadiusNotEnoughArgumentsError(AnSecRadiusError):
-    pass
+    """Too few radius-related parameters specified in AnSec initialization."""
 
 class AnSecRadiusIncorrectArgumentsError(AnSecRadiusError):
-    pass
+    """invalid combination of radius parameters in AnSec initialization."""
 
 class AnSecThetaError(AnSecError):
-    pass
+    """Base class for angle-related AnSec errors."""
 
 class AnSecThetaTooManyArgumentsError(AnSecThetaError):
-    pass
+    """Too many angle-related parameters specified in AnSec initialization."""
 
 class AnSecThetaNotEnoughArgumentsError(AnSecThetaError):
-    pass
+    """Too few angle-related parameters specified in AnSec initialization."""
 
 class AnSecThetaIncorrectArgumentsError(AnSecThetaError):
-    pass
+    """invalid combination of angle parameters in AnSec initialization."""
 
 class AnSec(rai.Compo):
     """
-    Annular Sector
+    Annular Sector.
 
     A polygon approximating an annular sector,
     or, in working men's terms, a "pizza crust".
@@ -187,7 +188,7 @@ class AnSec(rai.Compo):
             dr: float | None,
             ) -> tuple[float, float]:
         """
-        Convert any valid combination of r1, r2, rmid, dr into r1 and r2
+        Convert any valid combination of r1, r2, rmid, dr into r1 and r2.
 
         Parameters
         ----------
@@ -306,7 +307,7 @@ class AnSec(rai.Compo):
             dt: float | None,
             ) -> tuple[float, float]:
         """
-        Convert any valid combination of t1, t2, tmid, dt into t1 and t2
+        Convert any valid combination of t1, t2, tmid, dt into t1 and t2.
 
         Parameters
         ----------

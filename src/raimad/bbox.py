@@ -28,6 +28,9 @@ class EmptyBBoxError(Exception):
 T = TypeVar('T', 'rai.typing.Point', 'rai.typing.BoundPoint', )
 class AbstractBBox(Generic[T]):
     """
+    Abstract bounding box.
+
+    This is a base class for BoundBBox and BBox.
     """
 
     max_x: float
@@ -573,10 +576,44 @@ class AbstractBBox(Generic[T]):
 
 
 class BBox(AbstractBBox['rai.typing.Point']):
+    """
+    Unbound bounding box.
+
+    BBoxes define rectangles that encompass a set of points.
+    They offer methods for easily querying the dimensions of the
+    bounding box and specific points inside it.
+    This particular variant of bbox is "unbound", meaning
+    it is not tied to any proxy.
+    """
+
     def interpolate(
             self,
             x_ratio: float,
             y_ratio: float,
             ) -> 'rai.typing.Point':
+        """
+        Find a point inside (or outside) the bbox given X and Y ratios.
+
+        So, for example, 0,0 is top left,
+        1,1 is bottom right, 0.5,0.5 is center,
+        and 0.5,1 is bottom middle.
+        The ratios may be negative or higher than 1,
+        but doing so would probably make your code difficult to understand.
+
+        Parameters
+        ----------
+        x_ratio: float
+            A number, such that 0 represents all the way to the left
+            of the bbox, and 1 represents all the way to the right.
+        y_ratio: float
+            A number, such that 0 represents all the way to the bottom
+            of the bbox, and 1 represents all the way to the top.
+
+        Raises
+        ------
+        EmptyBBoxError
+            if the bbox is empty
+
+        """
         return super()._interpolate(x_ratio, y_ratio)
 
