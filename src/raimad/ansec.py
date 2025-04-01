@@ -41,8 +41,11 @@ class AnSec(rai.Compo):
 
     A polygon approximating an annular sector,
     or, in working men's terms, a "pizza crust".
-    There are many possible ways to define an AnSec;
-    # TODO examples
+    An ansec is defined by two radii and two angles:
+    the inner radius r1, the outter radius r2,
+    the starting angle theta1 and the end angle theta2.
+    Helper functions are available to construct ansecs
+    from different measurements.
     """
 
     browser_tags = ["builtin", "polygon"]
@@ -61,6 +64,27 @@ class AnSec(rai.Compo):
             theta2: float,
             num_points: int = 100,
             ) -> None:
+        """
+        Construct and AnSec.
+
+        Parameters
+        ----------
+        r1
+            The inner radius
+        r2
+            The outter radius
+        theta1
+            The start angle
+        theta2
+            The stop angle
+        num_points
+            The number of points to use in each arc (inner and outter).
+
+        SeeAlso
+        -------
+        The factory method AnSec.from_auto can be used to construct
+        ansecs more flexibly.
+        """
 
         if abs(r1 - r2) < rai.epsilon:
             self.geoms.update({'root': [[]]})
@@ -98,7 +122,15 @@ class AnSec(rai.Compo):
             num_points: int = 100,
             ) -> Self:
         """
-        Initialize a new AnSec from any valid combination of parameters.
+        Produce a new ansec from any valid combination of parameters.
+
+        While AnSec._make requires the set of parameters
+        r1, r2, theta1, theta2,
+        this method adds additional parameters
+        rmid (the midpoint radius), dr (radius delta),
+        thetamid (midpoint angle) and dtheta (angle delta).
+        You may use any valid combination of these extended parameters
+        to make new AnSecs.
 
         Parameters
         ----------
@@ -119,24 +151,22 @@ class AnSec(rai.Compo):
         dt
             angle delta or None
         num_points:
-            numbe of points to use TODO is this correct?
-
+            number of points to use per arc (outter and inner)
 
         Raises
         ------
         AnSecRadiusNotEnoughArgumentsError
-            If not enough parameters are given
+            If not enough radius-related parameters are given
         AnSecRadiusTooManyArgumentsError
-            If too many parameters are given
+            If too many radius-related parameters are given
         AnSecRadiusIncorrectArgumentsError
-            If invalid combination of arguments is given
-            TODO
+            If invalid combination of radius-related arguments is given
         AnSecThetaNotEnoughArgumentsError
-            If not enough parameters are given
+            If not enough angle-related parameters are given
         AnSecThetaTooManyArgumentsError
-            If too many parameters are given
+            If too many angle-related parameters are given
         AnSecThetaIncorrectArgumentsError
-            If invalid combination of arguments is given
+            If invalid combination of angle-related arguments is given
         """
 
         r1, r2 = cls.interpret_radius(r1, r2, rmid, dr)
