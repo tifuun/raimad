@@ -119,6 +119,51 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
                 }
             )
 
+    def test_layers_discard(self):
+        """
+        Test that LMAPping a layer to None actually discards it.
+        (bug 2025-04-14)
+        """
+
+        class MyCompo(rai.Compo):
+            def _make(self):
+                self.subcompos.extend((
+                    rai.RectLW(10, 10).proxy().map('foo'),
+                    rai.RectLW(20, 20).proxy().map('bar'),
+                ))
+
+        compo = MyCompo()
+
+        p0 = compo.proxy()
+        p1 = compo.proxy().map({'foo': None})
+        p2 = compo.proxy().map({'bar': None})
+        p3 = compo.proxy().map({'foo': None, 'bar': None})
+        p4 = compo.proxy().map({'foo': None, 'bar': 'ayy'})
+        p5 = compo.proxy().map({'foo': 'ayy', 'bar': None})
+        p6 = compo.proxy().map({'foo': 'ayy', 'bar': 'lmao'})
+
+        def layers(compo):
+            exporter = rai.cif.NoReuse(
+                compo,
+                multiplier=1,
+                )
+
+            parser = cift.Parser()
+            parser.parse(exporter.cif_string)
+            return parser.layers
+
+        self.assertEqual(layers(p0).keys(), {'foo', 'bar'})
+        self.assertEqual(layers(p1).keys(), {'bar'})
+        self.assertEqual(layers(p2).keys(), {'foo'})
+        self.assertEqual(layers(p3).keys(), set())
+        self.assertEqual(layers(p4).keys(), {'ayy'})
+        self.assertEqual(layers(p5).keys(), {'ayy'})
+        self.assertEqual(layers(p6).keys(), {'ayy', 'lmao'})
+
+        self.assertGeomsEqual(layers(p0), layer(p6))
+        self.assertGeomsEqual(layers(p1), layer(p4))
+        self.assertGeomsEqual(layers(p2), layer(p5))
+        self.assertEqual(len(layers(p3), 0)
 
 if __name__ == '__main__':
     unittest.main()
