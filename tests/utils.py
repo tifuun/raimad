@@ -2,6 +2,7 @@ from pprint import pprint
 from sys import stderr
 from typing import ClassVar
 
+from io import StringIO
 import raimad as rai
 import raimad.typing as rait
 
@@ -106,12 +107,13 @@ class GeomsEqual():
                 self.assertEqual(num_equal + num_equal_actual, length * 2)
                 # TODO What on earth!?
             except AssertionError as err:
-                print(f'ON LAYER {layer_name}', file=stderr)
-                print("ACTUAL: ", file=stderr)
-                pprint(polys_actual, stream=stderr)
-                print("expected: ", file=stderr)
-                pprint(polys_expected, stream=stderr)
-                raise err
+                stream = StringIO()
+                print(f'ON LAYER {layer_name}', file=stream)
+                print("ACTUAL: ", file=stream)
+                pprint(polys_actual, stream=stream)
+                print("expected: ", file=stream)
+                pprint(polys_expected, stream=stream)
+                raise AssertionError(stream.getvalue()) from err
 
         return True
 
