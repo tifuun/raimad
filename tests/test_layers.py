@@ -8,7 +8,9 @@ import unittest
 
 import raimad as rai
 
-class TestLayers(unittest.TestCase):
+from .utils import GeomsEqual
+
+class TestLayers(unittest.TestCase, GeomsEqual):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -60,8 +62,8 @@ class TestLayers(unittest.TestCase):
         compo = MyCompo()
 
         p0 = compo.proxy()
-        p1 = compo.proxy().map({'foo': None})
-        p2 = compo.proxy().map({'bar': None})
+        p1 = compo.proxy().map({'foo': None, 'bar': 'bar'})
+        p2 = compo.proxy().map({'foo': 'foo', 'bar': None})
         p3 = compo.proxy().map({'foo': None, 'bar': None})
         p4 = compo.proxy().map({'foo': None, 'bar': 'ayy'})
         p5 = compo.proxy().map({'foo': 'ayy', 'bar': None})
@@ -75,9 +77,9 @@ class TestLayers(unittest.TestCase):
         self.assertEqual(set(p5.steamroll().keys()), {'ayy'})
         self.assertEqual(set(p6.steamroll().keys()), {'ayy', 'lmao'})
 
-        self.assertGeomsEqual(p0.steamroll(), p6.steamroll())
-        self.assertGeomsEqual(p1.steamroll(), p4.steamroll())
-        self.assertGeomsEqual(p2.steamroll(), p5.steamroll())
+        self.assertGeomsEqualButAllowDifferentNames(p0.steamroll(), p6.steamroll())
+        self.assertGeomsEqualButAllowDifferentNames(p1.steamroll(), p4.steamroll())
+        self.assertGeomsEqualButAllowDifferentNames(p2.steamroll(), p5.steamroll())
         self.assertEqual(len(p3.steamroll()), 0)
 
     def test_layers_root_stack(self):

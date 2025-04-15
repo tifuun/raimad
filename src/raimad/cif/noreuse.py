@@ -39,6 +39,10 @@ class NoReuse:
 
         # Export all geometries
         for layer, geom in compo.geoms.items():
+
+            if layer is None:
+                continue
+
             yield f'\tL L{layer};\n'
             for poly in geom:
                 yield '\tP '

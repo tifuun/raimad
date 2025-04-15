@@ -199,9 +199,19 @@ class Compo:
         """
         Steamroll the entire compo hierarchy into one Geoms dict.
 
-        TODO more informative
+        Returns
+        -------
+        rai.typing.Geoms
+            Returns all geometries
+            (i.e. all raw geometries as well as subcompos)
+            of this component
+
+        TODO example
         """
+        # Take all of the geoms defined directly...
         geoms = self.geoms.copy()
+
+        # ... and append steamrolled geoms from subcompos
         for subcompo in self.subcompos.values():
             # TODO override "update" method in geoms container?
             for layer_name, layer_geoms in subcompo.steamroll().items():

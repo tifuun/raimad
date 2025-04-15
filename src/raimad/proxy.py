@@ -209,14 +209,17 @@ class Proxy:
             (i.e. all raw geometries as well as subcompos)
             of the CompoLike pointed to by this proxy,
             as seen through this proxy.
+
+        TODO example
         """
         return {
-            self.lmap[layer]: [
+            mapped_layer: [
                 self.transform.transform_poly(geom)
                 for geom in geoms
                 ]
             for layer, geoms
             in self.compo.steamroll().items()
+            if (mapped_layer := self.lmap[layer]) is not None
             }
 
     def get_flat_transform(self, maxdepth: int = -1) -> 'rai.typing.Transform':

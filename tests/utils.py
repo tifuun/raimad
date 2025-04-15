@@ -115,3 +115,17 @@ class GeomsEqual():
 
         return True
 
+    def assertGeomsEqualButAllowDifferentNames(
+            self,
+            actual: rait.Geoms,
+            expected: rait.Geoms,
+            epsilon: float | None = None):
+
+        # TODO this is a hack
+        # TODO FIXME FIXME this breaks if layer order is different FIXME
+        return self.assertGeomsEqual(
+            {f"layer{i}": geoms for i, geoms in enumerate(actual.values())},
+            {f"layer{i}": geoms for i, geoms in enumerate(expected.values())},
+            epsilon
+            )
+

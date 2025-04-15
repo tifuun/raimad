@@ -135,8 +135,8 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         compo = MyCompo()
 
         p0 = compo.proxy()
-        p1 = compo.proxy().map({'foo': None})
-        p2 = compo.proxy().map({'bar': None})
+        p1 = compo.proxy().map({'foo': None, 'bar': 'bar'})
+        p2 = compo.proxy().map({'foo': 'foo', 'bar': None})
         p3 = compo.proxy().map({'foo': None, 'bar': None})
         p4 = compo.proxy().map({'foo': None, 'bar': 'ayy'})
         p5 = compo.proxy().map({'foo': 'ayy', 'bar': None})
@@ -152,18 +152,18 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
             parser.parse(exporter.cif_string)
             return parser.layers
 
-        self.assertEqual(layers(p0).keys(), {'foo', 'bar'})
-        self.assertEqual(layers(p1).keys(), {'bar'})
-        self.assertEqual(layers(p2).keys(), {'foo'})
+        self.assertEqual(layers(p0).keys(), {'Lfoo', 'Lbar'})
+        self.assertEqual(layers(p1).keys(), {'Lbar'})
+        self.assertEqual(layers(p2).keys(), {'Lfoo'})
         self.assertEqual(layers(p3).keys(), set())
-        self.assertEqual(layers(p4).keys(), {'ayy'})
-        self.assertEqual(layers(p5).keys(), {'ayy'})
-        self.assertEqual(layers(p6).keys(), {'ayy', 'lmao'})
+        self.assertEqual(layers(p4).keys(), {'Layy'})
+        self.assertEqual(layers(p5).keys(), {'Layy'})
+        self.assertEqual(layers(p6).keys(), {'Layy', 'Llmao'})
 
-        self.assertGeomsEqual(layers(p0), layer(p6))
-        self.assertGeomsEqual(layers(p1), layer(p4))
-        self.assertGeomsEqual(layers(p2), layer(p5))
-        self.assertEqual(len(layers(p3), 0)
+        self.assertGeomsEqualButAllowDifferentNames(layers(p0), layers(p6))
+        self.assertGeomsEqualButAllowDifferentNames(layers(p1), layers(p4))
+        self.assertGeomsEqualButAllowDifferentNames(layers(p2), layers(p5))
+        self.assertEqual(len(layers(p3)), 0)
 
 if __name__ == '__main__':
     unittest.main()
