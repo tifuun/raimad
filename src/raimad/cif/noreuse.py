@@ -40,6 +40,8 @@ class NoReuse:
         # Export all geometries
         for layer, geom in compo.geoms.items():
 
+            # If a layer has been LMapp'ed to None,
+            # that means the user wants it discarded. Skip.
             if layer is None:
                 continue
 
