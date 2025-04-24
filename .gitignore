@@ -27,6 +27,9 @@ module_browser
 
 # Misc files
 *.log
+-
+# ^ sometimes a file called simply `-` is accidentally
+# created by fat-fingered shell commands
 
 # coverage.py files
 .coverage
