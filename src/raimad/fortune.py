@@ -97,6 +97,13 @@ fortunes_education = [
 
     "There are no stupid questions, "
     "only stupid people. ",
+
+    "...you being me in this case...\n"
+    "...\n"
+    "...\n"
+    "You are not always me, but in this particular case you are.",
+
+    "You MUST question authority. There shall be no questions about this.",
     ]
 
 fortunes_politics = [
@@ -191,6 +198,19 @@ fortunes_politics = [
     "then I guess we'll just have to win. ",
 
     "Forget dog whistles, they've been using bull horns for a while now. ",
+
+    "This year - a factory of semiconductors!\n"
+    "Next year - a factory of whole conductors!",
+
+    "В этом году - фабрика полупроводников!\n"
+    "В следующем году - фабрика целых проводников!\n",
+
+    "Please, we have no time to discuss such childish topics like "
+    '"human rights" and "belgium".',
+
+    "The militia belongs to the people and the people belong to the militia.",
+
+    "Time is yours, but everything else is ours.",
     ]
 
 fortunes_engineering = [
@@ -364,6 +384,14 @@ fortunes_misc = [
     "a B diminished seventh to be precise. ",
 
     "Whatever bloats your goat! ",
+
+    "Why is there a hay in my stack of needles!?",
+
+    "Your time is valuable, but you have a lot of it.",
+
+    "Those who trade freedom for convenience will lose both",
+
+    "Artificial intelligence proves futile against organic idiocy",
     ]
 
 fortunes_nonsense = [
