@@ -50,6 +50,9 @@ fortunes_technology = [
     "Give a man two places to store the same data, "
     "that need to be kept in sync, "
     "and you will have AN UNLIMITED NUMBER OF BUGS. ",
+
+    "Do NOT automate the production of maskfiles!\n"
+    "    -- Jochem",
     ]
 
 fortunes_economy = [
@@ -188,8 +191,16 @@ fortunes_politics = [
 
     "Это было давно и неправда. ",
 
+    "That was long ago and also not true.",
+
     "А у нас в России хорошо, приятно.\n"
     "Дома рушаться очень аккуратно. ",
+
+    "And here, in Russia, it is beautiful and full of compassion.\n"
+    "The houses -- they fall down in a very orderly fashion.",
+
+    "Your opinions is extremely valuable to us,\n"
+    "but, all in all, not very important.",
 
     "Ваше мнение для меня очень важно,\n"
     "но не очень-то и нужно.",
@@ -246,6 +257,12 @@ fortunes_engineering = [
 
     "The best case is O(n),\n"
     "and the worst case is that someone checks why. ",
+
+    "The enemy of good is perfect.\n"
+    "    -- Arend",
+
+    "The enemy of perfect is good enough.\n"
+    "    -- maybetree, in response to Arend",
     ]
 
 fortunes_resilience = [
@@ -418,8 +435,8 @@ fortunes_nonsense = [
 
     "бНОПНЯ ВХРЮК?",
 
-    "У нас есть многие квантовые технологии:\n",
-    "Прототип Российской Империи,\n",
+    "У нас есть многие квантовые технологии:\n"
+    "Прототип Российской Империи,\n"
     "симулятор Лаврентия Берии,\n"
     "вдохновляющий список с врагами, \n"
     "большегруз с государственными деньгами!\n"
@@ -427,6 +444,17 @@ fortunes_nonsense = [
     "Руководители, не умеющие руководить.\n"
     "Я прошу прощения,\n"
     "Но это - импортозамещение!\n"
+    ,
+
+    "We have numerous quantum tehnologies: \n"
+    "A prototype of the Russian Empire, \n"
+    "A simulated Lavrentiy Beria, who won't retire, \n"
+    "An inspiring list of foes, \n"
+    "Government cash in a truck-sized dose! \n"
+    "Cyclists who can neither talk or walk, \n"
+    "Managers who can't manage diddly-squak. \n"
+    "I beg for your absolution, \n"
+    "But this -- is importsubstitution! \n"
     ,
     ]
 
