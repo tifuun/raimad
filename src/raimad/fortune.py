@@ -222,6 +222,9 @@ fortunes_politics = [
     "The militia belongs to the people and the people belong to the militia.",
 
     "Time is yours, but everything else is ours.",
+
+    "Environmentalism without class consciousness "
+    "is just enlightened gardening.",
     ]
 
 fortunes_engineering = [
