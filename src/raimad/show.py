@@ -152,7 +152,7 @@ def _get_cifview_args(file: str) -> tuple[str, ...]:
         "Contact maybetree and request support."
         )
 
-def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
+def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False, force_external: bool = False) -> None:
     """
     Export component and show it to the user.
 
@@ -175,7 +175,7 @@ def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False) -> None:
     NotImplementedError
         if RAIMAD cannot figure out how to show you the component.
     """
-    if IS_NOTEBOOK:
+    if IS_NOTEBOOK and not force_external:
         jupyter_display(compo)
         return
 
