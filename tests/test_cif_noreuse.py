@@ -1,7 +1,7 @@
 import unittest
 
 import raimad as rai
-import cift
+import cift as cf
 
 from .utils import GeomsEqual
 
@@ -17,11 +17,13 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        parser = cift.Parser()
-        parser.parse(exporter.cif_string)
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
 
         self.assertGeomsEqual(
-            parser.layers,
+            layers,
             {
                 'Lroot': [
                     [
@@ -49,11 +51,13 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        parser = cift.Parser()
-        parser.parse(exporter.cif_string)
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
 
         self.assertGeomsEqual(
-            parser.layers,
+            layers,
             {
                 'Lmylayer': [
                     [
@@ -96,11 +100,14 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        parser = cift.Parser()
-        parser.parse(exporter.cif_string)
+        cf.debug.crutch(exporter.cif_string, cf.grammar.lenient_layers)
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
 
         self.assertGeomsEqual(
-            parser.layers,
+            layers,
             {
                 'Lroot': [
                     [
@@ -148,9 +155,11 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
                 multiplier=1,
                 )
 
-            parser = cift.Parser()
-            parser.parse(exporter.cif_string)
-            return parser.layers
+            layers = cf.parse(
+                exporter.cif_string,
+                grammar=cf.grammar.lenient_layers
+                )
+            return layers
 
         self.assertEqual(layers(p0).keys(), {'Lfoo', 'Lbar'})
         self.assertEqual(layers(p1).keys(), {'Lbar'})

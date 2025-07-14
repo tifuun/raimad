@@ -244,7 +244,9 @@ fortunes_politics = [
     "is just enlightened gardening.",
 
     "Don't waste time arguing about pulling the lever if you're the ones "
-    "tied to the tracks."
+    "tied to the tracks.",
+
+    "Practice everything in moderation, especially moderation itself. ",
     ]
 
 fortunes_engineering = [

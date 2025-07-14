@@ -1,48 +1,88 @@
-# Python temporary files
-__pycache__
-*.py[cod]
+### Generic ###
 
-# pip/stuptools/twine files
+# VIM
+*.sw*
+*.vim*
+*.obsession*
+
+# misc. garbage
+*.bak
+*.old*
+~*
+*~
+-
+
+# Damn you steve jobs!!!!
+.DS_Store
+
+# vscope
+.vscode/*
+*.code-workspace
+.history/
+
+# potential credentials
+*.pem
+*.secret
+**/credentials.json
+**/client_secrets.json
+**/client_secret.json
+*creds*
+*.dat
+*password*
+*.httr-oauth*
+*.env
+!*.sample.env
+
+# C/C++
+*.o
+*.out
+*.a
+*.so
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.clirope
 *.egg-info
 build
 dist
-
-# Rope (Python code refactoring tool)
-.clirope
-
-# VIM files
-*.sw*
-*.vim
-*.obsession*
-
-# PyClewin Output files
-/*.cif
-/*.pdf
-/*.svg
-module_browser
-
-# human-generated backup files
-*.bak
-*.old
-
-# Misc files
-*.log
--
-# ^ sometimes a file called simply `-` is accidentally
-# created by fat-fingered shell commands
-
-# coverage.py files
-.coverage
 coverage.json
 htmlcov
+*.spec
+.coverage
 
 # Archives
 *.zip
 *.tar
+*.rar
 *.tar.*
 *.tzst
 *.tgz
 *.txz
 *.zst
+*.gz
+
+# Multimedia
+*.xcf
+*.svg
+*.jpg
+*.jpeg
+*.png
+*.avif
+*.gif
+*.pdf
+*.gv
+!img/*.jpg
+!img/*.png
+!img/*.svg
+!img/*.gv
+
+### Project-specific ###
+
+
+
+
+
 
 
