@@ -436,6 +436,8 @@ fortunes_misc = [
     "Those who trade freedom for convenience will lose both",
 
     "Artificial intelligence proves futile against organic idiocy",
+
+    "Dear god, how many elephants can you fit in one room!?",
     ]
 
 fortunes_nonsense = [
