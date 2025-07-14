@@ -67,6 +67,9 @@ fortunes_technology = [
     "be ahead of time. "
     "This is obvious to anyone who has ever done any serious work; "
     "that is to say, nobody from the mathematics department. ",
+
+    "Monad, monoid, hemorrhoid -- what's the difference!?\n",
+    "All three are a pain in the backside.",
     ]
 
 fortunes_economy = [
@@ -436,6 +439,8 @@ fortunes_misc = [
     "Those who trade freedom for convenience will lose both",
 
     "Artificial intelligence proves futile against organic idiocy",
+
+    "Dear god, how many elephants can you fit in one room!?",
     ]
 
 fortunes_nonsense = [
