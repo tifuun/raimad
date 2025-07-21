@@ -5,14 +5,14 @@ import cift as cf
 
 from .utils import GeomsEqual
 
-class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
+class TestCIFReuse(GeomsEqual, unittest.TestCase):
 
-    def test_cif_noreuse_rect(self):
+    def test_cif_reuse_rect(self):
         """
         """
         compo = rai.RectLW(10, 20)
 
-        exporter = rai.cif.NoReuse(
+        exporter = rai.cif.Reuse(
             compo,
             multiplier=1,
             )
@@ -36,7 +36,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
                 }
             )
 
-    def test_cif_noreuse_proxy(self):
+    def test_cif_reuse_proxy(self):
         """
         """
         compo = (
@@ -46,7 +46,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
             .bbox.bot_left.to((0, 0))
             )
 
-        exporter = rai.cif.NoReuse(
+        exporter = rai.cif.Reuse(
             compo,
             multiplier=1,
             )
@@ -95,7 +95,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
 
         compo = Third()
 
-        exporter = rai.cif.NoReuse(
+        exporter = rai.cif.Reuse(
             compo,
             multiplier=1,
             )
@@ -149,7 +149,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         p6 = compo.proxy().map({'foo': 'ayy', 'bar': 'lmao'})
 
         def layers(compo):
-            exporter = rai.cif.NoReuse(
+            exporter = rai.cif.Reuse(
                 compo,
                 multiplier=1,
                 )
