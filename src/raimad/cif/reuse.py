@@ -7,8 +7,51 @@ from dataclasses import dataclass
 import raimad as rai
 
 @dataclass
+class ReuseStat:
+    steamrolls: int = 0
+
+@dataclass
 class DelayedRoutCall:
     target: weakref.ReferenceType[rai.Compo]
+    #lmap: None | rai.t.LMap = None
+
+def is_ciffable(proxy: rai.Proxy):
+    if proxy.transform.does_scale():
+        return False
+
+    if proxy.transform.does_rotate():
+        return False
+
+    if proxy.transform.does_shear():
+        return False
+
+    # TODO there are other ways to specify NOP lmap
+    # lmap is a mess in general
+    if proxy.lmap.shorthand is not None:
+        return False
+
+    return True
+
+def geoms2cif(geoms, multiplier):
+    # FIXME this is copypasta with export_compo
+    for layer, geom in geoms.items():
+
+        # If a layer has been LMapp'ed to None,
+        # that means the user wants it discarded. Skip.
+        if layer is None:
+            continue
+
+        yield f'L L{layer};'
+        for poly in geom:
+            yield (' '.join((
+                'P ',
+                *(
+                    f'{int(point[0] * multiplier)} '
+                    f'{int(point[1] * multiplier)} '
+                    for point in poly
+                    ),
+                ';'
+                )))
 
 def ciffify(transform, multiplier):
     if transform.does_scale():
@@ -37,6 +80,7 @@ class Reuse:
             multiplier: float = 1e3
             ) -> None:
 
+        self.stat = ReuseStat()
         self.compo = compo
         self.rout_num = 1
         self.multiplier = multiplier
@@ -53,8 +97,9 @@ class Reuse:
                 break
 
         # FIXME hack
+        foo = lines[0]
         del lines[0]
-        lines.append('C 1;')
+        lines.append(foo)
         lines.append('E')
 
         self.cif_string = '\n'.join(lines)
@@ -109,12 +154,19 @@ class Reuse:
                 self.export_compo(compo)
                 )
         elif isinstance(compo, rai.Proxy):
-            #print('this is a proxy.')
-            # TODO transform logic goes here!!
-            flat_transform = compo.get_flat_transform() 
-            #print(flat_transform)
-            line_call.append(ciffify(flat_transform, self.multiplier))
-            new_lines.append(DelayedRoutCall(weakref.ref(compo.compo)))
+            if is_ciffable(compo):
+                flat_transform = compo.get_flat_transform() 
+                line_call.append(ciffify(flat_transform, self.multiplier))
+                new_lines.append(
+                    DelayedRoutCall(
+                        weakref.ref(compo.compo),
+                        )
+                    )
+            else:
+                self.stat.steamrolls += 1
+                new_lines.extend(
+                    geoms2cif(compo.steamroll(), self.multiplier)
+                    )
         else:
             assert False
 
@@ -215,6 +267,8 @@ class Reuse:
                 yield from this_subcompo
 
         elif isinstance(compo, rai.Proxy):
+            assert False
+
             # Opening line, define the routine
             yield f'DS {self.rout_num} 1 1;\n'
             self.cache[id(compo)] = self.rout_num

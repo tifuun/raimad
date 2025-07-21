@@ -70,6 +70,44 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
                 }
             )
 
+    def test_cif_reuse_ciffable_proxy(self):
+        """
+        Test that reuse parser detects that a proxy can be
+        converted to a cif symbol call and actually does that
+        instead of steamrolling it
+        """
+        compo = (
+            rai.RectLW(10, 20)
+            .proxy()
+            .bbox.bot_left.to((0, 0))
+            )
+
+        exporter = rai.cif.Reuse(
+            compo,
+            multiplier=1,
+            )
+
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
+
+        self.assertEqual(exporter.stat.steamrolls, 0)
+
+        self.assertGeomsEqual(
+            layers,
+            {
+                'Lroot': [
+                    [
+                        (0, 0),
+                        (10, 0),
+                        (10, 20),
+                        (0, 20),
+                        ],
+                    ]
+                }
+            )
+
     def test_cif_2024_09_09(self):
         """Test that a bug that we found on 2024-09-09 doesn't occur."""
         class First(rai.Compo):
