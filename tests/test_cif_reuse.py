@@ -211,6 +211,64 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqualButAllowDifferentNames(layers(p2), layers(p5))
         self.assertEqual(len(layers(p3)), 0)
 
+    def test_cif_reuse_bridges(self):
+        """
+        test case: a transmission line with some bridges.
+        Bridges should be reused.
+        """
+
+        class Bridge(rai.Compo):
+            def _make(self):
+                foo = rai.RectLW(30, 10).proxy().map('FOO')
+                bar = rai.RectLW(40, 5).proxy().map('BAR')
+                bar.bbox.mid.to(foo.bbox.mid)
+
+                self.subcompos.foo = foo
+                self.subcompos.bar = bar
+
+        class TLine(rai.Compo):
+            def _make(self):
+                foo = rai.RectLW(1000, 10).proxy().map('CND')
+                bar = rai.RectLW(1000, 8).proxy().map('CND')
+                baz = rai.RectLW(1000, 8).proxy().map('CND')
+                ayy = rai.RectLW(1000, 26).proxy().map('MAS')
+                bar.snap_above(foo).movey(5)
+                baz.snap_below(foo).movey(-5)
+                ayy.bbox.mid.to(foo.bbox.mid)
+
+                self.subcompos.foo = foo
+                self.subcompos.bar = bar
+                self.subcompos.baz = baz
+                self.subcompos.ayy = ayy
+
+        class MyCompo(rai.Compo):
+            def _make(self, num_bridges: int = 10):
+                line = TLine().proxy()
+                for x in range(0, num_bridges):
+                    bridge = Bridge().proxy().rotate(rai.quartercircle)
+                    bridge.bbox.mid.to(
+                        line.bbox.interpolate((x + 0.5) / num_bridges, 0.5)
+                        )
+                    self.subcompos[f"bridge_{x}"] = bridge
+                self.subcompos.line = line
+
+        compo = MyCompo()
+
+        exporter = rai.cif.Reuse(
+            compo,
+            multiplier=1,
+            )
+
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
+
+        self.assertEqual(exporter.stat.steamrolls, 0)
+
+                
+                
+
 if __name__ == '__main__':
     unittest.main()
 
