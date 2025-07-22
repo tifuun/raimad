@@ -5,6 +5,56 @@ import cift as cf
 
 from .utils import GeomsEqual
 
+
+class Bridge(rai.Compo):
+    def _make(self, do_maps: bool):
+        foo = rai.RectLW(30, 10).proxy()
+        bar = rai.RectLW(40, 5).proxy()
+        bar.bbox.mid.to(foo.bbox.mid)
+
+        if do_maps:
+            foo.map('FOO')
+            bar.map('BAR')
+
+        self.subcompos.foo = foo
+        self.subcompos.bar = bar
+
+class TLine(rai.Compo):
+    def _make(self, do_maps: bool):
+        foo = rai.RectLW(4000, 10).proxy()
+        bar = rai.RectLW(4000, 8).proxy()
+        baz = rai.RectLW(4000, 8).proxy()
+        ayy = rai.RectLW(4000, 26).proxy()
+        bar.snap_above(foo).movey(5)
+        baz.snap_below(foo).movey(-5)
+        ayy.bbox.mid.to(foo.bbox.mid)
+
+        if do_maps:
+            foo.map('CND')
+            bar.map('CND')
+            baz.map('CND')
+            ayy.map('MAS')
+
+        self.subcompos.foo = foo
+        self.subcompos.bar = bar
+        self.subcompos.baz = baz
+        self.subcompos.ayy = ayy
+
+class TLineCompo(rai.Compo):
+    def _make(self, do_maps: bool, num_bridges: int = 50):
+        line = TLine(do_maps=do_maps).proxy()
+        bridge = Bridge(do_maps=do_maps).proxy().rotate(rai.quartercircle)
+
+        for x in range(0, num_bridges):
+            bridgep = bridge.proxy()
+            bridgep.bbox.mid.to(
+                line.bbox.interpolate((x + 0.5) / num_bridges, 0.5)
+                )
+            self.subcompos[f"bridge_{x}"] = bridgep
+
+        self.subcompos.line = line
+
+
 class TestCIFReuse(GeomsEqual, unittest.TestCase):
 
     def test_cif_reuse_rect(self):
@@ -217,57 +267,97 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         Bridges should be reused.
         """
 
-        class Bridge(rai.Compo):
-            def _make(self):
-                foo = rai.RectLW(30, 10).proxy().map('FOO')
-                bar = rai.RectLW(40, 5).proxy().map('BAR')
-                bar.bbox.mid.to(foo.bbox.mid)
-
-                self.subcompos.foo = foo
-                self.subcompos.bar = bar
-
-        class TLine(rai.Compo):
-            def _make(self):
-                foo = rai.RectLW(1000, 10).proxy().map('CND')
-                bar = rai.RectLW(1000, 8).proxy().map('CND')
-                baz = rai.RectLW(1000, 8).proxy().map('CND')
-                ayy = rai.RectLW(1000, 26).proxy().map('MAS')
-                bar.snap_above(foo).movey(5)
-                baz.snap_below(foo).movey(-5)
-                ayy.bbox.mid.to(foo.bbox.mid)
-
-                self.subcompos.foo = foo
-                self.subcompos.bar = bar
-                self.subcompos.baz = baz
-                self.subcompos.ayy = ayy
-
-        class MyCompo(rai.Compo):
-            def _make(self, num_bridges: int = 10):
-                line = TLine().proxy()
-                for x in range(0, num_bridges):
-                    bridge = Bridge().proxy().rotate(rai.quartercircle)
-                    bridge.bbox.mid.to(
-                        line.bbox.interpolate((x + 0.5) / num_bridges, 0.5)
-                        )
-                    self.subcompos[f"bridge_{x}"] = bridge
-                self.subcompos.line = line
-
-        compo = MyCompo()
+        compo = TLineCompo(do_maps=False)
 
         exporter = rai.cif.Reuse(
             compo,
             multiplier=1,
             )
 
+        from pathlib import Path
+        Path('test.cif').write_text(exporter.cif_string)
+        Path('test.gv').write_text(exporter.stat.call_graph_dot())
+
+        #layers = cf.parse(
+        #    exporter.cif_string,
+        #    grammar=cf.grammar.lenient_layers
+        #    )
+
+        self.assertEqual(exporter.stat.steamrolls, 0)
+
+
+    def test_cif_reuse_maps_bridges(self):
+        """
+        test case: a transmission line with some bridges.
+        Bridges should be reused.
+        """
+
+        compo = TLineCompo(do_maps=True)
+
+        exporter = rai.cif.Reuse(
+            compo,
+            multiplier=1,
+            )
+
+        #layers = cf.parse(
+        #    exporter.cif_string,
+        #    grammar=cf.grammar.lenient_layers
+        #    )
+
+        self.assertEqual(exporter.stat.steamrolls, 0)
+
+                
+    def test_cif_reuse_proxyorder(self):
+        class One(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = (
+                    rai.RectLW(20, 10).proxy().bbox.mid.to((0,0))
+                    )
+                
+        class Two(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = One().proxy().rotate(rai.eigthcircle)
+                
+        class Three(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = Two().proxy().rotate(rai.eigthcircle)
+                
+        class Four(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = Three().proxy().rotate(rai.eigthcircle)
+                
+        class Five(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = Four().proxy().rotate(rai.eigthcircle)
+                
+        class Six(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = Five().proxy().rotate(rai.eigthcircle)
+                
+        class Seven(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = Six().proxy().rotate(rai.eigthcircle)
+                
+        compo = Seven()
+        exporter = rai.cif.Reuse(compo, multiplier=1)
         layers = cf.parse(
             exporter.cif_string,
             grammar=cf.grammar.lenient_layers
             )
 
-        self.assertEqual(exporter.stat.steamrolls, 0)
-
-                
-                
+        self.assertGeomsEqual(
+            layers,
+            {
+                'Lroot': [
+                    [
+                        (-5, -10),
+                        (5, -10),
+                        (5, 10),
+                        (-5, 10),
+                        ],
+                    ]
+                }
+            )
 
 if __name__ == '__main__':
     unittest.main()

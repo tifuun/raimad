@@ -2,24 +2,41 @@
 
 from typing import Iterator
 import weakref
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import raimad as rai
 
 @dataclass
 class ReuseStat:
+    # How many proxies were steamrolled?
     steamrolls: int = 0
+
+    edges: list[tuple[int, int]] = field(default_factory=list)
+
+    def add_call(self, src, dst):
+        self.edges.append((src, dst))
+
+    # TODO copypasta from graphviz.py
+    def _call_graph_dot(self):
+        yield 'digraph D {'
+        for src, dst in self.edges:
+            yield f'node{src} -> node{dst}'
+        yield '}'
+
+    def call_graph_dot(self):
+        return '\n'.join(self._call_graph_dot())
 
 @dataclass
 class DelayedRoutCall:
     target: weakref.ReferenceType[rai.Compo]
-    #lmap: None | rai.t.LMap = None
+
+    # Callee symbol number. 0 for toplevel.
+    # This is not necessary for building the CIF
+    # file, keeping track of it just for stat.
+    source: int
 
 def is_ciffable(proxy: rai.Proxy):
     if proxy.transform.does_scale():
-        return False
-
-    if proxy.transform.does_rotate():
         return False
 
     if proxy.transform.does_shear():
@@ -53,11 +70,9 @@ def geoms2cif(geoms, multiplier):
                 ';'
                 )))
 
-def ciffify(transform, multiplier):
-    if transform.does_scale():
-        raise NotImplementedError()
+def ciffify(transform, multiplier, multiplier_rot = 1000):
 
-    if transform.does_rotate():
+    if transform.does_scale():
         raise NotImplementedError()
 
     if transform.does_shear():
@@ -65,11 +80,22 @@ def ciffify(transform, multiplier):
 
     tstring = []
 
+    # TODO is this order correct???
     if transform.does_translate():
         tx, ty = transform.get_translation()
-        tstring.append(f"T{int(tx * multiplier)} {int(ty * multiplier)}")
+        tstring.append(f"T {int(tx * multiplier)} {int(ty * multiplier)} ")
 
-    return ' '.join(tstring)
+    if transform.does_rotate():
+        rx = transform._affine[0][0]
+        ry = transform._affine[1][0]
+        tstring.append(
+            "R "
+            f"{int(rx * multiplier_rot)} "
+            f"{int(ry * multiplier_rot)} "
+            )
+
+
+    return ''.join(tstring)
 
 class Reuse:
     """CIF Exporter that does reuse subroutines."""
@@ -88,7 +114,7 @@ class Reuse:
         self.cache = weakref.WeakKeyDictionary()
 
         lines = [
-            DelayedRoutCall(weakref.ref(self.compo)),
+            DelayedRoutCall(weakref.ref(self.compo), 0),
             ]
 
         while True:
@@ -124,7 +150,10 @@ class Reuse:
                     target_rout = self.cache[target]
                 except KeyError:
                     #print('cache miss.')
-                    line_call, lines_def = self.export_compolike(target)
+                    line_call, lines_def = self.export_compolike(
+                        target,
+                        source=line.source
+                        )
                     new_lines_back.extend(lines_def)
                     new_lines.append(line_call)
                     continue
@@ -140,18 +169,21 @@ class Reuse:
 
         return new_lines, did_update
     
-    def export_compolike(self, compo):
+    def export_compolike(self, compo, source):
         new_lines = []
 
-        new_lines.append(f'DS {self.rout_num} 1 1;')
-        line_call = [f"C {self.rout_num}"]
-        self.cache[compo] = self.rout_num
+        this_rout_num = self.rout_num
         self.rout_num += 1
+
+        new_lines.append(f'DS {this_rout_num} 1 1;')
+        line_call = [f"C {this_rout_num}"]
+        self.cache[compo] = this_rout_num
+        self.stat.add_call(source, this_rout_num)
 
         if isinstance(compo, rai.Compo):
             #print('this is a compo.')
             new_lines.extend(
-                self.export_compo(compo)
+                self.export_compo(compo, this_rout_num)
                 )
         elif isinstance(compo, rai.Proxy):
             if is_ciffable(compo):
@@ -160,6 +192,7 @@ class Reuse:
                 new_lines.append(
                     DelayedRoutCall(
                         weakref.ref(compo.compo),
+                        this_rout_num
                         )
                     )
             else:
@@ -176,7 +209,7 @@ class Reuse:
 
         return ' '.join(line_call), new_lines
     
-    def export_compo(self, compo):
+    def export_compo(self, compo, this_rout_num):
         lines = []
         for layer, geom in compo.geoms.items():
 
@@ -199,7 +232,10 @@ class Reuse:
 
         for subcompo in compo.subcompos.values():
             lines.append(
-                DelayedRoutCall(weakref.ref(subcompo))
+                DelayedRoutCall(
+                    weakref.ref(subcompo),
+                    this_rout_num
+                    )
                 )
 
         return lines
