@@ -274,9 +274,9 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        from pathlib import Path
-        Path('test.cif').write_text(exporter.cif_string)
-        Path('test.gv').write_text(exporter.stat.call_graph_dot())
+        #from pathlib import Path
+        #Path('test.cif').write_text(exporter.cif_string)
+        #Path('test.gv').write_text(exporter.stat.call_graph_dot())
 
         #layers = cf.parse(
         #    exporter.cif_string,
@@ -358,6 +358,153 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
                         (5, -10),
                         (5, 10),
                         (-5, 10),
+                        ],
+                    ]
+                }
+            )
+
+    def test_cif_reuse_transformorder(self):
+        """
+        """
+        class Foo(rai.Compo):
+            def _make(self):
+                stick = rai.RectLW(10, 20).proxy()
+                rstick = stick.proxy()
+                rrstick = stick.proxy()
+
+                rstick.bbox.mid.rotate(rai.quartercircle)
+                rstick.movex(10)
+                rstick.bbox.mid.rotate(-rai.quartercircle)
+                rstick.movey(10)
+                rstick.bbox.mid.rotate(-rai.quartercircle)
+                rstick.movey(-10)
+                rstick.bbox.mid.rotate(rai.quartercircle)
+                rstick.movex(-10)
+                rstick.movex(-3)
+
+                rrstick = rrstick.proxy().bbox.mid.rotate(rai.quartercircle)
+                rrstick = rrstick.proxy().movex(10)
+                rrstick = rrstick.proxy().bbox.mid.rotate(-rai.quartercircle)
+                rrstick = rrstick.proxy().movey(10)
+                rrstick = rrstick.proxy().bbox.mid.rotate(-rai.quartercircle)
+                rrstick = rrstick.proxy().movey(-10)
+                rrstick = rrstick.proxy().bbox.mid.rotate(rai.quartercircle)
+                rrstick = rrstick.proxy().movex(-10)
+                rrstick = rrstick.proxy().movex(3)
+
+                self.subcompos.stick = stick
+                self.subcompos.rstick = rstick
+                self.subcompos.rrstick = rrstick
+                
+        compo = Foo()
+        exporter = rai.cif.Reuse(compo, multiplier=1)
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
+
+        rai.export_cif(compo, 'test3.cif', exporter=rai.cif.NoReuse)
+        rai.export_cif(compo, 'test3r.cif', exporter=rai.cif.Reuse)
+
+        self.assertGeomsEqual(
+            layers,
+            {
+                'Lroot': [
+                    [
+                        (-5, -10),
+                        (5, -10),
+                        (5, 10),
+                        (-5, 10),
+                        ],
+                    [
+                        (-5 - 3, -10),
+                        (5 - 3, -10),
+                        (5 - 3, 10),
+                        (-5 - 3, 10),
+                        ],
+                    [
+                        (-5 + 3, -10),
+                        (5 + 3, -10),
+                        (5 + 3, 10),
+                        (-5 + 3, 10),
+                        ],
+                    ]
+                }
+            )
+
+    def test_cif_reuse_proxystacking(self):
+        """
+        Make sure that proxies of proxies work correctly.
+
+        As I'm writing this test, there's currently a bug
+        where proxies of proxies get "double-stacked"
+        transforms i.e. transforms of underlying proxies
+        bubble their way upwards into the proxies above them.
+        There's also broken weirdness with how it interacts
+        with the cache, will need to test that later.
+        """
+        class Foo(rai.Compo):
+            def _make(self):
+                stick = rai.RectLW(10, 20).proxy()
+                rstick = stick.proxy().bbox.mid.rotate(rai.quartercircle)
+                rrstick = rstick.proxy().bbox.mid.rotate(rai.quartercircle)
+                brstick = rstick.proxy().movex(10)
+
+                rbrstick = brstick.proxy()
+                from math import radians
+                rbrstick.bbox.mid.rotate(radians(45))
+
+                self.subcompos.stick = stick
+                self.subcompos.rstick = rstick
+                self.subcompos.rrstick = rrstick
+                self.subcompos.brstick = brstick
+                self.subcompos.rbrstick = rbrstick
+                
+        compo = Foo()
+        exporter = rai.cif.Reuse(compo, multiplier=1)
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
+
+        from pathlib import Path
+        Path('test.cif').write_text(exporter.cif_string)
+        Path('test.gv').write_text(exporter.stat.call_graph_dot())
+        rai.export_cif(compo, 'test2.cif')
+
+        self.assertGeomsEqual(
+            layers,
+            {
+                'Lroot': [
+                    [  # stick: center, tall
+                        (-5, -10),
+                        (5, -10),
+                        (5, 10),
+                        (-5, 10),
+                        ],
+                    [  # rstick: center, long (90deg rotation)
+                        (10, -5),
+                        (10, 5),
+                        (-10, 5),
+                        (-10, -5),
+                        ],
+                    [  # rrstick: center, tall (180deg rotation)
+                        (5, 10),
+                        (-5, 10),
+                        (-5, -10),
+                        (5, -10),
+                        ],
+                    [  # brstick: right, long (90deg rotation)
+                        (10 + 10, -5),
+                        (10 + 10, 5),
+                        (-10 + 10, 5),
+                        (-10 + 10, -5),
+                        ],
+                    [  # rbrstick: right, tall (0 deg rotation)
+                        (-5 + 10, -10),
+                        (5 + 10, -10),
+                        (5 + 10, 10),
+                        (-5 + 10, 10),
                         ],
                     ]
                 }

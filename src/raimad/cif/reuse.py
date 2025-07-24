@@ -7,20 +7,25 @@ from dataclasses import dataclass, field
 import raimad as rai
 
 @dataclass
+class SymbCall:
+    src: int
+    dst: int
+    cached: bool
+
+@dataclass
 class ReuseStat:
     # How many proxies were steamrolled?
     steamrolls: int = 0
 
-    edges: list[tuple[int, int]] = field(default_factory=list)
-
-    def add_call(self, src, dst):
-        self.edges.append((src, dst))
+    edges: list[SymbCall] = field(default_factory=list)
 
     # TODO copypasta from graphviz.py
     def _call_graph_dot(self):
         yield 'digraph D {'
-        for src, dst in self.edges:
-            yield f'node{src} -> node{dst}'
+        for edge in self.edges:
+            style = ["solid", "dashed"][edge.cached]
+            yield f'node{edge.src} -> node{edge.dst} [style={style}]'
+
         yield '}'
 
     def call_graph_dot(self):
@@ -30,10 +35,10 @@ class ReuseStat:
 class DelayedRoutCall:
     target: weakref.ReferenceType[rai.Compo]
 
-    # Callee symbol number. 0 for toplevel.
+    # Callee symbol number.
     # This is not necessary for building the CIF
     # file, keeping track of it just for stat.
-    source: int
+    source: int | None
 
 def is_ciffable(proxy: rai.Proxy):
     if proxy.transform.does_scale():
@@ -114,7 +119,7 @@ class Reuse:
         self.cache = weakref.WeakKeyDictionary()
 
         lines = [
-            DelayedRoutCall(weakref.ref(self.compo), 0),
+            DelayedRoutCall(weakref.ref(self.compo), None),
             ]
 
         while True:
@@ -147,19 +152,33 @@ class Reuse:
                 target = line.target()
                 assert target is not None
                 try:
+                    raise KeyError('No caching!!')
                     target_rout = self.cache[target]
                 except KeyError:
                     #print('cache miss.')
-                    line_call, lines_def = self.export_compolike(
-                        target,
-                        source=line.source
+                    line_call, lines_def, new_symb_number = (
+                        self.export_compolike(target)
                         )
                     new_lines_back.extend(lines_def)
                     new_lines.append(line_call)
+
+                    self.stat.edges.append(SymbCall(
+                        line.source,
+                        new_symb_number,
+                        cached=False,
+                        ))
+
                     continue
                 else:
                     #print('cache hit.')
                     new_lines.append(f'C {target_rout};')
+
+                    self.stat.edges.append(SymbCall(
+                        line.source,
+                        new_symb_number,
+                        cached=True,
+                        ))
+
                     continue
 
             else:
@@ -169,7 +188,7 @@ class Reuse:
 
         return new_lines, did_update
     
-    def export_compolike(self, compo, source):
+    def export_compolike(self, compo):
         new_lines = []
 
         this_rout_num = self.rout_num
@@ -178,7 +197,6 @@ class Reuse:
         new_lines.append(f'DS {this_rout_num} 1 1;')
         line_call = [f"C {this_rout_num}"]
         self.cache[compo] = this_rout_num
-        self.stat.add_call(source, this_rout_num)
 
         if isinstance(compo, rai.Compo):
             #print('this is a compo.')
@@ -187,8 +205,11 @@ class Reuse:
                 )
         elif isinstance(compo, rai.Proxy):
             if is_ciffable(compo):
-                flat_transform = compo.get_flat_transform() 
-                line_call.append(ciffify(flat_transform, self.multiplier))
+                #flat_transform = compo.get_flat_transform() 
+                #line_call.append(ciffify(flat_transform, self.multiplier))
+
+                line_call.append(ciffify(compo.transform, self.multiplier))
+
                 new_lines.append(
                     DelayedRoutCall(
                         weakref.ref(compo.compo),
@@ -207,7 +228,7 @@ class Reuse:
 
         line_call.append(';')
 
-        return ' '.join(line_call), new_lines
+        return ' '.join(line_call), new_lines, this_rout_num
     
     def export_compo(self, compo, this_rout_num):
         lines = []
