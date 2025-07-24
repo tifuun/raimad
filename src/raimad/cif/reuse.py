@@ -151,11 +151,11 @@ class Reuse:
                 target = line.target()
                 assert target is not None
                 try:
-                    raise KeyError('No caching!!')
+                    #raise KeyError('No caching!!')
                     target_rout = self.cache[target]
                 except KeyError:
                     #print('cache miss.')
-                    line_call, lines_def, new_symb_number = (
+                    line_call, lines_def, target_rout = (
                         self.export_compolike(target)
                         )
                     new_lines_back.extend(lines_def)
@@ -163,7 +163,7 @@ class Reuse:
 
                     self.stat.edges.append(SymbCall(
                         line.source,
-                        new_symb_number,
+                        target_rout,
                         cached=False,
                         ))
 
@@ -174,7 +174,7 @@ class Reuse:
 
                     self.stat.edges.append(SymbCall(
                         line.source,
-                        new_symb_number,
+                        target_rout,
                         cached=True,
                         ))
 

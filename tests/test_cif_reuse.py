@@ -403,8 +403,10 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             grammar=cf.grammar.lenient_layers
             )
 
+        from pathlib import Path
         rai.export_cif(compo, 'test3.cif', exporter=rai.cif.NoReuse)
         rai.export_cif(compo, 'test3r.cif', exporter=rai.cif.Reuse)
+        Path('test3.gv').write_text(exporter.stat.call_graph_dot())
 
         self.assertGeomsEqual(
             layers,
@@ -467,9 +469,9 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             )
 
         from pathlib import Path
-        Path('test.cif').write_text(exporter.cif_string)
-        Path('test.gv').write_text(exporter.stat.call_graph_dot())
-        rai.export_cif(compo, 'test2.cif')
+        Path('proxystacking.cif').write_text(exporter.cif_string)
+        Path('proxystacking.gv').write_text(exporter.stat.call_graph_dot())
+        rai.export_cif(compo, 'proxystacking_nr.cif', exporter=rai.cif.NoReuse)
 
         self.assertGeomsEqual(
             layers,
