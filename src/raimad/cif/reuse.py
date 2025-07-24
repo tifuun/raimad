@@ -86,10 +86,6 @@ def ciffify(transform, multiplier, multiplier_rot = 1000):
     tstring = []
 
     # TODO is this order correct???
-    if transform.does_translate():
-        tx, ty = transform.get_translation()
-        tstring.append(f"T {int(tx * multiplier)} {int(ty * multiplier)} ")
-
     if transform.does_rotate():
         rx = transform._affine[0][0]
         ry = transform._affine[1][0]
@@ -99,6 +95,9 @@ def ciffify(transform, multiplier, multiplier_rot = 1000):
             f"{int(ry * multiplier_rot)} "
             )
 
+    if transform.does_translate():
+        tx, ty = transform.get_translation()
+        tstring.append(f"T {int(tx * multiplier)} {int(ty * multiplier)} ")
 
     return ''.join(tstring)
 

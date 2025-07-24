@@ -274,9 +274,9 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        #from pathlib import Path
-        #Path('test.cif').write_text(exporter.cif_string)
-        #Path('test.gv').write_text(exporter.stat.call_graph_dot())
+        from pathlib import Path
+        Path('test.cif').write_text(exporter.cif_string)
+        Path('test.gv').write_text(exporter.stat.call_graph_dot())
 
         #layers = cf.parse(
         #    exporter.cif_string,
@@ -451,8 +451,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
                 brstick = rstick.proxy().movex(10)
 
                 rbrstick = brstick.proxy()
-                from math import radians
-                rbrstick.bbox.mid.rotate(radians(45))
+                rbrstick.bbox.mid.rotate(-rai.quartercircle)
 
                 self.subcompos.stick = stick
                 self.subcompos.rstick = rstick
