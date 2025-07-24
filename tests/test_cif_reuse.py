@@ -337,6 +337,10 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         class Seven(rai.Compo):
             def _make(self):
                 self.subcompos.foo = Six().proxy().rotate(rai.eigthcircle)
+
+        #for f in [One, Two, Three, Four, Five, Six, Seven]:
+        #    c = f()
+        #    rai.export_cif(c, f"{f.__name__}.cif", rai.cif.Reuse, multiplier=1)
                 
         compo = Seven()
         exporter = rai.cif.Reuse(compo, multiplier=1)
