@@ -346,13 +346,13 @@ class Transform:
 
         return self
 
-    def hflip(self, x: float = 0) -> Self:
+    def vflip(self, y: float = 0) -> Self:
         """
         Flip (mirror) along horizontal axis.
 
         Parameters
         ----------
-        x : float
+        y : float
             Flip around this horizontal line (y coordinate)
 
         Returns
@@ -361,19 +361,19 @@ class Transform:
             This transform is returned to allow chaining methods.
         """
         self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.scale(1, -1), 0, x),
+            rai.affine.around(rai.affine.scale(1, -1), 0, y),
             self._affine
             )
         return self
 
-    def vflip(self, y: float = 0) -> Self:
+    def hflip(self, x: float = 0) -> Self:
         """
         Flip (mirror) along vertical axis.
 
         Parameters
         ----------
-        y : float
-            Flip around this vertical line (y coordinate)
+        x : float
+            Flip around this vertical line (x coordinate)
 
         Returns
         -------
@@ -381,7 +381,7 @@ class Transform:
             This transform is returned to allow chaining methods.
         """
         self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.scale(-1, 1), y, 0),
+            rai.affine.around(rai.affine.scale(-1, 1), x, 0),
             self._affine
             )
         return self

@@ -877,12 +877,12 @@ class Proxy:
 
     def hflip(self, x: float = 0) -> Self:
         """
-        Flip (mirror) along horizontal axis.
+        Flip (mirror) along vertical axis.
 
         Parameters
         ----------
         x : float
-            Flip around this horizontal line (x coordinate)
+            Flip around this vertical line (x coordinate)
 
         Returns
         -------
@@ -894,12 +894,12 @@ class Proxy:
 
     def vflip(self, y: float = 0) -> Self:
         """
-        Flip (mirror) along vertical axis.
+        Flip (mirror) along horizontal axis.
 
         Parameters
         ----------
         y : float
-            Flip around this vertical line (y coordinate)
+            Flip around this horizontal line (y coordinate)
 
         Returns
         -------
