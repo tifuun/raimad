@@ -2,6 +2,7 @@
 
 from typing import Iterator, TypeVar, Generic
 import math
+import re
 
 try:
     from typing import Self
@@ -347,4 +348,14 @@ def distance_between(
         p1[0] - p2[0],
         p1[1] - p2[1],
         ))
+
+_IS_LNAME_VALID = re.compile(r'[A-Z0-9]{0,4}', re.ASCII)
+def is_lname_valid(name):
+    return bool(
+        bool(name)
+        and
+        _IS_LNAME_VALID.fullmatch(name)
+        and
+        name != 'ZZZZ'
+        )
 

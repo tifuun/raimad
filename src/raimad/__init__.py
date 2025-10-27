@@ -23,6 +23,7 @@ from raimad.helpers import (
     eq,
     sub,
     distance_between,
+    is_lname_valid,
     )
 from raimad import affine
 import raimad.iters as iters
