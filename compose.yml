@@ -1,0 +1,30 @@
+services:
+  dev:
+    init: true
+    container_name: dev
+    hostname: raimad-dev
+
+    build:
+      additional_contexts:
+        alpine-base: service:alpine-base
+
+      dockerfile_inline: |
+        FROM alpine-base
+        RUN \
+          python -m venv /venv && \
+          echo '. /venv/bin/activate' > /etc/profile.d/50-load-venv.sh
+
+    volumes:
+      - .:/play
+
+    working_dir: /play
+    stdin_open: true
+    tty: true
+    command: /bin/sh -l  # login shell needed to load profile.d
+
+  alpine-base:
+    build:
+      dockerfile_inline: |
+        FROM alpine:latest
+        RUN apk add python3 make gcc g++
+
