@@ -70,6 +70,14 @@ fortunes_technology = [
 
     "Monad, monoid, hemorrhoid -- what's the difference!?\n",
     "All three are a pain in the backside.",
+
+    "Q: What is the best XML parser?\n"
+    "A: /bin/rm ",
+
+    'There are only two industries who call their clients "users". ',
+
+    "For me, pointer arithmetic starts to click after about three beers.\n"
+    "    -- Arend",
     ]
 
 fortunes_economy = [
@@ -247,6 +255,15 @@ fortunes_politics = [
     "tied to the tracks.",
 
     "Practice everything in moderation, especially moderation itself. ",
+
+    "We have guided missiles and misguided men.",
+
+    "Russia truly is the country of possibilities.\n"
+    "It's been three weeks and we still can't "
+    "comprehend how something like this can be possible.",
+
+    " [   WE KILL PEOPLE   ] "
+    " [ BASED ON META-DATA ] ",
     ]
 
 fortunes_engineering = [
@@ -347,6 +364,9 @@ fortunes_resilience = [
 
     '''You're not being "represented", you're being marketed to. ''',
 
+    "All men are like this, by the way. "
+    "These guys just get to say it out loud. ",
+
     "You have to laugh about these kinds of things, "
     "because otherwise you will cry. ",
 
@@ -365,6 +385,8 @@ fortunes_resilience = [
     "And now it is time to harvest the fruit. ",
 
     "世界の全てに赦されたら愛の意味わかったの",
+
+    "Who is afraid of a four-letter word?",
     ]
 
 fortunes_misc = [
@@ -443,6 +465,8 @@ fortunes_misc = [
     "Artificial intelligence proves futile against organic idiocy",
 
     "Dear god, how many elephants can you fit in one room!?",
+
+    "We have you surrounded, at least from this side!",
     ]
 
 fortunes_nonsense = [
