@@ -84,6 +84,10 @@ fortunes_technology = [
 
     "- The blue team has to get it right every time. "
     "The red team - just once. ",
+
+    "use goto, and be happy\n"
+    "    -- Linus "
+    ,
     ]
 
 fortunes_economy = [
@@ -114,6 +118,8 @@ fortunes_economy = [
     "I make a dime\n"
     "That's why my algorithms\n"
     "Run in exponential time\n",
+
+    "In Canada it gets so cold that even bank accounts freeze. ",
     ]
 
 
@@ -152,6 +158,10 @@ fortunes_education = [
 
     "Bachelor Electrical Engineering:\n"
     "Misery is not a consequence, it is a prerequisite."
+    ,
+
+    "Intuition is knowledge of which the origin has become unclear. \n"
+    "    - A. J. M. Montagne"
     ,
     ]
 
@@ -407,7 +417,7 @@ fortunes_misc = [
 
     "Present day, present time. ",
 
-    "As above, so below. ",
+    "As above, so below; as within, so without.",
 
     "I am not insulting you, I am *describing* you. ",
 

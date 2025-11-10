@@ -1,6 +1,7 @@
 import unittest
 
 import raimad as rai
+import cift as cf
 
 from .utils import GeomsEqual, ArrayAlmostEqual
 
@@ -40,12 +41,30 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 if option.browser_default is not rai.Empty
                 })
 
-            layers = tuple(instance.steamroll().keys())
+            exporter = rai.cif.NoReuse(
+                instance,
+                multiplier=1,
+                )
+
+            layers = cf.parse(
+                exporter.cif_string,
+                grammar=cf.grammar.strict
+                )
+
+            layers = tuple(layers.keys())
             self.assertTrue(len(layers) > 0)
 
             for layer_name in layers:
                 print(layer_name)
                 self.assertTrue(rai.is_lname_valid(layer_name))
+                self.assertTrue(layer_name != 'L')
+
+            #layers = tuple(instance.steamroll().keys())
+            #self.assertTrue(len(layers) > 0)
+
+            #for layer_name in layers:
+            #    print(layer_name)
+            #    self.assertTrue(rai.is_lname_valid(layer_name))
 
     def test_warn_layer_names(self):
         """
