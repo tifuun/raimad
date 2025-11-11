@@ -16,13 +16,17 @@ class Snowman(rai.Compo):
 
     class Layers:
         pebble = rai.Layer(
-            "Non-malleable polycrystalline silicon layer"
+            "Non-malleable polycrystalline silicon layer",
+            cif_name = "PEBL",
             )
         carrot = rai.Layer(
-            "Bio-lithographic layer characterised by lambda = approx. 6E-7nm"
+            "Bio-lithographic layer characterised by lambda = approx. 6E-7nm",
+            cif_name = "CROT",
             )
         snow = rai.Layer(
-            "A collection of individual crystals of frozen dihydrogen monoxide"
+            "A collection of individual crystals of "
+            "frozen dihydrogen monoxide",
+            cif_name = "SNOW",
             )
 
     def _make(

@@ -45,7 +45,28 @@ class NoReuse:
             if layer is None:
                 continue
 
-            yield f'\tL L{layer};\n'
+            ## Resolve name
+            
+            ## TODO THIS IS VERY TRICKY HERE!!!
+            try:
+                cif_name = compo.final().Layers[layer].cif_name
+            except (KeyError, AttributeError):
+                cif_name = None
+
+            resolved_name = cif_name or layer
+
+            ## Warn on incorrect
+
+            if not rai.is_lname_valid(resolved_name):
+                # TODO Exception type
+                raise Exception(
+                    f"Layer name `{resolved_name}` of component "
+                    f"`{compo}` is not a valid CIF layer name. "
+                    f"TODO links to doc."
+                    )
+
+
+            yield f'\tL {resolved_name};\n'
             for poly in geom:
                 yield '\tP '
                 for point in poly:

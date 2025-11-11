@@ -29,6 +29,8 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
 
         self.assertTrue(len(builtin_compos) > 2)
 
+        #builtin_compos = [rai.RectLW]
+
         for compo in builtin_compos:
 
             # This incantation instantiates a compo with its
@@ -46,10 +48,13 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 multiplier=1,
                 )
 
+            print(exporter.cif_string)
+
             layers = cf.parse(
                 exporter.cif_string,
                 grammar=cf.grammar.strict
                 )
+
 
             layers = tuple(layers.keys())
             self.assertTrue(len(layers) > 0)

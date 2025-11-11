@@ -11,7 +11,11 @@ class Layer(rai.Annotation):
     layer is.
     """
 
-    def __init__(self, desc: str):
-        self.desc = desc
+    def __init__(self, desc: str, cif_name: str | None = None):
         self.name = 'this should be set in compo.__init_subclass_'
+        self.desc = desc
+        self.cif_name = cif_name
+
+_root = Layer("Root layer.", "ROOT")
+_root.name = 'root'
 

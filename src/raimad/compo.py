@@ -1,6 +1,7 @@
 """compo.py: home of Compo class and supporting constructs."""
 import inspect
 from typing import Any, NoReturn, Iterator, TypeVar
+from raimad.layer import _root
 
 try:
     from typing import Self
@@ -548,6 +549,8 @@ class Compo:
         _class_to_dictlist(cls, 'Layers', rai.Layer)
         _class_to_dictlist(cls, 'Options', rai.Option)
 
+        _patch_layers_dict(cls.Layers)
+
         for param in inspect.signature(cls._make).parameters.values():
             if param.name not in cls.Options.keys():
                 # TODO unannotated
@@ -685,4 +688,13 @@ def _class_to_dictlist(
         new_list[name] = annot
 
     setattr(cls, attr, new_list)
+
+def _patch_layers_dict(layers: rai.DictList):
+    if 'root' in layers.keys():
+        # TODO Exception class
+        # TODO pass whole compo for descriptive error msg
+        raise Exception("Layer 'root' does not need to be annotated")
+
+    layers.root = _root
+
 
