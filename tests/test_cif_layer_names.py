@@ -5,6 +5,23 @@ import cift as cf
 
 from .utils import GeomsEqual, ArrayAlmostEqual
 
+def get_cif_layers(compo_class):
+    instance = compo_class()
+
+    exporter = rai.cif.NoReuse(
+            instance,
+            multiplier=1,
+            )
+
+    layers = cf.parse(
+        exporter.cif_string,
+        grammar=cf.grammar.strict
+        )
+
+    layers = set(layers.keys())
+
+    return layers
+
 class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
     """
     Ensure that layer names are CIF-compatible.
@@ -55,7 +72,6 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 grammar=cf.grammar.strict
                 )
 
-
             layers = tuple(layers.keys())
             self.assertTrue(len(layers) > 0)
 
@@ -75,6 +91,88 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
         """
         Test emmission of warning for cif-incompatible layer names.
         """
+
+    def test_cif_layer_name_composition(self):
+
+        class Foo(rai.Compo):
+            class Layers:
+                foo = rai.Layer("Foo", cif_name="FOO")
+            def _make(self):
+                self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+
+        self.assertEqual(get_cif_layers(Foo), {"FOO", })
+
+        class Bar(rai.Compo):
+            class Layers:
+                bar = rai.Layer("Bar", cif_name="BAR")
+            def _make(self):
+                self.geoms.update({'bar': [[(0, 0), (0, 1), (1, 1)]]})
+
+        self.assertEqual(get_cif_layers(Bar), {"BAR", })
+
+        class Baz(rai.Compo):
+            def _make(self):
+                self.subcompos.append(Foo().proxy())
+                self.subcompos.append(Bar().proxy())
+
+        self.assertEqual(get_cif_layers(Baz), {"FOO", "BAR"})
+
+        class Baq(rai.Compo):
+            def _make(self):
+                self.subcompos.append(Foo().proxy())
+                self.subcompos.append(Bar().proxy())
+                self.subcompos.append(Baz().proxy())
+
+        self.assertEqual(get_cif_layers(Baq), {"FOO", "BAR"})
+
+        # Overshadow subcompo's cif_name with new one
+        class Ayy(rai.Compo):
+            class Layers:
+                bar = rai.Layer("Bar", cif_name="RAB")
+            def _make(self):
+                self.subcompos.append(Foo().proxy())
+                self.subcompos.append(Bar().proxy())
+
+        self.assertEqual(get_cif_layers(Ayy), {"FOO", "RAB"})
+
+        # Overshadow overshadowed cif_name
+        # BAR -> RAB -> BAZ
+        class Lmao(rai.Compo):
+            class Layers:
+                bar = rai.Layer("Bar", cif_name="BAZ")
+            def _make(self):
+                self.subcompos.append(Ayy().proxy())
+
+        self.assertEqual(get_cif_layers(Lmao), {"FOO", "BAZ"})
+
+        # No overshadowing whatsoever in the toplevel compo
+        # so should be exactly same as Lmao (subcompo)
+        class Wrap(rai.Compo):
+            def _make(self):
+                self.subcompos.append(Lmao().proxy())
+
+        self.assertEqual(get_cif_layers(Wrap), {"FOO", "BAZ"})
+
+        class Lmap(rai.Compo):
+            class Layers:
+                ayy = rai.Layer("Ayy", cif_name="AYY")
+                lmao = rai.Layer("Ayy", cif_name="LMAO")
+            def _make(self):
+                self.subcompos.append(Foo().proxy().map('ayy'))
+                self.subcompos.append(Bar().proxy().map('lmao'))
+
+        self.assertEqual(get_cif_layers(Lmap), {"AYY", "LMAO"})
+
+        class HalfLmap(rai.Compo):
+            class Layers:
+                ayy = rai.Layer("Ayy", cif_name="AYY")
+                lmao = rai.Layer("Ayy", cif_name="LMAO")
+            def _make(self):
+                self.subcompos.append(Foo().proxy().map('ayy'))
+                self.subcompos.append(Bar().proxy())
+
+        self.assertEqual(get_cif_layers(HalfLmap), {"AYY", "BAR"})
+
 
     def test_cif_layername_helper(self):
         """

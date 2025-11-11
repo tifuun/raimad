@@ -4,6 +4,11 @@ from typing import Iterator
 
 import raimad as rai
 
+def _compo_to_cifmap(compo: rai.Proxy):
+    return {
+        lname: annot.cif_name for lname, annot in compo.final().Layers.items()
+        }
+
 class NoReuse:
     """CIF Exporter that doesn't reuse subroutines."""
 
@@ -17,6 +22,8 @@ class NoReuse:
         self.rout_num = 1
         self.multiplier = multiplier
 
+        self.cifmap = {}
+
         self.cif_string = self._export_cif()
 
     def _export_cif(self) -> str:
@@ -25,12 +32,25 @@ class NoReuse:
     def _yield_cif(self) -> Iterator[str]:
         """Yield lines of cif file."""
         first_rout = self.rout_num
-        yield from self.yield_cif_bare(self.compo)
+        yield from self.yield_cif_bare(
+            self.compo,
+            {},
+            )
         yield f'C {first_rout};\n'
         yield 'E'
 
-    def yield_cif_bare(self, compo: 'rai.typing.CompoLike') -> Iterator[str]:
+    def yield_cif_bare(
+            self,
+            compo: 'rai.typing.CompoLike',
+            cifmap: dict,
+            ) -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
+
+        # This clones cifmap and appends
+        # values in new cifmap without overriding
+        # existing ones
+        cifmap = {**_compo_to_cifmap(compo), **cifmap}
+
         # Opening line, define the routine
         yield f'DS {self.rout_num} 1 1;\n'
 
@@ -48,10 +68,11 @@ class NoReuse:
             ## Resolve name
             
             ## TODO THIS IS VERY TRICKY HERE!!!
-            try:
-                cif_name = compo.final().Layers[layer].cif_name
-            except (KeyError, AttributeError):
-                cif_name = None
+            #try:
+            #    cif_name = compo.final().Layers[layer].cif_name
+            #except (KeyError, AttributeError):
+            #    cif_name = None
+            cif_name = cifmap.get(layer)
 
             resolved_name = cif_name or layer
 
@@ -86,7 +107,7 @@ class NoReuse:
         for subcompo in compo.subcompos.values():
             subcompos.append((
                 self.rout_num,
-                list(self.yield_cif_bare(subcompo))
+                list(self.yield_cif_bare(subcompo, cifmap))
                 ))
 
         # Call subcomponent procedures
