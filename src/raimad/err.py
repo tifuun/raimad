@@ -20,6 +20,8 @@ from raimad.bbox import EmptyBBoxError
 
 from raimad.cif.shorthand import InvalidDestinationError
 
+from raimad.cif.noreuse import CIFLayerNameWarning
+
 from raimad.string_import import StringImportError
 
 __all__ = [

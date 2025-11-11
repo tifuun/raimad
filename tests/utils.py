@@ -6,6 +6,19 @@ from io import StringIO
 import raimad as rai
 import raimad.typing as rait
 
+### BEGIN CHATGPT CODE TODO ###
+
+class AssertDoesntWarn():
+    def assertDoesntWarn(self, func, *args, **kwargs):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            func(*args, **kwargs)
+            if w:
+                messages = [str(warn.message) for warn in w]
+                self.fail(f"Unexpected warnings: {messages}")
+
+### END CHATGPT CODE ###
+
 class PrettyEqual():
     def assertPrettyEqual(self, actual, expected):
         try:

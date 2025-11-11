@@ -359,3 +359,7 @@ def is_lname_valid(name):
         name != 'ZZZZ'
         )
 
+# TODO test this?
+def lname_to_klay(name):
+    return f"L{name}"
+

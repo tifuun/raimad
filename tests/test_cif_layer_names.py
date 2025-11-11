@@ -3,26 +3,41 @@ import unittest
 import raimad as rai
 import cift as cf
 
-from .utils import GeomsEqual, ArrayAlmostEqual
+from .utils import AssertDoesntWarn
 
-def get_cif_layers(compo_class):
-    instance = compo_class()
+def get_cif_layers(
+        compo_class,
+        grammar=cf.grammar.strict,
+        exporter_args=None
+        ):
+    #instance = compo_class()
+
+    # This incantation instantiates a compo with its
+    # browser_default options.
+    # TODO would be nice to break it out into a separate helper.
+
+    instance = compo_class(**{
+        option.name: option.browser_default
+        for option in compo_class.Options.values()
+        if option.browser_default is not rai.Empty
+        })
 
     exporter = rai.cif.NoReuse(
             instance,
             multiplier=1,
+            **(exporter_args or {})
             )
 
     layers = cf.parse(
         exporter.cif_string,
-        grammar=cf.grammar.strict
+        grammar=grammar
         )
 
     layers = set(layers.keys())
 
     return layers
 
-class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
+class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
     """
     Ensure that layer names are CIF-compatible.
     """
@@ -50,33 +65,12 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
 
         for compo in builtin_compos:
 
-            # This incantation instantiates a compo with its
-            # browser_default options.
-            # TODO would be nice to break it out into a separate helper.
+            with self.assertDoesntWarn():
+                layers = get_cif_layers(compo)
 
-            instance = compo(**{
-                option.name: option.browser_default
-                for option in compo.Options.values()
-                if option.browser_default is not rai.Empty
-                })
-
-            exporter = rai.cif.NoReuse(
-                instance,
-                multiplier=1,
-                )
-
-            print(exporter.cif_string)
-
-            layers = cf.parse(
-                exporter.cif_string,
-                grammar=cf.grammar.strict
-                )
-
-            layers = tuple(layers.keys())
             self.assertTrue(len(layers) > 0)
 
             for layer_name in layers:
-                print(layer_name)
                 self.assertTrue(rai.is_lname_valid(layer_name))
                 self.assertTrue(layer_name != 'L')
 
@@ -91,6 +85,69 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
         """
         Test emmission of warning for cif-incompatible layer names.
         """
+
+        # Default behavior on undefined layer name:
+        # use lname_to_klay and warn
+
+        class Foo(rai.Compo):
+            def _make(self):
+                self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+                self.geoms.update({'root': [[(0, 0), (0, 1), (1, 1)]]})
+
+        with self.assertWarns(rai.err.CIFLayerNameWarning):
+            layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'ROOT', 'Lfoo'})
+
+        # Set lname_policy to `fallback_klay_warn` to
+        # manually specify this default behavior
+
+        with self.assertWarns(rai.err.CIFLayerNameWarning):
+            layers = get_cif_layers(
+                Foo,
+                cf.grammar.lenient_layers,
+                exporter_args={'lname_policy': 'fallback_klay_warn'}
+                )
+        self.assertEqual(layers, {'ROOT', 'Lfoo'})
+
+        # `fallback-klay` to use klayout-compatible name as fallback
+
+        with self.assertDoesntWarn():
+            layers = get_cif_layers(
+                Foo,
+                grammar=cf.grammar.lenient_layers,
+                exporter_args={'lname_policy': 'fallback-klay'}
+                )
+        self.assertEqual(layers, {'ROOT', 'Lfoo'})
+
+        # `force-klay` to use klayout-compatible name for all layers
+
+        with self.assertDoesntWarn():
+            layers = get_cif_layers(
+                Foo,
+                grammar=cf.grammar.lenient_layers,
+                exporter_args={'lname_policy': 'force-klay'}
+                )
+        self.assertEqual(layers, {'Lroot', 'Lfoo'})
+
+        # `strict` to emit error on any cif-incompatible layer name
+
+        with self.assertRaises(rai.err.CIFLayerNameWarning):
+            get_cif_layers(
+                Foo,
+                grammar=cf.grammar.lenient_layers,
+                exporter_args={'lname_policy': 'err'}
+                )
+
+        # Check that error is emitted on invalid lname_policy
+
+        with self.assertRaises(ValueError):
+            get_cif_layers(
+                Foo,
+                grammar=cf.grammar.lenient_layers,
+                exporter_args={'lname_policy': 'this does not exist'}
+                )
+        
+
 
     def test_cif_layer_name_composition(self):
 

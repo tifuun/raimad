@@ -1,6 +1,7 @@
 """noreuse.py: home to the NoReuse CIF exporter."""
 
 from typing import Iterator
+from warnings import warn
 
 import raimad as rai
 
@@ -9,22 +10,75 @@ def _compo_to_cifmap(compo: rai.Proxy):
         lname: annot.cif_name for lname, annot in compo.final().Layers.items()
         }
 
+def _resolve_lname(compo: rai.Proxy, layer, cifmap, lname_policy):
+
+    cif_name = cifmap.get(layer) or layer
+
+    if lname_policy in {'warn', 'err'}:
+        text = (
+            f"Layer name `{resolved_name}` of component "
+            f"`{compo}` is not a valid CIF layer name. "
+            "TODO advice"
+            )
+
+    if lname in {'warn', 'fallback_klay'}:
+
+    if lname_policy == 'warn':
+        pass
+
+    elif lname_policy == 'err':
+        pass
+
+    elif lname_policy == 'fallback_klay':
+        pass
+
+    elif lname_policy == 'force_klay':
+        pass
+
+    else:
+        # TODO raise valueerror
+        pass
+
+
+    if not rai.is_lname_valid(resolved_name):
+        resolved_name = rai.lname_to_klay(resolved_name)
+        warn(
+            f"Layer name `{resolved_name}` of component "
+            f"`{compo}` is not a valid CIF layer name. "
+            "TODO advice",
+            CIFLayerNameWarning
+            )
+        ## TODO Exception type
+        #raise Exception(
+        #    f"Layer name `{resolved_name}` of component "
+        #    f"`{compo}` is not a valid CIF layer name. "
+        #    f"TODO links to doc."
+        #    )
+
+
+class CIFLayerNameWarning(UserWarning):
+    pass
+
 class NoReuse:
     """CIF Exporter that doesn't reuse subroutines."""
 
     def __init__(
             self,
             compo: 'rai.typing.CompoLike',
-            multiplier: float = 1e3
+            multiplier: float = 1e3,
+            lname_policy = 'warn',
             ) -> None:
 
         self.compo = compo
         self.rout_num = 1
         self.multiplier = multiplier
+        self.lname_policy = lname_policy
 
         self.cifmap = {}
 
         self.cif_string = self._export_cif()
+
+        # TODO validate lname policy
 
     def _export_cif(self) -> str:
         return ''.join(self._yield_cif())
@@ -72,19 +126,6 @@ class NoReuse:
             #    cif_name = compo.final().Layers[layer].cif_name
             #except (KeyError, AttributeError):
             #    cif_name = None
-            cif_name = cifmap.get(layer)
-
-            resolved_name = cif_name or layer
-
-            ## Warn on incorrect
-
-            if not rai.is_lname_valid(resolved_name):
-                # TODO Exception type
-                raise Exception(
-                    f"Layer name `{resolved_name}` of component "
-                    f"`{compo}` is not a valid CIF layer name. "
-                    f"TODO links to doc."
-                    )
 
 
             yield f'\tL {resolved_name};\n'
