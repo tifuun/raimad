@@ -178,6 +178,8 @@ __all__ = [
     'fortunes_resilience',
     'fortunes_misc',
     'fortunes_all',
+    'lname_to_klay',
+    'is_lname_valid',
     ]
 
 

@@ -350,7 +350,7 @@ def distance_between(
         ))
 
 _IS_LNAME_VALID = re.compile(r'[A-Z0-9]{0,4}', re.ASCII)
-def is_lname_valid(name):
+def is_lname_valid(name: str) -> bool:
     return bool(
         bool(name)
         and
@@ -360,6 +360,6 @@ def is_lname_valid(name):
         )
 
 # TODO test this?
-def lname_to_klay(name):
+def lname_to_klay(name: str) -> str:
     return f"L{name}"
 

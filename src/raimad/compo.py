@@ -689,7 +689,7 @@ def _class_to_dictlist(
 
     setattr(cls, attr, new_list)
 
-def _patch_layers_dict(layers: rai.DictList):
+def _patch_layers_dict(layers: rai.DictList[rai.Layer]) -> None:
     if 'root' in layers.keys():
         # TODO Exception class
         # TODO pass whole compo for descriptive error msg

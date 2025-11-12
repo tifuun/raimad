@@ -2,19 +2,38 @@
 
 from typing import Iterator
 from warnings import warn
+from typing import TypeAlias, Literal
 
 import raimad as rai
 
-def _compo_to_cifmap(compo: rai.Proxy):
+Cifmap: TypeAlias = dict[str, str | None]
+LnamePolicy: TypeAlias = Literal[
+    "fallback-klay-warn",
+    "fallback-klay",
+    "force-klay",
+    "strict",
+    ]
+
+def _compo_to_cifmap(compo: rai.typing.CompoLike) -> Cifmap:
     return {
         lname: annot.cif_name for lname, annot in compo.final().Layers.items()
+        if isinstance(lname, str)
+        # TODO this `if` is some mypy trickery
+        # because dictlist keys CAN be ints
+        # but for Layers annotation that should never happen
+        # but we still need a way to enforce that
+        # both at runtime and with type hints
         }
 
-def _resolve_lname(compo: rai.Proxy, layer, cifmap, lname_policy):
+def _resolve_lname(
+        compo: rai.typing.CompoLike,
+        layer: str,
+        cifmap: Cifmap,
+        lname_policy: LnamePolicy
+        ) -> str:
 
     resolved = cifmap.get(layer) or layer
     converted = rai.lname_to_klay(layer)
-
 
     if lname_policy == 'fallback-klay-warn':
         if rai.is_lname_valid(resolved):
@@ -74,7 +93,7 @@ class NoReuse:
             self,
             compo: 'rai.typing.CompoLike',
             multiplier: float = 1e3,
-            lname_policy = 'fallback-klay-warn',
+            lname_policy: LnamePolicy = 'fallback-klay-warn',
             ) -> None:
 
         self.compo = compo
@@ -82,7 +101,7 @@ class NoReuse:
         self.multiplier = multiplier
         self.lname_policy = lname_policy
 
-        self.cifmap = {}
+        self.cifmap: Cifmap = {}
 
         self.cif_string = self._export_cif()
 
@@ -104,7 +123,7 @@ class NoReuse:
     def yield_cif_bare(
             self,
             compo: 'rai.typing.CompoLike',
-            cifmap: dict,
+            cifmap: Cifmap,
             ) -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
 
