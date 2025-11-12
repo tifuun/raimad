@@ -12,49 +12,57 @@ def _compo_to_cifmap(compo: rai.Proxy):
 
 def _resolve_lname(compo: rai.Proxy, layer, cifmap, lname_policy):
 
-    cif_name = cifmap.get(layer) or layer
-
-    if lname_policy in {'warn', 'err'}:
-        text = (
-            f"Layer name `{resolved_name}` of component "
-            f"`{compo}` is not a valid CIF layer name. "
-            "TODO advice"
-            )
-
-    if lname in {'warn', 'fallback_klay'}:
-
-    if lname_policy == 'warn':
-        pass
-
-    elif lname_policy == 'err':
-        pass
-
-    elif lname_policy == 'fallback_klay':
-        pass
-
-    elif lname_policy == 'force_klay':
-        pass
-
-    else:
-        # TODO raise valueerror
-        pass
+    resolved = cifmap.get(layer) or layer
+    converted = rai.lname_to_klay(layer)
 
 
-    if not rai.is_lname_valid(resolved_name):
-        resolved_name = rai.lname_to_klay(resolved_name)
+    if lname_policy == 'fallback-klay-warn':
+        if rai.is_lname_valid(resolved):
+            return resolved
+
         warn(
-            f"Layer name `{resolved_name}` of component "
+            f"Layer name `{resolved}` of component "
             f"`{compo}` is not a valid CIF layer name. "
-            "TODO advice",
+            f"It is automatically converted to `{converted}`. "
+            "Either add a CIF-compatible layer name using the `Layers` "
+            "annotation class of your compo, or mute this warning "
+            "by passing `lname_policy='fallback-klay'` to the "
+            "CIF exporter."
+            ,
             CIFLayerNameWarning
             )
-        ## TODO Exception type
-        #raise Exception(
-        #    f"Layer name `{resolved_name}` of component "
-        #    f"`{compo}` is not a valid CIF layer name. "
-        #    f"TODO links to doc."
-        #    )
 
+        return converted
+
+    elif lname_policy == 'strict':
+        if rai.is_lname_valid(resolved):
+            return resolved
+
+        raise CIFLayerNameWarning(
+            f"Layer name `{resolved}` of component "
+            f"`{compo}` is not a valid CIF layer name. "
+            "Either add a CIF-compatible layer name using the `Layers` "
+            "annotation class of your compo, or change the "
+            "`lname_policy` of the CIF exporter to skip this error. "
+            ,
+            CIFLayerNameWarning
+            )
+
+    elif lname_policy == 'fallback-klay':
+        if rai.is_lname_valid(resolved):
+            return resolved
+        return converted
+
+    elif lname_policy == 'force-klay':
+        return converted
+
+    else:
+        raise ValueError(
+            "`lname_policy` must be one of "
+            "'force-klay', 'fallback-klay', 'strict', 'fallback-klay-warn'."
+            )
+    
+    assert False
 
 class CIFLayerNameWarning(UserWarning):
     pass
@@ -66,7 +74,7 @@ class NoReuse:
             self,
             compo: 'rai.typing.CompoLike',
             multiplier: float = 1e3,
-            lname_policy = 'warn',
+            lname_policy = 'fallback-klay-warn',
             ) -> None:
 
         self.compo = compo
@@ -119,14 +127,8 @@ class NoReuse:
             if layer is None:
                 continue
 
-            ## Resolve name
-            
-            ## TODO THIS IS VERY TRICKY HERE!!!
-            #try:
-            #    cif_name = compo.final().Layers[layer].cif_name
-            #except (KeyError, AttributeError):
-            #    cif_name = None
-
+            resolved_name = _resolve_lname(
+                compo, layer, cifmap, self.lname_policy)
 
             yield f'\tL {resolved_name};\n'
             for poly in geom:

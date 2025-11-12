@@ -1,6 +1,8 @@
 from pprint import pprint
 from sys import stderr
 from typing import ClassVar
+from contextlib import contextmanager
+import warnings
 
 from io import StringIO
 import raimad as rai
@@ -8,14 +10,37 @@ import raimad.typing as rait
 
 ### BEGIN CHATGPT CODE TODO ###
 
-class AssertDoesntWarn():
-    def assertDoesntWarn(self, func, *args, **kwargs):
-        with warnings.catch_warnings(record=True) as w:
+# Prompt:
+#
+# write python unittest.testcase mixin that adds assertDoesntWarn context
+# manager function the behaves the same as the builtin self.assertWarns but
+# tests that no warnings are emitted
+
+class AssertDoesntWarn:
+    """
+    Mixin for unittest.TestCase that adds an `assertDoesntWarn` context manager.
+    
+    Works like `assertWarns`, but asserts that no warnings are emitted.
+    """
+
+    @contextmanager
+    def assertDoesntWarn(self, msg=None):
+        """
+        Context manager that fails if any warnings are raised within its block.
+        
+        Example:
+            with self.assertDoesntWarn():
+                do_something()
+        """
+        with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
-            func(*args, **kwargs)
-            if w:
-                messages = [str(warn.message) for warn in w]
-                self.fail(f"Unexpected warnings: {messages}")
+            yield  # Run the code under test
+        if caught:
+            formatted = "\n".join(
+                f"{w.category.__name__}: {w.message}" for w in caught
+            )
+            standard_msg = f"Unexpected warnings raised:\n{formatted}"
+            self.fail(self._formatMessage(msg, standard_msg))
 
 ### END CHATGPT CODE ###
 
