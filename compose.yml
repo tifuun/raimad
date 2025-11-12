@@ -12,6 +12,8 @@ services:
         FROM alpine-base
         RUN \
           python -m venv /venv && \
+          /venv/bin/pip install -e /play && \
+          /venv/bin/pip install ipython cift ruff mypy coverage && \
           echo '. /venv/bin/activate' > /etc/profile.d/50-load-venv.sh
 
     volumes:
