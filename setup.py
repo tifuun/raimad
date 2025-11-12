@@ -1,5 +1,5 @@
 """
-Metadata about this project is available in pyproject.toml
+Metadata about this project is available in pyproject.toml.
 
 This file exists for backwards compatibility for python 3.10.
 See

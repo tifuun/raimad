@@ -152,7 +152,11 @@ def _get_cifview_args(file: str) -> tuple[str, ...]:
         "Contact maybetree and request support."
         )
 
-def show(compo: 'rai.typing.CompoLike', ignore_running: bool = False, force_external: bool = False) -> None:
+def show(
+        compo: 'rai.typing.CompoLike',
+        ignore_running: bool = False,
+        force_external: bool = False
+        ) -> None:
     """
     Export component and show it to the user.
 

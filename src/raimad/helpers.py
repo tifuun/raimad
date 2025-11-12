@@ -351,6 +351,7 @@ def distance_between(
 
 _IS_LNAME_VALID = re.compile(r'[A-Z0-9]{0,4}', re.ASCII)
 def is_lname_valid(name: str) -> bool:
+    """Check whether a string is a valid CIF layer name."""
     return bool(
         bool(name)
         and
@@ -361,5 +362,6 @@ def is_lname_valid(name: str) -> bool:
 
 # TODO test this?
 def lname_to_klay(name: str) -> str:
+    """Append `L` to the start of a string."""
     return f"L{name}"
 

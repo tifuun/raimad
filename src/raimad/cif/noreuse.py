@@ -84,7 +84,7 @@ def _resolve_lname(
     assert False
 
 class CIFLayerNameWarning(UserWarning):
-    pass
+    """Warning about layer names that are not compatible with CIF."""
 
 class NoReuse:
     """CIF Exporter that doesn't reuse subroutines."""
