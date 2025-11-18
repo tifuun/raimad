@@ -47,9 +47,9 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 print(layer_name)
                 self.assertTrue(rai.is_lname_valid(layer_name))
 
-    def test_warn_layer_names(self):
-        """
-        Test emmission of warning for cif-incompatible layer names.
+    #def test_warn_layer_names(self):
+    #    """
+    #    Test emmission of warning for cif-incompatible layer names.
         """
 
     def test_cif_layername_helper(self):
@@ -107,4 +107,44 @@ class TestLayerNames(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
         self.assertFalse(rai.is_lname_valid('\x00'))
         self.assertFalse(rai.is_lname_valid('\x00\x00\x00\x00'))
         self.assertFalse(rai.is_lname_valid('今朝毎朝'))
+
+    #def test_lname_policy_cli(self):
+    #    pwd = os.getcwd()
+    #    with tempfile.TemporaryDirectory() as folder:
+    #        os.chdir(folder)
+
+    #        Path('mymodule.py').write_text(
+    #            "import raimad as rai\n"
+    #            "\n"
+    #            "class MyCompo(rai.Compo):\n"
+    #            "    def _make(self):\n"
+    #            "        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})"
+    #            )
+
+    #        proc_default = subprocess.run(shlex.split(
+    #            f'{sys.executable} -m raimad export mymodule:MyCompo'
+    #            ), check=True, capture_output=True)
+
+    #        proc_warn = subprocess.run(shlex.split(
+    #            f'{sys.executable} -m raimad export mymodule:MyCompo '
+    #            '--exporter-opts lname_policy fallback-klay-warn'
+    #            ), check=True, capture_output=True)
+
+    #        proc_nowarn = subprocess.run(shlex.split(
+    #            f'{sys.executable} -m raimad export mymodule:MyCompo '
+    #            '--exporter-opts lname_policy fallback-klay'
+    #            ), check=True, capture_output=True)
+
+
+    #    os.chdir(pwd)
+
+    #    self.assertTrue(b'CIFLayerNameWarning' in proc_default.stderr)
+    #    self.assertTrue(b'CIFLayerNameWarning' in proc_warn.stderr)
+    #    self.assertTrue(b'CIFLayerNameWarning' not in proc_nowarn.stderr)
+
+# Use this to manually test what warning looks like:
+# `raimad export tests.test_cif_layer_names:Sample`
+class Sample(rai.Compo):
+    def _make(self):
+        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
 
