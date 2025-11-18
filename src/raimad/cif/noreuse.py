@@ -92,7 +92,7 @@ class NoReuse:
     def __init__(
             self,
             compo: 'rai.typing.CompoLike',
-            multiplier: float = 1e3,
+            multiplier: float = 1e2,
             lname_policy: LnamePolicy = 'fallback-klay-warn',
             ) -> None:
 
