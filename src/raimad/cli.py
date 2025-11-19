@@ -4,6 +4,7 @@ import argparse
 from typing import Sequence
 import sys
 import os
+from ast import literal_eval
 
 import raimad as rai
 
@@ -121,6 +122,50 @@ def _add_export_action(
         default='{name}.cif',
         )
 
+    compo_opts = parser.add_mutually_exclusive_group()
+    exporter_opts = parser.add_mutually_exclusive_group()
+
+    compo_opts.add_argument(
+        '--opts',
+        type=str,
+        nargs='*'
+        # TODO help text
+        )
+
+    compo_opts.add_argument(
+        '--opts-json',
+        type=str,
+        nargs='*'
+        # TODO help text
+        )
+
+    compo_opts.add_argument(
+        '--opts-dict',
+        type=str,
+        nargs='*'
+        # TODO help text
+        )
+
+    exporter_opts.add_argument(
+        '--exporter-opts',
+        type=str,
+        nargs='*'
+        # TODO help text
+        )
+
+    exporter_opts.add_argument(
+        '--exporter-opts-json',
+        type=str,
+        nargs='*'
+        )
+
+    exporter_opts.add_argument(
+        '--exporter-opts-dict',
+        type=str,
+        nargs='*'
+        # TODO help text
+        )
+
 
 def _add_show_action(
         subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
@@ -182,6 +227,31 @@ def _process_args_export(args: argparse.Namespace) -> None:
         '{name}',
         args.component.__name__
         )
+
+    if args.opts is not None:
+        # TODO handle uneven number
+        args.opts_dict = {
+            key: literal_eval(val) for key, val in rai.couples(args.opts)
+            }
+
+    elif args.opts_dict is not None:
+        raise NotImplementedError("foo")
+
+    elif args.opts_json is not None:
+        raise NotImplementedError("foo")
+
+    if args.exporter_opts is not None:
+        # TODO handle uneven number
+        args.exporter_opts_dict = {
+            key: literal_eval(val) for key, val
+            in rai.couples(args.exporter_opts)
+            }
+
+    elif args.exporter_opts_dict is not None:
+        raise NotImplementedError("foo")
+
+    elif args.exporter_opts_json is not None:
+        raise NotImplementedError("bar")
 
 def _ensure_pwd_in_path() -> None:
     try:

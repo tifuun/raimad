@@ -292,41 +292,39 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
         self.assertFalse(rai.is_lname_valid('今朝毎朝'))
 
 
-# TODO still thinking of how to best configure exporter
-# (eventually multiple)
-# from CLI
+    def test_lname_policy_cli(self):
+        pwd = os.getcwd()
+        with tempfile.TemporaryDirectory() as folder:
+            os.chdir(folder)
 
-#    def test_lname_policy_cli(self):
-#        pwd = os.getcwd()
-#        with tempfile.TemporaryDirectory() as folder:
-#            os.chdir(folder)
-#
-#            Path('mymodule.py').write_text(
-#                "import raimad as rai\n"
-#                "\n"
-#                "class MyCompo(rai.Compo):\n"
-#                "    def _make(self):\n"
-#                "        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})"
-#                )
-#
-#            proc_default = subprocess.run(shlex.split(
-#                f'{sys.executable} -m raimad export mymodule:MyCompo'
-#                ), check=True, capture_output=True)
-#
-#            proc_warn = subprocess.run(shlex.split(
-#                f'{sys.executable} -m raimad export mymodule:MyCompo --lname-policy fallback-klay-warn'
-#                ), check=True, capture_output=True)
-#
-#            proc_nowarn = subprocess.run(shlex.split(
-#                f'{sys.executable} -m raimad export mymodule:MyCompo --lname-policy fallback-klay'
-#                ), check=True, capture_output=True)
-#
-#
-#        os.chdir(pwd)
-#
-#        self.assertTrue(b'CIFLayerNameWarning' in proc_default.stderr)
-#        self.assertTrue(b'CIFLayerNameWarning' in proc_warn.stderr)
-#        self.assertTrue(b'CIFLayerNameWarning' not in proc_nowarn.stderr)
+            Path('mymodule.py').write_text(
+                "import raimad as rai\n"
+                "\n"
+                "class MyCompo(rai.Compo):\n"
+                "    def _make(self):\n"
+                "        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})"
+                )
+
+            proc_default = subprocess.run(shlex.split(
+                f'{sys.executable} -m raimad export mymodule:MyCompo'
+                ), check=True, capture_output=True)
+
+            proc_warn = subprocess.run(shlex.split(
+                f'{sys.executable} -m raimad export mymodule:MyCompo '
+                '--exporter-opts lname_policy fallback-klay-warn'
+                ), check=True, capture_output=True)
+
+            proc_nowarn = subprocess.run(shlex.split(
+                f'{sys.executable} -m raimad export mymodule:MyCompo '
+                '--exporter-opts lname_policy fallback-klay'
+                ), check=True, capture_output=True)
+
+
+        os.chdir(pwd)
+
+        self.assertTrue(b'CIFLayerNameWarning' in proc_default.stderr)
+        self.assertTrue(b'CIFLayerNameWarning' in proc_warn.stderr)
+        self.assertTrue(b'CIFLayerNameWarning' not in proc_nowarn.stderr)
 
 # Use this to manually test what warning looks like:
 # `raimad export tests.test_cif_layer_names:Sample`
