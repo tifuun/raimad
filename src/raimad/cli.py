@@ -129,7 +129,7 @@ def _add_export_action(
         )
 
     compo_opts = parser.add_mutually_exclusive_group()
-    exporter_opts = parser.add_mutually_exclusive_group()
+    #exporter_opts = parser.add_mutually_exclusive_group()
 
     compo_opts.add_argument(
         '--opts',
@@ -152,25 +152,25 @@ def _add_export_action(
         # TODO help text
         )
 
-    exporter_opts.add_argument(
-        '--exporter-opts',
-        type=str,
-        nargs='*'
-        # TODO help text
-        )
+    #exporter_opts.add_argument(
+    #    '--exporter-opts',
+    #    type=str,
+    #    nargs='*'
+    #    # TODO help text
+    #    )
 
-    exporter_opts.add_argument(
-        '--exporter-opts-json',
-        type=str,
-        nargs='*'
-        )
+    #exporter_opts.add_argument(
+    #    '--exporter-opts-json',
+    #    type=str,
+    #    nargs='*'
+    #    )
 
-    exporter_opts.add_argument(
-        '--exporter-opts-dict',
-        type=str,
-        nargs='*'
-        # TODO help text
-        )
+    #exporter_opts.add_argument(
+    #    '--exporter-opts-dict',
+    #    type=str,
+    #    nargs='*'
+    #    # TODO help text
+    #    )
 
 
 def _add_show_action(
@@ -246,19 +246,19 @@ def _process_args_export(args: argparse.Namespace) -> None:
     elif args.opts_json is not None:
         args.opts_dict = json.loads(args.opts_json)
 
-    if args.exporter_opts is not None:
-        raise NotImplementedError("foo")
-        # TODO handle uneven number
-        args.exporter_opts_dict = {
-            key: literal_eval(val) for key, val
-            in rai.couples(args.exporter_opts)
-            }
+    #if args.exporter_opts is not None:
+    #    raise NotImplementedError("foo")
+    #    # TODO handle uneven number
+    #    args.exporter_opts_dict = {
+    #        key: literal_eval(val) for key, val
+    #        in rai.couples(args.exporter_opts)
+    #        }
 
-    elif args.exporter_opts_dict is not None:
-        raise NotImplementedError("foo")
+    #elif args.exporter_opts_dict is not None:
+    #    raise NotImplementedError("foo")
 
-    elif args.exporter_opts_json is not None:
-        raise NotImplementedError("bar")
+    #elif args.exporter_opts_json is not None:
+    #    raise NotImplementedError("bar")
 
 def _ensure_pwd_in_path() -> None:
     try:
