@@ -83,7 +83,12 @@ fortunes_technology = [
     "Security at the expense of usability comes at the expense of security. ",
 
     "- The blue team has to get it right every time. "
-    "The red team - just once. ",
+    "The red team - just once. "
+    ,
+
+    '''maybetree: "Is MATLAB garbage-collected?\n'''
+    '''Arend: "No, it's just garbage". '''
+    ,
     ]
 
 fortunes_economy = [
@@ -114,6 +119,12 @@ fortunes_economy = [
     "I make a dime\n"
     "That's why my algorithms\n"
     "Run in exponential time\n",
+
+    "In Canada it gets so cold that even bank accounts freeze. ",
+
+    "Russia is the biggest country in the world! "
+    "Time timezones span 11 hours -- and also 11 decades. "
+    ,
     ]
 
 
@@ -265,6 +276,8 @@ fortunes_politics = [
     "The militia belongs to the people and the people belong to the militia.",
 
     "Time is yours, but everything else is ours.",
+
+    "We must make a radical turn, at 360 degress.",
     ]
 
 fortunes_engineering = [
