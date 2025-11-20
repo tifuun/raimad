@@ -190,7 +190,10 @@ class NoReuse:
                     self.yield_cif_bare(
                         subcompo,
                         cifmap,
-                        nickname=subcompo_name
+                        nickname=str(subcompo_name)
+                        # anonymous subcompos have their
+                        # name as an int (thats how dictlist works),
+                        # cast it to str here
                         )
                     )
                 ))
