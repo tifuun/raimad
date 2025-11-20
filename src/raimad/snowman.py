@@ -45,7 +45,7 @@ class Snowman(rai.Compo):
             )
 
         eye_r = eye_l.shallow_copy()
-        eye_r.vflip(head.bbox.mid[0])
+        eye_r.hflip(head.bbox.mid[0])
         # TODO flip at arbitrary angle around point?
         # also, for hflip/vflip, is passed point,
         # automatically pick coordinate.
