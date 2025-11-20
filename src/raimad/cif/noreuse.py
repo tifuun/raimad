@@ -126,6 +126,7 @@ class NoReuse:
             compo: 'rai.typing.CompoLike',
             cifmap: Cifmap,
             nickname: str | None = None,
+            #subcompo_name_stack = None
             ) -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
 
@@ -176,6 +177,14 @@ class NoReuse:
                         )
                 yield ';\n'
 
+        for mark_name, mark in compo.marks.items():
+            yield (
+                'L MARK;\n'
+                f'94 {mark_name} '
+                f'{int(mark[0] * self.multiplier)} '
+                f'{int(mark[1] * self.multiplier)};\n'
+                )
+
         # Precompute a list of [routine number, subcomponent]
         # Remember, subcomponents can also have subcomponents,
         # so the subroutine numbers won't always be consecutive.
@@ -184,16 +193,31 @@ class NoReuse:
         # the routine number
         subcompos = []
         for subcompo_name, subcompo in compo.subcompos.items():
+
+            if isinstance(subcompo_name, int):
+                instance_name = f'{subcompo_name}-ANON'
+            elif isinstance(subcompo_name, str):
+                instance_name = subcompo_name
+            else:
+                assert False
+
+            #if subcompo_name_stack is None:
+            #    subcompo_name_stack = ()
+
+            #subcompo_name_stack = (*subcompo_name_stack, instance_name)
+            #instance_name = '.'.join((*subcompo_name_stack, instance_name))
+
+            type_name = type(subcompo.final()).__name__
+
             subcompos.append((
                 self.rout_num,
                 list(
                     self.yield_cif_bare(
                         subcompo,
                         cifmap,
-                        nickname=str(subcompo_name)
-                        # anonymous subcompos have their
-                        # name as an int (thats how dictlist works),
-                        # cast it to str here
+                        #nickname=f"{type_name}::{'.'.join(subcompo_name_stack)}{'.' * bool(subcompo_name_stack)}{instance_name}",
+                        nickname=f"{type_name}::{instance_name}",
+                        #subcompo_name_stack=(*subcompo_name_stack, instance_name),
                         )
                     )
                 ))
