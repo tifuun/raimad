@@ -77,12 +77,13 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 ),
             ]
 
-        for i, x in enumerate(same):
-            open(f'/tmp/{i}.svg', 'w').write(rai.export_svg(x))
+        if 0:
+            # Use this to debug manually
+            for i, x in enumerate(same):
+                open(f'/tmp/{i}.svg', 'w').write(rai.export_svg(x))
 
         i = 1
         for compo in same[1:]:
-            print(i)
             i += 1
             self.assertArrayAlmostEqual(
                 same[0].bbox.as_list(),
