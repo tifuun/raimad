@@ -120,6 +120,10 @@ fortunes_economy = [
     "Run in exponential time\n",
 
     "In Canada it gets so cold that even bank accounts freeze. ",
+
+    "Russia is the biggest country in the world! "
+    "Time timezones span 11 hours -- and also 11 decades. "
+    ,
     ]
 
 
@@ -275,6 +279,8 @@ fortunes_politics = [
     "The militia belongs to the people and the people belong to the militia.",
 
     "Time is yours, but everything else is ours.",
+
+    "We must make a radical turn, at 360 degress.",
     ]
 
 fortunes_engineering = [
