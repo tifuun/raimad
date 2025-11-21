@@ -18,7 +18,7 @@ LnamePolicy: TypeAlias = Literal[
 
 def _compo_to_cifmap(compo: rai.typing.CompoLike) -> Cifmap:
     return {
-        lname: annot.cif_name for lname, annot in compo.final().Layers.items()
+        lname: annot for lname, annot in compo.final().Layers.items()
         if isinstance(lname, str)
         # TODO this `if` is some mypy trickery
         # because dictlist keys CAN be ints
@@ -125,7 +125,7 @@ class NoReuse:
                 compo, layer, cifmap, self.lname_policy, self.layer_indices)
             # TODO cache it???
 
-            self.lypmap[layer] = resolved_name
+            self.lypmap[layer] = resolved_name, cifmap[layer]
 
             yield f'\tL {resolved_name};\n'
             for poly in geom:
@@ -199,7 +199,7 @@ def _resolve_lname(
         layer_indices,
         ) -> str:
 
-    resolved = cifmap.get(layer) or layer
+    resolved = cifmap.get(layer).cif_name or layer
     converted = rai.lname_to_klay(layer)
 
     if lname_policy == 'fallback-klay-warn':
@@ -261,6 +261,8 @@ def _resolve_lname(
 
 def _gen_lyp(lypmap):
 
+    # TODO lypmap/cifmap very confusing sit down to
+    # think about it an make it good
 
     # TODO not including a layer (i.e. MARK) in lyp makes it
     # not show up at all????
@@ -269,18 +271,27 @@ def _gen_lyp(lypmap):
     yield '<layer-properties>'
     #yield from _lyp_pattern()
 
-    for i, (full_name, cif_name) in enumerate(lypmap.items()):
+    for i, (full_name, (cif_name, annot)) in enumerate(lypmap.items()):
 
-        yield ''.join(_dither_text(full_name))
+        #yield ''.join(_dither_text(full_name))
 
         yield '<properties>'
         #yield '<expanded>false</expanded>'
         #yield '<frame-color>#00ffff</frame-color>'
         #yield '<fill-color>#00ffff</fill-color>'
+
+        if fill_color := annot.lyp_fill_color:
+            yield f'<fill-color>{fill_color}</fill-color>'
+
+        if frame_color := annot.lyp_frame_color:
+            yield f'<frame-color>{frame_color}</frame-color>'
+
         #yield '<frame-brightness>0</frame-brightness>'
         #yield '<fill-brightness>0</fill-brightness>'
         #yield '<dither-pattern>I9</dither-pattern>'
-        yield f'<dither-pattern>C{i}</dither-pattern>'
+
+        #yield f'<dither-pattern>C{i}</dither-pattern>'
+
         #yield '<line-style/>'
         #yield '<valid>true</valid>'
         #yield '<visible>true</visible>'
@@ -301,6 +312,7 @@ def _gen_lyp(lypmap):
     yield '<name/>'
     yield '</layer-properties>'
 
+# https://github.com/dhepper/font8x8/blob/master/font8x8_basic.h
 FONT = (
     ( 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ),   # U+0000 (nul)
     ( 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ),   # U+0001

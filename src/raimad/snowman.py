@@ -18,15 +18,21 @@ class Snowman(rai.Compo):
         pebble = rai.Layer(
             "Non-malleable polycrystalline silicon layer",
             cif_name = "PEBL",
+            lyp_fill_color = "#222244",
+            lyp_frame_color = "#222244",
             )
         carrot = rai.Layer(
             "Bio-lithographic layer characterised by lambda = approx. 6E-7nm",
             cif_name = "CROT",
+            lyp_fill_color = "#ffaa00",
+            lyp_frame_color = "#ffaa00",
             )
         snow = rai.Layer(
             "A collection of individual crystals of "
             "frozen dihydrogen monoxide",
             cif_name = "SNOW",
+            lyp_fill_color = "#eeeeee",
+            lyp_frame_color = "#000000",
             )
 
     def _make(
