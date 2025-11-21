@@ -83,12 +83,15 @@ def export_cif(
     """
     exporter_instance = (exporter or rai.cif.NoReuse)(compo, *args, **kwargs)
     cif_string = exporter_instance.cif_string
+    lyp_string = exporter_instance.lyp_string
 
     if dest is None:
         pass
     elif isinstance(dest, (str, Path)):
         with open(dest, 'w') as file:
             file.write(cif_string)
+        with open(Path(dest).with_suffix('.lyp'), 'w') as file:
+            file.write(lyp_string)
     elif hasattr(dest, 'write'):
         dest.write(cif_string)
     else:

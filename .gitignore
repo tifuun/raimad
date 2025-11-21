@@ -82,6 +82,7 @@ htmlcov
 
 *.cif
 test.py
+*.lyp
 
 
 
