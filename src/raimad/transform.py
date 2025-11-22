@@ -201,7 +201,9 @@ class Transform:
         does_shear = self.does_shear()
         does_scale = self.does_scale()
 
-        move_x, move_y = self.get_scale()
+        move_x, move_y = self.get_translation()
+        # TODO need unit tests for this this was broken!!!
+
         rotation = self.get_rotation()
         shear = self.get_shear()
         scale_x, scale_y = self.get_scale()
