@@ -18,6 +18,15 @@ class NoReuse:
         self.multiplier = multiplier
 
         self.enable_cell_names = True  # TODO param
+        self.lname_transformers = (
+            rai.cif.lname_transformers.root,
+            rai.cif.lname_transformers.noop,
+            {
+                'carrot': 'CROT',
+                'pebble': 'PEBL',
+                'snow': 'SNOW',
+                }
+            )
 
         self.cif_string = self._export_cif()
 
@@ -74,7 +83,12 @@ class NoReuse:
             if layer is None:
                 continue
 
-            yield f'\tL L{layer};\n'
+            transformed_layer = _transform_lname(
+                self.lname_transformers,
+                layer
+                )
+
+            yield f'\tL {layer};\n'
             for poly in geom:
                 yield '\tP '
                 for point in poly:
@@ -124,4 +138,23 @@ def _compo_to_cell_name(subcompo_name, subcompo):
     type_name = type(subcompo.final()).__name__
 
     return f"{type_name}::{instance_name}"
+
+def _transform_lname(lname_transformers, name):
+    for transformer in lname_transformers:
+        if hasattr(transformer, '__getitem__'):
+            try:
+                transformed = transformer[name]
+            except KeyError:
+                transformed = None
+        elif hasattr(transformer, '__call__'):
+            transformed = transformer(name)
+
+        if transformed is not None:
+            if not rai.is_lname_valid(transformed):
+                raise Exception('DOTO')  # TODO
+            return transformed
+
+    if transformed is None:
+        raise Exception(f'TODO {name}')
+
 
