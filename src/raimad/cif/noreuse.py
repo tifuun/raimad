@@ -17,6 +17,8 @@ class NoReuse:
         self.rout_num = 1
         self.multiplier = multiplier
 
+        self.enable_cell_names = True  # TODO param
+
         self.cif_string = self._export_cif()
 
     def _export_cif(self) -> str:
@@ -25,29 +27,41 @@ class NoReuse:
     def _yield_cif(self) -> Iterator[str]:
         """Yield lines of cif file."""
         first_rout = self.rout_num
-        yield from self.yield_cif_bare(self.compo)
+        yield from self.yield_cif_bare(
+            self.compo,
+            cell_name=type(self.compo.final()).__name__
+            )
         yield f'C {first_rout};\n'
         yield 'E'
 
-    def yield_cif_bare(self, compo: 'rai.typing.CompoLike') -> Iterator[str]:
+    def yield_cif_bare(
+            self,
+            compo: 'rai.typing.CompoLike',
+            cell_name: str
+            ) -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
+
         # Opening line, define the routine
         yield f'DS {self.rout_num} 1 1;\n'
 
-        if nickname is not None:
-            #assert bool(nickname)
-            if not nickname:
-                warn(
-                        "Empty cell nicname????",
+        if self.enable_cell_names:
+
+            if cell_name:
+                yield f'9 {cell_name};\n'
+
+            else:
+                if cell_name is not None:
+                    warn(
+                        "Cell name is falsy but not None??? "
+                        "How did this happen!?",
                         UserWarning
                         )
-                nickname = 'EMPTY'
+
             # TODO L-name doc says no duplicate cell names
             # but klayout supports it (adds `$1`, `$2`, `$3` and so on
             # to differentiate between them)
             # TODO what are the bounds on layer names?
             # no spaces it seems, but what else?
-            yield f'9 {nickname};\n'
 
         # advance to next routine number
         self.rout_num += 1
@@ -78,9 +92,16 @@ class NoReuse:
         # the routine number
         subcompos = []
         for subcompo_name, subcompo in compo.subcompos.items():
+
             subcompos.append((
                 self.rout_num,
-                list(self.yield_cif_bare(subcompo))
+                list(self.yield_cif_bare(
+                    subcompo,
+                    cell_name=
+                        _compo_to_cell_name(subcompo_name, subcompo)
+                        if self.enable_cell_names
+                        else None
+                    ))
                 ))
 
         # Call subcomponent procedures
@@ -91,4 +112,16 @@ class NoReuse:
         # Define those procedures
         for _, this_subcompo in subcompos:
             yield from this_subcompo
+
+def _compo_to_cell_name(subcompo_name, subcompo):
+    if isinstance(subcompo_name, int):
+        instance_name = f'{subcompo_name}-ANON'
+    elif isinstance(subcompo_name, str):
+        instance_name = subcompo_name
+    else:
+        assert False
+
+    type_name = type(subcompo.final()).__name__
+
+    return f"{type_name}::{instance_name}"
 
