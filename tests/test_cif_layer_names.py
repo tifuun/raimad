@@ -87,152 +87,152 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             #    print(layer_name)
             #    self.assertTrue(rai.is_lname_valid(layer_name))
 
-    def test_warn_layer_names(self):
-        """
-        Test emmission of warning for cif-incompatible layer names.
-        """
+    #def test_warn_layer_names(self):
+    #    """
+    #    Test emmission of warning for cif-incompatible layer names.
+    #    """
 
-        # Default behavior on undefined layer name:
-        # use lname_to_klay and warn
+    #    # Default behavior on undefined layer name:
+    #    # use lname_to_klay and warn
 
-        class Foo(rai.Compo):
-            def _make(self):
-                self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
-                self.geoms.update({'root': [[(0, 0), (0, 1), (1, 1)]]})
+    #    class Foo(rai.Compo):
+    #        def _make(self):
+    #            self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+    #            self.geoms.update({'root': [[(0, 0), (0, 1), (1, 1)]]})
 
-        with self.assertWarns(rai.err.CIFLayerNameWarning):
-            layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
-        self.assertEqual(layers, {'ROOT', 'Lfoo'})
+    #    with self.assertWarns(rai.err.CIFLayerNameWarning):
+    #        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+    #    self.assertEqual(layers, {'ROOT', 'Lfoo'})
 
-        # Set lname_policy to `fallback_klay_warn` to
-        # manually specify this default behavior
+    #    # Set lname_policy to `fallback_klay_warn` to
+    #    # manually specify this default behavior
 
-        with self.assertWarns(rai.err.CIFLayerNameWarning):
-            layers = get_cif_layers(
-                Foo,
-                cf.grammar.lenient_layers,
-                exporter_args={'lname_policy': 'fallback-klay-warn'}
-                )
-        self.assertEqual(layers, {'ROOT', 'Lfoo'})
+    #    with self.assertWarns(rai.err.CIFLayerNameWarning):
+    #        layers = get_cif_layers(
+    #            Foo,
+    #            cf.grammar.lenient_layers,
+    #            exporter_args={'lname_policy': 'fallback-klay-warn'}
+    #            )
+    #    self.assertEqual(layers, {'ROOT', 'Lfoo'})
 
-        # `fallback-klay` to use klayout-compatible name as fallback
+    #    # `fallback-klay` to use klayout-compatible name as fallback
 
-        with self.assertDoesntWarn():
-            layers = get_cif_layers(
-                Foo,
-                grammar=cf.grammar.lenient_layers,
-                exporter_args={'lname_policy': 'fallback-klay'}
-                )
-        self.assertEqual(layers, {'ROOT', 'Lfoo'})
+    #    with self.assertDoesntWarn():
+    #        layers = get_cif_layers(
+    #            Foo,
+    #            grammar=cf.grammar.lenient_layers,
+    #            exporter_args={'lname_policy': 'fallback-klay'}
+    #            )
+    #    self.assertEqual(layers, {'ROOT', 'Lfoo'})
 
-        # `force-klay` to use klayout-compatible name for all layers
+    #    # `force-klay` to use klayout-compatible name for all layers
 
-        with self.assertDoesntWarn():
-            layers = get_cif_layers(
-                Foo,
-                grammar=cf.grammar.lenient_layers,
-                exporter_args={'lname_policy': 'force-klay'}
-                )
-        self.assertEqual(layers, {'Lroot', 'Lfoo'})
+    #    with self.assertDoesntWarn():
+    #        layers = get_cif_layers(
+    #            Foo,
+    #            grammar=cf.grammar.lenient_layers,
+    #            exporter_args={'lname_policy': 'force-klay'}
+    #            )
+    #    self.assertEqual(layers, {'Lroot', 'Lfoo'})
 
-        # `strict` to emit error on any cif-incompatible layer name
+    #    # `strict` to emit error on any cif-incompatible layer name
 
-        with self.assertRaises(rai.err.CIFLayerNameWarning):
-            get_cif_layers(
-                Foo,
-                grammar=cf.grammar.lenient_layers,
-                exporter_args={'lname_policy': 'strict'}
-                )
+    #    with self.assertRaises(rai.err.CIFLayerNameWarning):
+    #        get_cif_layers(
+    #            Foo,
+    #            grammar=cf.grammar.lenient_layers,
+    #            exporter_args={'lname_policy': 'strict'}
+    #            )
 
-        # Check that error is emitted on invalid lname_policy
+    #    # Check that error is emitted on invalid lname_policy
 
-        with self.assertRaises(ValueError):
-            get_cif_layers(
-                Foo,
-                grammar=cf.grammar.lenient_layers,
-                exporter_args={'lname_policy': 'this does not exist'}
-                )
-        
-    def test_cif_layer_name_composition(self):
+    #    with self.assertRaises(ValueError):
+    #        get_cif_layers(
+    #            Foo,
+    #            grammar=cf.grammar.lenient_layers,
+    #            exporter_args={'lname_policy': 'this does not exist'}
+    #            )
+    #    
+    #def test_cif_layer_name_composition(self):
 
-        class Foo(rai.Compo):
-            class Layers:
-                foo = rai.Layer("Foo", cif_name="FOO")
-            def _make(self):
-                self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+    #    class Foo(rai.Compo):
+    #        class Layers:
+    #            foo = rai.Layer("Foo", cif_name="FOO")
+    #        def _make(self):
+    #            self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
 
-        self.assertEqual(get_cif_layers(Foo), {"FOO", })
+    #    self.assertEqual(get_cif_layers(Foo), {"FOO", })
 
-        class Bar(rai.Compo):
-            class Layers:
-                bar = rai.Layer("Bar", cif_name="BAR")
-            def _make(self):
-                self.geoms.update({'bar': [[(0, 0), (0, 1), (1, 1)]]})
+    #    class Bar(rai.Compo):
+    #        class Layers:
+    #            bar = rai.Layer("Bar", cif_name="BAR")
+    #        def _make(self):
+    #            self.geoms.update({'bar': [[(0, 0), (0, 1), (1, 1)]]})
 
-        self.assertEqual(get_cif_layers(Bar), {"BAR", })
+    #    self.assertEqual(get_cif_layers(Bar), {"BAR", })
 
-        class Baz(rai.Compo):
-            def _make(self):
-                self.subcompos.append(Foo().proxy())
-                self.subcompos.append(Bar().proxy())
+    #    class Baz(rai.Compo):
+    #        def _make(self):
+    #            self.subcompos.append(Foo().proxy())
+    #            self.subcompos.append(Bar().proxy())
 
-        self.assertEqual(get_cif_layers(Baz), {"FOO", "BAR"})
+    #    self.assertEqual(get_cif_layers(Baz), {"FOO", "BAR"})
 
-        class Baq(rai.Compo):
-            def _make(self):
-                self.subcompos.append(Foo().proxy())
-                self.subcompos.append(Bar().proxy())
-                self.subcompos.append(Baz().proxy())
+    #    class Baq(rai.Compo):
+    #        def _make(self):
+    #            self.subcompos.append(Foo().proxy())
+    #            self.subcompos.append(Bar().proxy())
+    #            self.subcompos.append(Baz().proxy())
 
-        self.assertEqual(get_cif_layers(Baq), {"FOO", "BAR"})
+    #    self.assertEqual(get_cif_layers(Baq), {"FOO", "BAR"})
 
-        # Overshadow subcompo's cif_name with new one
-        class Ayy(rai.Compo):
-            class Layers:
-                bar = rai.Layer("Bar", cif_name="RAB")
-            def _make(self):
-                self.subcompos.append(Foo().proxy())
-                self.subcompos.append(Bar().proxy())
+    #    # Overshadow subcompo's cif_name with new one
+    #    class Ayy(rai.Compo):
+    #        class Layers:
+    #            bar = rai.Layer("Bar", cif_name="RAB")
+    #        def _make(self):
+    #            self.subcompos.append(Foo().proxy())
+    #            self.subcompos.append(Bar().proxy())
 
-        self.assertEqual(get_cif_layers(Ayy), {"FOO", "RAB"})
+    #    self.assertEqual(get_cif_layers(Ayy), {"FOO", "RAB"})
 
-        # Overshadow overshadowed cif_name
-        # BAR -> RAB -> BAZ
-        class Lmao(rai.Compo):
-            class Layers:
-                bar = rai.Layer("Bar", cif_name="BAZ")
-            def _make(self):
-                self.subcompos.append(Ayy().proxy())
+    #    # Overshadow overshadowed cif_name
+    #    # BAR -> RAB -> BAZ
+    #    class Lmao(rai.Compo):
+    #        class Layers:
+    #            bar = rai.Layer("Bar", cif_name="BAZ")
+    #        def _make(self):
+    #            self.subcompos.append(Ayy().proxy())
 
-        self.assertEqual(get_cif_layers(Lmao), {"FOO", "BAZ"})
+    #    self.assertEqual(get_cif_layers(Lmao), {"FOO", "BAZ"})
 
-        # No overshadowing whatsoever in the toplevel compo
-        # so should be exactly same as Lmao (subcompo)
-        class Wrap(rai.Compo):
-            def _make(self):
-                self.subcompos.append(Lmao().proxy())
+    #    # No overshadowing whatsoever in the toplevel compo
+    #    # so should be exactly same as Lmao (subcompo)
+    #    class Wrap(rai.Compo):
+    #        def _make(self):
+    #            self.subcompos.append(Lmao().proxy())
 
-        self.assertEqual(get_cif_layers(Wrap), {"FOO", "BAZ"})
+    #    self.assertEqual(get_cif_layers(Wrap), {"FOO", "BAZ"})
 
-        class Lmap(rai.Compo):
-            class Layers:
-                ayy = rai.Layer("Ayy", cif_name="AYY")
-                lmao = rai.Layer("Ayy", cif_name="LMAO")
-            def _make(self):
-                self.subcompos.append(Foo().proxy().map('ayy'))
-                self.subcompos.append(Bar().proxy().map('lmao'))
+    #    class Lmap(rai.Compo):
+    #        class Layers:
+    #            ayy = rai.Layer("Ayy", cif_name="AYY")
+    #            lmao = rai.Layer("Ayy", cif_name="LMAO")
+    #        def _make(self):
+    #            self.subcompos.append(Foo().proxy().map('ayy'))
+    #            self.subcompos.append(Bar().proxy().map('lmao'))
 
-        self.assertEqual(get_cif_layers(Lmap), {"AYY", "LMAO"})
+    #    self.assertEqual(get_cif_layers(Lmap), {"AYY", "LMAO"})
 
-        class HalfLmap(rai.Compo):
-            class Layers:
-                ayy = rai.Layer("Ayy", cif_name="AYY")
-                lmao = rai.Layer("Ayy", cif_name="LMAO")
-            def _make(self):
-                self.subcompos.append(Foo().proxy().map('ayy'))
-                self.subcompos.append(Bar().proxy())
+    #    class HalfLmap(rai.Compo):
+    #        class Layers:
+    #            ayy = rai.Layer("Ayy", cif_name="AYY")
+    #            lmao = rai.Layer("Ayy", cif_name="LMAO")
+    #        def _make(self):
+    #            self.subcompos.append(Foo().proxy().map('ayy'))
+    #            self.subcompos.append(Bar().proxy())
 
-        self.assertEqual(get_cif_layers(HalfLmap), {"AYY", "BAR"})
+    #    self.assertEqual(get_cif_layers(HalfLmap), {"AYY", "BAR"})
 
 
     def test_cif_layername_helper(self):

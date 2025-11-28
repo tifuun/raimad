@@ -60,7 +60,7 @@ def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
 
 def norm(vec: Sequence[float]) -> float:
     """
-    Calculate the norm of a vector (aka equclidean distance).
+    Calculate the norm of a vector (aka euclidean distance).
 
     Parameters
     ----------

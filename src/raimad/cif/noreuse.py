@@ -8,24 +8,11 @@ import raimad as rai
 
 Cifmap: TypeAlias = dict[str, str | None]
 LnamePolicy: TypeAlias = Literal[
-    "fallback-klay-warn",
-    "fallback-klay",
-    "force-klay",
+    "klay-warn",
+    "klay",
     "strict",
     "numeric",
-    "fallback-numeric",
     ]
-
-def _compo_to_cifmap(compo: rai.typing.CompoLike) -> Cifmap:
-    return {
-        lname: annot for lname, annot in compo.final().Layers.items()
-        if isinstance(lname, str)
-        # TODO this `if` is some mypy trickery
-        # because dictlist keys CAN be ints
-        # but for Layers annotation that should never happen
-        # but we still need a way to enforce that
-        # both at runtime and with type hints
-        }
 
 class CIFLayerNameWarning(UserWarning):
     """Warning about layer names that are not compatible with CIF."""
@@ -44,23 +31,20 @@ class NoReuse:
         self.compo = compo
         self.rout_num = 1
         self.multiplier = multiplier
-        self.lname_policy = lname_policy
 
-        # TODO this is pretty inefficient.
+        self.lname_policy = lname_policy
+        self.experimental_cell_names = True  # TODO Param
+        self.ignore_annot_cif_name = False
+
         # This is used for numeric and fallback-numeric
-        # layer policies
+        # layer policies.
+        # Filled out progressively during the export process.
         self.layer_indices = {
-            name: index for index, name
-            in enumerate(self.compo.steamroll().keys())
             }
 
-        # this is used for generating lyp (layer properties)
-        # file for klayout.
-        # Essentially cache of _resolve_lname
-        self.lypmap = {}
-
         self.cif_string = self._export_cif()
-        self.lyp_string = '\n'.join(_gen_lyp(self.lypmap))
+        self.lyp_string = ''
+        #self.lyp_string = '\n'.join(_gen_lyp(self.annotmap))
 
         # TODO validate lname policy
 
@@ -72,8 +56,8 @@ class NoReuse:
         first_rout = self.rout_num
         yield from self.yield_cif_bare(
             self.compo,
-            {},
-            nickname=type(self.compo.final()).__name__
+            #{},
+            experimental_cell_name=type(self.compo.final()).__name__
             )
         yield f'C {first_rout};\n'
         yield 'E'
@@ -81,34 +65,60 @@ class NoReuse:
     def yield_cif_bare(
             self,
             compo: 'rai.typing.CompoLike',
-            cifmap: Cifmap,
-            nickname: str | None = None,
-            #subcompo_name_stack = None
+            experimental_cell_name: str,
+            #annotmap,
             ) -> Iterator[str]:
-        """Yield lines of CIF of a particular component, without calling it."""
+        """
+        Recursively yield fragments of CIF of a particular component.
 
-        # This clones cifmap and appends
-        # values in new cifmap without overriding
+        This function takes a CompoLike and yields
+        lines that define it, recursing down the tree of subcomponents.
+        First come the DS line, then the
+        compo's raw geometry,
+        then calls calls to procedures that define subcompos,
+        then DF,
+        and finally the definitions of the subcompo procedures,
+        which themselves contain subcompos procedures, and so on.
+        Note that a call to the toplevel procedure
+        (the one corresponding to the compo being exported)
+        is NOT yielded anywhere.
+
+        Parameters
+        ----------
+        compo : rai.typing.CompoLike
+            The compo or proxy to export.
+        annotmap : TODO type
+            Map of RAIMAD layer names to RAIMAD type annotations.
+            Used for CIF Layer names, lyp properties.
+            This gets composed with the layer annotations of each
+            compo at each recursion step.
+
+        Yields
+        ------
+        str
+            Fragments of CIF code that can be joined together
+            to form a complete CIF file.
+            TODO windows CRLF??
+        """
+
+        # This clones annotmap and appends
+        # values in new annotmap without overriding
         # existing ones
-        cifmap = {**_compo_to_cifmap(compo), **cifmap}
+        #annotmap = {**compo.layers, **annotmap}
+
+        #self.annotmap = {**compo.final().Layers, **self.annotmap}
 
         # Opening line, define the routine
         yield f'DS {self.rout_num} 1 1;\n'
 
-        if nickname is not None:
-            #assert bool(nickname)
-            if not nickname:
-                warn(
-                        "Empty cell nicname????",
-                        UserWarning
-                        )
-                nickname = 'EMPTY'
+        if self.experimental_cell_names:
+            if experimental_cell_name:
+                yield f'9 {experimental_cell_name};\n'
             # TODO L-edit doc says no duplicate cell names
             # but klayout supports it (adds `$1`, `$2`, `$3` and so on
             # to differentiate between them)
             # TODO what are the bounds on layer names?
             # no spaces it seems, but what else?
-            yield f'9 {nickname};\n'
 
         # advance to next routine number
         self.rout_num += 1
@@ -121,11 +131,16 @@ class NoReuse:
             if layer is None:
                 continue
 
-            resolved_name = _resolve_lname(
-                compo, layer, cifmap, self.lname_policy, self.layer_indices)
+            resolved_name = self._resolve_lname(
+                compo,
+                layer,
+                )
             # TODO cache it???
+            # TODO sit and think really hard about this --
+            # can rai -> cif layer name change in one
+            # compo export???
 
-            self.lypmap[layer] = resolved_name, cifmap[layer]
+            assert rai.is_lname_valid(resolved_name)
 
             yield f'\tL {resolved_name};\n'
             for poly in geom:
@@ -137,14 +152,6 @@ class NoReuse:
                         )
                 yield ';\n'
 
-        for mark_name, mark in compo.marks.items():
-            yield (
-                'L MARK;\n'
-                f'94 {mark_name} '
-                f'{int(mark[0] * self.multiplier)} '
-                f'{int(mark[1] * self.multiplier)};\n'
-                )
-
         # Precompute a list of [routine number, subcomponent]
         # Remember, subcomponents can also have subcomponents,
         # so the subroutine numbers won't always be consecutive.
@@ -154,30 +161,20 @@ class NoReuse:
         subcompos = []
         for subcompo_name, subcompo in compo.subcompos.items():
 
-            if isinstance(subcompo_name, int):
-                instance_name = f'{subcompo_name}-ANON'
-            elif isinstance(subcompo_name, str):
-                instance_name = subcompo_name
+            if self.experimental_cell_names:
+                experimental_cell_name = _experimental_compo_to_cell_name(
+                    subcompo_name, subcompo)
             else:
-                assert False
+                experimental_cell_name = None
 
-            #if subcompo_name_stack is None:
-            #    subcompo_name_stack = ()
-
-            #subcompo_name_stack = (*subcompo_name_stack, instance_name)
-            #instance_name = '.'.join((*subcompo_name_stack, instance_name))
-
-            type_name = type(subcompo.final()).__name__
 
             subcompos.append((
                 self.rout_num,
                 list(
                     self.yield_cif_bare(
                         subcompo,
-                        cifmap,
-                        #nickname=f"{type_name}::{'.'.join(subcompo_name_stack)}{'.' * bool(subcompo_name_stack)}{instance_name}",
-                        nickname=f"{type_name}::{instance_name}",
-                        #subcompo_name_stack=(*subcompo_name_stack, instance_name),
+                        experimental_cell_name,
+                        #annotmap,
                         )
                     )
                 ))
@@ -191,87 +188,91 @@ class NoReuse:
         for _, this_subcompo in subcompos:
             yield from this_subcompo
 
-def _resolve_lname(
-        compo: rai.typing.CompoLike,
-        layer: str,
-        cifmap: Cifmap,
-        lname_policy: LnamePolicy,
-        layer_indices,
-        ) -> str:
+    def _resolve_lname(
+            self,
+            compo,
+            layer,
+            annotmap,
+            ):
 
-    resolved = cifmap.get(layer).cif_name or layer
-    converted = rai.lname_to_klay(layer)
+        if not self.ignore_annot_cif_name:
+            if (annot_cif_name := annotmap.get(layer).cif_name) is not None:
+                return annot_cif_name
+                # TODO not validating that its valid here.
+                # Are we validating it when creating annotation??
 
-    if lname_policy == 'fallback-klay-warn':
-        if rai.is_lname_valid(resolved):
-            return resolved
+        if lname_policy == 'numeric':
+            try:
+                layer_index = self.layer_indices[layer]
 
-        warn(
-            f"Layer name `{resolved}` of component "
-            f"`{compo}` is not a valid CIF layer name. "
-            f"It is automatically converted to `{converted}`. "
-            "Either add a CIF-compatible layer name using the `Layers` "
-            "annotation class of your compo, or mute this warning "
-            "by passing `lname_policy='fallback-klay'` to the "
-            "CIF exporter."
-            ,
-            CIFLayerNameWarning
-            )
+            except KeyError:
+                if len(self.layer_indices) >= 9999:
+                    # TODO test this
+                    raise RuntimeError(  # TODO custom exception class??
+                        "Cannot generate numeric CIF layer name "
+                        "because there are more than 9999 layers. "
+                        "WHAT are you event doing!?!?!? "
+                        )
+                layer_index = len(self.layer_indices) + 1
+                self.layer_indices[layer] = layer_index
 
-        return converted
+            # TODO how does this play with layer order?? Annotations??
 
-    elif lname_policy == 'strict':
-        if rai.is_lname_valid(resolved):
-            return resolved
+            return str(layer_index)
 
-        raise CIFLayerNameWarning(
-            f"Layer name `{resolved}` of component "
-            f"`{compo}` is not a valid CIF layer name. "
-            "Either add a CIF-compatible layer name using the `Layers` "
-            "annotation class of your compo, or change the "
-            "`lname_policy` of the CIF exporter to skip this error. "
-            ,
-            CIFLayerNameWarning
-            )
+        if lname_policy == 'strict':
+            raise CIFLayerNameWarning(
+                f"Layer `{layer}` of component "
+                f"`{compo}` is not annotated with a CIF-compatible layer name. "
+                "Either add a CIF-compatible layer name using the `Layers` "
+                "annotation class of your compo, or change the "
+                "`lname_policy` of the CIF exporter to skip this error. "
+                ,
+                CIFLayerNameWarning
+                )
 
-    elif lname_policy == 'fallback-klay':
-        if rai.is_lname_valid(resolved):
-            return resolved
-        return converted
+        if lname_policy in {'klay', 'klay-warn'}:
+            converted = rai.lname_to_klay(layer)
 
-    elif lname_policy == 'force-klay':
-        return converted
+            if lname_policy == 'klay-warn':
+                warn(
+                    f"Layer name `{layer}` of component "
+                    f"`{compo}` has been "
+                    f"automatically converted to `{converted}`. "
+                    "Either add a CIF-compatible layer name using the `Layers` "
+                    "annotation class of your compo, or mute this warning "
+                    "by passing `lname_policy='fallback-klay'` to the "
+                    "CIF exporter."
+                    ,
+                    CIFLayerNameWarning
+                )
 
-    elif lname_policy == 'numeric':
-        # TODO overflow
-        return str(layer_indices[layer])
+            return converted
+        
+        else:
+            raise ValueError(  # TODO custom exception class?
+                "`lname_policy` must be one of "
+                "'force-klay', 'fallback-klay', 'strict', 'fallback-klay-warn'."
+                )
 
-    elif lname_policy == 'fallback-numeric':
-        if rai.is_lname_valid(resolved):
-            return resolved
-        return str(layer_indices[layer])
+        # TODO what if raimad name HAPPENS to be cif-compatible?
+        # Shouldn't happen because don't want ppl using
+        # uppercase layer names, but what if they do??
 
-    else:
-        raise ValueError(
-            "`lname_policy` must be one of "
-            "'force-klay', 'fallback-klay', 'strict', 'fallback-klay-warn'."
-            )
-    
-    assert False
+        assert False
 
-def _gen_lyp(lypmap):
+def _gen_lyp(annotmap):
+    yield ''
+    return
 
-    # TODO lypmap/cifmap very confusing sit down to
-    # think about it an make it good
-
-    # TODO not including a layer (i.e. MARK) in lyp makes it
-    # not show up at all????
+    # TODO not including a layer in lyp makes it
+    # not show up at all???? Is this an issue??
 
     yield '<?xml version="1.0" encoding="utf-8"?>'
     yield '<layer-properties>'
     #yield from _lyp_pattern()
 
-    for i, (full_name, (cif_name, annot)) in enumerate(lypmap.items()):
+    for i, (full_name, annot) in enumerate(annotmap.items()):
 
         #yield ''.join(_dither_text(full_name))
 
@@ -504,4 +505,16 @@ def _lyp_pattern():
     yield '<order>1</order>'
     yield '<name>Irregular</name>'
     yield '</custom-dither-pattern>'
+
+def _experimental_compo_to_cell_name(subcompo_name, subcompo):
+    if isinstance(subcompo_name, int):
+        instance_name = f'{subcompo_name}-ANON'
+    elif isinstance(subcompo_name, str):
+        instance_name = subcompo_name
+    else:
+        assert False
+
+    type_name = type(subcompo.final()).__name__
+
+    return f"{type_name}::{instance_name}"
 
