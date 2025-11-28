@@ -22,7 +22,8 @@ services:
     working_dir: /play
     stdin_open: true
     tty: true
-    command: /bin/sh -l  # login shell needed to load profile.d
+    #command: /bin/sh -l  # login shell needed to load profile.d
+    command: sleep 999999999
 
   alpine-base:
     build:

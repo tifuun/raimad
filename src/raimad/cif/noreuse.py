@@ -34,6 +34,21 @@ class NoReuse:
         # Opening line, define the routine
         yield f'DS {self.rout_num} 1 1;\n'
 
+        if nickname is not None:
+            #assert bool(nickname)
+            if not nickname:
+                warn(
+                        "Empty cell nicname????",
+                        UserWarning
+                        )
+                nickname = 'EMPTY'
+            # TODO L-name doc says no duplicate cell names
+            # but klayout supports it (adds `$1`, `$2`, `$3` and so on
+            # to differentiate between them)
+            # TODO what are the bounds on layer names?
+            # no spaces it seems, but what else?
+            yield f'9 {nickname};\n'
+
         # advance to next routine number
         self.rout_num += 1
 
@@ -62,7 +77,7 @@ class NoReuse:
         # you just have to generate each subcompo and keep track of
         # the routine number
         subcompos = []
-        for subcompo in compo.subcompos.values():
+        for subcompo_name, subcompo in compo.subcompos.items():
             subcompos.append((
                 self.rout_num,
                 list(self.yield_cif_bare(subcompo))
