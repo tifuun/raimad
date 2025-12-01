@@ -20,12 +20,8 @@ class NoReuse:
         self.enable_cell_names = True  # TODO param
         self.lname_transformers = (
             rai.cif.lname_transformers.root,
+            rai.cif.lname_transformers.annot,
             rai.cif.lname_transformers.noop,
-            {
-                'carrot': 'CROT',
-                'pebble': 'PEBL',
-                'snow': 'SNOW',
-                }
             )
 
         self.cif_string = self._export_cif()
