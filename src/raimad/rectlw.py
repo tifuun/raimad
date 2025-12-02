@@ -17,7 +17,7 @@ class RectLW(rai.Compo):
         self.width = width
 
         self.geoms.update({
-            'ROOT': [
+            'root': [
                 [
                     (- length / 2, - width / 2),
                     (+ length / 2, - width / 2),

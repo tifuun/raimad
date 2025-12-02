@@ -16,10 +16,6 @@ def noop(name: str):
     if rai.is_lname_valid(name):
         return name
 
-def annot(name: str):
-    if rai.is_lname_valid(name):
-        return name
-
 def capitalise(name: str):
     if 0 < len(name) <= 4:
         if name.is_alnum():

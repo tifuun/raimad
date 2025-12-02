@@ -17,6 +17,7 @@ class TestUnits(unittest.TestCase):
 
         exporter = rai.cif.NoReuse(Box())
         cifstring = exporter.cif_string
+        #print(cifstring)
         layers = cf.parse(cifstring)
 
         self.assertTrue(len(layers['ROOT'][0]) == 3)

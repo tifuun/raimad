@@ -6,6 +6,11 @@ class Snowman(rai.Compo):
     """A sample component."""
 
     browser_tags = ["builtin", "example"]
+    _experimental_cif_lname_transformer = {
+        'snow': 'SNOW',
+        'carrot': 'CROT',
+        'pebble': 'PEBL',
+        }
 
     class Marks:
         nose = rai.Mark("Tip of the snowman's nose")
@@ -16,16 +21,13 @@ class Snowman(rai.Compo):
 
     class Layers:
         pebble = rai.Layer(
-            "Non-malleable polycrystalline silicon layer",
-            cif_name='PEBL',
+            "Non-malleable polycrystalline silicon layer"
             )
         carrot = rai.Layer(
             "Bio-lithographic layer characterised by lambda = approx. 6E-7nm"
-            cif_name='CROT',
             )
         snow = rai.Layer(
             "A collection of individual crystals of frozen dihydrogen monoxide"
-            cif_name='SNOW',
             )
 
     def _make(

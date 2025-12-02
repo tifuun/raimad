@@ -19,8 +19,12 @@ class NoReuse:
 
         self.enable_cell_names = True  # TODO param
         self.lname_transformers = (
+            *(
+                [compo._experimental_cif_lname_transformer]
+                if hasattr(compo, '_experimental_cif_lname_transformer')
+                else []
+                ),
             rai.cif.lname_transformers.root,
-            rai.cif.lname_transformers.annot,
             rai.cif.lname_transformers.noop,
             )
 
@@ -84,7 +88,7 @@ class NoReuse:
                 layer
                 )
 
-            yield f'\tL {layer};\n'
+            yield f'\tL {transformed_layer};\n'
             for poly in geom:
                 yield '\tP '
                 for point in poly:
