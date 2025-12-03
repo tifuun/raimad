@@ -4,6 +4,7 @@ import sys
 
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
+from raimad import saveto
 from raimad.helpers import (
     fullcircle,
     halfcircle,

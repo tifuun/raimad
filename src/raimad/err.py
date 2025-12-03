@@ -18,7 +18,7 @@ from raimad.ansec import AnSecThetaIncorrectArgumentsError
 
 from raimad.bbox import EmptyBBoxError
 
-from raimad.cif.shorthand import InvalidDestinationError
+from raimad.saveto import InvalidDestinationError
 
 from raimad.string_import import StringImportError
 
