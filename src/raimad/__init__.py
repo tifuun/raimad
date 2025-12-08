@@ -80,6 +80,9 @@ from raimad.svg import export_svg
 from raimad.show import show
 from raimad import err
 
+from raimad.cif.lyp import export_lyp
+from raimad.cif import lyp
+
 from raimad.fortune import fortune
 from raimad.fortune import fortunes_technology
 from raimad.fortune import fortunes_economy

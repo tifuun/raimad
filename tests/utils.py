@@ -8,13 +8,16 @@ from io import StringIO
 import raimad as rai
 import raimad.typing as rait
 
-### BEGIN CHATGPT CODE TODO ###
-
-# Prompt:
-#
-# write python unittest.testcase mixin that adds assertDoesntWarn context
-# manager function the behaves the same as the builtin self.assertWarns but
-# tests that no warnings are emitted
+class XmlComparisonMixin:
+    def assertXmlEqual(self, xml1, xml2):
+        if xml1 != xml2:
+            warnings.warn(
+                'assertXmlEqual is currently implemented '
+                'with raw string comparison, FIXME!!'
+                ,
+                warnings.UserWarning
+                )
+        self.assertEqual(xml1, xml2)
 
 class AssertDoesntWarn:
     """
