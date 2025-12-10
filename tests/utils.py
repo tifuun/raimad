@@ -106,11 +106,20 @@ class GeomsEqual():
             zip(actual, expected, strict=True)
             )
 
+    def assertManyGeomsEqual(
+            self,
+            geomses: Sequence[rait.Geoms],
+            epsilon: float | None = None):
+
+        for a, b in rai.duplets(geomses):
+            self.assertGeomsEqual(a, b)
+
     def assertGeomsEqual(
             self,
             actual: rait.Geoms,
             expected: rait.Geoms,
             epsilon: float | None = None):
+
         self.assertEqual(set(actual.keys()), set(expected.keys()))
         for layer_name in actual.keys():
 
