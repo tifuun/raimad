@@ -1,6 +1,6 @@
 from pprint import pprint
 from sys import stderr
-from typing import ClassVar
+from typing import ClassVar, Sequence
 from contextlib import contextmanager
 import warnings
 
