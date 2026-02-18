@@ -37,14 +37,12 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         # pick pflip or cflip based on number of args
         self.assertTrue(hasattr(rai.Transform,  'flip'))
 
-        # Scale should also take AROUND argument
-        # scale both x and y axes by same factor
-        self.assertTrue(hasattr(rai.Transform, 'ascale'))
-        # scale x and y independently by different factors (xy tuple)
-        self.assertTrue(hasattr(rai.Transform, 'pscale'))
-        # scale x and y independently by different factors (x, y factors)
-        self.assertTrue(hasattr(rai.Transform, 'cscale'))
-        # pick ascale, pscale or cscale based on number and type of args
+        self.assertTrue(hasattr(rai.Transform, 'apscale'))
+        self.assertTrue(hasattr(rai.Transform, 'acscale'))
+        self.assertTrue(hasattr(rai.Transform, 'ppscale'))
+        self.assertTrue(hasattr(rai.Transform, 'ccscale'))
+        self.assertTrue(hasattr(rai.Transform, 'cpscale'))
+        self.assertTrue(hasattr(rai.Transform, 'pcscale'))
         self.assertTrue(hasattr(rai.Transform,  'scale'))
 
         ### Common methods: Proxy ###
@@ -65,10 +63,12 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertTrue(hasattr(rai.Proxy, 'hflip'))
         self.assertTrue(hasattr(rai.Proxy,  'flip'))
 
-        self.assertTrue(hasattr(rai.Proxy, 'pscale'))
-        self.assertTrue(hasattr(rai.Proxy, 'cscale'))
-        self.assertTrue(hasattr(rai.Proxy, 'ascale'))
-        # pick ascale, pscale or cscale based on number and type of args
+        self.assertTrue(hasattr(rai.Proxy, 'apscale'))
+        self.assertTrue(hasattr(rai.Proxy, 'acscale'))
+        self.assertTrue(hasattr(rai.Proxy, 'ppscale'))
+        self.assertTrue(hasattr(rai.Proxy, 'ccscale'))
+        self.assertTrue(hasattr(rai.Proxy, 'cpscale'))
+        self.assertTrue(hasattr(rai.Proxy, 'pcscale'))
         self.assertTrue(hasattr(rai.Proxy,  'scale'))
 
         ### Common methods: BP ###
@@ -94,9 +94,9 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
 
         # Here the boundpoint acts as the reference point
         # of the scale
+        self.assertTrue(hasattr(rai.BoundPoint, 'ascale'))
         self.assertTrue(hasattr(rai.BoundPoint, 'pscale'))
         self.assertTrue(hasattr(rai.BoundPoint, 'cscale'))
-        self.assertTrue(hasattr(rai.BoundPoint, 'ascale'))
         self.assertTrue(hasattr(rai.BoundPoint,  'scale'))
 
         ### Boundpoint special: to ###
@@ -211,14 +211,22 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
 
         # test vflip
         self.assertManyGeomsEqual((
-            shape.proxy(). flip(5, 0),
-            shape.proxy().vflip(5   ),
+            shape.proxy().vflip(0),
+            shape.proxy().vflip(),
+            ))
+        self.assertManyGeomsEqual((
+            shape.proxy(). flip(5, 0).vflip(0),
+            shape.proxy().hflip(5   ),
             ))
 
         # test hflip
         self.assertManyGeomsEqual((
-            shape.proxy(). flip(0, 5),
-            shape.proxy().hflip(5   ),
+            shape.proxy().hflip(0),
+            shape.proxy().hflip(),
+            ))
+        self.assertManyGeomsEqual((
+            shape.proxy(). flip(0, 7).hflip(0),
+            shape.proxy().vflip(7   ),
             ))
 
         ## Test boundpoint
@@ -248,35 +256,35 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
             (-1, 1),
             ))
 
-        # vflip along bottom left = mirror along left edge
+        # hflip along bottom left = mirror along left edge
         # left edge itself (x = -1) stays where it is
         self.assertManyGeomsEqual((
-            box.proxy().vflip(box.bbox.bot_left[1]),
-            box.proxy().bbox.bot_left.vflip(),
+            box.proxy().hflip(box.bbox.bot_left[1]),
+            box.proxy().bbox.bot_left.hflip(),
             {
                 'root': [
                     [
                         (-1, -1),
-                        (-2, -1),
-                        (-2, 1),
+                        (-3, -1),
+                        (-3, 1),
                         (-1, 1),
                         ]
                     ]
                 }
             ))
 
-        # hflip along bottom left = mirror along bottom edge
+        # vflip along bottom left = mirror along bottom edge
         # bottom edge itself (y = -1) stays where it is
         self.assertManyGeomsEqual((
-            box.proxy().hflip(box.bbox.bot_left[0]),
-            box.proxy().bbox.bot_left.hflip(),
+            box.proxy().vflip(box.bbox.bot_left[0]),
+            box.proxy().bbox.bot_left.vflip(),
             {
                 'root': [
                     [
                         (-1, -1),
                         (1, -1),
-                        (1, -2),
-                        (-1, -2),
+                        (1, -3),
+                        (-1, -3),
                         ]
                     ]
                 }
@@ -290,17 +298,34 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
             ))
 
         self.assertManyGeomsEqual((
-            shape.proxy(). scale((3, 5)),
-            shape.proxy(). scale( 3, 5 ),
-            shape.proxy().pscale((3, 5)),
-            shape.proxy().cscale( 3, 5 ),
+            shape.proxy(). scale( (3, 5)),
+            shape.proxy(). scale(  3, 5 ),
+            shape.proxy().ppscale((3, 5)),
+            shape.proxy().cpscale( 3, 5 ),
+            shape.proxy().pcscale((3, 5)),
+            shape.proxy().ccscale( 3, 5 ),
+            shape.proxy(). scale( (3, 5), (0, 0)),
+            shape.proxy(). scale(  3, 5 , (0, 0)),
+            shape.proxy().ppscale((3, 5), (0, 0)),
+            shape.proxy().cpscale( 3, 5 , (0, 0)),
+            shape.proxy().pcscale((3, 5),  0, 0 ),
+            shape.proxy().ccscale( 3, 5 ,  0, 0 ),
+            shape.proxy(). scale( (3, 5),  0, 0 ),
+            shape.proxy(). scale(  3, 5 ,  0, 0 ),
             ))
 
         self.assertManyGeomsEqual((
-            shape.proxy(). scale(  5, 5  ),
-            shape.proxy(). scale( (5, 5) ),
-            shape.proxy(). scale(  5,   ),
-            shape.proxy().ascale(  5,   ),
+            shape.proxy().  scale(  5, 5  ),
+            shape.proxy().  scale( (5, 5) ),
+            shape.proxy().  scale(  5,    ),
+            shape.proxy().  scale(  5, 5  , (0, 0)),
+            shape.proxy().  scale( (5, 5) , (0, 0)),
+            shape.proxy().  scale(  5     , (0, 0)),
+            shape.proxy().apscale(  5     , (0, 0)),
+            shape.proxy().  scale(  5, 5  ,  0, 0 ),
+            shape.proxy().  scale( (5, 5) ,  0, 0 ),
+            shape.proxy().  scale(  5     ,  0, 0 ),
+            shape.proxy().acscale(  5     ,  0, 0 ),
             ))
 
         ## Test boundpoint
@@ -346,7 +371,7 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
             ))
 
         # around bottom left - blows up into top right
-        self.assertManyGeoms((
+        self.assertManyGeomsEqual((
             box.proxy().scale(2, (-1, -1)),
             box.proxy().bbox.bot_left.scale(2),
             {

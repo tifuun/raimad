@@ -108,7 +108,7 @@ class GeomsEqual():
 
     def assertManyGeomsEqual(
             self,
-            geomses: Sequence[rait.Geoms],
+            geomses: Sequence[rait.Geoms | rait.CompoLike],
             epsilon: float | None = None):
 
         for a, b in rai.duplets(geomses):
@@ -116,9 +116,15 @@ class GeomsEqual():
 
     def assertGeomsEqual(
             self,
-            actual: rait.Geoms,
-            expected: rait.Geoms,
+            actual: rait.Geoms | rait.CompoLike,
+            expected: rait.Geoms | rait.CompoLike,
             epsilon: float | None = None):
+
+        if isinstance(actual, rait.CompoLike):
+            actual = actual.steamroll()
+
+        if isinstance(expected, rait.CompoLike):
+            expected = expected.steamroll()
 
         self.assertEqual(set(actual.keys()), set(expected.keys()))
         for layer_name in actual.keys():

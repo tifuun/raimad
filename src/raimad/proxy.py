@@ -1,6 +1,6 @@
 """proxy.py: home to Proxy class and supporting classes."""
 
-from typing import Iterator
+from typing import Iterator, overload
 
 try:
     from typing import Self
@@ -797,158 +797,6 @@ class Proxy:
         """
         return self.__str__()
 
-    # Transform functions #
-    # TODO for all transforms
-    # TODO same implementation as in Compo
-    # TODO stack another transform or modify self?
-    def scale(self, x: float, y: float | None = None) -> Self:
-        """
-        Scale this proxy.
-
-        Parameters
-        ----------
-        x : float
-            Factor to scale by along the x axis
-        y : float
-            Factor to scale by along the y axis.
-            If unspecified or None,
-            use the x scale factor.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.scale(x, y)
-        return self
-
-    def movex(self, factor: float) -> Self:
-        """
-        Move this proxy horizontally.
-
-        Parameters
-        ----------
-        x : float
-            Move this many units along x axis.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.movex(factor)
-        return self
-
-    def movey(self, factor: float) -> Self:
-        """
-        Move this proxy vertically.
-
-        Parameters
-        ----------
-        y : float
-            Move this many units along y axis.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.movey(factor)
-        return self
-
-    def move(self, x: float, y: float) -> Self:
-        """
-        Move this proxy.
-
-        Parameters
-        ----------
-        x : float
-            Move this many units along x axis.
-        y : float
-            Move this many units along y axis.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.move(x, y)
-        return self
-
-    def hflip(self, x: float = 0) -> Self:
-        """
-        Flip (mirror) along vertical axis.
-
-        Parameters
-        ----------
-        x : float
-            Flip around this vertical line (x coordinate)
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.hflip(x)
-        return self
-
-    def vflip(self, y: float = 0) -> Self:
-        """
-        Flip (mirror) along horizontal axis.
-
-        Parameters
-        ----------
-        y : float
-            Flip around this horizontal line (y coordinate)
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.vflip(y)
-        return self
-
-    def flip(self, x: float = 0, y: float = 0) -> Self:
-        """
-        Flip (mirror) along both horizontal and vertical axis.
-
-        Parameters
-        ----------
-        x : float
-            Flip around this point (x coordinate). Default: origin
-        y : float
-            Flip around this point (y coordinate). Default: origin
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.flip(x, y)
-        return self
-
-    def rotate(self, angle: float, x: float = 0, y: float = 0) -> Self:
-        """
-        Rotate this proxy, possibly around a point.
-
-        Parameters
-        ----------
-        angle : float
-            Rotate by this many radians in the positive orientation
-        x : float
-            Rotate around this point (x coord). Default: origin
-        y : float
-            Rotate around this point (y coord). Default: origin
-
-        Returns
-        -------
-        Self
-            self is returned to allow method chaining.
-        """
-        self.transform.rotate(angle, x, y)
-        return self
-
     def map(self, lmap_shorthand: 'rai.typing.LMapShorthand') -> Self:
         """
         Apply a layermap shorthand to a proxy.
@@ -1147,4 +995,451 @@ class Proxy:
         rai.Compo._export_svg_
         """
         return rai.export_svg(self)
+
+    #-------------#
+    # Rotate      #
+    #-------------#
+
+    def crotate(
+            self,
+            angle: float,
+            x: float = 0,
+            y: float = 0
+            ) -> Self:
+        """
+        Rotate around a point given by x and y coordinate.
+
+        Parameters
+        ----------
+        angle : float
+            Angle to rotate by, in radians.
+        x : float
+            Rotate around this point (x coordinate)
+            default: 0
+        y : float
+            Rotate around this point (y coordinate)
+            default: 0
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.crotate(angle, x, y)
+        return self
+
+    def protate(
+            self,
+            angle: float,
+            pivot: 'rai.typing.Point' = (0, 0),
+            ) -> None:
+        """
+        Rotate around a reference point given as an (x, y) tuple.
+
+        Parameters
+        ----------
+        angle : float
+            Angle to rotate by, in radians.
+        pivot : 'rai.typing.Point'
+            The point (x, y) to rotate around. Default: origin.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.protate(angle, pivot)
+        return self
+
+    @overload
+    def rotate(self, angle: float, x: float, y: float) -> None: ...
+    @overload
+    def rotate(self, angle: float, pivot: 'rai.typing.Point') -> None: ...
+
+    def rotate(
+            self,
+            angle: float,
+            /,
+            a=None,
+            b=None,
+            ) -> None:
+        """
+        TODO overloaded docstrings??
+        """
+        self.transform.rotate(angle, a, b)
+        return self
+
+
+    #-------------#
+    # Move        #
+    #-------------#
+
+    def cmove(
+            self,
+            x: float = 0,
+            y: float = 0
+            ) -> Self:
+        """
+        Translate by x and y.
+
+        Parameters
+        ----------
+        x : float
+            Move this many units along x axis.
+        y : float
+            Move this many units along y axis.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.cmove(x, y)
+        return self
+
+    def pmove(
+            self,
+            offset: 'rai.typing.Point'
+            ) -> None:
+        """
+        Translate by x and y, given as a tuple.
+
+        Parameters
+        ----------
+        offset : 'rai.typing.Point'
+            A tuple of two values (x, y).
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.pmove(offset)
+        return self
+
+    @overload
+    def move(self, x: float, y: float) -> None: ...
+    @overload
+    def move(self, offset: 'rai.typing.Point') -> None: ...
+
+    def move(
+            self,
+            a: 'float | rai.typing.Point',
+            b: float | None = None
+            ) -> None:
+        """
+        TODO overloaded docstrings??
+        """
+        self.transform.move(a, b)
+        return self
+
+    def movex(self, x: float = 0) -> Self:
+        """
+        Move along x axis.
+
+        Parameters
+        ----------
+        x : float
+            Move this many units along x axis.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.movex(x)
+        return self
+
+    def movey(self, y: float = 0) -> Self:
+        """
+        Move along y axis.
+
+        Parameters
+        ----------
+        y : float
+            Move this many units along y axis.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.movey(y)
+        return self
+
+    #-------------#
+    # Flip        #
+    #-------------#
+
+    def cflip(
+            self,
+            x: float = 0,
+            y: float = 0
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis.
+
+        Parameters
+        ----------
+        x : float
+            Flip around this point (x coordinate)
+        y : float
+            Flip around this point (y coordinate)
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.cflip(x, y)
+        return self
+
+    def pflip(
+            self,
+            pivot: 'rai.typing.Point'
+            ) -> None:
+        """
+        Flip (mirror) along both horizontal and vertical axis (tuple).
+
+        Parameters
+        ----------
+        pivot: 'rai.typing.Point'
+            Tuple representing x and y coordinates of lines to mirror
+            against
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.pflip(pivot)
+        return self
+
+    @overload
+    def flip(self, x: float, y: float) -> None: ...
+    @overload
+    def flip(self, offset: 'rai.typing.Point') -> None: ...
+
+    def flip(
+            self,
+            a: 'float | rai.typing.Point',
+            b: float | None = None
+            ) -> None:
+        """
+        TODO overloaded docstrings??
+        """
+        self.transform.flip(a, b)
+        return self
+
+    def vflip(self, y: float = 0) -> Self:
+        """
+        Flip (mirror) along horizontal axis.
+
+        Parameters
+        ----------
+        y : float
+            Flip around this horizontal line (y coordinate)
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.vflip(y)
+        return self
+
+    def hflip(self, x: float = 0) -> Self:
+        """
+        Flip (mirror) along vertical axis.
+
+        Parameters
+        ----------
+        x : float
+            Flip around this vertical line (x coordinate)
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.hflip(x)
+        return self
+
+    #-------------#
+    # Scale       #
+    #-------------#
+
+    def cpscale(
+            self,
+            x: float,
+            y: float,
+            pivot: 'rai.typing.Point' = (0, 0),
+            ) -> Self:
+        """
+        Scale width and height (two floats) around pivot point (tuple)
+
+        Parameters
+        ----------
+        x : float
+            Factor to scale by along the x axis
+        y : float
+            Factor to scale by along the y axis.
+        pivot : rai.typing.Point | None
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.cpscale(x, y, pivot)
+        return self
+
+    def ccscale(
+            self,
+            x: float,
+            y: float,
+            px: float = 0,
+            py: float = 0,
+            ) -> Self:
+        """
+        Scale width and height (two floats) around pivot point (two floats)
+
+        Parameters
+        ----------
+        x : float
+            Factor to scale by along the x axis
+        y : float
+            Factor to scale by along the y axis.
+        px : float
+            X coordinate of origin of the scale (default: 0)
+        py : float
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.ccscale(x, y, px, py)
+        return self
+
+    def ppscale(
+            self,
+            scale: 'rai.typing.Point',
+            pivot: 'rai.typing.Point' = (0, 0),
+            ) -> Self:
+        """
+        Scale width and height (tuple) around pivot point (tuple)
+
+        Parameters
+        ----------
+        scale : 'rai.typing.Point'
+            The x and y scale factors
+        pivot : rai.typing.Point
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.ppscale(scale, pivot)
+        return self
+
+    def pcscale(
+            self,
+            scale: 'rai.typing.Point',
+            px: float = 0,
+            py: float = 0,
+            ) -> Self:
+        """
+        Scale width and height (tuple) around pivot point (two floats)
+
+        Parameters
+        ----------
+        scale : 'rai.typing.Point'
+            The x and y scale factors
+           `None` means origin.
+        px : float
+            X coordinate of origin of the scale (default: 0)
+        py : float
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.pcscale(scale, px, py)
+        return self
+
+    def apscale(
+            self,
+            factor: float,
+            pivot: 'rai.typing.Point' = (0, 0),
+            ) -> Self:
+        """
+        Scale both width and height by same factor around pivot (tuple)
+
+        Parameters
+        ----------
+        factor : float
+            Factor to scale by.
+        pivot : rai.typing.Point | None
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.apscale(factor, pivot)
+        return self
+
+    def acscale(
+            self,
+            factor: float,
+            px: float = 0,
+            py: float = 0,
+            ) -> Self:
+        """
+        Scale both width and height by same factor around pivot (two floats)
+
+        Parameters
+        ----------
+        factor : float
+            Factor to scale by.
+        px : float
+            X coordinate of origin of the scale (default: 0)
+        py : float
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.acscale(factor, px, py)
+        return self
+
+    # TODO
+    @overload
+    def scale(self, x: float, y: float) -> None: ...
+    @overload
+    def scale(self, scale: 'rai.typing.Point') -> None: ...
+    @overload
+    def scale(self, factor: float) -> None: ...
+
+    def scale(
+            self, /, a=None, b=None, c=None, d=None
+            ) -> None:
+        """
+        TODO overloaded docstrings??
+        """
+        self.transform.scale(a, b, c, d)
+        return self
 
