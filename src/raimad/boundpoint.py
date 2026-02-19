@@ -1,9 +1,11 @@
 """boundpoint.py: home to BoundPoint class."""
 
-from typing import Literal, Iterator, overload, Sequence
+from typing import Literal, Iterator, overload
 from types import NoneType
+from numbers import Real
 
 import raimad as rai
+from raimad.types import Vec2
 
 class BoundPoint():
     """
@@ -426,17 +428,17 @@ class BoundPoint():
         TODO overloaded docstrings??
         """
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int)
+                isinstance(a, Real) and
+                isinstance(b, Real)
                 ):
             self._proxy.transform.ccscale(a, b, self._x, self._y)
         elif (
-                isinstance(a, Sequence) and
+                isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
             self._proxy.transform.pcscale(a, self._x, self._y)
         elif (
-                isinstance(a, float | int) and
+                isinstance(a, Real) and
                 isinstance(b, NoneType)
                 ):
             self._proxy.transform.acscale(a, self._x, self._y)
@@ -513,8 +515,8 @@ class BoundPoint():
             to allow chaining methods.
         """
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int)
+                isinstance(a, Real) and
+                isinstance(b, Real)
                 ):
             self.cto(a, b)
         elif (
