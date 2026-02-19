@@ -495,7 +495,7 @@ class BoundPoint():
         return self._proxy
 
     # TODO overload
-    def to(self, a, b) -> 'rai.typing.Proxy':
+    def to(self, a=None, b=None) -> 'rai.typing.Proxy':
         """
         Move the Proxy so that this BoundPoint ends up at `point` (two floats).
 
@@ -513,8 +513,8 @@ class BoundPoint():
             to allow chaining methods.
         """
         if (
-                isinstance(a, float) and
-                isinstance(b, float)
+                isinstance(a, float | int) and
+                isinstance(b, float | int)
                 ):
             self.cto(a, b)
         elif (

@@ -105,6 +105,92 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertTrue(hasattr(rai.BoundPoint, 'pto'))
         self.assertTrue(hasattr(rai.BoundPoint, 'cto'))
 
+    def test_editing_chaining(self):
+        """
+        Test that editing methods return correct object to allow chaining.
+        """
+
+        ### Common methods: Transform ###
+
+        transform = rai.Transform()
+
+        self.assertIs(transform.protate(0), transform)
+        self.assertIs(transform.crotate(0), transform)
+        self.assertIs(transform.rotate(0), transform)
+
+        self.assertIs(transform.movex(0), transform)
+        self.assertIs(transform.movey(0), transform)
+        self.assertIs(transform.pmove((0, 0)), transform)
+        self.assertIs(transform.cmove(0, 0), transform)
+        self.assertIs(transform.move(0, 0), transform)
+
+        self.assertIs(transform.pflip((0, 0)), transform)
+        self.assertIs(transform.cflip(0, 0), transform)
+        self.assertIs(transform.vflip(0), transform)
+        self.assertIs(transform.hflip(0), transform)
+        self.assertIs(transform.flip(0, 0), transform)
+
+        self.assertIs(transform.apscale(1), transform)
+        self.assertIs(transform.acscale(1), transform)
+        self.assertIs(transform.ppscale((1, 1)), transform)
+        self.assertIs(transform.ccscale(1, 1), transform)
+        self.assertIs(transform.cpscale(1, 1), transform)
+        self.assertIs(transform.pcscale((1, 1)), transform)
+        self.assertIs(transform.scale(1, 1), transform)
+
+        ### Common methods: Proxy ###
+
+        proxy = rai.RectLW(1, 1).proxy()
+
+        self.assertIs(proxy.protate(0), proxy)
+        self.assertIs(proxy.crotate(0), proxy)
+        self.assertIs(proxy.rotate(0), proxy)
+
+        self.assertIs(proxy.movex(0), proxy)
+        self.assertIs(proxy.movey(0), proxy)
+        self.assertIs(proxy.pmove((0, 0)), proxy)
+        self.assertIs(proxy.cmove(0, 0), proxy)
+        self.assertIs(proxy.move(0, 0), proxy)
+
+        self.assertIs(proxy.pflip((0, 0)), proxy)
+        self.assertIs(proxy.cflip(0, 0), proxy)
+        self.assertIs(proxy.vflip(0), proxy)
+        self.assertIs(proxy.hflip(0), proxy)
+        self.assertIs(proxy.flip(0, 0), proxy)
+
+        self.assertIs(proxy.apscale(1), proxy)
+        self.assertIs(proxy.acscale(1), proxy)
+        self.assertIs(proxy.ppscale((1, 1)), proxy)
+        self.assertIs(proxy.ccscale(1, 1), proxy)
+        self.assertIs(proxy.cpscale(1, 1), proxy)
+        self.assertIs(proxy.pcscale((1, 1)), proxy)
+        self.assertIs(proxy.scale(1, 1), proxy)
+
+        ### Common methods: BP ###
+
+        bp = proxy.bbox.mid
+
+        self.assertIs(bp.rotate(0), proxy)
+
+        self.assertIs(bp.movex(0), proxy)
+        self.assertIs(bp.movey(0), proxy)
+        self.assertIs(bp.pmove((0, 0)), proxy)
+        self.assertIs(bp.cmove(0, 0), proxy)
+        self.assertIs(bp.move(0, 0), proxy)
+
+        self.assertIs(bp.flip(), proxy)
+        self.assertIs(bp.vflip(), proxy)
+        self.assertIs(bp.hflip(), proxy)
+
+        self.assertIs(bp.ascale(1), proxy)
+        self.assertIs(bp.pscale((1, 1)), proxy)
+        self.assertIs(bp.cscale(1, 1), proxy)
+        self.assertIs(bp.scale(1, 1), proxy)
+
+        self.assertIs(bp.to((0, 0)), proxy)
+        self.assertIs(bp.pto((0, 0)), proxy)
+        self.assertIs(bp.cto(0, 0), proxy)
+
     def test_editing_rotate(self):
         shape = rai.CustomPoly((
             (0, 0),

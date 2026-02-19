@@ -97,8 +97,8 @@ class Transform:
     def rotate(
             self,
             angle: float,
-            a: 'float | rai.typing.Point',
-            b: float | None = None
+            a = None,
+            b = None,
             ) -> None:
         """
         TODO overloaded docstrings??
@@ -183,19 +183,27 @@ class Transform:
 
     def move(
             self,
-            a: 'float | rai.typing.Point',
-            b: float | None = None
+            a=None,
+            b=None,
             ) -> None:
         """
         TODO overloaded docstrings??
         """
-        if isinstance(a, tuple):
-            self.pmove(a)
-        elif b is not None:
+        if (
+                isinstance(a, float | int) and
+                isinstance(b, float | int)
+                ):
             self.cmove(a, b)
+        elif (
+                isinstance(a, Sequence) and
+                isinstance(b, NoneType)
+                ):
+            self.pmove(a)
         else:
             # TODO custom type?
-            raise TypeError("foobar")
+            raise TypeError(f"foobar {a}, {b}")
+
+        return self
 
     def movex(self, x: float = 0) -> Self:
         """
@@ -286,6 +294,7 @@ class Transform:
                 ),
             self._affine
             )
+        return self
 
     @overload
     def flip(self, x: float, y: float) -> None: ...
@@ -569,7 +578,7 @@ class Transform:
     def scale(self, factor: float) -> None: ...
 
     def scale(
-            self, a, b, c, d
+            self, a=None, b=None, c=None, d=None
             ) -> None:
         """
         TODO overloaded docstrings??
