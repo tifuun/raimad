@@ -518,13 +518,13 @@ class BoundPoint():
                 ):
             self.cto(a, b)
         elif (
-                isinstance(a, Sequence) and
+                isinstance(a, rai.types.Vec2) and
                 isinstance(b, NoneType)
                 ):
             self.pto(a)
         else:
             # TODO
-            raise TypeError('foobar')
+            raise TypeError(f'foobar {a} {b}')
 
         return self._proxy
 

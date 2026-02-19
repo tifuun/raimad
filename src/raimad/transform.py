@@ -3,9 +3,10 @@ transform.py: home to Transform class.
 
 See the docstring of Transform for more information.
 """
-from typing import overload, Sequence
+from typing import overload
 from types import NoneType
 from math import degrees
+from numbers import Real
 
 from copy import deepcopy
 
@@ -16,6 +17,7 @@ except ImportError:
     from typing_extensions import Self
 
 import raimad as rai
+from raimad.types import Vec2
 
 class Transform:
     """Transformation: container for affine matrix."""
@@ -104,12 +106,12 @@ class Transform:
         TODO overloaded docstrings??
         """
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int)
+                isinstance(a, Real) and
+                isinstance(b, Real)
                 ):
             self.crotate(angle, a, b)
         elif (
-                isinstance(a, Sequence) and
+                isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
             self.protate(angle, a)
@@ -190,12 +192,12 @@ class Transform:
         TODO overloaded docstrings??
         """
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int)
+                isinstance(a, Real) and
+                isinstance(b, Real)
                 ):
             self.cmove(a, b)
         elif (
-                isinstance(a, Sequence) and
+                isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
             self.pmove(a)
@@ -310,12 +312,12 @@ class Transform:
         TODO overloaded docstrings??
         """
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int)
+                isinstance(a, Real) and
+                isinstance(b, Real)
                 ):
             self.cflip(a, b)
         elif (
-                isinstance(a, Sequence) and
+                isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
             self.pflip(a)
@@ -588,64 +590,64 @@ class Transform:
         # Structural pattern matching at python39:
 
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int) and
-                isinstance(c, float | int) and
-                isinstance(d, float | int)
+                isinstance(a, Real) and
+                isinstance(b, Real) and
+                isinstance(c, Real) and
+                isinstance(d, Real)
                 ):
             return self.ccscale(a, b, c, d)
         if (
-                isinstance(a, Sequence) and
-                isinstance(b, Sequence) and
+                isinstance(a, Vec2) and
+                isinstance(b, Vec2) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
             return self.ppscale(a, b)
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int) and
-                isinstance(c, Sequence) and
+                isinstance(a, Real) and
+                isinstance(b, Real) and
+                isinstance(c, Vec2) and
                 isinstance(d, NoneType)
                 ):
             return self.cpscale(a, b, c)
         if (
-                isinstance(a, Sequence) and
-                isinstance(b, float | int) and
-                isinstance(c, float | int) and
+                isinstance(a, Vec2) and
+                isinstance(b, Real) and
+                isinstance(c, Real) and
                 isinstance(d, NoneType)
                 ):
             return self.pcscale(a, b, c)
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int) and
-                isinstance(c, float | int) and
+                isinstance(a, Real) and
+                isinstance(b, Real) and
+                isinstance(c, Real) and
                 isinstance(d, NoneType)
                 ):
             return self.acscale(a, b, c)
         if (
-                isinstance(a, Sequence) and
+                isinstance(a, Vec2) and
                 isinstance(b, NoneType) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
             return self.ppscale(a)
         if (
-                isinstance(a, float | int) and
-                isinstance(b, float | int) and
+                isinstance(a, Real) and
+                isinstance(b, Real) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
             return self.cpscale(a, b)
         if (
-                isinstance(a, float | int) and
+                isinstance(a, Real) and
                 isinstance(b, NoneType) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
             return self.acscale(a)
         if (
-                isinstance(a, float | int) and
-                isinstance(b, Sequence) and
+                isinstance(a, Real) and
+                isinstance(b, Vec2) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):

@@ -4,6 +4,7 @@ These are used internally,
 and you may also use them to annotate your RAIMAD packages.
 """
 
+
 try:
     from typing import TypeAlias
 except ImportError:

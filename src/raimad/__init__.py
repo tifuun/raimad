@@ -2,6 +2,8 @@
 
 import sys
 
+from raimad import types
+
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
 from raimad import saveto

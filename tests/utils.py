@@ -21,7 +21,7 @@ class XmlComparisonMixin:
 
 class AssertDoesntWarn:
     """
-    Mixin for unittest.TestCase that adds an `assertDoesntWarn` context manager.
+    Mixin for unittest.TestCase that adds `assertDoesntWarn` context manager.
     
     Works like `assertWarns`, but asserts that no warnings are emitted.
     """
