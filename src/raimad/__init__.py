@@ -27,6 +27,7 @@ from raimad.helpers import (
     sub,
     distance_between,
     is_lname_valid,
+    vec2s,
     )
 from raimad import affine
 import raimad.iters as iters
@@ -183,6 +184,7 @@ __all__ = [
     'fortunes_resilience',
     'fortunes_misc',
     'fortunes_all',
+    'vec2s',
     ]
 
 

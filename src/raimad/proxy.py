@@ -9,8 +9,10 @@ except ImportError:
     from typing_extensions import Self
 
 from copy import copy
+from numbers import Real
 
 import raimad as rai
+from raimad.types import Vec2, Vec2S, GeomsS
 
 class LMap:
     """
@@ -105,8 +107,8 @@ class LMap:
 
 class ProxiedMarksContainer(
         rai.FilteredDictList[
-            'rai.typing.Point',
-            'rai.typing.PointLike',
+            Vec2,
+            Vec2,
             'rai.typing.BoundPoint',
             ]):
     """
@@ -125,14 +127,14 @@ class ProxiedMarksContainer(
     def __init__(
             self,
             proxy: 'rai.typing.Proxy',
-            dict_: dict[int | str, 'rai.typing.Point'] | None = None,
+            dict_: dict[int | str, Vec2] | None = None,
             *,
             copy: bool | None = None
             ):
         super().__init__(dict_, copy=copy)
         self._proxy = proxy
 
-    def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
+    def _filter_set(self, val: Vec2) -> Vec2S:
         """
         Set filter for markscontainer.
 
@@ -140,9 +142,9 @@ class ProxiedMarksContainer(
         (regular tuple or boundpoint or whatever),
         what gets stored is a simple regular tuple.
         """
-        return (val[0], val[1])
+        return rai.vec2s(val)
 
-    def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.BoundPoint':
+    def _filter_get(self, val: Vec2) -> 'rai.typing.BoundPoint':
 
         assert not isinstance(val, rai.BoundPoint)
         assert isinstance(val, tuple)
@@ -151,8 +153,8 @@ class ProxiedMarksContainer(
 
         point = self._proxy.transform_point(val)
         boundpoint = rai.BoundPoint(
-            point[0],
-            point[1],
+            float(point[0]),
+            float(point[1]),
             self._proxy
             )
         return boundpoint
@@ -198,13 +200,13 @@ class Proxy:
         self.lmap = LMap(lmap)
         self.transform = transform or rai.Transform()
 
-    def steamroll(self) -> 'rai.typing.Geoms':
+    def steamroll(self) -> GeomsS:
         """
         Get all geometries of this proxy.
 
         Returns
         -------
-        rai.typing.Geoms
+        GeomsS
             Returns all geometries
             (i.e. all raw geometries as well as subcompos)
             of the CompoLike pointed to by this proxy,
@@ -273,13 +275,13 @@ class Proxy:
             )
 
     @property
-    def geoms(self) -> 'rai.typing.Geoms':
+    def geoms(self) -> GeomsS:
         """
         Get the raw geometries as seen through this proxy.
 
         Returns
         -------
-        rai.typing.Geoms
+        GeomsS
             Returns the raw geometries
             (i.e. NOT geometries defined in subcompos)
             defined in the CompoLike pointed to by this Proxy,
@@ -720,8 +722,8 @@ class Proxy:
 
     def transform_point(
             self,
-            point: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            point: Vec2
+            ) -> Vec2:
         """
         Apply this proxies transform to a point, return the transformed point.
 
@@ -1031,7 +1033,7 @@ class Proxy:
     def protate(
             self,
             angle: float,
-            pivot: 'rai.typing.Point' = (0, 0),
+            pivot: Vec2S = (0, 0),
             ) -> None:
         """
         Rotate around a reference point given as an (x, y) tuple.
@@ -1040,7 +1042,7 @@ class Proxy:
         ----------
         angle : float
             Angle to rotate by, in radians.
-        pivot : 'rai.typing.Point'
+        pivot : Vec2S
             The point (x, y) to rotate around. Default: origin.
 
         Returns
@@ -1052,19 +1054,40 @@ class Proxy:
         return self
 
     @overload
-    def rotate(self, angle: float, x: float, y: float) -> None: ...
+    def rotate(self, angle: Real) -> Self: ...
     @overload
-    def rotate(self, angle: float, pivot: 'rai.typing.Point') -> None: ...
+    def rotate(self, angle: Real, /, a: Real, b: Real) -> Self: ...
+    @overload
+    def rotate(self, angle: Real, /, a: Vec2S) -> Self: ...
 
     def rotate(
             self,
-            angle: float,
+            angle: Real,
             /,
-            a=None,
-            b=None,
-            ) -> None:
+            a: Real | Vec2S | None = None,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Rotate around a pivot point (overload).
+
+        This is an overloaded method that can take the position of the pivot
+        point either as two separate x and y arguments, or as a single tuple
+        of two values.
+
+        Parameters
+        ----------
+        angle : Real
+            Angle to rotate by, in radians.
+        a : Real | Vec2S
+            Either the X coordinate, the entire pivot point,
+            or None
+        b : Real | None
+            Either the Y coordinate or None
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
         """
         self.transform.rotate(angle, a, b)
         return self
@@ -1099,14 +1122,14 @@ class Proxy:
 
     def pmove(
             self,
-            offset: 'rai.typing.Point'
+            offset: Vec2
             ) -> None:
         """
         Translate by x and y, given as a tuple.
 
         Parameters
         ----------
-        offset : 'rai.typing.Point'
+        offset : Vec2
             A tuple of two values (x, y).
 
         Returns
@@ -1118,17 +1141,33 @@ class Proxy:
         return self
 
     @overload
-    def move(self, x: float, y: float) -> None: ...
+    def move(self, /, a: Real, b: Real) -> 'rai.typing.Proxy': ...
     @overload
-    def move(self, offset: 'rai.typing.Point') -> None: ...
+    def move(self, /, a: Vec2S) -> 'rai.typing.Proxy': ...
 
     def move(
             self,
-            a: 'float | rai.typing.Point',
-            b: float | None = None
-            ) -> None:
+            /,
+            a: Real | Vec2S,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Translate vertically and horizontally (overload).
+
+        This is an overloaded method that can take the X and Y offsets either
+        as two separate x and y arguments, or as a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Real | Vec2S
+            X offset or tuple of offsets
+        b : Real | None
+            Y offset or None
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
         """
         self.transform.move(a, b)
         return self
@@ -1196,14 +1235,14 @@ class Proxy:
 
     def pflip(
             self,
-            pivot: 'rai.typing.Point'
+            pivot: Vec2
             ) -> None:
         """
         Flip (mirror) along both horizontal and vertical axis (tuple).
 
         Parameters
         ----------
-        pivot: 'rai.typing.Point'
+        pivot: Vec2
             Tuple representing x and y coordinates of lines to mirror
             against
 
@@ -1216,17 +1255,34 @@ class Proxy:
         return self
 
     @overload
-    def flip(self, x: float, y: float) -> None: ...
+    def flip(self, /, a: Real, b: Real) -> Self: ...
     @overload
-    def flip(self, offset: 'rai.typing.Point') -> None: ...
+    def flip(self, /, a: Vec2S) -> Self: ...
 
     def flip(
             self,
-            a: 'float | rai.typing.Point',
-            b: float | None = None
-            ) -> None:
+            /,
+            a: Real | Vec2S,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Flip (mirror) along both horizontal and vertical axis.
+
+        This is an overloaded method that can take the X and Y intercepts of
+        the two mirroring lines either as two separate x and y arguments, or as
+        a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Real | Vec2S
+            Either the x-intercept or a tuple of the two intercepts.
+        b : Real | None
+            Either the y-intercept or None
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
         """
         self.transform.flip(a, b)
         return self
@@ -1273,7 +1329,7 @@ class Proxy:
             self,
             x: float,
             y: float,
-            pivot: 'rai.typing.Point' = (0, 0),
+            pivot: Vec2 = (0, 0),
             ) -> Self:
         """
         Scale width and height (two floats) around pivot point (tuple)
@@ -1284,7 +1340,7 @@ class Proxy:
             Factor to scale by along the x axis
         y : float
             Factor to scale by along the y axis.
-        pivot : rai.typing.Point | None
+        pivot : Vec2
             Use this point as origin for the scale.
             Default: origin
 
@@ -1327,17 +1383,17 @@ class Proxy:
 
     def ppscale(
             self,
-            scale: 'rai.typing.Point',
-            pivot: 'rai.typing.Point' = (0, 0),
+            scale: Vec2,
+            pivot: Vec2 = (0, 0),
             ) -> Self:
         """
         Scale width and height (tuple) around pivot point (tuple)
 
         Parameters
         ----------
-        scale : 'rai.typing.Point'
+        scale : Vec2
             The x and y scale factors
-        pivot : rai.typing.Point
+        pivot : Vec2
             Use this point as origin for the scale.
             Default: origin
 
@@ -1351,7 +1407,7 @@ class Proxy:
 
     def pcscale(
             self,
-            scale: 'rai.typing.Point',
+            scale: Vec2,
             px: float = 0,
             py: float = 0,
             ) -> Self:
@@ -1360,7 +1416,7 @@ class Proxy:
 
         Parameters
         ----------
-        scale : 'rai.typing.Point'
+        scale : Vec2
             The x and y scale factors
            `None` means origin.
         px : float
@@ -1379,7 +1435,7 @@ class Proxy:
     def apscale(
             self,
             factor: float,
-            pivot: 'rai.typing.Point' = (0, 0),
+            pivot: Vec2 = (0, 0),
             ) -> Self:
         """
         Scale both width and height by same factor around pivot (tuple)
@@ -1388,7 +1444,7 @@ class Proxy:
         ----------
         factor : float
             Factor to scale by.
-        pivot : rai.typing.Point | None
+        pivot : Vec2
             Use this point as origin for the scale.
             Default: origin
 
@@ -1426,19 +1482,60 @@ class Proxy:
         self.transform.acscale(factor, px, py)
         return self
 
-    # TODO
     @overload
-    def scale(self, x: float, y: float) -> None: ...
+    def scale(self, /, a: Real ,                             ) -> Self: ...
     @overload
-    def scale(self, scale: 'rai.typing.Point') -> None: ...
+    def scale(self, /, a: Real ,          b: Vec2S,          ) -> Self: ...
     @overload
-    def scale(self, factor: float) -> None: ...
+    def scale(self, /, a: Real ,          b: Real , c: Real  ) -> Self: ...
+    @overload
+    def scale(self, /, a: Real , b: Real                     ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2S,                             ) -> Self: ...
+    @overload
+    def scale(self, /, a: Real , b: Real, c: Vec2S,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2S,          b: Vec2S,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Real , b: Real, c: Real , d: Real, ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2S,          b: Real , c: Real  ) -> Self: ...
 
     def scale(
-            self, /, a=None, b=None, c=None, d=None
-            ) -> None:
+            self,
+            /,
+            a: Real | Vec2S,
+            b: Real | Vec2S | None = None,
+            c: Real | Vec2S | None = None,
+            d: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Scale width and height around a pivot point (overload).
+
+        This is an overloaded function. It can take:
+        - single scale factor
+            - `self.scale(5)`
+        - single scale factor and pivot point (tuple)
+            - `self.scale(5, (1, 1))`
+        - single scale factor and pivot point (separate values)
+            - `self.scale(5, 1, 1)`
+        - x, y scale factors (separate values)
+            - `self.scale(5, 4)`
+        - x, y scale factors (tuple)
+            - `self.scale((5, 4))`
+        - x, y scale factors (separate values) and pivot (tuple)
+            - `self.scale(5, 4, (1, 1))`
+        - x, y scale factors (tuple) and pivot (tuple)
+            - `self.scale((5, 4), (1, 1))`
+        - x, y scale factors (separate values) and pivot (separate values)
+            - `self.scale(5, 4, 1, 1)`
+        - x, y scale factors (tuple) and pivot (separate values)
+            - `self.scale((5, 4), 1, 1)`
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
         """
         self.transform.scale(a, b, c, d)
         return self

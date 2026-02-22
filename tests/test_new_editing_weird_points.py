@@ -5,6 +5,11 @@ RAIMAD does not use numpy,
 but we want people to be able to pass in numpy arrays
 as points,
 and also other weird but workable things.
+
+Transform's methods are not tested here directly,
+only Proxy and BoundPoint.
+Hopefully test_new_editing.py tests
+Transform's methods sufficiently.
 """
 import unittest
 

@@ -5,7 +5,7 @@ from types import NoneType
 from numbers import Real
 
 import raimad as rai
-from raimad.types import Vec2
+from raimad.types import Vec2, Vec2S
 
 class BoundPoint():
     """
@@ -170,13 +170,13 @@ class BoundPoint():
     # Rotate      #
     #-------------#
 
-    def rotate(self, angle: float) -> 'rai.typing.Proxy':
+    def rotate(self, angle: Real) -> 'rai.typing.Proxy':
         """
         Rotate the bound Proxy around this BoundPoint.
 
         Parameters
         ----------
-        angle: float
+        angle: Real
             The rotation angle, specified in radians in the positive
             direction.
 
@@ -224,14 +224,14 @@ class BoundPoint():
 
     def pmove(
             self,
-            offset: 'rai.typing.Point'
+            offset: Vec2
             ) -> None:
         """
         Translate by x and y, given as a tuple.
 
         Parameters
         ----------
-        offset : 'rai.typing.Point'
+        offset : Vec2
             A tuple of two values (x, y).
 
         Returns
@@ -244,17 +244,34 @@ class BoundPoint():
         return self._proxy
 
     @overload
-    def move(self, x: float, y: float) -> None: ...
+    def move(self, /, a: Real, b: Real) -> Self: ...
     @overload
-    def move(self, offset: 'rai.typing.Point') -> None: ...
+    def move(self, /, a: Vec2S) -> Self: ...
 
     def move(
             self,
-            a: 'float | rai.typing.Point',
-            b: float | None = None
-            ) -> None:
+            /,
+            a: Real | Vec2S,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Translate vertically and horizontally (overload).
+
+        This is an overloaded method that can take the X and Y offsets either
+        as two separate x and y arguments, or as a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Real | Vec2S
+            X offset or tuple of offsets
+        b : Real | None
+            Y offset or None
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
         """
         self._proxy.transform.move(a, b)
         return self._proxy
@@ -373,14 +390,14 @@ class BoundPoint():
 
     def pscale(
             self,
-            scale: 'rai.typing.Point',
+            scale: Vec2,
             ) -> 'rai.typing.Proxy':
         """
         Scale width and height (tuple) with this boundpoint as pivot
 
         Parameters
         ----------
-        scale : 'rai.typing.Point'
+        scale : Vec2
             The x and y scale factors
 
         Returns
@@ -413,25 +430,49 @@ class BoundPoint():
         self._proxy.transform.acscale(factor, self._x, self._y)
         return self._proxy
 
-    # TODO
     @overload
-    def scale(self, x: float, y: float) -> None: ...
+    def scale(self, /, a: Real ,                             ) -> Self: ...
     @overload
-    def scale(self, scale: 'rai.typing.Point') -> None: ...
+    def scale(self, /, a: Real , b: Real                     ) -> Self: ...
     @overload
-    def scale(self, factor: float) -> None: ...
+    def scale(self, /, a: Vec2S,                             ) -> Self: ...
 
     def scale(
-            self, /, a=None, b=None
+            self,
+            /,
+            a: Real | Vec2S,
+            b: Real | Vec2S | None = None,
             ) -> None:
         """
-        TODO overloaded docstrings??
+        Scale width and height, using self as pivot point (overload).
+
+        This is an overloaded function. It can take:
+        - single scale factor
+            - `self.scale(5)`
+        - x, y scale factors (separate values)
+            - `self.scale(5, 4)`
+        - x, y scale factors (tuple)
+            - `self.scale((5, 4))`
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
         """
+        # `Isinstance` check is against Real
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
         if (
                 isinstance(a, Real) and
                 isinstance(b, Real)
                 ):
-            self._proxy.transform.ccscale(a, b, self._x, self._y)
+            self._proxy.transform.ccscale(
+                float(a),
+                float(b),
+                self._x,
+                self._y
+                )
         elif (
                 isinstance(a, Vec2) and
                 isinstance(b, NoneType)
@@ -441,10 +482,14 @@ class BoundPoint():
                 isinstance(a, Real) and
                 isinstance(b, NoneType)
                 ):
-            self._proxy.transform.acscale(a, self._x, self._y)
+            self._proxy.transform.acscale(
+                float(a),
+                self._x,
+                self._y
+                )
         else:
             #TODO
-            raise TypeError('foobar')
+            raise TypeError(f'foobar {a} {b}')
 
         return self._proxy
 
@@ -452,13 +497,13 @@ class BoundPoint():
     # To          #
     #-------------#
 
-    def pto(self, point: 'rai.typing.PointLike') -> 'rai.typing.Proxy':
+    def pto(self, point: Vec2) -> 'rai.typing.Proxy':
         """
         Move the Proxy such that this BoundPoint ends up at `point` (tuple).
 
         Parameters
         ----------
-        point: rai.typing.PointLike
+        point: Vec2
             Target point.
 
         Returns
@@ -496,17 +541,30 @@ class BoundPoint():
             )
         return self._proxy
 
-    # TODO overload
-    def to(self, a=None, b=None) -> 'rai.typing.Proxy':
+    @overload
+    def to(self, a: Real, b: Real) -> 'rai.typing.Proxy': ...
+    @overload
+    def to(self, a: Vec2) -> 'rai.typing.Proxy': ...
+
+    def to(
+            self,
+            a: Real | Vec2,
+            b: Real | None = None,
+            ) -> 'rai.typing.Proxy':
         """
-        Move the Proxy so that this BoundPoint ends up at `point` (two floats).
+        Move the Proxy so that this BoundPoint ends up at `point` (overload).
+
+        This is an overloaded method that can take the position of the target
+        point either as two separate x and y arguments, or as a single tuple
+        of two values.
+
 
         Parameters
         ----------
-        x : float
-            Move this many units along x axis.
-        y : float
-            Move this many units along y axis.
+        a : Real | Vec2S
+            Either the X coordinate or target point
+        b : Real | None
+            Either the Y coordinate or None
 
         Returns
         -------
@@ -514,13 +572,16 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
+        # `Isinstance` check is against Real
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
         if (
                 isinstance(a, Real) and
                 isinstance(b, Real)
                 ):
-            self.cto(a, b)
+            self.cto(float(a), float(b))
         elif (
-                isinstance(a, rai.types.Vec2) and
+                isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
             self.pto(a)

@@ -1,6 +1,7 @@
 """helpers.py: misc helper functions."""
 
-from typing import Iterator, TypeVar, Generic
+from typing import Iterator, TypeVar, Generic, overload
+from types import NoneType
 import math
 import re
 
@@ -358,5 +359,19 @@ def is_lname_valid(name):
         and
         name != 'ZZZZ'
         )
+
+@overload
+def vec2s(a: Real, b: Real) -> Vec2S: ...
+@overload
+def vec2s(a: Vec2) -> Vec2S: ...
+
+def vec2s(a: Real | Vec2, b: Real | None = None) -> Vec2S:
+    if isinstance(a, Real) and isinstance(b, Real):
+        return (float(a), float(b))
+
+    if isinstance(a, Vec2) and isinstance(b, NoneType):
+        return (float(a[0]), float(b[1]))
+
+    raise TypeError('TODO')
 
 

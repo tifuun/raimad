@@ -54,3 +54,12 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
+
+[tool.mypy]
+exclude = [
+	"src/raimad/cif/lname_transformers.py",  # TODO
+	"src/raimad/cif/lyp.py",  # TODO
+	"src/raimad/cif/noreuse.py",  # TODO
+	"src/raimad/cif/shorthand.py",  # TODO
+	]
+

@@ -3,6 +3,8 @@
 from typing import Iterator, Generic, TypeVar
 from copy import copy
 
+from raimad.types import Vec2, Vec2S, PolyS
+
 try:
     from typing import Self
 except ImportError:
@@ -25,7 +27,8 @@ class EmptyBBoxError(Exception):
     """
 
 
-T = TypeVar('T', 'rai.typing.Point', 'rai.typing.BoundPoint', )
+# TODO vec2 vs vec2s?
+T = TypeVar('T', Vec2S, 'rai.typing.BoundPoint', )
 class AbstractBBox(Generic[T]):
     """
     Abstract bounding box.
@@ -40,7 +43,7 @@ class AbstractBBox(Generic[T]):
 
     def __init__(
             self,
-            poly: 'rai.typing.Poly | None' = None,
+            poly: PolyS | None = None,
             ):
         """
         Create a new BBox.
@@ -123,7 +126,7 @@ class AbstractBBox(Generic[T]):
         # in Python
         return copy(self)
 
-    def add_poly(self, poly: 'rai.typing.Poly') -> None:
+    def add_poly(self, poly: PolyS) -> None:
         """
         Add new points to the bounding box.
 
@@ -135,13 +138,13 @@ class AbstractBBox(Generic[T]):
         for point in poly:
             self.add_point(point)
 
-    def add_point(self, point: 'rai.typing.PointLike') -> None:
+    def add_point(self, point: Vec2S) -> None:
         """
         Add a new point to the bounding box.
 
         Parameters
         ----------
-        point
+        point : Vec2S
             the point to add
         """
         # TODO simplify with ELIFs?
@@ -267,7 +270,7 @@ class AbstractBBox(Generic[T]):
             self,
             x_ratio: float,
             y_ratio: float,
-            ) -> 'rai.typing.Point':
+            ) -> Vec2S:
         x = self.min_x + self.length * x_ratio
         y = self.min_y + self.width * y_ratio
 
@@ -575,7 +578,7 @@ class AbstractBBox(Generic[T]):
         return new
 
 
-class BBox(AbstractBBox['rai.typing.Point']):
+class BBox(AbstractBBox[Vec2S]):
     """
     Unbound bounding box.
 
@@ -590,7 +593,7 @@ class BBox(AbstractBBox['rai.typing.Point']):
             self,
             x_ratio: float,
             y_ratio: float,
-            ) -> 'rai.typing.Point':
+            ) -> Vec2S:
         """
         Find a point inside (or outside) the bbox given X and Y ratios.
 

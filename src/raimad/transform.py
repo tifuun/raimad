@@ -17,7 +17,7 @@ except ImportError:
     from typing_extensions import Self
 
 import raimad as rai
-from raimad.types import Vec2
+from raimad.types import Vec2, Vec2S, PolyS
 
 class Transform:
     """Transformation: container for affine matrix."""
@@ -67,8 +67,8 @@ class Transform:
     def protate(
             self,
             angle: float,
-            pivot: 'rai.typing.Point' = (0, 0),
-            ) -> None:
+            pivot: Vec2S = (0, 0),
+            ) -> Self:
         """
         Rotate around a reference point given as an (x, y) tuple.
 
@@ -76,7 +76,7 @@ class Transform:
         ----------
         angle : float
             Angle to rotate by, in radians.
-        pivot : 'rai.typing.Point'
+        pivot : Vec2S
             The point (x, y) to rotate around. Default: origin.
 
         Returns
@@ -92,34 +92,63 @@ class Transform:
         return self
 
     @overload
-    def rotate(self, angle: float, x: float, y: float) -> None: ...
+    def rotate(self, angle: Real, /) -> Self: ...
+    # Trailing `/` is needed for mypy for some reason
     @overload
-    def rotate(self, angle: float, pivot: 'rai.typing.Point') -> None: ...
+    def rotate(self, angle: Real, /, a: Real, b: Real) -> Self: ...
+    @overload
+    def rotate(self, angle: Real, /, a: Vec2S) -> Self: ...
 
     def rotate(
             self,
-            angle: float,
-            a = None,
-            b = None,
-            ) -> None:
+            angle: Real,
+            /,
+            a: Real | Vec2S | None = None,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Rotate around a pivot point (overload).
+
+        This is an overloaded method that can take the position of the pivot
+        point either as two separate x and y arguments, or as a single tuple
+        of two values.
+
+        Parameters
+        ----------
+        angle : Real
+            Angle to rotate by, in radians.
+        a : Real | Vec2S
+            Either the X coordinate, the entire pivot point,
+            or None
+        b : Real | None
+            Either the Y coordinate or None
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
         """
+        # `Isinstance` check is against Real
+        # to support weird things like mypy numbers
+        # which we then convert to regular float
+
+        angle_float = float(angle)
+
         if (
                 isinstance(a, Real) and
                 isinstance(b, Real)
                 ):
-            self.crotate(angle, a, b)
+            self.crotate(angle_float, float(a), float(b))
         elif (
                 isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
-            self.protate(angle, a)
+            self.protate(angle_float, a)
         elif (
                 isinstance(a, NoneType) and
                 isinstance(b, NoneType)
                 ):
-            self.protate(angle)
+            self.protate(angle_float)
         else:
             # TODO custom type?
             raise TypeError(f"foobar {a}, {b}")
@@ -157,14 +186,14 @@ class Transform:
 
     def pmove(
             self,
-            offset: 'rai.typing.Point'
-            ) -> None:
+            offset: Vec2S,
+            ) -> Self:
         """
         Translate by x and y, given as a tuple.
 
         Parameters
         ----------
-        offset : 'rai.typing.Point'
+        offset : Vec2S
             A tuple of two values (x, y).
 
         Returns
@@ -179,23 +208,42 @@ class Transform:
         return self
 
     @overload
-    def move(self, x: float, y: float) -> None: ...
+    def move(self, /, a: Real, b: Real) -> Self: ...
     @overload
-    def move(self, offset: 'rai.typing.Point') -> None: ...
+    def move(self, /, a: Vec2S) -> Self: ...
 
     def move(
             self,
-            a=None,
-            b=None,
-            ) -> None:
+            /,
+            a: Real | Vec2S,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Translate vertically and horizontally (overload).
+
+        This is an overloaded method that can take the X and Y offsets either
+        as two separate x and y arguments, or as a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Real | Vec2S
+            X offset or tuple of offsets
+        b : Real | None
+            Y offset or None
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
         """
+        # `Isinstance` check is against Real
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
         if (
                 isinstance(a, Real) and
                 isinstance(b, Real)
                 ):
-            self.cmove(a, b)
+            self.cmove(float(a), float(b))
         elif (
                 isinstance(a, Vec2) and
                 isinstance(b, NoneType)
@@ -203,7 +251,7 @@ class Transform:
             self.pmove(a)
         else:
             # TODO custom type?
-            raise TypeError(f"foobar {a}, {b}")
+            raise TypeError(f"foobar {type(a)}, {type(b)}")
 
         return self
 
@@ -273,14 +321,14 @@ class Transform:
 
     def pflip(
             self,
-            pivot: 'rai.typing.Point'
-            ) -> None:
+            pivot: Vec2S
+            ) -> Self:
         """
         Flip (mirror) along both horizontal and vertical axis (tuple).
 
         Parameters
         ----------
-        pivot: 'rai.typing.Point'
+        pivot: Vec2S
             Tuple representing x and y coordinates of lines to mirror
             against
 
@@ -299,23 +347,43 @@ class Transform:
         return self
 
     @overload
-    def flip(self, x: float, y: float) -> None: ...
+    def flip(self, /, a: Real, b: Real) -> Self: ...
     @overload
-    def flip(self, offset: 'rai.typing.Point') -> None: ...
+    def flip(self, /, a: Vec2S) -> Self: ...
 
     def flip(
             self,
-            a: 'float | rai.typing.Point',
-            b: float | None = None
-            ) -> None:
+            /,
+            a: Real | Vec2S,
+            b: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Flip (mirror) along both horizontal and vertical axis.
+
+        This is an overloaded method that can take the X and Y intercepts of
+        the two mirroring lines either as two separate x and y arguments, or as
+        a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Real | Vec2S
+            Either the x-intercept or a tuple of the two intercepts.
+        b : Real | None
+            Either the y-intercept or None
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
         """
+        # `Isinstance` check is against Real
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
         if (
                 isinstance(a, Real) and
                 isinstance(b, Real)
                 ):
-            self.cflip(a, b)
+            self.cflip(float(a), float(b))
         elif (
                 isinstance(a, Vec2) and
                 isinstance(b, NoneType)
@@ -376,7 +444,7 @@ class Transform:
             self,
             x: float,
             y: float,
-            pivot: 'rai.typing.Point' = (0, 0),
+            pivot: Vec2S = (0, 0),
             ) -> Self:
         """
         Scale width and height (two floats) around pivot point (tuple)
@@ -387,7 +455,7 @@ class Transform:
             Factor to scale by along the x axis
         y : float
             Factor to scale by along the y axis.
-        pivot : rai.typing.Point | None
+        pivot : Vec2S
             Use this point as origin for the scale.
             Default: origin
 
@@ -444,17 +512,17 @@ class Transform:
 
     def ppscale(
             self,
-            scale: 'rai.typing.Point',
-            pivot: 'rai.typing.Point' = (0, 0),
+            scale: Vec2S,
+            pivot: Vec2S = (0, 0),
             ) -> Self:
         """
         Scale width and height (tuple) around pivot point (tuple)
 
         Parameters
         ----------
-        scale : 'rai.typing.Point'
+        scale : Vec2S
             The x and y scale factors
-        pivot : rai.typing.Point
+        pivot : Vec2S
             Use this point as origin for the scale.
             Default: origin
 
@@ -476,7 +544,7 @@ class Transform:
 
     def pcscale(
             self,
-            scale: 'rai.typing.Point',
+            scale: Vec2S,
             px: float = 0,
             py: float = 0,
             ) -> Self:
@@ -485,9 +553,8 @@ class Transform:
 
         Parameters
         ----------
-        scale : 'rai.typing.Point'
+        scale : Vec2S
             The x and y scale factors
-           `None` means origin.
         px : float
             X coordinate of origin of the scale (default: 0)
         py : float
@@ -512,7 +579,7 @@ class Transform:
     def apscale(
             self,
             factor: float,
-            pivot: 'rai.typing.Point' = (0, 0),
+            pivot: Vec2S = (0, 0),
             ) -> Self:
         """
         Scale both width and height by same factor around pivot (tuple)
@@ -521,7 +588,7 @@ class Transform:
         ----------
         factor : float
             Factor to scale by.
-        pivot : rai.typing.Point | None
+        pivot : Vec2S
             Use this point as origin for the scale.
             Default: origin
 
@@ -571,19 +638,60 @@ class Transform:
                 )
         return self
 
-    # TODO
     @overload
-    def scale(self, x: float, y: float) -> None: ...
+    def scale(self, /, a: Real ,                             ) -> Self: ...
     @overload
-    def scale(self, scale: 'rai.typing.Point') -> None: ...
+    def scale(self, /, a: Real ,          b: Vec2S,          ) -> Self: ...
     @overload
-    def scale(self, factor: float) -> None: ...
+    def scale(self, /, a: Real ,          b: Real , c: Real  ) -> Self: ...
+    @overload
+    def scale(self, /, a: Real , b: Real                     ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2S,                             ) -> Self: ...
+    @overload
+    def scale(self, /, a: Real , b: Real, c: Vec2S,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2S,          b: Vec2S,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Real , b: Real, c: Real , d: Real, ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2S,          b: Real , c: Real  ) -> Self: ...
 
     def scale(
-            self, a=None, b=None, c=None, d=None
-            ) -> None:
+            self,
+            /,
+            a: Real | Vec2S,
+            b: Real | Vec2S | None = None,
+            c: Real | Vec2S | None = None,
+            d: Real | None = None,
+            ) -> Self:
         """
-        TODO overloaded docstrings??
+        Scale width and height around a pivot point (overload).
+
+        This is an overloaded function. It can take:
+        - single scale factor
+            - `self.scale(5)`
+        - single scale factor and pivot point (tuple)
+            - `self.scale(5, (1, 1))`
+        - single scale factor and pivot point (separate values)
+            - `self.scale(5, 1, 1)`
+        - x, y scale factors (separate values)
+            - `self.scale(5, 4)`
+        - x, y scale factors (tuple)
+            - `self.scale((5, 4))`
+        - x, y scale factors (separate values) and pivot (tuple)
+            - `self.scale(5, 4, (1, 1))`
+        - x, y scale factors (tuple) and pivot (tuple)
+            - `self.scale((5, 4), (1, 1))`
+        - x, y scale factors (separate values) and pivot (separate values)
+            - `self.scale(5, 4, 1, 1)`
+        - x, y scale factors (tuple) and pivot (separate values)
+            - `self.scale((5, 4), 1, 1)`
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow method chaining.
         """
         # "Mom, can we have structural pattern matching?"
         # "We have structural pattern matching at python39"
@@ -595,7 +703,7 @@ class Transform:
                 isinstance(c, Real) and
                 isinstance(d, Real)
                 ):
-            return self.ccscale(a, b, c, d)
+            return self.ccscale(float(a), float(b), float(c), float(d))
         if (
                 isinstance(a, Vec2) and
                 isinstance(b, Vec2) and
@@ -609,21 +717,21 @@ class Transform:
                 isinstance(c, Vec2) and
                 isinstance(d, NoneType)
                 ):
-            return self.cpscale(a, b, c)
+            return self.cpscale(float(a), float(b), c)
         if (
                 isinstance(a, Vec2) and
                 isinstance(b, Real) and
                 isinstance(c, Real) and
                 isinstance(d, NoneType)
                 ):
-            return self.pcscale(a, b, c)
+            return self.pcscale(a, float(b), float(c))
         if (
                 isinstance(a, Real) and
                 isinstance(b, Real) and
                 isinstance(c, Real) and
                 isinstance(d, NoneType)
                 ):
-            return self.acscale(a, b, c)
+            return self.acscale(float(a), float(b), float(c))
         if (
                 isinstance(a, Vec2) and
                 isinstance(b, NoneType) and
@@ -637,21 +745,21 @@ class Transform:
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
-            return self.cpscale(a, b)
+            return self.cpscale(float(a), float(b))
         if (
                 isinstance(a, Real) and
                 isinstance(b, NoneType) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
-            return self.acscale(a)
+            return self.acscale(float(a))
         if (
                 isinstance(a, Real) and
                 isinstance(b, Vec2) and
                 isinstance(c, NoneType) and
                 isinstance(d, NoneType)
                 ):
-            return self.apscale(a, b)
+            return self.apscale(float(a), b)
 
         raise TypeError(f"foobar {a} {b} {c} {d}")
 
@@ -769,27 +877,27 @@ class Transform:
 
     def transform_poly(
             self,
-            poly: 'rai.typing.Poly'
-            ) -> 'rai.typing.Poly':
+            poly: PolyS
+            ) -> PolyS:
         """
         Apply transformation to poly and return new transformed poly.
 
         Parameters
         ----------
-        poly : rai.typing.Poly
+        poly : PolyS
             The Poly to transform
 
         Returns
         -------
-        rai.typing.Poly
+        PolyS
             The new, transformed, Poly
         """
         return rai.affine.transform_poly(self._affine, poly)
 
     def transform_point(
             self,
-            point: 'rai.typing.PointLike'
-            ) -> 'rai.typing.Point':
+            point: Vec2S
+            ) -> Vec2S:
         """
         Apply this transform to a point, and return the transformed point.
 
@@ -798,12 +906,12 @@ class Transform:
 
         Parameters
         ----------
-        point : 'rai.typing.Point'Like
+        point : Vec2S
             The point to transform.
 
         Returns
         -------
-        rai.typing.Point
+        Vec2S
             The transformed point.
         """
         return rai.affine.transform_point(self._affine, point)

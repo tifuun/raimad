@@ -6,7 +6,8 @@ import warnings
 
 from io import StringIO
 import raimad as rai
-import raimad.typing as rait
+from raimad.types import Geoms, Poly
+from raimad.typing import CompoLike
 
 class XmlComparisonMixin:
     def assertXmlEqual(self, xml1, xml2):
@@ -95,8 +96,8 @@ class GeomsEqual():
 
     def checkPolysEqual(
             self,
-            actual: rait.Poly,
-            expected: rait.Poly,
+            actual: Poly,
+            expected: Poly,
             epsilon: float | None = None
             ):
 
@@ -108,7 +109,7 @@ class GeomsEqual():
 
     def assertManyGeomsEqual(
             self,
-            geomses: Sequence[rait.Geoms | rait.CompoLike],
+            geomses: Sequence[Geoms | CompoLike],
             epsilon: float | None = None):
 
         for a, b in rai.duplets(geomses):
@@ -116,14 +117,14 @@ class GeomsEqual():
 
     def assertGeomsEqual(
             self,
-            actual: rait.Geoms | rait.CompoLike,
-            expected: rait.Geoms | rait.CompoLike,
+            actual: Geoms | CompoLike,
+            expected: Geoms | CompoLike,
             epsilon: float | None = None):
 
-        if isinstance(actual, rait.CompoLike):
+        if isinstance(actual, CompoLike):
             actual = actual.steamroll()
 
-        if isinstance(expected, rait.CompoLike):
+        if isinstance(expected, CompoLike):
             expected = expected.steamroll()
 
         self.assertEqual(set(actual.keys()), set(expected.keys()))
@@ -175,8 +176,8 @@ class GeomsEqual():
 
     def assertGeomsEqualButAllowDifferentNames(
             self,
-            actual: rait.Geoms,
-            expected: rait.Geoms,
+            actual: Geoms,
+            expected: Geoms,
             epsilon: float | None = None):
 
         # TODO this is a hack

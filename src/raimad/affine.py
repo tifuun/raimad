@@ -4,6 +4,7 @@ from math import sin, cos, sqrt, atan2
 from typing import Sequence
 
 import raimad as rai
+from raimad.types import Vec2, Vec2S, Poly, PolyS
 
 def identity() -> 'rai.typing.Affine':
     """Make 3x3 identity matrix."""
@@ -167,8 +168,8 @@ def get_rotation(matrix: 'rai.typing.Affine') -> float:
 
 def transform_poly(
         matrix: 'rai.typing.Affine',
-        poly: 'rai.typing.Poly'
-        ) -> 'rai.typing.Poly':
+        poly: Poly
+        ) -> PolyS:
     """Apply transformation to poly and return new transformed poly."""
     return [
         transform_point(matrix, point)
@@ -178,11 +179,13 @@ def transform_poly(
 
 def transform_point(
         matrix: 'rai.typing.Affine',
-        point: 'rai.typing.PointLike'
-        ) -> 'rai.typing.Point':
+        point: Vec2
+        ) -> Vec2S:
     """Apply transformation to point and return transformed point."""
     # code written by perplexity.ai
-    x, y = point
+    x = float(point[0])
+    y = float(point[1])
+
     a, b, c = matrix[0]
     d, e, f = matrix[1]
 
