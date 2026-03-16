@@ -4,6 +4,7 @@ from typing import Iterator, TypeVar, Generic, overload
 from types import NoneType
 import math
 import re
+from raimad.types import Vec2, Vec2S, Num
 
 try:
     from typing import Self
@@ -22,7 +23,7 @@ semicircle = math.radians(180)
 demisemicircle = math.radians(90)
 hemidemisemicircle = math.radians(45)
 
-def angle_between(p1: 'rai.typing.Point', p2: 'rai.typing.Point') -> float:
+def angle_between(p1: Vec2, p2: Vec2) -> float:
     """
     Calculate angle between two points.
 
@@ -39,11 +40,14 @@ def angle_between(p1: 'rai.typing.Point', p2: 'rai.typing.Point') -> float:
         The angle, in [numpy convention](coords-transforms.md)
 
     """
+    p1 = vec2s(p1)
+    p2 = vec2s(p2)
+
     x = p2[0] - p1[0]
     y = p2[1] - p1[1]
     return math.atan2(y, x)
 
-def polar(arg: float, mod: float = 1) -> 'rai.typing.Point':
+def polar(arg: Num, mod: Num = 1) -> Vec2S:
     """
     Construct an XY point from an argument and modulus.
 
@@ -60,6 +64,9 @@ def polar(arg: float, mod: float = 1) -> 'rai.typing.Point':
     rai.typing.Point
         The constructed point
     """
+    arg = float(arg)
+    mod = float(mod)
+
     return (
         math.cos(arg) * mod,
         math.sin(arg) * mod
@@ -186,7 +193,7 @@ class _Infix(Generic[T, R]):
     def __call__(self, left: T, right: T) -> R:
         raise NotImplementedError() ## TODO undo
 
-class Midpoint(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+class Midpoint(_Infix[Vec2, Vec2]):
     """
     Infix operator for calculating midpoint of points.
 
@@ -195,9 +202,9 @@ class Midpoint(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
     def __call__(
             self,
-            p1: 'rai.typing.PointLike',
-            p2: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            p1: Vec2,
+            p2: Vec2
+            ) -> Vec2:
         """
         Get midpoint between two points.
 
@@ -213,6 +220,9 @@ class Midpoint(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
         rai.typing.Point
             The midpoint
         """
+        p1 = vec2s(p1)
+        p2 = vec2s(p2)
+
         return (
             (p1[0] + p2[0]) / 2,
             (p1[1] + p2[1]) / 2,
@@ -221,7 +231,7 @@ class Midpoint(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 midpoint = Midpoint()
 # TODO more than 1 input
 
-class Add(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+class Add(_Infix[Vec2, Vec2]):
     """
     Infix operator for adding points.
 
@@ -230,9 +240,9 @@ class Add(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
     def __call__(
             self,
-            p1: 'rai.typing.PointLike',
-            p2: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            p1: Vec2,
+            p2: Vec2
+            ) -> Vec2:
         """
         Add together two points.
 
@@ -248,6 +258,9 @@ class Add(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
         rai.typing.PointLike
             The sum of p1 and p2
         """
+        p1 = vec2s(p1)
+        p2 = vec2s(p2)
+
         return (
             p1[0] + p2[0],
             p1[1] + p2[1],
@@ -255,7 +268,7 @@ class Add(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
 add = Add()
 
-class Sub(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
+class Sub(_Infix[Vec2, Vec2]):
     """
     Infix operator for subtracting points.
 
@@ -264,9 +277,9 @@ class Sub(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
     def __call__(
             self,
-            p1: 'rai.typing.PointLike',
-            p2: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            p1: Vec2,
+            p2: Vec2
+            ) -> Vec2:
         """
         Subtract one point from another.
 
@@ -282,6 +295,9 @@ class Sub(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
         rai.typing.PointLike
             The resulting point.
         """
+        p1 = vec2s(p1)
+        p2 = vec2s(p2)
+
         return (
             p1[0] - p2[0],
             p1[1] - p2[1],
@@ -289,7 +305,7 @@ class Sub(_Infix['rai.typing.PointLike', 'rai.typing.PointLike']):
 
 sub = Sub()
 
-class Eq(_Infix['rai.typing.PointLike', bool]):
+class Eq(_Infix[Vec2, bool]):
     """
     Infix operator for testing point equality.
 
@@ -298,8 +314,8 @@ class Eq(_Infix['rai.typing.PointLike', bool]):
 
     def __call__(
             self,
-            p1: 'rai.typing.PointLike',
-            p2: 'rai.typing.PointLike'
+            p1: Vec2,
+            p2: Vec2
             ) -> bool:
         """
         Check whether two points are the same.
@@ -318,16 +334,20 @@ class Eq(_Infix['rai.typing.PointLike', bool]):
             is less than `rai.epsilon`.
             False otherwise.
         """
-        return rai.affine.norm((
+        p1 = vec2s(p1)
+        p2 = vec2s(p2)
+
+        return rai.affine.norm((    # type: ignore 
             p1[0] - p2[0],
             p1[1] - p2[1],
             )) < rai.epsilon
+        #TODO ???
 
 eq = Eq()
 
 def distance_between(
-        p1: 'rai.typing.Point',
-        p2: 'rai.typing.Point'
+        p1: Vec2,
+        p2: Vec2
         ) -> float:
     """
     Get euclidean distance between two points.
@@ -344,14 +364,17 @@ def distance_between(
     float
         Euclidean distance between two points
     """
+    p1 = vec2s(p1)
+    p2 = vec2s(p2)
 
-    return rai.affine.norm((
+    return rai.affine.norm((  # type: ignore
+                            #TODO???
         p1[0] - p2[0],
         p1[1] - p2[1],
         ))
 
 _IS_LNAME_VALID = re.compile(r'[A-Z0-9]{0,4}', re.ASCII)
-def is_lname_valid(name):
+def is_lname_valid(name: str) -> bool:
     return bool(
         bool(name)
         and
@@ -361,16 +384,16 @@ def is_lname_valid(name):
         )
 
 @overload
-def vec2s(a: Real, b: Real) -> Vec2S: ...
+def vec2s(a: float, b: float) -> Vec2S: ...
 @overload
 def vec2s(a: Vec2) -> Vec2S: ...
 
-def vec2s(a: Real | Vec2, b: Real | None = None) -> Vec2S:
-    if isinstance(a, Real) and isinstance(b, Real):
+def vec2s(a: float | Vec2, b: float | None = None) -> Vec2S:
+    if isinstance(a, float) and isinstance(b, float):
         return (float(a), float(b))
 
     if isinstance(a, Vec2) and isinstance(b, NoneType):
-        return (float(a[0]), float(b[1]))
+        return (float(a[0]), float(a[1]))
 
     raise TypeError('TODO')
 

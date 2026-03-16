@@ -25,6 +25,12 @@ dependencies = [
     'typing-extensions',
 	]
 
+[project.optional-dependencies]
+dev = [
+	"numpy",
+	"cift",
+	]
+
 # This lets people use `raimad` directly as a shell command
 # instead of `python -m raimad`
 [project.scripts]

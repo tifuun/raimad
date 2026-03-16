@@ -9,6 +9,7 @@ except ImportError:
     from typing_extensions import Self
 
 import raimad as rai
+from raimad.types import Vec2, Vec2S, GeomsS
 
 class InvalidSubcompoError(TypeError):
     """
@@ -81,9 +82,9 @@ class ProxyableDictList(rai.DictList[T]):
 
 class MarksContainer(
         rai.FilteredDictList[
-            'rai.typing.Point',
-            'rai.typing.PointLike',
-            'rai.typing.Point',
+            Vec2S,
+            Vec2,
+            Vec2S,
             ]):
     """
     Specialized container that implements Compo.marks.
@@ -91,7 +92,7 @@ class MarksContainer(
     TODO explain.
     """
 
-    def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
+    def _filter_set(self, val: Vec2) -> Vec2S:
         """
         Set filter for markscontainer.
 
@@ -99,9 +100,9 @@ class MarksContainer(
         (regular tuple or boundpoint or whatever),
         what gets stored is a simple regular tuple.
         """
-        return (val[0], val[1])
+        return rai.vec2s(val)
 
-    def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.Point':
+    def _filter_get(self, val: Vec2S) -> Vec2S:
         return val
 
 class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
@@ -142,7 +143,7 @@ class Compo:
     TODO explain
     """
 
-    geoms: 'rai.typing.Geoms'
+    geoms: GeomsS
     marks: MarksContainer
     subcompos: SubcompoContainer
 
@@ -195,7 +196,7 @@ class Compo:
         """
         return rai.Partial(cls, **kwargs)
 
-    def steamroll(self) -> 'rai.typing.Geoms':
+    def steamroll(self) -> GeomsS:
         """
         Steamroll the entire compo hierarchy into one Geoms dict.
 
@@ -332,8 +333,8 @@ class Compo:
 
     def transform_point(
             self,
-            point: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            point: Vec2S
+            ) -> Vec2S:
         """
         Do nothing to `point` and return as-is.
 

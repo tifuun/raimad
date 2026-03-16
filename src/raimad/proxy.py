@@ -9,10 +9,9 @@ except ImportError:
     from typing_extensions import Self
 
 from copy import copy
-from numbers import Real
 
 import raimad as rai
-from raimad.types import Vec2, Vec2S, GeomsS
+from raimad.types import Vec2, Vec2S, GeomsS, Num
 
 class LMap:
     """
@@ -722,8 +721,8 @@ class Proxy:
 
     def transform_point(
             self,
-            point: Vec2
-            ) -> Vec2:
+            point: Vec2S
+            ) -> Vec2S:
         """
         Apply this proxies transform to a point, return the transformed point.
 
@@ -833,13 +832,14 @@ class Proxy:
         Returns
         -------
         ProxiedMarksContainer
-            A special `ProxiesMarksContainer` is returned
+            A special `ProxiedMarksContainer` is returned
             which can be used to query the underlying CompoLike's
             marks as seen through this proxy.
         """
         return ProxiedMarksContainer(
             self,
-            self.compo.marks._dict,
+            self.compo.marks._dict,  # type: ignore
+            # Honestly NO CLUE what mypy wants from me here
             copy=False
             )
 
@@ -1004,9 +1004,9 @@ class Proxy:
 
     def crotate(
             self,
-            angle: float,
-            x: float = 0,
-            y: float = 0
+            angle: Num,
+            x: Num = 0,
+            y: Num = 0
             ) -> Self:
         """
         Rotate around a point given by x and y coordinate.
@@ -1032,9 +1032,9 @@ class Proxy:
 
     def protate(
             self,
-            angle: float,
+            angle: Num,
             pivot: Vec2S = (0, 0),
-            ) -> None:
+            ) -> Self:
         """
         Rotate around a reference point given as an (x, y) tuple.
 
@@ -1054,18 +1054,18 @@ class Proxy:
         return self
 
     @overload
-    def rotate(self, angle: Real) -> Self: ...
+    def rotate(self, angle: Num, /) -> Self: ...
     @overload
-    def rotate(self, angle: Real, /, a: Real, b: Real) -> Self: ...
+    def rotate(self, angle: Num, /, a: Num, b: Num) -> Self: ...
     @overload
-    def rotate(self, angle: Real, /, a: Vec2S) -> Self: ...
+    def rotate(self, angle: Num, /, a: Vec2S) -> Self: ...
 
     def rotate(
             self,
-            angle: Real,
+            angle: Num,
             /,
-            a: Real | Vec2S | None = None,
-            b: Real | None = None,
+            a: Num | Vec2S | None = None,
+            b: Num | None = None,
             ) -> Self:
         """
         Rotate around a pivot point (overload).
@@ -1076,12 +1076,12 @@ class Proxy:
 
         Parameters
         ----------
-        angle : Real
+        angle : Num
             Angle to rotate by, in radians.
-        a : Real | Vec2S
+        a : Num | Vec2S
             Either the X coordinate, the entire pivot point,
             or None
-        b : Real | None
+        b : Num | None
             Either the Y coordinate or None
 
         Returns
@@ -1089,7 +1089,7 @@ class Proxy:
         Self
             This proxy is returned to allow chaining methods.
         """
-        self.transform.rotate(angle, a, b)
+        self.transform.rotate(angle, a, b)  # type: ignore
         return self
 
 
@@ -1099,8 +1099,8 @@ class Proxy:
 
     def cmove(
             self,
-            x: float = 0,
-            y: float = 0
+            x: Num = 0,
+            y: Num = 0
             ) -> Self:
         """
         Translate by x and y.
@@ -1123,7 +1123,7 @@ class Proxy:
     def pmove(
             self,
             offset: Vec2
-            ) -> None:
+            ) -> Self:
         """
         Translate by x and y, given as a tuple.
 
@@ -1141,15 +1141,15 @@ class Proxy:
         return self
 
     @overload
-    def move(self, /, a: Real, b: Real) -> 'rai.typing.Proxy': ...
+    def move(self, /, a: Num, b: Num) -> 'rai.typing.Proxy': ...
     @overload
     def move(self, /, a: Vec2S) -> 'rai.typing.Proxy': ...
 
     def move(
             self,
             /,
-            a: Real | Vec2S,
-            b: Real | None = None,
+            a: Num | Vec2S,
+            b: Num | None = None,
             ) -> Self:
         """
         Translate vertically and horizontally (overload).
@@ -1159,9 +1159,9 @@ class Proxy:
 
         Parameters
         ----------
-        a : Real | Vec2S
+        a : Num | Vec2S
             X offset or tuple of offsets
-        b : Real | None
+        b : Num | None
             Y offset or None
 
         Returns
@@ -1169,16 +1169,16 @@ class Proxy:
         Self
             This proxy is returned to allow method chaining.
         """
-        self.transform.move(a, b)
+        self.transform.move(a, b)  # type: ignore
         return self
 
-    def movex(self, x: float = 0) -> Self:
+    def movex(self, x: Num = 0) -> Self:
         """
         Move along x axis.
 
         Parameters
         ----------
-        x : float
+        x : Num
             Move this many units along x axis.
 
         Returns
@@ -1189,13 +1189,13 @@ class Proxy:
         self.transform.movex(x)
         return self
 
-    def movey(self, y: float = 0) -> Self:
+    def movey(self, y: Num = 0) -> Self:
         """
         Move along y axis.
 
         Parameters
         ----------
-        y : float
+        y : Num
             Move this many units along y axis.
 
         Returns
@@ -1212,17 +1212,17 @@ class Proxy:
 
     def cflip(
             self,
-            x: float = 0,
-            y: float = 0
+            x: Num = 0,
+            y: Num = 0
             ) -> Self:
         """
         Flip (mirror) along both horizontal and vertical axis.
 
         Parameters
         ----------
-        x : float
+        x : Num
             Flip around this point (x coordinate)
-        y : float
+        y : Num
             Flip around this point (y coordinate)
 
         Returns
@@ -1236,7 +1236,7 @@ class Proxy:
     def pflip(
             self,
             pivot: Vec2
-            ) -> None:
+            ) -> Self:
         """
         Flip (mirror) along both horizontal and vertical axis (tuple).
 
@@ -1255,15 +1255,15 @@ class Proxy:
         return self
 
     @overload
-    def flip(self, /, a: Real, b: Real) -> Self: ...
+    def flip(self, /, a: Num, b: Num) -> Self: ...
     @overload
-    def flip(self, /, a: Vec2S) -> Self: ...
+    def flip(self, /, a: Vec2) -> Self: ...
 
     def flip(
             self,
             /,
-            a: Real | Vec2S,
-            b: Real | None = None,
+            a: Num | Vec2,
+            b: Num | None = None,
             ) -> Self:
         """
         Flip (mirror) along both horizontal and vertical axis.
@@ -1274,9 +1274,9 @@ class Proxy:
 
         Parameters
         ----------
-        a : Real | Vec2S
+        a : Num | Vec2S
             Either the x-intercept or a tuple of the two intercepts.
-        b : Real | None
+        b : Num | None
             Either the y-intercept or None
 
         Returns
@@ -1284,16 +1284,16 @@ class Proxy:
         Self
             This proxy is returned to allow chaining methods.
         """
-        self.transform.flip(a, b)
+        self.transform.flip(a, b)  # type: ignore
         return self
 
-    def vflip(self, y: float = 0) -> Self:
+    def vflip(self, y: Num = 0) -> Self:
         """
         Flip (mirror) along horizontal axis.
 
         Parameters
         ----------
-        y : float
+        y : Num
             Flip around this horizontal line (y coordinate)
 
         Returns
@@ -1304,13 +1304,13 @@ class Proxy:
         self.transform.vflip(y)
         return self
 
-    def hflip(self, x: float = 0) -> Self:
+    def hflip(self, x: Num = 0) -> Self:
         """
         Flip (mirror) along vertical axis.
 
         Parameters
         ----------
-        x : float
+        x : Num
             Flip around this vertical line (x coordinate)
 
         Returns
@@ -1327,8 +1327,8 @@ class Proxy:
 
     def cpscale(
             self,
-            x: float,
-            y: float,
+            x: Num,
+            y: Num,
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
@@ -1336,9 +1336,9 @@ class Proxy:
 
         Parameters
         ----------
-        x : float
+        x : Num
             Factor to scale by along the x axis
-        y : float
+        y : Num
             Factor to scale by along the y axis.
         pivot : Vec2
             Use this point as origin for the scale.
@@ -1354,23 +1354,23 @@ class Proxy:
 
     def ccscale(
             self,
-            x: float,
-            y: float,
-            px: float = 0,
-            py: float = 0,
+            x: Num,
+            y: Num,
+            px: Num = 0,
+            py: Num = 0,
             ) -> Self:
         """
         Scale width and height (two floats) around pivot point (two floats)
 
         Parameters
         ----------
-        x : float
+        x : Num
             Factor to scale by along the x axis
-        y : float
+        y : Num
             Factor to scale by along the y axis.
-        px : float
+        px : Num
             X coordinate of origin of the scale (default: 0)
-        py : float
+        py : Num
             Y coordinate of origin of the scale (default: 0)
 
         Returns
@@ -1408,20 +1408,20 @@ class Proxy:
     def pcscale(
             self,
             scale: Vec2,
-            px: float = 0,
-            py: float = 0,
+            px: Num = 0,
+            py: Num = 0,
             ) -> Self:
         """
-        Scale width and height (tuple) around pivot point (two floats)
+        Scale width and height (tuple) around pivot point (two Nums)
 
         Parameters
         ----------
         scale : Vec2
             The x and y scale factors
            `None` means origin.
-        px : float
+        px : Num
             X coordinate of origin of the scale (default: 0)
-        py : float
+        py : Num
             Y coordinate of origin of the scale (default: 0)
 
         Returns
@@ -1434,7 +1434,7 @@ class Proxy:
 
     def apscale(
             self,
-            factor: float,
+            factor: Num,
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
@@ -1442,7 +1442,7 @@ class Proxy:
 
         Parameters
         ----------
-        factor : float
+        factor : Num
             Factor to scale by.
         pivot : Vec2
             Use this point as origin for the scale.
@@ -1458,20 +1458,20 @@ class Proxy:
 
     def acscale(
             self,
-            factor: float,
-            px: float = 0,
-            py: float = 0,
+            factor: Num,
+            px: Num = 0,
+            py: Num = 0,
             ) -> Self:
         """
-        Scale both width and height by same factor around pivot (two floats)
+        Scale both width and height by same factor around pivot (two Nums)
 
         Parameters
         ----------
-        factor : float
+        factor : Num
             Factor to scale by.
-        px : float
+        px : Num
             X coordinate of origin of the scale (default: 0)
-        py : float
+        py : Num
             Y coordinate of origin of the scale (default: 0)
 
         Returns
@@ -1483,31 +1483,31 @@ class Proxy:
         return self
 
     @overload
-    def scale(self, /, a: Real ,                             ) -> Self: ...
+    def scale(self, /, a: Num ,                             ) -> Self: ...
     @overload
-    def scale(self, /, a: Real ,          b: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Num ,          b: Vec2S,          ) -> Self: ...
     @overload
-    def scale(self, /, a: Real ,          b: Real , c: Real  ) -> Self: ...
+    def scale(self, /, a: Num ,          b: Num , c: Num  ) -> Self: ...
     @overload
-    def scale(self, /, a: Real , b: Real                     ) -> Self: ...
+    def scale(self, /, a: Num , b: Num                     ) -> Self: ...
     @overload
     def scale(self, /, a: Vec2S,                             ) -> Self: ...
     @overload
-    def scale(self, /, a: Real , b: Real, c: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Num , b: Num, c: Vec2S,          ) -> Self: ...
     @overload
     def scale(self, /, a: Vec2S,          b: Vec2S,          ) -> Self: ...
     @overload
-    def scale(self, /, a: Real , b: Real, c: Real , d: Real, ) -> Self: ...
+    def scale(self, /, a: Num , b: Num, c: Num , d: Num, ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,          b: Real , c: Real  ) -> Self: ...
+    def scale(self, /, a: Vec2S,          b: Num , c: Num  ) -> Self: ...
 
     def scale(
             self,
             /,
-            a: Real | Vec2S,
-            b: Real | Vec2S | None = None,
-            c: Real | Vec2S | None = None,
-            d: Real | None = None,
+            a: Num | Vec2S,
+            b: Num | Vec2S | None = None,
+            c: Num | Vec2S | None = None,
+            d: Num | None = None,
             ) -> Self:
         """
         Scale width and height around a pivot point (overload).
@@ -1537,6 +1537,6 @@ class Proxy:
         Self
             This proxy is returned to allow method chaining.
         """
-        self.transform.scale(a, b, c, d)
+        self.transform.scale(a, b, c, d)  # type: ignore
         return self
 

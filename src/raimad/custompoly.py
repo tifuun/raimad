@@ -3,6 +3,8 @@ import raimad as rai
 
 from typing import Sequence
 
+from raimad.types import PolyS
+
 class CustomPolyException(Exception):
     """Error for when you incorrectly create a CustomPoly."""
 
@@ -34,7 +36,7 @@ class CustomPoly(rai.Compo):
                 tuple[str, tuple[float, float]]
                 ]
             ) -> None:
-        processed_points: 'list[rai.typing.Point]' = []
+        processed_points: PolyS = []
         for point in points:
 
             if isinstance(point[0], str):

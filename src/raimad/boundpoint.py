@@ -1,11 +1,10 @@
 """boundpoint.py: home to BoundPoint class."""
 
-from typing import Literal, Iterator, overload
+from typing import Literal, Iterator, overload, Self
 from types import NoneType
-from numbers import Real
 
 import raimad as rai
-from raimad.types import Vec2, Vec2S
+from raimad.types import Vec2, Vec2S, Num, NumS
 
 class BoundPoint():
     """
@@ -31,7 +30,11 @@ class BoundPoint():
     for the transformation.
     """
 
-    def __init__(self, x: float, y: float, proxy: 'rai.typing.Proxy'):
+    _x: NumS
+    _y: NumS
+    proxy: 'rai.typing.Proxy'
+
+    def __init__(self, x: Num, y: Num, proxy: 'rai.typing.Proxy'):
         """
         Initialize new boundpoint.
 
@@ -48,11 +51,11 @@ class BoundPoint():
         proxy
             The proxy this to bind to
         """
-        self._x = x
-        self._y = y
+        self._x = float(x)
+        self._y = float(y)
         self._proxy = proxy
 
-    def __getitem__(self, index: Literal[0, 1]) -> float:
+    def __getitem__(self, index: Literal[0, 1]) -> Num:
         """
         Get the X or Y coordinate of this BoundPoint.
 
@@ -63,7 +66,7 @@ class BoundPoint():
 
         Returns
         -------
-        float
+        Num
             The coordinate value
 
         Raises
@@ -90,13 +93,13 @@ class BoundPoint():
             "so the index must be either 0 or 1"
             )
 
-    def __iter__(self) -> Iterator[float]:
+    def __iter__(self) -> Iterator[Num]:
         """
         Return an iterator of the x and y coordinates of this BoundPoint.
 
         Returns
         -------
-        Iterator[float]
+        Iterator[Num]
             Iterator containing x and y coordinate.
 
         """
@@ -170,13 +173,13 @@ class BoundPoint():
     # Rotate      #
     #-------------#
 
-    def rotate(self, angle: Real) -> 'rai.typing.Proxy':
+    def rotate(self, angle: Num) -> 'rai.typing.Proxy':
         """
         Rotate the bound Proxy around this BoundPoint.
 
         Parameters
         ----------
-        angle: Real
+        angle: Num
             The rotation angle, specified in radians in the positive
             direction.
 
@@ -200,17 +203,17 @@ class BoundPoint():
 
     def cmove(
             self,
-            x: float = 0,
-            y: float = 0
+            x: Num = 0,
+            y: Num = 0
             ) -> 'rai.typing.Proxy':
         """
         Translate by x and y.
 
         Parameters
         ----------
-        x : float
+        x : Num
             Move this many units along x axis.
-        y : float
+        y : Num
             Move this many units along y axis.
 
         Returns
@@ -225,7 +228,7 @@ class BoundPoint():
     def pmove(
             self,
             offset: Vec2
-            ) -> None:
+            ) -> 'rai.typing.Proxy':
         """
         Translate by x and y, given as a tuple.
 
@@ -244,16 +247,16 @@ class BoundPoint():
         return self._proxy
 
     @overload
-    def move(self, /, a: Real, b: Real) -> Self: ...
+    def move(self, /, a: Num, b: Num) -> 'rai.typing.Proxy': ...
     @overload
-    def move(self, /, a: Vec2S) -> Self: ...
+    def move(self, /, a: Vec2S) -> 'rai.typing.Proxy': ...
 
     def move(
             self,
             /,
-            a: Real | Vec2S,
-            b: Real | None = None,
-            ) -> Self:
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> 'rai.typing.Proxy':
         """
         Translate vertically and horizontally (overload).
 
@@ -262,9 +265,9 @@ class BoundPoint():
 
         Parameters
         ----------
-        a : Real | Vec2S
+        a : Num | Vec2S
             X offset or tuple of offsets
-        b : Real | None
+        b : Num | None
             Y offset or None
 
         Returns
@@ -273,16 +276,16 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        self._proxy.transform.move(a, b)
+        self._proxy.transform.move(a, b)  # type: ignore
         return self._proxy
 
-    def movex(self, x: float = 0) -> 'rai.typing.Proxy':
+    def movex(self, x: Num = 0) -> 'rai.typing.Proxy':
         """
         Move along x axis.
 
         Parameters
         ----------
-        x : float
+        x : Num
             Move this many units along x axis.
 
         Returns
@@ -294,13 +297,13 @@ class BoundPoint():
         self._proxy.transform.movex(x)
         return self._proxy
 
-    def movey(self, y: float = 0) -> 'rai.typing.Proxy':
+    def movey(self, y: Num = 0) -> 'rai.typing.Proxy':
         """
         Move along y axis.
 
         Parameters
         ----------
-        y : float
+        y : Num
             Move this many units along y axis.
 
         Returns
@@ -318,7 +321,7 @@ class BoundPoint():
 
     def flip(
             self,
-            ) -> None:
+            ) -> 'rai.typing.Proxy':
         #TODO add tests
         """
         Flip the bound proxy around this boundpoint.
@@ -366,17 +369,17 @@ class BoundPoint():
 
     def cscale(
             self,
-            x: float,
-            y: float,
+            x: Num,
+            y: Num,
             ) -> 'rai.typing.Proxy':
         """
         Scale width and height (two floats) with this boundpoint as pivot
 
         Parameters
         ----------
-        x : float
+        x : Num
             Factor to scale by along the x axis
-        y : float
+        y : Num
             Factor to scale by along the y axis.
 
         Returns
@@ -411,14 +414,14 @@ class BoundPoint():
 
     def ascale(
             self,
-            factor: float,
+            factor: Num,
             ) -> 'rai.typing.Proxy':
         """
         Scale width and height by same factor with this boundpoint as pivot
 
         Parameters
         ----------
-        factor : float
+        factor : Num
             Factor to scale by.
 
         Returns
@@ -431,18 +434,18 @@ class BoundPoint():
         return self._proxy
 
     @overload
-    def scale(self, /, a: Real ,                             ) -> Self: ...
+    def scale(self, /, a: Num  ,         ) -> 'rai.typing.Proxy': ...
     @overload
-    def scale(self, /, a: Real , b: Real                     ) -> Self: ...
+    def scale(self, /, a: Num  , b: Num  ) -> 'rai.typing.Proxy': ...
     @overload
-    def scale(self, /, a: Vec2S,                             ) -> Self: ...
+    def scale(self, /, a: Vec2S,         ) -> 'rai.typing.Proxy': ...
 
     def scale(
             self,
             /,
-            a: Real | Vec2S,
-            b: Real | Vec2S | None = None,
-            ) -> None:
+            a: Num | Vec2S,
+            b: Num | Vec2S | None = None,
+            ) -> 'rai.typing.Proxy':
         """
         Scale width and height, using self as pivot point (overload).
 
@@ -460,12 +463,12 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        # `Isinstance` check is against Real
+        # `Isinstance` check is against Num
         # to support weird things like mypy numbers
         # which we then downcast to regular float
         if (
-                isinstance(a, Real) and
-                isinstance(b, Real)
+                isinstance(a, Num) and
+                isinstance(b, Num)
                 ):
             self._proxy.transform.ccscale(
                 float(a),
@@ -479,7 +482,7 @@ class BoundPoint():
                 ):
             self._proxy.transform.pcscale(a, self._x, self._y)
         elif (
-                isinstance(a, Real) and
+                isinstance(a, Num) and
                 isinstance(b, NoneType)
                 ):
             self._proxy.transform.acscale(
@@ -512,21 +515,23 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
+        point = rai.vec2s(point)
+
         self._proxy.transform.move(
             point[0] - self._x,
             point[1] - self._y,
             )
         return self._proxy
 
-    def cto(self, x: float, y: float) -> 'rai.typing.Proxy':
+    def cto(self, x: Num, y: Num) -> 'rai.typing.Proxy':
         """
-        Move the Proxy so that this BoundPoint ends up at `point` (two floats).
+        Move the Proxy so that this BoundPoint ends up at `point` (two Nums).
 
         Parameters
         ----------
-        x : float
+        x : Num
             Move this many units along x axis.
-        y : float
+        y : Num
             Move this many units along y axis.
 
         Returns
@@ -535,6 +540,9 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
+        x = float(x)
+        y = float(y)
+
         self._proxy.transform.move(
             x - self._x,
             y - self._y,
@@ -542,14 +550,14 @@ class BoundPoint():
         return self._proxy
 
     @overload
-    def to(self, a: Real, b: Real) -> 'rai.typing.Proxy': ...
+    def to(self, a: Num, b: Num) -> 'rai.typing.Proxy': ...
     @overload
     def to(self, a: Vec2) -> 'rai.typing.Proxy': ...
 
     def to(
             self,
-            a: Real | Vec2,
-            b: Real | None = None,
+            a: Num | Vec2,
+            b: Num | None = None,
             ) -> 'rai.typing.Proxy':
         """
         Move the Proxy so that this BoundPoint ends up at `point` (overload).
@@ -561,9 +569,9 @@ class BoundPoint():
 
         Parameters
         ----------
-        a : Real | Vec2S
+        a : Num | Vec2S
             Either the X coordinate or target point
-        b : Real | None
+        b : Num | None
             Either the Y coordinate or None
 
         Returns
@@ -572,12 +580,12 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        # `Isinstance` check is against Real
+        # `Isinstance` check is against float
         # to support weird things like mypy numbers
         # which we then downcast to regular float
         if (
-                isinstance(a, Real) and
-                isinstance(b, Real)
+                isinstance(a, Num) and
+                isinstance(b, Num)
                 ):
             self.cto(float(a), float(b))
         elif (

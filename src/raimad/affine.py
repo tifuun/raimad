@@ -4,9 +4,9 @@ from math import sin, cos, sqrt, atan2
 from typing import Sequence
 
 import raimad as rai
-from raimad.types import Vec2, Vec2S, Poly, PolyS
+from raimad.types import Vec2, Vec2S, Poly, PolyS, Mat3S, NumS
 
-def identity() -> 'rai.typing.Affine':
+def identity() -> Mat3S:
     """Make 3x3 identity matrix."""
     return (
         (1, 0, 0),
@@ -14,7 +14,7 @@ def identity() -> 'rai.typing.Affine':
         (0, 0, 1)
         )
 
-def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
+def matmul(*arrays: Mat3S) -> Mat3S:
     """
     Multiply 3x3 matrices.
 
@@ -59,7 +59,7 @@ def matmul(*arrays: 'rai.typing.Affine') -> 'rai.typing.Affine':
 
     return matmul(matmul(arrays[0], arrays[1]), *arrays[2:])
 
-def norm(vec: Sequence[float]) -> float:
+def norm(vec: Sequence[NumS]) -> NumS:
     """
     Calculate the norm of a vector (aka equclidean distance).
 
@@ -82,22 +82,22 @@ def norm(vec: Sequence[float]) -> float:
         return 0
 
     if len(vec) == 1:
-        return vec[0]
+        return float(vec[0])
 
     if len(vec) == 2:
         # `sqrt` is the tiniest bit faster than `** (1/2)`,
         # at least on my machine
-        return sqrt(vec[0] ** 2 + vec[1] ** 2)
+        return sqrt(float(vec[0]) ** 2 + float(vec[1]) ** 2)
 
     if len(vec) == 3:
-        return sqrt(vec[0] ** 2 + vec[1] ** 2 + vec[2] ** 2)
+        return sqrt(float(vec[0]) ** 2 + float(vec[1]) ** 2 + float(vec[2]) ** 2)
 
     # This is around three times faster than
     # numpy.linalg.norm for small vectors
-    return sqrt(sum((coord ** 2 for coord in vec)))
+    return sqrt(sum((float(coord) ** 2 for coord in vec)))
 
 
-def rotate(angle: float) -> 'rai.typing.Affine':
+def rotate(angle: NumS) -> Mat3S:
     """Generate an affine matrix corresponding to a rotation."""
     return (
         (cos(angle), -sin(angle), 0),
@@ -105,7 +105,7 @@ def rotate(angle: float) -> 'rai.typing.Affine':
         (0, 0, 1),
         )
 
-def move(x: float, y: float) -> 'rai.typing.Affine':
+def move(x: NumS, y: NumS) -> Mat3S:
     """Generate an affine matrix corresponding to a translation."""
     return (
         (1, 0, x),
@@ -113,7 +113,7 @@ def move(x: float, y: float) -> 'rai.typing.Affine':
         (0, 0, 1),
         )
 
-def scale(x: float, y: float) -> 'rai.typing.Affine':
+def scale(x: NumS, y: NumS) -> Mat3S:
     """Generate an affine matrix corresponding to a scale."""
     return (
         (x, 0, 0),
@@ -122,10 +122,10 @@ def scale(x: float, y: float) -> 'rai.typing.Affine':
         )
 
 def around(
-        matrix: 'rai.typing.Affine',
-        x: float,
-        y: float
-        ) -> 'rai.typing.Affine':
+        matrix: Mat3S,
+        x: NumS,
+        y: NumS
+        ) -> Mat3S:
     """
     Change the origin of an affine matrix.
 
@@ -138,22 +138,25 @@ def around(
     This can be used to perform transformations such as scale or rotation
     around a specific point.
     """
+    x = float(x)
+    y = float(y)
+
     to_origin = move(-x, -y)
     from_origin = move(x, y)
 
     return matmul(from_origin, matrix, to_origin)
 
-def get_translation(matrix: 'rai.typing.Affine') -> tuple[float, float]:
+def get_translation(matrix: Mat3S) -> Vec2S:
     """Given an affine matrix, return the corresponding translation."""
     return matrix[0][2], matrix[1][2]
 
-def get_scale(matrix: 'rai.typing.Affine') -> tuple[float, float]:
+def get_scale(matrix: Mat3S) -> Vec2S:
     """Given an affine matrix, return the corresponding scale."""
     scale_x = norm((matrix[0][0], matrix[1][0], matrix[2][0]))
     scale_y = norm((matrix[0][1], matrix[1][1], matrix[2][1]))
     return float(scale_x), float(scale_y)
 
-def get_shear(matrix: 'rai.typing.Affine') -> float:
+def get_shear(matrix: Mat3S) -> NumS:
     """Given an affine matrix, return the corresponding shear."""
     scale_x, scale_y = get_scale(matrix)
     return (
@@ -162,12 +165,12 @@ def get_shear(matrix: 'rai.typing.Affine') -> float:
         + matrix[2][0] * matrix[2][1]
         ) / (scale_x * scale_y)
 
-def get_rotation(matrix: 'rai.typing.Affine') -> float:
+def get_rotation(matrix: Mat3S) -> NumS:
     """Given an affine matrix, return the corresponding rotation."""
     return float(atan2(matrix[1][0], matrix[0][0]))
 
 def transform_poly(
-        matrix: 'rai.typing.Affine',
+        matrix: Mat3S,
         poly: Poly
         ) -> PolyS:
     """Apply transformation to poly and return new transformed poly."""
@@ -178,7 +181,7 @@ def transform_poly(
     # TODO remove "poly name"
 
 def transform_point(
-        matrix: 'rai.typing.Affine',
+        matrix: Mat3S,
         point: Vec2
         ) -> Vec2S:
     """Apply transformation to point and return transformed point."""

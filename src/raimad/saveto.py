@@ -13,7 +13,7 @@ class InvalidDestinationError(ValueError):
 
 Destination: TypeAlias = str | Path | TextIO | None
 
-def _saveto(string: str, dest: Destination = None):
+def _saveto(string: str, dest: Destination = None) -> str:
     if dest is None:
         pass
     elif isinstance(dest, (str, Path)):
