@@ -1,8 +1,10 @@
 """noreuse.py: home to the NoReuse CIF exporter."""
 
 from typing import Iterator
+from warnings import warn
 
 import raimad as rai
+from raimad.types import LNameTransformers
 
 class NoReuse:
     """CIF Exporter that doesn't reuse subroutines."""
@@ -46,7 +48,7 @@ class NoReuse:
     def yield_cif_bare(
             self,
             compo: 'rai.typing.CompoLike',
-            cell_name: str
+            cell_name: str | None,
             ) -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
 
@@ -127,7 +129,7 @@ class NoReuse:
         for _, this_subcompo in subcompos:
             yield from this_subcompo
 
-def _compo_to_cell_name(subcompo_name, subcompo):
+def _compo_to_cell_name(subcompo_name: str | int, subcompo: 'rai.typing.CompoLike') -> str:
     if isinstance(subcompo_name, int):
         instance_name = f'{subcompo_name}-ANON'
     elif isinstance(subcompo_name, str):
@@ -139,22 +141,25 @@ def _compo_to_cell_name(subcompo_name, subcompo):
 
     return f"{type_name}::{instance_name}"
 
-def _transform_lname(lname_transformers, name):
+def _transform_lname(lname_transformers: LNameTransformers, name: str) -> str:
     for transformer in lname_transformers:
         if hasattr(transformer, '__getitem__'):
             try:
                 transformed = transformer[name]
             except KeyError:
                 transformed = None
+
         elif hasattr(transformer, '__call__'):
             transformed = transformer(name)
 
         if transformed is not None:
             if not rai.is_lname_valid(transformed):
                 raise Exception('DOTO')  # TODO
-            return transformed
+            break
 
     if transformed is None:
         raise Exception(f'TODO {name}')
+
+    return transformed
 
 

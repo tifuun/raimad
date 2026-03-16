@@ -185,6 +185,7 @@ __all__ = [
     'fortunes_misc',
     'fortunes_all',
     'vec2s',
+    'is_lname_valid',
     ]
 
 

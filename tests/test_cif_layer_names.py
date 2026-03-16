@@ -336,3 +336,9 @@ class Sample(rai.Compo):
     def _make(self):
         self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
 
+class SampleCap(rai.Compo):
+    def _make(self):
+        _experimental_cif_lname_transformer = \
+                rai.cif.lname_transformers.capitalise
+        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+

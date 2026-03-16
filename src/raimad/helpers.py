@@ -337,11 +337,10 @@ class Eq(_Infix[Vec2, bool]):
         p1 = vec2s(p1)
         p2 = vec2s(p2)
 
-        return rai.affine.norm((    # type: ignore 
+        return rai.affine.norm((
             p1[0] - p2[0],
             p1[1] - p2[1],
             )) < rai.epsilon
-        #TODO ???
 
 eq = Eq()
 
@@ -367,8 +366,7 @@ def distance_between(
     p1 = vec2s(p1)
     p2 = vec2s(p2)
 
-    return rai.affine.norm((  # type: ignore
-                            #TODO???
+    return rai.affine.norm((
         p1[0] - p2[0],
         p1[1] - p2[1],
         ))

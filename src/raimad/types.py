@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Protocol, runtime_checkable, Literal, TypeAlias, Tuple
+from typing import Protocol, runtime_checkable, Literal, TypeAlias, Tuple, Union, Callable
 from collections.abc import Sequence, Mapping
 from numbers import Real
 from typing import SupportsFloat
@@ -45,4 +45,12 @@ Mat3S: TypeAlias = Tuple[Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS], Tuple
 #    """Either indexable at 0/1 or has .x/.y attributes."""
 #    # No extra methods; this is a structural union-ish protocol
 #    ...
+
+
+
+LNameTransformer: TypeAlias = Union[
+        Callable[[str], str | None],
+        Mapping[str, str | None]
+        ]
+LNameTransformers: TypeAlias = Sequence[LNameTransformer]
 

@@ -2,33 +2,32 @@ from typing import Callable, Union, Mapping, TypeAlias, Sequence
 
 import raimad as rai
 
-LNameTransformer: TypeAlias = Union[
-        Callable[[str], str | None],
-        Mapping[str, str | None]
-        ]
-LNameTransformers: TypeAlias = Sequence[LNameTransformer]
-
-def root(name: str):
+def root(name: str) -> str | None:
     if name == 'root':
         return 'ROOT'
+    return None
 
-def noop(name: str):
+def noop(name: str) -> str | None:
     if rai.is_lname_valid(name):
         return name
+    return None
 
-def capitalise(name: str):
+def capitalise(name: str) -> str | None:
     if 0 < len(name) <= 4:
-        if name.is_alnum():
+        if name.isalnum():
             return name.upper()
     return None
 
 class Enumerator:
-    def __init__(self):
+
+    layer_indices: dict[str, int]
+
+    def __init__(self) -> None:
         self.layer_indices = {}
 
-    def __call__(self, name: str):
+    def __call__(self, name: str) -> str | None:
         try:
-            layer_index = self.layer_indices[layer]
+            layer_index = self.layer_indices[name]
 
         except KeyError:
             if len(self.layer_indices) >= 9999:
@@ -39,7 +38,7 @@ class Enumerator:
                     "WHAT are you event doing!?!?!? "
                     )
             layer_index = len(self.layer_indices) + 1
-            self.layer_indices[layer] = layer_index
+            self.layer_indices[name] = layer_index
 
         # TODO how does this play with layer order?? Annotations??
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Mapping, TypeAlias
+from typing import Mapping, TypeAlias, Iterator
 
 import raimad as rai
 
@@ -27,12 +27,12 @@ LayerProperties: TypeAlias = Mapping[str, Properties]
 def export_lyp(
         lyp: LayerProperties,
         dest: rai.saveto.Destination = None,
-        ):
+        ) -> str:
     return rai.saveto._saveto('\n'.join(_export_lyp(lyp)), dest)
 
 def _export_lyp(
         lyp: LayerProperties,
-        ):
+        ) -> Iterator[str]:
     yield '<?xml version="1.0" encoding="utf-8"?>'
     yield '<layer-properties>'
 
