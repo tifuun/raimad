@@ -4,6 +4,7 @@ from typing import Literal, Iterator, overload, Self
 from types import NoneType
 
 import raimad as rai
+from raimad.transform import EditingArgumentError
 from raimad.types import Vec2, Vec2S, Num, NumS
 
 class BoundPoint():
@@ -492,7 +493,7 @@ class BoundPoint():
                 )
         else:
             #TODO
-            raise TypeError(f'foobar {a} {b}')
+            raise EditingArgumentError()
 
         return self._proxy
 
@@ -595,7 +596,7 @@ class BoundPoint():
             self.pto(a)
         else:
             # TODO
-            raise TypeError(f'foobar {a} {b}')
+            raise EditingArgumentError()
 
         return self._proxy
 

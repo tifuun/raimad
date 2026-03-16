@@ -18,6 +18,14 @@ except ImportError:
 import raimad as rai
 from raimad.types import Vec2, Vec2S, PolyS, Num, NumS
 
+class EditingArgumentError(TypeError):
+    """
+    Invalid arguments are passed to "automatic" editing functions like *.move.
+    """
+    def __init__(self) -> None:
+        super().__init__(f"Invalid arguments passed to editing method.")
+
+
 class Transform:
     """Transformation: container for affine matrix."""
 
@@ -156,8 +164,7 @@ class Transform:
                 ):
             self.protate(angle_float)
         else:
-            # TODO custom type?
-            raise TypeError(f"foobar {a}, {b}")
+            raise EditingArgumentError()
 
         return self
 
@@ -261,8 +268,7 @@ class Transform:
                 ):
             self.pmove(a)
         else:
-                # TODO custom type?
-            raise TypeError(f"foobar {type(a)}, {type(b)}")
+            raise EditingArgumentError()
 
         return self
 
@@ -409,7 +415,7 @@ class Transform:
             self.pflip(a)
         else:
             # TODO custom type?
-            raise TypeError(f"foobar {a}, {b}")
+            raise EditingArgumentError()
 
         return self
 
@@ -806,7 +812,7 @@ class Transform:
                 ):
             return self.apscale(float(a), b)
 
-        raise TypeError(f"foobar {a} {b} {c} {d}")
+        raise EditingArgumentError()
 
     #-------------#
     # Extract     #

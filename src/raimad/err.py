@@ -22,6 +22,8 @@ from raimad.saveto import InvalidDestinationError
 
 from raimad.string_import import StringImportError
 
+from raimad.transform import EditingArgumentError
+
 __all__ = [
     "InvalidSubcompoError",
     "CompoInsteadOfProxyAsSubcompoError",

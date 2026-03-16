@@ -472,6 +472,12 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
                 }
             ))
 
+    def test_new_editing_error_type(self):
+        """Test that EditingArgumentError is raised (non-exhaustive)"""
+        with self.assertRaises(rai.err.EditingArgumentError):
+            rai.RectLW(3,3).proxy().move((2, 2), (2, 2))
+
+
 
 
 
