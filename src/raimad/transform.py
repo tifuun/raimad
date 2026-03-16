@@ -103,13 +103,13 @@ class Transform:
     @overload
     def rotate(self, angle: Num, /, a: Num, b: Num) -> Self: ...
     @overload
-    def rotate(self, angle: Num, /, a: Vec2S) -> Self: ...
+    def rotate(self, angle: Num, /, a: Vec2) -> Self: ...
 
     def rotate(
             self,
             angle: Num,
             /,
-            a: Num | Vec2S | None = None,
+            a: Num | Vec2 | None = None,
             b: Num | None = None,
             ) -> Self:
         """
@@ -149,7 +149,7 @@ class Transform:
                 isinstance(a, Vec2) and
                 isinstance(b, NoneType)
                 ):
-            self.protate(angle_float, a)
+            self.protate(angle_float, rai.vec2s(a))
         elif (
                 isinstance(a, NoneType) and
                 isinstance(b, NoneType)

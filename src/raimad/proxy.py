@@ -1058,13 +1058,13 @@ class Proxy:
     @overload
     def rotate(self, angle: Num, /, a: Num, b: Num) -> Self: ...
     @overload
-    def rotate(self, angle: Num, /, a: Vec2S) -> Self: ...
+    def rotate(self, angle: Num, /, a: Vec2) -> Self: ...
 
     def rotate(
             self,
             angle: Num,
             /,
-            a: Num | Vec2S | None = None,
+            a: Num | Vec2 | None = None,
             b: Num | None = None,
             ) -> Self:
         """
