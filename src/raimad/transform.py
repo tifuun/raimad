@@ -414,7 +414,6 @@ class Transform:
                 ):
             self.pflip(a)
         else:
-            # TODO custom type?
             raise EditingArgumentError()
 
         return self

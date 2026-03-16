@@ -323,7 +323,6 @@ class BoundPoint():
     def flip(
             self,
             ) -> 'rai.typing.Proxy':
-        #TODO add tests
         """
         Flip the bound proxy around this boundpoint.
 
@@ -346,7 +345,6 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        #TODO add tests
         self._proxy.transform.hflip(self._x)
         return self._proxy
 
@@ -360,7 +358,6 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        #TODO add tests
         self._proxy.transform.vflip(self._y)
         return self._proxy
 
@@ -492,7 +489,6 @@ class BoundPoint():
                 self._y
                 )
         else:
-            #TODO
             raise EditingArgumentError()
 
         return self._proxy
@@ -595,7 +591,6 @@ class BoundPoint():
                 ):
             self.pto(a)
         else:
-            # TODO
             raise EditingArgumentError()
 
         return self._proxy
