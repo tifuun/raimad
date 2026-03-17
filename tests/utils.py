@@ -1,6 +1,6 @@
 from pprint import pprint
 from sys import stderr
-from typing import ClassVar, Sequence
+from typing import ClassVar, Sequence, Protocol, Any, Iterator, Self
 from contextlib import contextmanager
 import warnings
 
@@ -9,26 +9,39 @@ import raimad as rai
 from raimad.types import Geoms, Poly
 from raimad.typing import CompoLike
 
+from unittest import TestCase
+
+class TestCaseProto(Protocol):
+    """
+    Protocol modeling unittest.TestCase.
+
+    From what I understand, this is the only sane way to type-check mixins.
+    """
+    def assertEqual(self, a: Any, b: Any) -> None: ...
+    def assertTrue(self, a: Any) -> None: ...
+    def fail(self, msg: str) -> None: ...
+    def _formatMessage(self, a: str | None, b: str) -> str: ...
+
 class XmlComparisonMixin:
-    def assertXmlEqual(self, xml1, xml2):
+    def assertXmlEqual(self: TestCaseProto, xml1: str, xml2: str) -> None:
         if xml1 != xml2:
             warnings.warn(
                 'assertXmlEqual is currently implemented '
                 'with raw string comparison, FIXME!!'
                 ,
-                warnings.UserWarning
+                UserWarning
                 )
         self.assertEqual(xml1, xml2)
 
 class AssertDoesntWarn:
     """
-    Mixin for unittest.TestCase that adds `assertDoesntWarn` context manager.
+    Mixin for unittest.TestCaseProto that adds `assertDoesntWarn` context manager.
     
     Works like `assertWarns`, but asserts that no warnings are emitted.
     """
 
     @contextmanager
-    def assertDoesntWarn(self, msg=None):
+    def assertDoesntWarn(self: TestCaseProto, msg: str | None = None) -> Iterator[None]:
         """
         Context manager that fails if any warnings are raised within its block.
         
@@ -49,7 +62,7 @@ class AssertDoesntWarn:
 ### END CHATGPT CODE ###
 
 class PrettyEqual():
-    def assertPrettyEqual(self, actual, expected):
+    def assertPrettyEqual(self: TestCaseProto, actual: Any, expected: Any) -> None:
         try:
             self.assertEqual(actual, expected)
 
@@ -60,15 +73,30 @@ class PrettyEqual():
             pprint(expected, stream=stderr)
             raise err
 
+class TestCaseWithEpsilonProto(Protocol):
+    """
+    TODO docstring
+    """
+    def assertEqual(self, a: Any, b: Any) -> None: ...
+    def assertTrue(self, a: Any) -> None: ...
+    def fail(self, msg: str) -> None: ...
+    def _formatMessage(self, a: str | None, b: str) -> str: ...
+    epsilon: ClassVar[float]
 
-class ArrayAlmostEqual():
+class ArrayApproxEqual():
     decimal: ClassVar[float]
+    epsilon: ClassVar[float]
 
-    def __init_subclass__(cls, *args, epsilon=0.01, **kwargs) -> None:
+    def __init_subclass__(cls, *args: Any, epsilon: float = 0.01, **kwargs: Any) -> None:
         cls.epsilon = epsilon
         super().__init_subclass__(*args, **kwargs)
 
-    def assertArrayAlmostEqual(self, actual, expected, epsilon=None):
+    def assertArrayApproxEqual(
+            self: TestCaseWithEpsilonProto,
+            actual: Sequence[float],
+            expected: Sequence[float],
+            epsilon: float | None = None
+            ) -> None:
         max_deviation = max((abs(a - d) for a, d in zip(actual, expected)))
 
         try:
@@ -80,8 +108,46 @@ class ArrayAlmostEqual():
             pprint(expected, stream=stderr)
             raise err
 
-    def assertAlmostEqual(self, actual, expected, epsilon=None):
+    def assertApproxEqual(
+            self: TestCaseWithEpsilonProto,
+            actual: Any,
+            expected: Any,
+            epsilon: float | None = None
+            ) -> None:
         self.assertTrue(abs(actual - expected) <= (epsilon or self.epsilon))
+
+class TestCaseGeomsProto(Protocol):
+    """
+    TODO docstring
+    """
+    def assertEqual(self, a: Any, b: Any) -> None: ...
+    def assertTrue(self, a: Any) -> None: ...
+    def fail(self, msg: str) -> None: ...
+    def _formatMessage(self, a: str | None, b: str) -> str: ...
+    epsilon: ClassVar[float]
+    def assertManyGeomsEqual(
+            self,
+            geomses: Sequence[Geoms | CompoLike],
+            epsilon: float | None = None) -> None: ...
+
+    def assertGeomsEqual(
+            self,
+            actual: Geoms | CompoLike,
+            expected: Geoms | CompoLike,
+            epsilon: float | None = None) -> None: ...
+
+    def assertGeomsEqualButAllowDifferentNames(
+            self,
+            actual: Geoms,
+            expected: Geoms,
+            epsilon: float | None = None) -> None: ...
+
+    def checkPolysEqual(
+            self,
+            actual: Poly,
+            expected: Poly,
+            epsilon: float | None = None
+            ) -> bool: ...
 
 class GeomsEqual():
     """
@@ -89,17 +155,18 @@ class GeomsEqual():
     of the order of polys in each layer,
     or the order of points in each poly
     """
+    epsilon: float
 
-    def __init_subclass__(cls, *args, epsilon=0.001, **kwargs) -> None:
+    def __init_subclass__(cls, *args: Any, epsilon: float = 0.001, **kwargs: Any) -> None:
         cls.epsilon = epsilon
         super().__init_subclass__(*args, **kwargs)
 
     def checkPolysEqual(
-            self,
+            self: TestCaseGeomsProto,
             actual: Poly,
             expected: Poly,
             epsilon: float | None = None
-            ):
+            ) -> bool:
 
         return all(
             rai.distance_between(point1, point2) <= (epsilon or self.epsilon)
@@ -108,18 +175,18 @@ class GeomsEqual():
             )
 
     def assertManyGeomsEqual(
-            self,
+            self: TestCaseGeomsProto,
             geomses: Sequence[Geoms | CompoLike],
-            epsilon: float | None = None):
+            epsilon: float | None = None) -> None:
 
         for a, b in rai.duplets(geomses):
             self.assertGeomsEqual(a, b)
 
     def assertGeomsEqual(
-            self,
+            self: TestCaseGeomsProto,
             actual: Geoms | CompoLike,
             expected: Geoms | CompoLike,
-            epsilon: float | None = None):
+            epsilon: float | None = None) -> None:
 
         if isinstance(actual, CompoLike):
             actual = actual.steamroll()
@@ -172,13 +239,11 @@ class GeomsEqual():
                 pprint(polys_expected, stream=stream)
                 raise AssertionError(stream.getvalue()) from err
 
-        return True
-
     def assertGeomsEqualButAllowDifferentNames(
-            self,
+            self: TestCaseGeomsProto,
             actual: Geoms,
             expected: Geoms,
-            epsilon: float | None = None):
+            epsilon: float | None = None) -> None:
 
         # TODO this is a hack
         # TODO FIXME FIXME this breaks if layer order is different FIXME

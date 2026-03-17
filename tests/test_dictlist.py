@@ -1,7 +1,6 @@
 """
 Autotests for dictlist.
 """
-
 import unittest
 
 from raimad.dictlist import DictList
@@ -9,7 +8,7 @@ from raimad.dictlist import DictList
 class TestDictList(unittest.TestCase):
 
     def test_dictlist_as_dict(self):
-        dl = DictList()
+        dl: DictList[int] = DictList()
         dl["a"] = 5
         dl["b"] = 6
 
@@ -28,7 +27,7 @@ class TestDictList(unittest.TestCase):
         self.assertEqual(dl["b"], 6)
 
     def test_dictlist_as_list(self):
-        dl = DictList()
+        dl: DictList[int] = DictList()
         dl.append(4)
         dl.append(5)
 
@@ -47,7 +46,7 @@ class TestDictList(unittest.TestCase):
         self.assertEqual(set(dl.values()), {4, 8})
 
     def test_dictlist_as_object(self):
-        dl = DictList()
+        dl: DictList[int] = DictList()
         dl.ayy = 5
         dl.b = 6
 
@@ -66,7 +65,7 @@ class TestDictList(unittest.TestCase):
         self.assertEqual(dl.b, 6)
 
     def test_dictlist_indexing(self):
-        dl = DictList()
+        dl: DictList[int] = DictList()
         dl["a"] = 5
         dl.b = 6
 
@@ -95,7 +94,7 @@ class TestDictList(unittest.TestCase):
         self.assertEqual(dl[1], 8)
 
     def test_dictlist_assign(self):
-        dl = DictList()
+        dl: DictList[int] = DictList()
 
         with self.assertRaises(KeyError):
             dl["keys"] = 5
@@ -111,9 +110,9 @@ class TestDictList(unittest.TestCase):
             dl["_mything"]
 
         with self.assertRaises(AttributeError):
-            dl.keys = 5
+            dl.keys = 5  # type: ignore
 
-    def _test_dictlist_filter(self, dl):
+    def _test_dictlist_filter(self, dl: DictList['str']) -> None:
         """
         Helper method for testing whether _filter_set or _filter_get
         methods work correctly.
@@ -148,25 +147,25 @@ class TestDictList(unittest.TestCase):
             )
 
     def test_dictlist_filter_set(self):
-        class DictListSet(DictList):
+        class DictListSet(DictList[str]):
             def _filter_set(self, val):
                 return val.upper()
 
         self._test_dictlist_filter(DictListSet())
 
     def test_dictlist_filter_get(self):
-        class DictListGet(DictList):
+        class DictListGet(DictList[str]):
             def _filter_get(self, val):
                 return val.upper()
 
         self._test_dictlist_filter(DictListGet())
 
     def test_dictlist_init(self):
-        class DictListSet(DictList):
+        class DictListSet(DictList[str]):
             def _filter_set(self, val):
                 return val.upper()
 
-        dl = DictList()
+        dl: DictList[str] = DictList()
         dl.append('ayy')
         dl_view = DictListSet(dl._dict, copy=False)
         dl_view.append('lmao')
@@ -178,20 +177,20 @@ class TestDictList(unittest.TestCase):
             DictList(dl._dict)
 
         with self.assertRaises(TypeError):
-            DictList(dl._dict, True)
+            DictList(dl._dict, True)  # type: ignore
 
         with self.assertRaises(TypeError):
-            DictList(dl)
+            DictList(dl)  # type: ignore
 
         with self.assertRaises(TypeError):
-            DictList('invalid type')
+            DictList('invalid type')  # type: ignore
 
     def test_dictlist_post_init(self):
-        class DictListPostInit(DictList):
+        class DictListPostInit(DictList[int]):
             def _post_init(self):
                 self._myattr = 'hello'
 
-        dl = DictListPostInit()
+        dl: DictList[int] = DictListPostInit()
         self.assertEqual(dl._myattr, 'hello')
 
 

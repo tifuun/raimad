@@ -3,7 +3,7 @@ from math import radians
 
 import raimad as rai
 
-from .utils import ArrayAlmostEqual
+from .utils import ArrayApproxEqual
 
 class TwoCircles(rai.Compo):
     """
@@ -28,54 +28,54 @@ class RotatedCircles(rai.Compo):
             TwoCircles().proxy().rotate(radians(90))
             )
 
-class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
+class TestBBox(ArrayApproxEqual, unittest.TestCase, epsilon=0.01):
 
     def test_bbox_basic(self):
         circle = rai.Circle(5)
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox,
             [-5, -5, 5, 5]
             )
-        self.assertAlmostEqual(circle.bbox.length, 10)
-        self.assertAlmostEqual(circle.bbox.width, 10)
-        self.assertAlmostEqual(circle.bbox.top, 5)
-        self.assertAlmostEqual(circle.bbox.bottom, -5)
-        self.assertAlmostEqual(circle.bbox.left, -5)
-        self.assertAlmostEqual(circle.bbox.right, 5)
-        self.assertArrayAlmostEqual(
+        self.assertApproxEqual(circle.bbox.length, 10)
+        self.assertApproxEqual(circle.bbox.width, 10)
+        self.assertApproxEqual(circle.bbox.top, 5)
+        self.assertApproxEqual(circle.bbox.bottom, -5)
+        self.assertApproxEqual(circle.bbox.left, -5)
+        self.assertApproxEqual(circle.bbox.right, 5)
+        self.assertArrayApproxEqual(
             circle.bbox.top_left,
             (-5, 5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.top_mid,
             (0, 5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.top_right,
             (5, 5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.mid_left,
             (-5, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.mid,
             (0, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.mid_right,
             (5, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.bot_left,
             (-5, -5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.bot_mid,
             (0, -5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circle.bbox.bot_right,
             (5, -5)
             )
@@ -83,49 +83,49 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
     def test_bbox_subcompo(self):
         circles = TwoCircles()
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox,
             [-10, -5, 10, 5]
             )
-        self.assertAlmostEqual(circles.bbox.length, 20)
-        self.assertAlmostEqual(circles.bbox.width, 10)
-        self.assertAlmostEqual(circles.bbox.top, 5)
-        self.assertAlmostEqual(circles.bbox.bottom, -5)
-        self.assertAlmostEqual(circles.bbox.left, -10)
-        self.assertAlmostEqual(circles.bbox.right, 10)
-        self.assertArrayAlmostEqual(
+        self.assertApproxEqual(circles.bbox.length, 20)
+        self.assertApproxEqual(circles.bbox.width, 10)
+        self.assertApproxEqual(circles.bbox.top, 5)
+        self.assertApproxEqual(circles.bbox.bottom, -5)
+        self.assertApproxEqual(circles.bbox.left, -10)
+        self.assertApproxEqual(circles.bbox.right, 10)
+        self.assertArrayApproxEqual(
             circles.bbox.top_left,
             (-10, 5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.top_mid,
             (0, 5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.top_right,
             (10, 5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.mid_left,
             (-10, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.mid,
             (0, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.mid_right,
             (10, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.bot_left,
             (-10, -5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.bot_mid,
             (0, -5)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.bot_right,
             (10, -5)
             )
@@ -133,49 +133,49 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
     def test_bbox_transform(self):
         circles = RotatedCircles()
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox,
             [-5, -10, 5, 10]
             )
-        self.assertAlmostEqual(circles.bbox.length, 10)
-        self.assertAlmostEqual(circles.bbox.width, 20)
-        self.assertAlmostEqual(circles.bbox.top, 10)
-        self.assertAlmostEqual(circles.bbox.bottom, -10)
-        self.assertAlmostEqual(circles.bbox.left, -5)
-        self.assertAlmostEqual(circles.bbox.right, 5)
-        self.assertArrayAlmostEqual(
+        self.assertApproxEqual(circles.bbox.length, 10)
+        self.assertApproxEqual(circles.bbox.width, 20)
+        self.assertApproxEqual(circles.bbox.top, 10)
+        self.assertApproxEqual(circles.bbox.bottom, -10)
+        self.assertApproxEqual(circles.bbox.left, -5)
+        self.assertApproxEqual(circles.bbox.right, 5)
+        self.assertArrayApproxEqual(
             circles.bbox.top_left,
             (-5, 10)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.top_mid,
             (0, 10)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.top_right,
             (5, 10)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.mid_left,
             (-5, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.mid,
             (0, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.mid_right,
             (5, 0)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.bot_left,
             (-5, -10)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.bot_mid,
             (0, -10)
             )
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             circles.bbox.bot_right,
             (5, -10)
             )
@@ -184,17 +184,17 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
         circles = RotatedCircles()
         bbox = circles.bbox
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox,
             [-5, -10, 5, 10]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(.1),
             [-5.1, -10.1, 5.1, 10.1]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(.2, .3),
             [-5.2, -10.3, 5.2, 10.3]
             )
@@ -205,32 +205,32 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
         with self.assertRaises(TypeError):
             bbox.pad(.2, .3, .4, .5)
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(left=0.3),
             [-5.3, -10, 5, 10]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(bottom=0.4),
             [-5, -10.4, 5, 10]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(right=0.2, bottom=0.4),
             [-5, -10.4, 5.2, 10]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(right=0.3, bottom=0.4, left=0.1),
             [-5.1, -10.4, 5.3, 10]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(.2, top=0.3, bottom=0.4, left=0.1),
             [-5 - .2 - .1, -10 - .2 - .4, 5 + .2, 10 + .2 + .3]
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox.pad(.2, .1, top=0.3, bottom=0.4, left=0.1),
             [-5 - .2 - .1, -10 - .1 - .4, 5 + .2, 10 + .1 + .3]
             )
@@ -254,7 +254,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         bbox.add_point((1, 1))
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox,
             [1, 1, 1, 1]
             )
@@ -269,7 +269,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         bbox.add_point((-2, -3))
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             bbox,
             [-2, -3, 1, 1]
             )
@@ -283,9 +283,9 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
         c2.snap_left(c1)
         c3.bbox.top_mid.to(c1.bbox.mid_right)
 
-        self.assertArrayAlmostEqual(c1.bbox.mid, (0, 0))
-        self.assertArrayAlmostEqual(c2.bbox.mid, (-10 - 5, 0))
-        self.assertArrayAlmostEqual(c3.bbox.mid, (10, -2))
+        self.assertArrayApproxEqual(c1.bbox.mid, (0, 0))
+        self.assertArrayApproxEqual(c2.bbox.mid, (-10 - 5, 0))
+        self.assertArrayApproxEqual(c3.bbox.mid, (10, -2))
 
     def test_bbox_bound(self):
         c1 = rai.Circle(10)
@@ -305,7 +305,7 @@ class TestBBox(ArrayAlmostEqual, unittest.TestCase, epsilon=0.01):
 
         c1.bbox.pad(5).mid_left.to((0, 0))
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             c1.bbox.mid,
             (15, 0)
             )

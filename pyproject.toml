@@ -57,11 +57,20 @@ ignore = [
     "D401",  # don't complain about "imperative mood"
     "D202",  # Allow blank line after docstring
     ]
+
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
 
 [tool.mypy]
+strict = true
 exclude = [
 	]
+
+# don't complain about missing -> None return annotation
+# in test methods
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.*'
+disallow_untyped_defs = false
 

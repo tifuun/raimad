@@ -8,15 +8,15 @@ class BareGeometric(rai.Compo):
         self.geoms.update({
             'root': [
                 [
-                    [0, 0],
-                    [0, 10],
-                    [10, 10],
-                    [10, 0],
+                    (0, 0),
+                    (0, 10),
+                    (10, 10),
+                    (10, 0),
                     ],
                 [
-                    [20, 20],
-                    [40, 20],
-                    [30, 40],
+                    (20, 20),
+                    (40, 20),
+                    (30, 40),
                     ],
                 ]
             })
@@ -72,7 +72,8 @@ class TestCompo(unittest.TestCase):
         """
         class MyCompo(rai.Compo):
             def _make(self):
-                self.subcompos.invalid = 'invalid'
+                self.subcompos.invalid = 'invalid'  # type: ignore
+                # without the type: ignore, MyPy will also catch this error
 
         with self.assertRaises(rai.err.InvalidSubcompoError):
             MyCompo()
@@ -84,7 +85,8 @@ class TestCompo(unittest.TestCase):
         """
         class MyCompo(rai.Compo):
             def _make(self):
-                self.subcompos.invalid = rai.Snowman()
+                self.subcompos.invalid = rai.Snowman()  # type: ignore
+                # without the type: ignore, MyPy will also catch this error
 
         with self.assertRaises(rai.err.CompoInsteadOfProxyAsSubcompoError):
             MyCompo()
