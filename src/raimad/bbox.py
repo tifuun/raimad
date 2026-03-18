@@ -3,7 +3,7 @@
 from typing import Iterator, Generic, TypeVar
 from copy import copy
 
-from raimad.types import Vec2, Vec2S, PolyS
+from raimad.types import Vec2S, PolyS
 
 try:
     from typing import Self

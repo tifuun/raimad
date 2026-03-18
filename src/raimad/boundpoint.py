@@ -1,11 +1,11 @@
 """boundpoint.py: home to BoundPoint class."""
 
-from typing import Literal, Iterator, overload, Self
+from typing import Literal, Iterator, overload
 from types import NoneType
 
 import raimad as rai
 from raimad.transform import EditingArgumentError
-from raimad.types import Vec2, Vec2S, Num, NumS
+from raimad.types import Vec2, Num, NumS
 
 class BoundPoint():
     """

@@ -3,7 +3,6 @@
 from math import sin, cos, sqrt, atan2
 from typing import Sequence
 
-import raimad as rai
 from raimad.types import Vec2, Vec2S, Poly, PolyS, Mat3S, NumS
 
 def identity() -> Mat3S:

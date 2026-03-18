@@ -1,4 +1,4 @@
-from typing import Tuple, List, Protocol, Literal, SupportsFloat, TypeAlias, runtime_checkable
+from typing import Tuple, Protocol, Literal, SupportsFloat, TypeAlias, runtime_checkable
 
 Num: TypeAlias = float | int | SupportsFloat
 

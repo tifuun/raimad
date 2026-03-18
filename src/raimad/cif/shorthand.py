@@ -6,8 +6,7 @@ of exporting components to CIF than using an exporter
 directly.
 """
 
-from pathlib import Path
-from typing import TextIO, Protocol, Any
+from typing import Protocol, Any
 
 import raimad as rai
 

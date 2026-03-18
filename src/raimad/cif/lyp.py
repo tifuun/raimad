@@ -94,7 +94,7 @@ def _export_lyp(
         if layer.name is not None:
             yield f'<name>{layer.name}</name>'
 
-        yield f'</properties>'
+        yield '</properties>'
 
     yield '<name/>'
     yield '</layer-properties>'

@@ -22,8 +22,9 @@ class EditingArgumentError(TypeError):
     """
     Invalid arguments are passed to "automatic" editing functions like *.move.
     """
+
     def __init__(self) -> None:
-        super().__init__(f"Invalid arguments passed to editing method.")
+        super().__init__("Invalid arguments passed to editing method.")
 
 
 class Transform:

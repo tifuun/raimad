@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Protocol, runtime_checkable, Literal, TypeAlias, Tuple, Union, Callable
 from collections.abc import Sequence, Mapping
-from numbers import Real
 from typing import SupportsFloat
 
 # "loose" types: for annotating inputs of functions that
@@ -22,7 +21,11 @@ class Vec2(Protocol):
 Poly: TypeAlias = Sequence[Vec2]
 Polys: TypeAlias = Sequence[Poly]
 Geoms: TypeAlias = Mapping[str, Polys]
-Mat3: TypeAlias = Tuple[Tuple[Num, Num, Num], Tuple[Num, Num, Num], Tuple[Num, Num, Num]]
+Mat3: TypeAlias = Tuple[
+        Tuple[Num, Num, Num],
+        Tuple[Num, Num, Num],
+        Tuple[Num, Num, Num]
+        ]
 
 types_loose: set[TypeAlias] = {
         Num,
@@ -41,7 +44,11 @@ Vec2S: TypeAlias = tuple[NumS, NumS]
 PolyS: TypeAlias = list[Vec2S]
 PolysS: TypeAlias = list[PolyS]
 GeomsS: TypeAlias = dict[str, PolysS]
-Mat3S: TypeAlias = Tuple[Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS]]
+Mat3S: TypeAlias = Tuple[
+        Tuple[NumS, NumS, NumS],
+        Tuple[NumS, NumS, NumS],
+        Tuple[NumS, NumS, NumS]
+        ]
 
 types_strict: set[TypeAlias] = {
         NumS,
