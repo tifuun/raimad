@@ -11,19 +11,8 @@ from raimad.typing import CompoLike
 
 from unittest import TestCase
 
-class TestCaseProto(Protocol):
-    """
-    Protocol modeling unittest.TestCase.
-
-    From what I understand, this is the only sane way to type-check mixins.
-    """
-    def assertEqual(self, a: Any, b: Any) -> None: ...
-    def assertTrue(self, a: Any) -> None: ...
-    def fail(self, msg: str) -> None: ...
-    def _formatMessage(self, a: str | None, b: str) -> str: ...
-
 class XmlComparisonMixin:
-    def assertXmlEqual(self: TestCaseProto, xml1: str, xml2: str) -> None:
+    def assertXmlEqual(self, xml1: str, xml2: str) -> None:
         if xml1 != xml2:
             warnings.warn(
                 'assertXmlEqual is currently implemented '
@@ -41,7 +30,7 @@ class AssertDoesntWarn:
     """
 
     @contextmanager
-    def assertDoesntWarn(self: TestCaseProto, msg: str | None = None) -> Iterator[None]:
+    def assertDoesntWarn(self, msg: str | None = None) -> Iterator[None]:
         """
         Context manager that fails if any warnings are raised within its block.
         
@@ -62,7 +51,7 @@ class AssertDoesntWarn:
 ### END CHATGPT CODE ###
 
 class PrettyEqual():
-    def assertPrettyEqual(self: TestCaseProto, actual: Any, expected: Any) -> None:
+    def assertPrettyEqual(self, actual: Any, expected: Any) -> None:
         try:
             self.assertEqual(actual, expected)
 
@@ -73,16 +62,6 @@ class PrettyEqual():
             pprint(expected, stream=stderr)
             raise err
 
-class TestCaseWithEpsilonProto(Protocol):
-    """
-    TODO docstring
-    """
-    def assertEqual(self, a: Any, b: Any) -> None: ...
-    def assertTrue(self, a: Any) -> None: ...
-    def fail(self, msg: str) -> None: ...
-    def _formatMessage(self, a: str | None, b: str) -> str: ...
-    epsilon: ClassVar[float]
-
 class ArrayApproxEqual():
     decimal: ClassVar[float]
     epsilon: ClassVar[float]
@@ -92,7 +71,7 @@ class ArrayApproxEqual():
         super().__init_subclass__(*args, **kwargs)
 
     def assertArrayApproxEqual(
-            self: TestCaseWithEpsilonProto,
+            self,
             actual: Sequence[float],
             expected: Sequence[float],
             epsilon: float | None = None
@@ -109,7 +88,7 @@ class ArrayApproxEqual():
             raise err
 
     def assertApproxEqual(
-            self: TestCaseWithEpsilonProto,
+            self,
             actual: Any,
             expected: Any,
             epsilon: float | None = None
@@ -162,7 +141,7 @@ class GeomsEqual():
         super().__init_subclass__(*args, **kwargs)
 
     def checkPolysEqual(
-            self: TestCaseGeomsProto,
+            self,
             actual: Poly,
             expected: Poly,
             epsilon: float | None = None
@@ -175,7 +154,7 @@ class GeomsEqual():
             )
 
     def assertManyGeomsEqual(
-            self: TestCaseGeomsProto,
+            self,
             geomses: Sequence[Geoms | CompoLike],
             epsilon: float | None = None) -> None:
 
@@ -183,7 +162,7 @@ class GeomsEqual():
             self.assertGeomsEqual(a, b)
 
     def assertGeomsEqual(
-            self: TestCaseGeomsProto,
+            self,
             actual: Geoms | CompoLike,
             expected: Geoms | CompoLike,
             epsilon: float | None = None) -> None:
@@ -240,7 +219,7 @@ class GeomsEqual():
                 raise AssertionError(stream.getvalue()) from err
 
     def assertGeomsEqualButAllowDifferentNames(
-            self: TestCaseGeomsProto,
+            self,
             actual: Geoms,
             expected: Geoms,
             epsilon: float | None = None) -> None:

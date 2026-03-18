@@ -74,3 +74,18 @@ strict = false
 module = 'tests.*'
 disallow_untyped_defs = false
 
+# Don't complain about missing attributes in test utils file.
+# This file relies heavily on mixins,
+# and type-hinting mixins -- especially mixins that
+# all depend on one another -- is a pants-backward tedious process
+# that produces tons of incomprehensible typing.Protocol boilerplate
+# (see https://stackoverflow.com/questions/59311963/ 
+# and commit 35ed468bde2404876599da74e023837730fc43cd in this repo ),
+# all for the dubious benefit of ensuring type safety in code
+# that, almost by-defenition, has 100% runtime coverage,
+# and never runs on the end-user's machine.
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.utils'
+disable_error_code = ["attr-defined"]
+
