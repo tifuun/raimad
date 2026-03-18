@@ -93,7 +93,7 @@ ALL_VECS = (
 # none of their arguments are annotated as type `float`
 #
 
-def contains_strict_annotation(annotation) -> bool:
+def contains_strict_annotation(annotation: type) -> bool:
     if annotation in rai.types.types_strict:
         return True
 
@@ -105,7 +105,7 @@ def contains_strict_annotation(annotation) -> bool:
     args = typing.get_args(annotation)
     return any(contains_strict_annotation(arg) for arg in args)
 
-def ensure_no_strict_args(cls):
+def ensure_no_strict_args(cls: type) -> None:
     for name, member in inspect.getmembers(cls, predicate=inspect.isfunction):
         sig = inspect.signature(member)
         for param in sig.parameters.values():

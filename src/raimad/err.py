@@ -42,5 +42,6 @@ __all__ = [
     "EmptyBBoxError",
     "InvalidDestinationError",
     "StringImportError",
+    "EditingArgumentError",
     ]
 
