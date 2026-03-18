@@ -21,9 +21,9 @@ class BareGeometric(rai.Compo):
         self.geoms.update({
             'root': [
                 [
-                    [0, 0],
-                    [40, 0],
-                    [0, 40],
+                    (0, 0),
+                    (40, 0),
+                    (0, 40),
                     ],
                 ]
             })
@@ -61,7 +61,7 @@ class TestBoundpoint(ArrayApproxEqual, unittest.TestCase):
         compo.move(2, 3)
 
         self.assertArrayApproxEqual(
-            compo.marks["corner_a"],
+            rai.vec2s(compo.marks["corner_a"]),
             (2, 3)
             )
 
@@ -73,7 +73,7 @@ class TestBoundpoint(ArrayApproxEqual, unittest.TestCase):
         compo = BareStructural()
 
         self.assertArrayApproxEqual(
-            compo.subcompos.geometric.marks.corner_a,
+            rai.vec2s(compo.subcompos.geometric.marks.corner_a),
             (3, 2)
             )
 
@@ -88,7 +88,7 @@ class TestBoundpoint(ArrayApproxEqual, unittest.TestCase):
         compo.move(10, 20)
 
         self.assertArrayApproxEqual(
-            compo.subcompos.geometric.marks.corner_a,
+            rai.vec2s(compo.subcompos.geometric.marks.corner_a),
             (3 + 10, 2 + 20)
             )
 
@@ -97,7 +97,7 @@ class TestBoundpoint(ArrayApproxEqual, unittest.TestCase):
         compo.move(10, 20)
 
         self.assertArrayApproxEqual(
-            compo.subcompos.geometric.bbox.bot_left,
+            rai.vec2s(compo.subcompos.geometric.bbox.bot_left),
             (3 + 10, 2 + 20)
             )
 

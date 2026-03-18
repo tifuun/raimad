@@ -89,6 +89,8 @@ class LMap:
             # TODO better way to do this?
             if isinstance(self.shorthand, dict):
                 for self_k, self_val in tuple(self.shorthand.items()):
+                    if self_val is None:
+                        continue
                     try:
                         self.shorthand[self_k] = other[self_val]
                     except KeyError:
@@ -288,12 +290,13 @@ class Proxy:
             as seen through this proxy.
         """
         return {
-            self.lmap[layer]: [
+            target_layer: [
                 self.transform.transform_poly(geom)
                 for geom in geoms
                 ]
             for layer, geoms
             in self.compo.geoms.items()
+            if (target_layer := self.lmap[layer]) is not None
             }
 
     @property

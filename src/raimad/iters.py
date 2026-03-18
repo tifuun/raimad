@@ -67,7 +67,8 @@ triples = _make_alias('triples', nonoverlap, 3)
 quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
 
-# Python does not support recursive types.
+# Python does not (really) support recursive types
+# (see mypy-experiments/recursive_iterable.py).
 # Solution: The Great Pyramid of Iterable
 I: TypeAlias = Iterable
 V = TypeVar("V")
