@@ -149,6 +149,7 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
         ensure_no_strict_args(rai.Proxy)
         ensure_no_strict_args(rai.BoundPoint)
         ensure_no_strict_args(rai.Transform)
+        ensure_no_strict_args(rai.Compo)
 
 
     #------------#

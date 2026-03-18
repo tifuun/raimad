@@ -60,4 +60,5 @@ def replace_all_assignments(filename):
 
 if __name__ == "__main__":
     replace_all_assignments("src/raimad/err.py")
+    replace_all_assignments("src/raimad/__init__.py")
 

@@ -1,6 +1,6 @@
 """iters.py: iteration-related helpers."""
 
-from typing import TypeVar, Any
+from typing import TypeVar, Any, TypeAlias
 from collections.abc import Iterable, Callable, Sequence
 from itertools import chain
 
@@ -67,7 +67,36 @@ triples = _make_alias('triples', nonoverlap, 3)
 quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
 
-def flatten(iterable: Iterable[Any]) -> Iterable[Any]:
+# Python does not support recursive types.
+# Solution: The Great Pyramid of Iterable
+I: TypeAlias = Iterable
+V = TypeVar("V")
+def flatten(
+        iterable:
+                                  V |
+                                 I[V] |
+                                I[I[V]] |
+                               I[I[I[V]]] |
+                              I[I[I[I[V]]]] |
+                             I[I[I[I[I[V]]]]] |
+                            I[I[I[I[I[I[V]]]]]] |
+                           I[I[I[I[I[I[I[V]]]]]]] |
+                          I[I[I[I[I[I[I[I[V]]]]]]]] |
+                         I[I[I[I[I[I[I[I[I[V]]]]]]]]] |
+                        I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]] |
+                       I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]] |
+                      I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]] |
+                     I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]] |
+                    I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]] |
+                   I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]] |
+                  I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]] |
+                 I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]] |
+                I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]] |
+               I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]] |
+              I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]]] |
+             I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]]]] |
+            I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]]]]]
+        ) -> list[V]:
     """Recursively flatten a nested iterable."""
     if not isinstance(iterable, Iterable) or isinstance(iterable, str):
         # This terminates the recursion

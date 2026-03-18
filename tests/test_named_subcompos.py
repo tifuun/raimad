@@ -47,7 +47,7 @@ class TestNamedSubcompos(ArrayApproxEqual, unittest.TestCase):
         compo = Compo_direct()
 
         self.assertArrayApproxEqual(
-            compo.subcompos.coup_top.bbox.top_mid,
+            rai.vec2s(compo.subcompos.coup_top.bbox.top_mid),
             (0, 20 / 2 + 2)
             )
 
@@ -61,7 +61,7 @@ class TestNamedSubcompos(ArrayApproxEqual, unittest.TestCase):
         compo = Compo_auto()
 
         self.assertArrayApproxEqual(
-            compo.subcompos.coup_top.bbox.top_mid,
+            rai.vec2s(compo.subcompos.coup_top.bbox.top_mid),
             (0, 20 / 2 + 2)
             )
 

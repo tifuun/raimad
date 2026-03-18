@@ -24,7 +24,7 @@ Polys: TypeAlias = Sequence[Poly]
 Geoms: TypeAlias = Mapping[str, Polys]
 Mat3: TypeAlias = Tuple[Tuple[Num, Num, Num], Tuple[Num, Num, Num], Tuple[Num, Num, Num]]
 
-types_loose: Set[TypeAlias] = {
+types_loose: set[TypeAlias] = {
         Num,
         Vec2,
         Poly,
@@ -43,7 +43,7 @@ PolysS: TypeAlias = list[PolyS]
 GeomsS: TypeAlias = dict[str, PolysS]
 Mat3S: TypeAlias = Tuple[Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS]]
 
-types_strict: Set[TypeAlias] = {
+types_strict: set[TypeAlias] = {
         NumS,
         Vec2S,
         PolyS,

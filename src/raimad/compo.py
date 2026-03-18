@@ -333,10 +333,11 @@ class Compo:
 
     def transform_point(
             self,
-            point: Vec2S
+            point: Vec2
             ) -> Vec2S:
         """
         Do nothing to `point` and return as-is.
+        TODO THAT IS NOT TRUE
 
         This method exists for uniformity with Proxy.transform_point.
 
@@ -354,7 +355,7 @@ class Compo:
         -------
         raimad.Proxy.transform_point
         """
-        return point
+        return rai.vec2s(point)
 
     @property
     def scale(self) -> NoReturn:

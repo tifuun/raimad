@@ -44,7 +44,7 @@ class LMap:
     def __init__(self, shorthand: 'rai.typing.LMapShorthand') -> None:
         self.shorthand = shorthand
 
-    def __getitem__(self, name: str) -> str:
+    def __getitem__(self, name: str) -> str | None:
         """Given a child layer, return the parent layer."""
         if self.shorthand is None:
             return name
@@ -57,6 +57,7 @@ class LMap:
 
         assert False
     # TODO hacky
+    # also TODO docstring
 
     def copy(self) -> Self:
         """Copy this lmap."""

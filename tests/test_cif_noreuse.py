@@ -140,7 +140,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         p5 = compo.proxy().map({'FOO': 'AYY', 'BAR': None})
         p6 = compo.proxy().map({'FOO': 'AYY', 'BAR': 'LMAO'})
 
-        def layers(compo):
+        def layers(compo: 'rai.typing.CompoLike') -> :
             exporter = rai.cif.NoReuse(
                 compo,
                 multiplier=1,

@@ -9,15 +9,15 @@ class BareGeometric(rai.Compo):
         self.geoms.update({
             'root': [
                 [
-                    [0, 0],
-                    [0, 10],
-                    [10, 10],
-                    [10, 0],
+                    (0, 0),
+                    (0, 10),
+                    (10, 10),
+                    (10, 0),
                     ],
                 [
-                    [20, 20],
-                    [40, 20],
-                    [30, 40],
+                    (20, 20),
+                    (40, 20),
+                    (30, 40),
                     ],
                 ]
             })
@@ -65,15 +65,15 @@ class BareGeometricSyntax(rai.Compo):
         self.geoms.update({
             'root': [
                 [
-                    [0, 0],
-                    [0, 10],
-                    [10, 10],
-                    [10, 0],
+                    (0, 0),
+                    (0, 10),
+                    (10, 10),
+                    (10, 0),
                     ],
                 [
-                    [20, 20],
-                    [40, 20],
-                    [30, 40],
+                    (20, 20),
+                    (40, 20),
+                    (30, 40),
                     ],
                 ]
             })
@@ -122,17 +122,17 @@ class TestMarks(ArrayApproxEqual, unittest.TestCase):
         compo = BareStructural()
 
         self.assertArrayApproxEqual(
-            compo.marks.propagated,
+            rai.vec2s(compo.marks.propagated),
             (20 - 3, 40 - 3)
             )
 
         self.assertArrayApproxEqual(
-            compo.subcompos[2].subcompos[0].marks.triangle_corner,
+            rai.vec2s(compo.subcompos[2].subcompos[0].marks.triangle_corner),
             (20 - 3, 40 - 3)
             )
 
         self.assertArrayApproxEqual(
-            compo.subcompos[2].marks.propagated,
+            rai.vec2s(compo.subcompos[2].marks.propagated),
             (20 - 3, 40 - 3)
             )
 
@@ -140,17 +140,17 @@ class TestMarks(ArrayApproxEqual, unittest.TestCase):
         compo = BareStructuralSyntax()
 
         self.assertArrayApproxEqual(
-            compo.marks.propagated,
+            rai.vec2s(compo.marks.propagated),
             (20 - 3, 40 - 3)
             )
 
         self.assertArrayApproxEqual(
-            compo.subcompos[2].subcompos[0].marks.triangle_corner,
+            rai.vec2s(compo.subcompos[2].subcompos[0].marks.triangle_corner),
             (20 - 3, 40 - 3)
             )
 
         self.assertArrayApproxEqual(
-            compo.subcompos[2].marks.propagated,
+            rai.vec2s(compo.subcompos[2].marks.propagated),
             (20 - 3, 40 - 3)
             )
 

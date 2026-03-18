@@ -67,6 +67,7 @@ convention = "numpy"
 [tool.mypy]
 strict = true
 exclude = [
+	'tests/test_cif_noreuse.py',  # TODO cift type hints!
 	]
 
 # don't complain about missing -> None return annotation

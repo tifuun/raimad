@@ -32,6 +32,6 @@ Affine: TypeAlias = tuple[
     tuple[float, float, float],
     ]
 
-LMapShorthand: TypeAlias = None | str | dict[str, str]
+LMapShorthand: TypeAlias = None | str | dict[str, str | None]
 LMap: TypeAlias = rai.LMap
 
