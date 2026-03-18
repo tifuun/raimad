@@ -250,7 +250,7 @@ class BoundPoint():
     @overload
     def move(self, /, a: Num, b: Num) -> 'rai.typing.Proxy': ...
     @overload
-    def move(self, /, a: Vec2S) -> 'rai.typing.Proxy': ...
+    def move(self, /, a: Vec2) -> 'rai.typing.Proxy': ...
 
     def move(
             self,
@@ -266,7 +266,7 @@ class BoundPoint():
 
         Parameters
         ----------
-        a : Num | Vec2S
+        a : Num | Vec2
             X offset or tuple of offsets
         b : Num | None
             Y offset or None
@@ -436,13 +436,13 @@ class BoundPoint():
     @overload
     def scale(self, /, a: Num  , b: Num  ) -> 'rai.typing.Proxy': ...
     @overload
-    def scale(self, /, a: Vec2S,         ) -> 'rai.typing.Proxy': ...
+    def scale(self, /, a: Vec2,         ) -> 'rai.typing.Proxy': ...
 
     def scale(
             self,
             /,
-            a: Num | Vec2S,
-            b: Num | Vec2S | None = None,
+            a: Num | Vec2,
+            b: Num | Vec2 | None = None,
             ) -> 'rai.typing.Proxy':
         """
         Scale width and height, using self as pivot point (overload).
@@ -566,7 +566,7 @@ class BoundPoint():
 
         Parameters
         ----------
-        a : Num | Vec2S
+        a : Num | Vec2
             Either the X coordinate or target point
         b : Num | None
             Either the Y coordinate or None

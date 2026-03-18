@@ -29,6 +29,8 @@ dependencies = [
 dev = [
 	"numpy",
 	"cift",
+	"mypy",
+	"ipython",
 	]
 
 # This lets people use `raimad` directly as a shell command

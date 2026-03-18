@@ -721,7 +721,7 @@ class Proxy:
 
     def transform_point(
             self,
-            point: Vec2S
+            point: Vec2
             ) -> Vec2S:
         """
         Apply this proxies transform to a point, return the transformed point.
@@ -1033,7 +1033,7 @@ class Proxy:
     def protate(
             self,
             angle: Num,
-            pivot: Vec2S = (0, 0),
+            pivot: Vec2 = (0, 0),
             ) -> Self:
         """
         Rotate around a reference point given as an (x, y) tuple.
@@ -1078,7 +1078,7 @@ class Proxy:
         ----------
         angle : Num
             Angle to rotate by, in radians.
-        a : Num | Vec2S
+        a : Num | Vec2
             Either the X coordinate, the entire pivot point,
             or None
         b : Num | None
@@ -1143,12 +1143,12 @@ class Proxy:
     @overload
     def move(self, /, a: Num, b: Num) -> 'rai.typing.Proxy': ...
     @overload
-    def move(self, /, a: Vec2S) -> 'rai.typing.Proxy': ...
+    def move(self, /, a: Vec2) -> 'rai.typing.Proxy': ...
 
     def move(
             self,
             /,
-            a: Num | Vec2S,
+            a: Num | Vec2,
             b: Num | None = None,
             ) -> Self:
         """
@@ -1159,7 +1159,7 @@ class Proxy:
 
         Parameters
         ----------
-        a : Num | Vec2S
+        a : Num | Vec2
             X offset or tuple of offsets
         b : Num | None
             Y offset or None
@@ -1274,7 +1274,7 @@ class Proxy:
 
         Parameters
         ----------
-        a : Num | Vec2S
+        a : Num | Vec2
             Either the x-intercept or a tuple of the two intercepts.
         b : Num | None
             Either the y-intercept or None
@@ -1485,28 +1485,28 @@ class Proxy:
     @overload
     def scale(self, /, a: Num ,                             ) -> Self: ...
     @overload
-    def scale(self, /, a: Num ,          b: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Num ,          b: Vec2,          ) -> Self: ...
     @overload
     def scale(self, /, a: Num ,          b: Num , c: Num  ) -> Self: ...
     @overload
     def scale(self, /, a: Num , b: Num                     ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,                             ) -> Self: ...
+    def scale(self, /, a: Vec2,                             ) -> Self: ...
     @overload
-    def scale(self, /, a: Num , b: Num, c: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Num , b: Num, c: Vec2,          ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,          b: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Vec2,          b: Vec2,          ) -> Self: ...
     @overload
     def scale(self, /, a: Num , b: Num, c: Num , d: Num, ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,          b: Num , c: Num  ) -> Self: ...
+    def scale(self, /, a: Vec2,          b: Num , c: Num  ) -> Self: ...
 
     def scale(
             self,
             /,
-            a: Num | Vec2S,
-            b: Num | Vec2S | None = None,
-            c: Num | Vec2S | None = None,
+            a: Num | Vec2,
+            b: Num | Vec2 | None = None,
+            c: Num | Vec2 | None = None,
             d: Num | None = None,
             ) -> Self:
         """

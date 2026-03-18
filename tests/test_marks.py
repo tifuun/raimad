@@ -2,7 +2,7 @@ import unittest
 
 import raimad as rai
 
-from .utils import ArrayAlmostEqual
+from .utils import ArrayApproxEqual
 
 class BareGeometric(rai.Compo):
     def _make(self):
@@ -116,22 +116,22 @@ class BareStructuralSyntax(rai.Compo):
 
         self.marks.propagated = self.subcompos[2].marks.propagated
 
-class TestMarks(ArrayAlmostEqual, unittest.TestCase):
+class TestMarks(ArrayApproxEqual, unittest.TestCase):
 
     def test_marks(self):
         compo = BareStructural()
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.marks.propagated,
             (20 - 3, 40 - 3)
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.subcompos[2].subcompos[0].marks.triangle_corner,
             (20 - 3, 40 - 3)
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.subcompos[2].marks.propagated,
             (20 - 3, 40 - 3)
             )
@@ -139,17 +139,17 @@ class TestMarks(ArrayAlmostEqual, unittest.TestCase):
     def test_marks_syntax(self):
         compo = BareStructuralSyntax()
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.marks.propagated,
             (20 - 3, 40 - 3)
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.subcompos[2].subcompos[0].marks.triangle_corner,
             (20 - 3, 40 - 3)
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.subcompos[2].marks.propagated,
             (20 - 3, 40 - 3)
             )

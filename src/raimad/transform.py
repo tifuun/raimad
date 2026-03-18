@@ -16,7 +16,7 @@ except ImportError:
     from typing_extensions import Self
 
 import raimad as rai
-from raimad.types import Vec2, Vec2S, PolyS, Num, NumS
+from raimad.types import Vec2, Vec2S, PolyS, Num, NumS, Poly
 
 class EditingArgumentError(TypeError):
     """
@@ -78,7 +78,7 @@ class Transform:
     def protate(
             self,
             angle: Num,
-            pivot: Vec2S = (0, 0),
+            pivot: Vec2 = (0, 0),
             ) -> Self:
         """
         Rotate around a reference point given as an (x, y) tuple.
@@ -87,7 +87,7 @@ class Transform:
         ----------
         angle : Num
             Angle to rotate by, in radians.
-        pivot : Vec2S
+        pivot : Vec2
             The point (x, y) to rotate around. Default: origin.
 
         Returns
@@ -131,7 +131,7 @@ class Transform:
         ----------
         angle : Num
             Angle to rotate by, in radians.
-        a : Num | Vec2S
+        a : Num | Vec2
             Either the X coordinate, the entire pivot point,
             or None
         b : Num | None
@@ -209,7 +209,7 @@ class Transform:
 
         Parameters
         ----------
-        offset : Vec2S
+        offset : Vec2
             A tuple of two values (x, y).
 
         Returns
@@ -228,7 +228,7 @@ class Transform:
     @overload
     def move(self, /, a: Num, b: Num) -> Self: ...
     @overload
-    def move(self, /, a: Vec2S) -> Self: ...
+    def move(self, /, a: Vec2) -> Self: ...
 
     def move(
             self,
@@ -244,7 +244,7 @@ class Transform:
 
         Parameters
         ----------
-        a : Num | Vec2S
+        a : Num | Vec2
             X offset or tuple of offsets
         b : Num | None
             Y offset or None
@@ -350,7 +350,7 @@ class Transform:
 
         Parameters
         ----------
-        pivot: Vec2S
+        pivot: Vec2
             Tuple representing x and y coordinates of lines to mirror
             against
 
@@ -390,7 +390,7 @@ class Transform:
 
         Parameters
         ----------
-        a : Num | Vec2S
+        a : Num | Vec2
             Either the x-intercept or a tuple of the two intercepts.
         b : Num | None
             Either the y-intercept or None
@@ -482,7 +482,7 @@ class Transform:
             Factor to scale by along the x axis
         y : Num
             Factor to scale by along the y axis.
-        pivot : Vec2S
+        pivot : Vec2
             Use this point as origin for the scale.
             Default: origin
 
@@ -556,9 +556,9 @@ class Transform:
 
         Parameters
         ----------
-        scale : Vec2S
+        scale : Vec2
             The x and y scale factors
-        pivot : Vec2S
+        pivot : Vec2
             Use this point as origin for the scale.
             Default: origin
 
@@ -592,7 +592,7 @@ class Transform:
 
         Parameters
         ----------
-        scale : Vec2S
+        scale : Vec2
             The x and y scale factors
         px : Num
             X coordinate of origin of the scale (default: 0)
@@ -631,7 +631,7 @@ class Transform:
         ----------
         factor : Num
             Factor to scale by.
-        pivot : Vec2S
+        pivot : Vec2
             Use this point as origin for the scale.
             Default: origin
 
@@ -691,28 +691,28 @@ class Transform:
     @overload
     def scale(self, /, a: Num ,                             ) -> Self: ...
     @overload
-    def scale(self, /, a: Num ,          b: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Num ,          b: Vec2,          ) -> Self: ...
     @overload
     def scale(self, /, a: Num ,          b: Num , c: Num  ) -> Self: ...
     @overload
     def scale(self, /, a: Num , b: Num                     ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,                             ) -> Self: ...
+    def scale(self, /, a: Vec2,                             ) -> Self: ...
     @overload
-    def scale(self, /, a: Num , b: Num, c: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Num , b: Num, c: Vec2,          ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,          b: Vec2S,          ) -> Self: ...
+    def scale(self, /, a: Vec2,          b: Vec2,          ) -> Self: ...
     @overload
     def scale(self, /, a: Num , b: Num, c: Num , d: Num, ) -> Self: ...
     @overload
-    def scale(self, /, a: Vec2S,          b: Num , c: Num  ) -> Self: ...
+    def scale(self, /, a: Vec2,          b: Num , c: Num  ) -> Self: ...
 
     def scale(
             self,
             /,
-            a: Num | Vec2S,
-            b: Num | Vec2S | None = None,
-            c: Num | Vec2S | None = None,
+            a: Num | Vec2,
+            b: Num | Vec2 | None = None,
+            c: Num | Vec2 | None = None,
             d: Num | None = None,
             ) -> Self:
         """
@@ -927,7 +927,7 @@ class Transform:
 
     def transform_poly(
             self,
-            poly: PolyS
+            poly: Poly
             ) -> PolyS:
         """
         Apply transformation to poly and return new transformed poly.
@@ -946,7 +946,7 @@ class Transform:
 
     def transform_point(
             self,
-            point: Vec2S
+            point: Vec2
             ) -> Vec2S:
         """
         Apply this transform to a point, and return the transformed point.
@@ -956,7 +956,7 @@ class Transform:
 
         Parameters
         ----------
-        point : Vec2S
+        point : Vec2
             The point to transform.
 
         Returns

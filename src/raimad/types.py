@@ -24,6 +24,15 @@ Polys: TypeAlias = Sequence[Poly]
 Geoms: TypeAlias = Mapping[str, Polys]
 Mat3: TypeAlias = Tuple[Tuple[Num, Num, Num], Tuple[Num, Num, Num], Tuple[Num, Num, Num]]
 
+types_loose: Set[TypeAlias] = {
+        Num,
+        Vec2,
+        Poly,
+        Polys,
+        Geoms,
+        Mat3,
+    }
+
 # "strict" types: for annotating outputs of functions,
 # where the exact return type is always known
 
@@ -33,6 +42,15 @@ PolyS: TypeAlias = list[Vec2S]
 PolysS: TypeAlias = list[PolyS]
 GeomsS: TypeAlias = dict[str, PolysS]
 Mat3S: TypeAlias = Tuple[Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS], Tuple[NumS, NumS, NumS]]
+
+types_strict: Set[TypeAlias] = {
+        NumS,
+        Vec2S,
+        PolyS,
+        PolysS,
+        GeomsS,
+        Mat3S,
+    }
 
 #@runtime_checkable
 #class Vec2Attr(Protocol):

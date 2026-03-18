@@ -2,9 +2,9 @@ import unittest
 
 import raimad as rai
 
-from .utils import GeomsEqual, ArrayAlmostEqual
+from .utils import GeomsEqual, ArrayApproxEqual
 
-class TestFlips(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
+class TestFlips(GeomsEqual, ArrayApproxEqual, unittest.TestCase):
     """
     Test that vflip and hflip do what you expect.
 

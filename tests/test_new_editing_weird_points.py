@@ -12,6 +12,8 @@ Hopefully test_new_editing.py tests
 Transform's methods sufficiently.
 """
 import unittest
+import inspect
+import typing
 
 import numpy as np
 
@@ -22,16 +24,24 @@ class IdxVec2:
     """
     custom vec2 class that supports indexing
     """
-    def __init__(self, x, y):
+    _x: float
+    _y: float
+
+    def __init__(self, x: float, y: float) -> None:
         self._x = x
         self._y = y
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> float:
+        """
+        Get either x or y coordinate.
+
+        Deliberately lazy `int` type hint instead of `Literal[0, 1]`.
+        """
         if idx == 0:
             return self._x
         if idx == 1:
             return self._y
-        raise ArgumentError('foobar')
+        raise TypeError('foobar')
 
 #class AttrVec2:
 #    """
@@ -75,6 +85,41 @@ ALL_VECS = (
     #atr_n := AttrVec2(2,   np.float64(3)),
 )
 
+### BEGIN (edited) LLM CODE ###
+#
+# PROMPT:
+#
+# write python script that scans all methods of class `Foo` and makes sure
+# none of their arguments are annotated as type `float`
+#
+
+def contains_strict_annotation(annotation) -> bool:
+    if annotation in rai.types.types_strict:
+        return True
+
+    # Handle typing constructs like Optional[float], list[float], dict[str, float], etc.
+    origin = typing.get_origin(annotation)
+    if origin is None:
+        return False
+
+    args = typing.get_args(annotation)
+    return any(contains_strict_annotation(arg) for arg in args)
+
+def ensure_no_strict_args(cls):
+    for name, member in inspect.getmembers(cls, predicate=inspect.isfunction):
+        sig = inspect.signature(member)
+        for param in sig.parameters.values():
+            ann = param.annotation
+            if ann is inspect._empty:  # no annotation
+                continue
+            if contains_strict_annotation(ann):
+                raise AssertionError(
+                    f"Method {cls.__name__}.{name} has parameter "
+                    f"'{param.name}' annotated with or containing strict type: {ann!r}"
+                )
+
+
+### END LLM CODE ###
 
 class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
     def test_internal(self):
@@ -93,6 +138,19 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
         for vec in ALL_VECS:
             self.assertIsInstance(vec, rai.types.Vec2)
 
+    def test_no_strict_args(self):
+        """
+        Test that Proxy, BoundPoint, and Transform
+        never take `Vec2S` or `NumS` (i.e. strict raimad types)
+        as input -- should be the more open-ended
+        `Vec2` and `Num` types to allow user to pass in a broader
+        range of things.
+        """
+        ensure_no_strict_args(rai.Proxy)
+        ensure_no_strict_args(rai.BoundPoint)
+        ensure_no_strict_args(rai.Transform)
+
+
     #------------#
     # Proxy      #
     #------------#
@@ -106,9 +164,26 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
             ))
 
         self.assertManyGeomsEqual((
-            *(
-                box.proxy().move(vec)
-                for vec in ALL_VECS),
+            #*(
+            #    box.proxy().move(vec)
+            #    for vec in ALL_VECS),
+            box.proxy().move(ALL_VECS[0]),
+            box.proxy().move(ALL_VECS[1]),
+            box.proxy().move(ALL_VECS[2]),
+            box.proxy().move(ALL_VECS[3]),
+            box.proxy().move(ALL_VECS[4]),
+            box.proxy().move(ALL_VECS[5]),
+            box.proxy().move(ALL_VECS[6]),
+            box.proxy().move(ALL_VECS[7]),
+            box.proxy().move(ALL_VECS[8]),
+            box.proxy().move(ALL_VECS[9]),
+            box.proxy().move(ALL_VECS[10]),
+            box.proxy().move(ALL_VECS[11]),
+            box.proxy().move(ALL_VECS[12]),
+            box.proxy().move(ALL_VECS[13]),
+            box.proxy().move(ALL_VECS[14]),
+            box.proxy().move(ALL_VECS[15]),
+            box.proxy().move(ALL_VECS[16]),
             *(
                 {
                     'root': [
