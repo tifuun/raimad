@@ -238,21 +238,22 @@ Time to ask around!!
 # AI usage disclosure
 <!-- TODO style -->
 \raimad makes limited use of AI-generated code.
-Some functions regarding coordinate transformations
-and test fixtures has been written using gratis publically available
-large language models,
-such as ChatGPT and Perplexity.
+Some coordinate transformation functions
+and test fixtures have been written using
+publically available
+gratis large language models,
+such as ChatGPT [@chatgpt] and Perplexity [@perplexity].
 Due to the software-as-a-service nature of these AI models,
-exact versions of the models cannot be ascertained.
-<!-- AI usage policty section says versions of models
+the exact versions cannot be ascertained.
+<!-- AI usage section description says versions of models
     need to be provided but we really can't say what versions
     because I just used the webui without logging in
     TODO need to cite
     the models in bib?? -->
-All AI-generated code has been proof-read and edited by the author
-to ensure it does what it needs to,
-and that its code style is consistent with the rest of the project.
-All code that originated from AI is clearly labeled using comment blocks.
+All AI-generated code is marked as such using comments,
+and has been proofread and edited by the author
+to ensure correct functionality and consistency
+with \raimad code style.
 
 <!-- non-required section... -->
 # Availability
