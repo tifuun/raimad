@@ -44,6 +44,8 @@ bibliography: paper.bib
 \newcommand{\raidoc}{\texttt{RAIDOC}}
 \newcommand{\raidex}{\texttt{RAIDEX}}
 \newcommand{\pip}{\texttt{pip}}
+\newcommand{\compo}{\texttt{compo}}
+\newcommand{\proxy}{\texttt{proxy}}
 
 \Huge THIS IS A VERY EARLY DRAFT IM JUST WRITING WHAT POPS INTO MY HEAD \normalsize
 
@@ -166,44 +168,64 @@ interface for all components in order to reduce complexity.
 
 <!-- -----NEW------ REQUIRED SECTION!! -->
 # Software design
-<!-- TODO style -->
-The design of \raimad is good because
-we arrived at it after srumbling head-first into every possible
-bad design decision.
 
-We have a modular component system:
-every raimad design adheres to the same "compo" interface,
-and compos can be put together to make larger compos.
-This is important because it allows people to understand each
-other's code more easily.
-Instead of getting a zip with tons of random functions and classes,
-we have compos.
-Everyone knows what a compo is.
-So it helps collaboration
-by reducing the onboard time.
+The current design of \raimad is a product of
+multiple years of iterative development,
+during which different approaches have been put into trial.
+One of the most fundamental design decisions that has
+emerged from this process
+is \raimad's balanced approach to mutability.
+\raimad's \compo{}s
+(a keyboard-friendly shorthand for "component"),
+once instantiated, are immutable.
+Transformations, such as translation, rotations,
+duplication, and layer reassignment,
+are handled using \proxy{}s,
+which offer a mutable "view" of a \compo.
+Thus, the memory requirements of producing multiple
+instances of a particular structure --
+such as dozens of bridges on a coplanar waveguide --
+are lowered,
+since the underlying structure of the bridge is only stored
+once in the \compo,
+while the translations and rotations of each instance are stored
+in a lightweight \proxy object.
 
-We take inspiration from python's gradual typing.
-Compo authors can add annotations describing
-what their classes contain (marks, layers, options),
-that are human- and machine-parseable,
-but they don't have to.
-So an author can first write a compo quickly,
-refine it,
-and then add structured documentation using these annotations,
-much like python's type hints.
-Potentially, this can also be used to catch bugs early thru static analysis,
-liky python's mypy.
-We even had a demo of this.
+<!-- we already said that modular approach is
+    easier to understand for developers
+    than a bunch of loose functions/methods.
+    Now specifically I want to talk about why the compos are immutable.
+    -->
 
-Finally, we take inspiration from functional programming.
-Compos are immutable.
-Transformations are done using proxies,
-which transfrom the coordinate system and layer mappings of compos that
-stay the same.
-The reason we do this is for optimizations:
-to produce leaner CIF files.
-But this is not implemented yet.
-Oh well.
+This approach also allows the exporter --
+the code responsible for translating \raimad structures
+into CIF output, akin to a compiler --
+to "reason" about the structure of the design and make optimizations,
+such as re-using parts of the geometry using the
+subroutine <!-- TODO is it called subroutines? -->
+feature of the CIF format.
+Such optimizations are critical for the future of the TIFUUN project,
+which will feature designs of a much higher complexity than DESHIMA.
+<!-- TODO explicitly mention that tifuun designs are complex
+but in a repeating way i.e. lots of spaxels and filterbanks
+of similar structure???? -->
+
+The theme of "reasonability" is also mirrored in the "annotations"
+feature of \raimad's \compo{}s.
+Taking inspiration from Python's gradual typing system,
+\compo{}s may -- but are not required to -- have
+annotations that explain what layers, marks, and options they have.
+These annotations are used by the \raidex component browser
+to produce structured documentation,
+and may, in the future,
+be used for static checking of \compo{}s,
+much like Python's MyPy.
+Earlier versions of \raimad
+had mandatory \compo annotations.
+It was chosen to make them options
+in order to allow more flexibility (e.g. dynamic mark names)
+and separation of concerns for the designer
+(e.g. write code first, annotate later).
 
 
 <!-- -----NEW------ REQUIRED SECTION!! -->
@@ -217,8 +239,16 @@ Time to ask around!!
 <!-- TODO style -->
 \raimad makes limited use of AI-generated code.
 Some functions regarding coordinate transformations
-and test fixtures has been written using publically available
-large language models.
+and test fixtures has been written using gratis publically available
+large language models,
+such as ChatGPT and Perplexity.
+Due to the software-as-a-service nature of these AI models,
+exact versions of the models cannot be ascertained.
+<!-- AI usage policty section says versions of models
+    need to be provided but we really can't say what versions
+    because I just used the webui without logging in
+    TODO need to cite
+    the models in bib?? -->
 All AI-generated code has been proof-read and edited by the author
 to ensure it does what it needs to,
 and that its code style is consistent with the rest of the project.

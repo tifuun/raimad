@@ -82,6 +82,7 @@ htmlcov
 
 *.cif
 !archive/*.tar
+paper/jats
 
 
 
