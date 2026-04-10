@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.2 20190208//EN"
+                  "JATS-publishing1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="other">
+<front>
+<journal-meta>
+<journal-id></journal-id>
+<journal-title-group>
+<journal-title>Journal of Open Source Software</journal-title>
+<abbrev-journal-title>JOSS</abbrev-journal-title>
+</journal-title-group>
+<issn publication-format="electronic">2475-9066</issn>
+<publisher>
+<publisher-name>Open Journals</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="publisher-id">0</article-id>
+<article-id pub-id-type="doi">N/A</article-id>
+<title-group>
+<article-title>RAIMAD: Collaborative Development of On-Chip Astronomical
+Instruments</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0009-0000-6638-5087</contrib-id>
+<name>
+<surname>Soshnin</surname>
+<given-names>Nikita</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+<xref ref-type="corresp" rid="cor-1"><sup>*</sup></xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0003-0379-2341</contrib-id>
+<name>
+<surname>Endo</surname>
+<given-names>Akira</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0003-4562-5584</contrib-id>
+<name>
+<surname>Karatsu</surname>
+<given-names>Kenichi</given-names>
+</name>
+<xref ref-type="aff" rid="aff-2"/>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0009-0001-1747-9906</contrib-id>
+<name>
+<surname>Marting</surname>
+<given-names>Louis</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0475-6134</contrib-id>
+<name>
+<surname>Moerman</surname>
+<given-names>Arend</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-7115-6366</contrib-id>
+<name>
+<surname>Scholtenhuis</surname>
+<given-names>Leon Olde</given-names>
+</name>
+<xref ref-type="aff" rid="aff-1"/>
+</contrib>
+<aff id="aff-1">
+<institution-wrap>
+<institution><p>Faculty of Electrical Engineering, Mathematics and
+Computer Science, Delft University of Technology, Mekelweg 4, 2628 CD,
+Delft, The Netherlands</p></institution>
+</institution-wrap>
+</aff>
+<aff id="aff-2">
+<institution-wrap>
+<institution><p>SRON Netherlands Institute for Space Research, Niels
+Bohrweg 4, 2333 CA Leiden, The Netherlands</p></institution>
+</institution-wrap>
+</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor-1">* E-mail: <email></email></corresp>
+</author-notes>
+<pub-date date-type="pub" publication-format="electronic" iso-8601-date="2025-02-18">
+<day>18</day>
+<month>2</month>
+<year>2025</year>
+</pub-date>
+<volume>¿VOL?</volume>
+<issue>¿ISSUE?</issue>
+<fpage>¿PAGE?</fpage>
+<permissions>
+<copyright-statement>Authors of papers retain copyright and release the
+work under a Creative Commons Attribution 4.0 International License (CC
+BY 4.0)</copyright-statement>
+<copyright-year>1970</copyright-year>
+<copyright-holder>The article authors</copyright-holder>
+<license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/">
+<license-p>Authors of papers retain copyright and release the work under
+a Creative Commons Attribution 4.0 International License (CC BY
+4.0)</license-p>
+</license>
+</permissions>
+<kwd-group kwd-group-type="author">
+<kwd>Python</kwd>
+<kwd>Astronomy</kwd>
+<kwd>CAD</kwd>
+</kwd-group>
+</article-meta>
+</front>
+<body>
+<sec id="summary">
+  <title>Summary</title>
+  <p><monospace>RAIMAD</monospace>is a parametric 2D computer aided
+  design (CAD) program that is optimised for the creation of mask files
+  for on-chip astronomical instruments, such as spectrometers and
+  cameras.</p>
+  <p><monospace>RAIMAD</monospace>comes with a library of built-in
+  geometrical primitives, including rectangles, circles, and arcs. Users
+  can combine these primitives into individual components, such as
+  bandpass filters
+  (<xref alt="Pascual Laguna et al., 2021" rid="ref-alejandro" ref-type="bibr">Pascual
+  Laguna et al., 2021</xref>), waveguides, and kinetic inductance
+  detectors
+  (<xref alt="Day et al., 2003" rid="ref-mkids-day-actual" ref-type="bibr">Day
+  et al., 2003</xref>). These components can then be assembled into a
+  complete mask file for an astronomical instrument. This modular
+  approach allows for streamlined collaboration and enables reuse of
+  existing components among different instruments.</p>
+  <p><monospace>RAIMAD</monospace>designs can be exported as a
+  <monospace>.cif</monospace> (Caltech Intermediate Form) file
+  (<xref alt="Sproull &amp; Lyon, 1980" rid="ref-cif" ref-type="bibr">Sproull
+  &amp; Lyon, 1980</xref>), a format for storing mask files. Using these
+  files, a process engineer is able to transfer the design onto the
+  desired substrate using general lithography techniques.</p>
+  <p><monospace>RAIMAD</monospace>components are created using Python
+  (<xref alt="“Python: A dynamic, open source programming language,” 2025" rid="ref-python" ref-type="bibr">“<named-content content-type="nocase">Python:
+  A dynamic, open source programming language</named-content>,”
+  2025</xref>) code, which allows for both simplicity and flexibility.
+  <monospace>RAIMAD</monospace>itself is written in pure Python, making
+  it easy to use on all major desktop operating systems. In order to
+  allow users to share visual previews of their designs, a web-based
+  component directory called <monospace>RAIDEX</monospace>has been
+  developed. The name <monospace>RAIMAD</monospace> is a recursive
+  acronym that stands for
+  <monospace>RAIMAD Astronomical Instrument MAsk Designer</monospace>.</p>
+</sec>
+<sec id="statement-of-need">
+  <title>Statement of Need</title>
+  <p>The development of <monospace>RAIMAD</monospace>was initiated in
+  order to fulfill the needs in the TIFUUN (Terahertz Integral Field
+  Units with Unified Nanotechnology) project
+  (<xref alt="Endo, 2022" rid="ref-tifuun" ref-type="bibr">Endo,
+  2022</xref>;
+  <xref alt="Nishimura et al., 2025" rid="ref-nishimura" ref-type="bibr">Nishimura
+  et al., 2025</xref>), to quickly design integral field units (IFUs)
+  that are tailored to each astronomical science question as
+  open-hardware
+  (<xref alt="Shammah et al., 2024" rid="ref-openhardware" ref-type="bibr">Shammah
+  et al., 2024</xref>). Previously, a small number of integrated
+  superconducting spectrometer chips were designed for TIFUUN’s
+  precursor project, DESHIMA (Deep Spectroscopic High-redshift Mapper)
+  (<xref alt="Endo et al., 2019" rid="ref-deshima1" ref-type="bibr">Endo
+  et al., 2019</xref>;
+  <xref alt="Taniguchi et al., 2022" rid="ref-deshima2" ref-type="bibr">Taniguchi
+  et al., 2022</xref>), using an internally developed script. While that
+  script proved to be a capable solution for the task at hand, its
+  narrow scope and reliance on the end-of-life Python 2 made it
+  unsuitable for use in TIFUUN. <monospace>RAIMAD</monospace>aims to
+  build on the success of the script used in DESHIMA while also adhering
+  to standard Python practices, such as the PEP8 style guide and
+  relevant packaging conventions. Furthermore, the Ruff linter
+  (<xref alt="“Ruff: An extremely fast Python linter and code formatter, written in Rust.” 2025" rid="ref-ruff" ref-type="bibr">“<named-content content-type="nocase">Ruff:
+  An extremely fast Python linter and code formatter, written in
+  Rust.</named-content>” 2025</xref>) and MyPy static checker
+  (<xref alt="“MyPy: Optional static typing for Python,” 2025" rid="ref-mypy" ref-type="bibr">“<named-content content-type="nocase">MyPy:
+  Optional static typing for Python</named-content>,” 2025</xref>) are
+  employed to ensure code quality.</p>
+  <p><monospace>RAIMAD</monospace>aims to be useful to the broader
+  scientific community by enabling collaboration through its modular
+  approach to design. All <monospace>RAIMAD</monospace>components have a
+  uniform Python interface, which streamlines the process of
+  incorporating freely available components into a novel design.
+  Existing components can be discovered in <monospace>RAIDEX</monospace>
+  and installed trivially using <monospace>pip</monospace>, Python’s
+  standard package manager. This fosters an accessible environment with
+  a low barrier of entry.</p>
+</sec>
+<sec id="state-of-the-field">
+  <title>State of the field</title>
+  <p><monospace>RAIMAD</monospace>seeks to enrich the growing ecosystem
+  of analogue circuit CAD software by focusing on the specific niche of
+  on-chip astronomical instrumentation. To this end, it draws key design
+  inspirations from two existing programs with similar goals: Qiskit
+  Metal and KLayout.</p>
+  <p>Qiskit Metal is a software platform for quantum device design
+  (<xref alt="“Qiskit Metal | Quantum Device Design &amp; Analysis (q-EDA),” 2024" rid="ref-qiskit" ref-type="bibr">“Qiskit
+  Metal | Quantum Device Design &amp; Analysis (q-EDA),” 2024</xref>).
+  Conceptually, it shares many similarities with
+  <monospace>RAIMAD</monospace>, however its component library is geared
+  towards quantum computing. We determined that developing
+  <monospace>RAIMAD</monospace>from scratch would allow us more
+  flexibility in implementation compared to retrofitting Qiskit for our
+  specific use case.</p>
+  <p>KLayout is a mask file viewer and editor
+  (<xref alt="“KLayout Package Manager (Salt),” 2024" rid="ref-klay" ref-type="bibr">“KLayout
+  Package Manager (Salt),” 2024</xref>). One notable strength of its
+  Salt package manager is its support for a wide variety of package
+  formats, including Ruby macros, fonts, and binary extensions. In
+  <monospace>RAIMAD</monospace>, we instead decided to establish a
+  single uniform interface for all components in order to reduce
+  complexity.</p>
+</sec>
+<sec id="availability">
+  <title>Availability</title>
+  <p><monospace>RAIMAD</monospace>can be found on
+  <ext-link ext-link-type="uri" xlink:href="https://github.com/tifuun/raimad">GitHub</ext-link>
+  and is available for any platform that supports CPython, including
+  Linux, Mac OS, and Windows. Documentation, installation instructions,
+  and contributor guidelines can be found on the
+  <ext-link ext-link-type="uri" xlink:href="https://tifuun.github.io/raidoc/"><monospace>RAIDOC</monospace>site</ext-link>,
+  which also includes tutorials and sample code. Existing
+  <monospace>RAIMAD</monospace>components are tracked in
+  <ext-link ext-link-type="uri" xlink:href="https://tifuun.github.io/raidex/"><monospace>RAIDEX</monospace></ext-link>.</p>
+</sec>
+<sec id="acknowledgements">
+  <title>Acknowledgements</title>
+  <p>We would like to thank Christiaan Slieker, Dr. Ilke Ercan, and
+  Martine van der Laag-Hoogendijk of Delft University of Technology for
+  helping resolve administrative issues in the early stages of RAIMAD
+  development.</p>
+  <p>We would also like to thank the developers and maintainers of the
+  <monospace>typing-extensions</monospace> package
+  (<xref alt="“typing-extensions: Backported and Experimental Type Hints for Python 3.8+,” 2025" rid="ref-typeext" ref-type="bibr">“<named-content content-type="nocase">typing-extensions:
+  Backported and Experimental Type Hints for Python
+  3.8+</named-content>,” 2025</xref>), which is used in
+  <monospace>RAIMAD</monospace>to maintain compatibility with Python
+  3.10.</p>
+  <p>This work is supported by the European Union (ERC Consolidator
+  Grant No. 101043486 TIFUUN). Views and opinions expressed are however
+  those of the authors only and do not necessarily reflect those of the
+  European Union or the European Research Council Executive Agency.
+  Neither the European Union nor the granting authority can be held
+  responsible for them.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+  <title></title>
+  <ref id="ref-python">
+    <element-citation>
+      <article-title>Python: A dynamic, open source programming language</article-title>
+      <source>Python.org website</source>
+      <publisher-name>Python Software Foundation</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://www.python.org/</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-mypy">
+    <element-citation>
+      <article-title>MyPy: Optional static typing for Python</article-title>
+      <source>GitHub repository</source>
+      <publisher-name>GitHub</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://github.com/python/mypy</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-ruff">
+    <element-citation>
+      <article-title>Ruff: An extremely fast Python linter and code formatter, written in Rust.</article-title>
+      <source>GitHub repository</source>
+      <publisher-name>GitHub</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://github.com/astral-sh/ruff</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-typeext">
+    <element-citation>
+      <article-title>typing-extensions: Backported and Experimental Type Hints for Python 3.8+</article-title>
+      <source>GitHub repository</source>
+      <publisher-name>GitHub</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://github.com/python/typing_extensions</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-tifuun">
+    <element-citation>
+      <person-group person-group-type="author">
+        <name><surname>Endo</surname><given-names>Akira</given-names></name>
+      </person-group>
+      <article-title>Terahertz integral field unit with universal nanotechnology (TIFUUN)</article-title>
+      <year iso-8601-date="2022">2022</year>
+      <uri>https://cordis.europa.eu/project/id/101043486</uri>
+      <pub-id pub-id-type="doi">10.3030/101043486</pub-id>
+    </element-citation>
+  </ref>
+  <ref id="ref-alejandro">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Pascual Laguna</surname><given-names>Alejandro</given-names></name>
+        <name><surname>Karatsu</surname><given-names>Kenichi</given-names></name>
+        <name><surname>Thoen</surname><given-names>David</given-names></name>
+        <name><surname>Murugesan</surname><given-names>Vignesh</given-names></name>
+        <name><surname>Buijtendorp</surname><given-names>Bruno</given-names></name>
+        <name><surname>Endo</surname><given-names>Akira</given-names></name>
+        <name><surname>Baselmans</surname><given-names>Jochem</given-names></name>
+      </person-group>
+      <article-title>Terahertz band-pass filters for wideband superconducting on-chip filter-bank spectrometers</article-title>
+      <source>IEEE Transactions on Terahertz Science and Technology</source>
+      <publisher-name>Institute of Electrical; Electronics Engineers (IEEE)</publisher-name>
+      <year iso-8601-date="2021-11">2021</year><month>11</month>
+      <volume>11</volume>
+      <issue>6</issue>
+      <issn>2156-3446</issn>
+      <uri>http://dx.doi.org/10.1109/TTHZ.2021.3095429</uri>
+      <pub-id pub-id-type="doi">10.1109/tthz.2021.3095429</pub-id>
+      <fpage>635</fpage>
+      <lpage>646</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-nishimura">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Nishimura</surname><given-names>Yuri</given-names></name>
+        <name><surname>Dabironezare</surname><given-names>Shahab O.</given-names></name>
+        <name><surname>Marting</surname><given-names>Louis H.</given-names></name>
+        <name><surname>Moerman</surname><given-names>Arend</given-names></name>
+        <name><surname>Olde Scholtenhuis</surname><given-names>Leon G. G.</given-names></name>
+        <name><surname>Bakx</surname><given-names>Tom J. L. C.</given-names></name>
+        <name><surname>Baselmans</surname><given-names>Jochem J. A.</given-names></name>
+        <name><surname>Brandl</surname><given-names>Bernhard R.</given-names></name>
+        <name><surname>Calvo</surname><given-names>Martino</given-names></name>
+        <name><surname>Karatsu</surname><given-names>Kenichi</given-names></name>
+        <name><surname>Keijzer</surname><given-names>Nick de</given-names></name>
+        <name><surname>Huiting</surname><given-names>Robert</given-names></name>
+        <name><surname>Monfardini</surname><given-names>Alessandro</given-names></name>
+        <name><surname>Rybak</surname><given-names>Matus</given-names></name>
+        <name><surname>Simionescu</surname><given-names>Aurora</given-names></name>
+        <name><surname>Soshnin</surname><given-names>Nikita A.</given-names></name>
+        <name><surname>Steenvoorde</surname><given-names>Fenno</given-names></name>
+        <name><surname>Thoen</surname><given-names>David J.</given-names></name>
+        <name><surname>Tamura</surname><given-names>Yoichi</given-names></name>
+        <name><surname>Taniguchi</surname><given-names>Akio</given-names></name>
+        <name><surname>Vollebregt</surname><given-names>Sten</given-names></name>
+        <name><surname>Wang</surname><given-names>Lingyu</given-names></name>
+        <name><surname>Werf</surname><given-names>Paul P. van der</given-names></name>
+        <name><surname>Yates</surname><given-names>Stephen J. C.</given-names></name>
+        <name><surname>Kohno</surname><given-names>Kotaro</given-names></name>
+        <name><surname>Endo</surname><given-names>Akira</given-names></name>
+      </person-group>
+      <article-title>TIFUUN: THz Integral Field Unit with Universal Nanotechnology</article-title>
+      <source>To be presented at the Low Temperature Detectors Conference 2025</source>
+      <year iso-8601-date="2025">2025</year>
+    </element-citation>
+  </ref>
+  <ref id="ref-deshima1">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Endo</surname><given-names>Akira</given-names></name>
+        <name><surname>Karatsu</surname><given-names>Kenichi</given-names></name>
+        <name><surname>Laguna</surname><given-names>Alejandro Pascual</given-names></name>
+        <name><surname>Mirzaei</surname><given-names>Behnam</given-names></name>
+        <name><surname>Huiting</surname><given-names>Robert</given-names></name>
+        <name><surname>Thoen</surname><given-names>David J.</given-names></name>
+        <name><surname>Murugesan</surname><given-names>Vignesh</given-names></name>
+        <name><surname>Yates</surname><given-names>Stephen J. C.</given-names></name>
+        <name><surname>Bueno</surname><given-names>Juan</given-names></name>
+        <name><surname>Marrewijk</surname><given-names>Nuri van</given-names></name>
+        <name><surname>Bosma</surname><given-names>Sjoerd</given-names></name>
+        <name><surname>Yurduseven</surname><given-names>Ozan</given-names></name>
+        <name><surname>Llombart</surname><given-names>Nuria</given-names></name>
+        <name><surname>Suzuki</surname><given-names>Junya</given-names></name>
+        <name><surname>Naruse</surname><given-names>Masato</given-names></name>
+        <name><surname>Visser</surname><given-names>Pieter J. de</given-names></name>
+        <name><surname>Werf</surname><given-names>Paul P. van der</given-names></name>
+        <name><surname>Klapwijk</surname><given-names>Teun M.</given-names></name>
+        <name><surname>Baselmans</surname><given-names>Jochem J. A.</given-names></name>
+      </person-group>
+      <article-title>Wideband on-chip terahertz spectrometer based on a superconducting filterbank</article-title>
+      <source>Journal of Astronomical Telescopes, Instruments, and Systems</source>
+      <publisher-name>SPIE-Intl Soc Optical Eng</publisher-name>
+      <year iso-8601-date="2019-06">2019</year><month>06</month>
+      <volume>5</volume>
+      <issue>03</issue>
+      <issn>2329-4124</issn>
+      <uri>http://dx.doi.org/10.1117/1.JATIS.5.3.035004</uri>
+      <pub-id pub-id-type="doi">10.1117/1.jatis.5.3.035004</pub-id>
+      <fpage>1</fpage>
+      <lpage></lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-deshima2">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Taniguchi</surname><given-names>Akio</given-names></name>
+        <name><surname>Bakx</surname><given-names>Tom J. L. C.</given-names></name>
+        <name><surname>Baselmans</surname><given-names>Jochem J. A.</given-names></name>
+        <name><surname>Huiting</surname><given-names>Robert</given-names></name>
+        <name><surname>Karatsu</surname><given-names>Kenichi</given-names></name>
+        <name><surname>Llombart</surname><given-names>Nuria</given-names></name>
+        <name><surname>Rybak</surname><given-names>Matus</given-names></name>
+        <name><surname>Takekoshi</surname><given-names>Tatsuya</given-names></name>
+        <name><surname>Tamura</surname><given-names>Yoichi</given-names></name>
+        <name><surname>Akamatsu</surname><given-names>Hiroki</given-names></name>
+        <name><surname>Brackenhoff</surname><given-names>Stefanie</given-names></name>
+        <name><surname>Bueno</surname><given-names>Juan</given-names></name>
+        <name><surname>Buijtendorp</surname><given-names>Bruno T.</given-names></name>
+        <name><surname>Dabironezare</surname><given-names>Shahab O.</given-names></name>
+        <name><surname>Doing</surname><given-names>Anne-Kee</given-names></name>
+        <name><surname>Fujii</surname><given-names>Yasunori</given-names></name>
+        <name><surname>Fujita</surname><given-names>Kazuyuki</given-names></name>
+        <name><surname>Gouwerok</surname><given-names>Matthijs</given-names></name>
+        <name><surname>Hähnle</surname><given-names>Sebastian</given-names></name>
+        <name><surname>Ishida</surname><given-names>Tsuyoshi</given-names></name>
+        <name><surname>Ishii</surname><given-names>Shun</given-names></name>
+        <name><surname>Kawabe</surname><given-names>Ryohei</given-names></name>
+        <name><surname>Kitayama</surname><given-names>Tetsu</given-names></name>
+        <name><surname>Kohno</surname><given-names>Kotaro</given-names></name>
+        <name><surname>Kouchi</surname><given-names>Akira</given-names></name>
+        <name><surname>Maekawa</surname><given-names>Jun</given-names></name>
+        <name><surname>Matsuda</surname><given-names>Keiichi</given-names></name>
+        <name><surname>Murugesan</surname><given-names>Vignesh</given-names></name>
+        <name><surname>Nakatsubo</surname><given-names>Shunichi</given-names></name>
+        <name><surname>Oshima</surname><given-names>Tai</given-names></name>
+        <name><surname>Pascual Laguna</surname><given-names>Alejandro</given-names></name>
+        <name><surname>Thoen</surname><given-names>David J.</given-names></name>
+        <name><surname>Werf</surname><given-names>Paul P. van der</given-names></name>
+        <name><surname>Yates</surname><given-names>Stephen J. C.</given-names></name>
+        <name><surname>Endo</surname><given-names>Akira</given-names></name>
+      </person-group>
+      <article-title>DESHIMA 2.0: Development of an integrated superconducting spectrometer for science-grade astronomical observations</article-title>
+      <source>Journal of Low Temperature Physics</source>
+      <year iso-8601-date="2022-11-01">2022</year><month>11</month><day>01</day>
+      <volume>209</volume>
+      <issue>3</issue>
+      <issn>1573-7357</issn>
+      <uri>https://doi.org/10.1007/s10909-022-02888-5</uri>
+      <pub-id pub-id-type="doi">10.1007/s10909-022-02888-5</pub-id>
+      <fpage>278</fpage>
+      <lpage>286</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-cif">
+    <element-citation publication-type="report">
+      <person-group person-group-type="author">
+        <name><surname>Sproull</surname><given-names>Robert</given-names></name>
+        <name><surname>Lyon</surname><given-names>Richard</given-names></name>
+      </person-group>
+      <article-title>The caltech intermediate form for LSI layout description</article-title>
+      <publisher-name>California Institute of Technology, Computer Science Department, Silicon Structures Project</publisher-name>
+      <year iso-8601-date="1980-02">1980</year><month>02</month>
+    </element-citation>
+  </ref>
+  <ref id="ref-mkids-day-actual">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Day</surname><given-names>Peter K.</given-names></name>
+        <name><surname>LeDuc</surname><given-names>Henry G.</given-names></name>
+        <name><surname>Mazin</surname><given-names>Benjamin A.</given-names></name>
+        <name><surname>Vayonakis</surname><given-names>Anastasios</given-names></name>
+        <name><surname>Zmuidzinas</surname><given-names>Jonas</given-names></name>
+      </person-group>
+      <article-title>A broadband superconducting detector suitable for use in large arrays</article-title>
+      <source>Nature</source>
+      <year iso-8601-date="2003-10-01">2003</year><month>10</month><day>01</day>
+      <volume>425</volume>
+      <issue>6960</issue>
+      <issn>1476-4687</issn>
+      <uri>https://doi.org/10.1038/nature02037</uri>
+      <pub-id pub-id-type="doi">10.1038/nature02037</pub-id>
+      <fpage>817</fpage>
+      <lpage>821</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-qiskit">
+    <element-citation>
+      <article-title>Qiskit metal | quantum device design &amp; analysis (q-EDA)</article-title>
+      <source>Qiskit website</source>
+      <publisher-name>IBM</publisher-name>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://qiskit-community.github.io/qiskit-metal/</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-klay">
+    <element-citation>
+      <article-title>KLayout package manager (salt)</article-title>
+      <source>GitHub repository</source>
+      <publisher-name>GitHub</publisher-name>
+      <year iso-8601-date="2024">2024</year>
+      <uri>https://github.com/KLayout/klayout/wiki/KLayout-Package-Manager-(Salt)</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-openhardware">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Shammah</surname><given-names>Nathan</given-names></name>
+        <name><surname>Saha Roy</surname><given-names>Anurag</given-names></name>
+        <name><surname>Almudever</surname><given-names>Carmen G.</given-names></name>
+        <name><surname>Bourdeauducq</surname><given-names>Sébastien</given-names></name>
+        <name><surname>Butko</surname><given-names>Anastasiia</given-names></name>
+        <name><surname>Cancelo</surname><given-names>Gustavo</given-names></name>
+        <name><surname>Clark</surname><given-names>Susan M.</given-names></name>
+        <name><surname>Heinsoo</surname><given-names>Johannes</given-names></name>
+        <name><surname>Henriet</surname><given-names>Loïc</given-names></name>
+        <name><surname>Huang</surname><given-names>Gang</given-names></name>
+        <name><surname>Jurczak</surname><given-names>Christophe</given-names></name>
+        <name><surname>Kotilahti</surname><given-names>Janne</given-names></name>
+        <name><surname>Landra</surname><given-names>Alessandro</given-names></name>
+        <name><surname>LaRose</surname><given-names>Ryan</given-names></name>
+        <name><surname>Mari</surname><given-names>Andrea</given-names></name>
+        <name><surname>Nowrouzi</surname><given-names>Kasra</given-names></name>
+        <name><surname>Ockeloen-Korppi</surname><given-names>Caspar</given-names></name>
+        <name><surname>Prawiroatmodjo</surname><given-names>Guen</given-names></name>
+        <name><surname>Siddiqi</surname><given-names>Irfan</given-names></name>
+        <name><surname>Zeng</surname><given-names>William J.</given-names></name>
+      </person-group>
+      <article-title>Open hardware solutions in quantum technology</article-title>
+      <source>APL Quantum</source>
+      <year iso-8601-date="2024-03">2024</year><month>03</month>
+      <volume>1</volume>
+      <issue>1</issue>
+      <issn>2835-0103</issn>
+      <uri>https://doi.org/10.1063/5.0180987</uri>
+      <pub-id pub-id-type="doi">10.1063/5.0180987</pub-id>
+      <fpage>011501</fpage>
+      <lpage></lpage>
+    </element-citation>
+  </ref>
+</ref-list>
+</back>
+</article>

@@ -81,6 +81,7 @@ htmlcov
 ### Project-specific ###
 
 *.cif
+!archive/*.tar
 
 
 
