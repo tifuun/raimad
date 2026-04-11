@@ -230,9 +230,19 @@ and separation of concerns for the designer
 
 <!-- -----NEW------ REQUIRED SECTION!! -->
 # Research Impact Statement
-Some amazing people are doing amazing things with raimad.
-But I don't really know the details.
-Time to ask around!!
+
+I don't really know what to do here,
+since there is yet no published work done with raimad.
+Maybe we can ask Leon for a description of what this chip
+does (will do, once manufactured),
+include some pictures,
+and just say that this is done within the group?
+
+![
+Part of the T7011 chip designed in \raimad,
+rendered in KLayout [@klay]
+](img/t7011-closeup.png)
+
 
 <!-- -----NEW------ REQUIRED SECTION!! -->
 # AI usage disclosure
