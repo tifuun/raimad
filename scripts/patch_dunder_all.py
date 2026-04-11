@@ -1,9 +1,32 @@
 #!/usr/bin/env python3
+"""
+patch_dunder_all.py: rewrite `__all__` assignments to include all re-exports.
+
+There are multiple modules in RAIMAD that import other RAIMAD objects
+not to use them,
+but to make them available to users in a nicer syntax.
+For example,
+`src/raimad/__init__.py`
+contains the line
+`from raimad.compo import Compo`
+so that users can write
+`raimad.Compo`
+instead of
+`raimad.compo.Compo`.
+
+These re-exports must also be included in the `__all__` list
+in each of those files,
+otherwise MyPy and Ruff will complain.
+
+This script uses `ast` to scan all imports in these files
+and re-write the `__all__` assignments to include all of the imports.
+"""
 
 import ast
 from typing import Any
 
 class Visitor(ast.NodeVisitor):
+    """Visit every node and record object names if it is an import."""
 
     names: list[str]
     line_range: None | tuple[int, int]
@@ -14,6 +37,7 @@ class Visitor(ast.NodeVisitor):
         super().__init__(*args, **kwargs)
 
     def visit(self, node: ast.AST) -> None:
+        """Visit a single node and record object names if it is an import."""
         match node:
             case ast.ImportFrom() | ast.Import():
                 self.names.extend(
@@ -41,7 +65,8 @@ class Visitor(ast.NodeVisitor):
 
         super().generic_visit(node)
 
-def replace_all_assignments(filename: str) -> None:
+def patch_dunder_all(filename: str) -> None:
+    """Patch `__all__` in single file."""
     with open(filename, 'r') as f:
         lines = f.readlines()
     
@@ -69,7 +94,7 @@ def replace_all_assignments(filename: str) -> None:
     
 
 if __name__ == "__main__":
-    replace_all_assignments("src/raimad/err.py")
-    replace_all_assignments("src/raimad/__init__.py")
-    replace_all_assignments("src/raimad/cif/__init__.py")
+    patch_dunder_all("src/raimad/err.py")
+    patch_dunder_all("src/raimad/__init__.py")
+    patch_dunder_all("src/raimad/cif/__init__.py")
 
