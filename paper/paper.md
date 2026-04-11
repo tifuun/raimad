@@ -210,7 +210,7 @@ which will feature designs of a much higher complexity than DESHIMA.
 but in a repeating way i.e. lots of spaxels and filterbanks
 of similar structure???? -->
 
-The theme of "reasonability" is also mirrored in the "annotations"
+The theme of "reasonability" is also mirrored in the Annotations
 feature of \raimad's \compo{}s.
 Taking inspiration from Python's gradual typing system,
 \compo{}s may -- but are not required to -- have
@@ -222,7 +222,7 @@ be used for static checking of \compo{}s,
 much like Python's MyPy.
 Earlier versions of \raimad
 had mandatory \compo annotations.
-It was chosen to make them options
+It was chosen to make them optional
 in order to allow more flexibility (e.g. dynamic mark names)
 and separation of concerns for the designer
 (e.g. write code first, annotate later).
@@ -248,8 +248,7 @@ the exact versions cannot be ascertained.
 <!-- AI usage section description says versions of models
     need to be provided but we really can't say what versions
     because I just used the webui without logging in
-    TODO need to cite
-    the models in bib?? -->
+    -->
 All AI-generated code is marked as such using comments,
 and has been proofread and edited by the author
 to ensure correct functionality and consistency
