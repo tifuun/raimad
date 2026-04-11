@@ -129,7 +129,10 @@ class NoReuse:
         for _, this_subcompo in subcompos:
             yield from this_subcompo
 
-def _compo_to_cell_name(subcompo_name: str | int, subcompo: 'rai.typing.CompoLike') -> str:
+def _compo_to_cell_name(
+        subcompo_name: str | int,
+        subcompo: 'rai.typing.CompoLike',
+        ) -> str:
     if isinstance(subcompo_name, int):
         instance_name = f'{subcompo_name}-ANON'
     elif isinstance(subcompo_name, str):

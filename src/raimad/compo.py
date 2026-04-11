@@ -336,10 +336,11 @@ class Compo:
             point: Vec2
             ) -> Vec2S:
         """
-        Do nothing to `point` and return as-is.
-        TODO THAT IS NOT TRUE
+        Cast Vec2 to Vec2S.
 
         This method exists for uniformity with Proxy.transform_point.
+        It does not apply any transformation to the point,
+        but does cast it to Vec2s (tuple of two float | int).
 
         Parameters
         ----------

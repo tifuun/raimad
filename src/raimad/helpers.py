@@ -373,6 +373,7 @@ def distance_between(
 
 _IS_LNAME_VALID = re.compile(r'[A-Z0-9]{0,4}', re.ASCII)
 def is_lname_valid(name: str) -> bool:
+    """Check that a CIF layer name is valid according to the 1980 spec."""
     return bool(
         bool(name)
         and
@@ -387,6 +388,7 @@ def vec2s(a: float, b: float) -> Vec2S: ...
 def vec2s(a: Vec2) -> Vec2S: ...
 
 def vec2s(a: float | Vec2, b: float | None = None) -> Vec2S:
+    """Convert Vec2 to Vec2S."""
     if isinstance(a, float) and isinstance(b, float):
         return (float(a), float(b))
 

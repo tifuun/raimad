@@ -19,9 +19,7 @@ import raimad as rai
 from raimad.types import Vec2, Vec2S, PolyS, Num, NumS, Poly
 
 class EditingArgumentError(TypeError):
-    """
-    Invalid arguments are passed to "automatic" editing functions like *.move.
-    """
+    """Invalid arguments are passed to "automatic" functions like *.move."""
 
     def __init__(self) -> None:
         super().__init__("Invalid arguments passed to editing method.")
@@ -475,7 +473,7 @@ class Transform:
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
-        Scale width and height (two Nums) around pivot point (tuple)
+        Scale width and height (two Nums) around pivot point (tuple).
 
         Parameters
         ----------
@@ -514,7 +512,7 @@ class Transform:
             py: Num = 0,
             ) -> Self:
         """
-        Scale width and height (two Nums) around pivot point (two Nums)
+        Scale width and height (two Nums) around pivot point (two Nums).
 
         Parameters
         ----------
@@ -553,7 +551,7 @@ class Transform:
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
-        Scale width and height (tuple) around pivot point (tuple)
+        Scale width and height (tuple) around pivot point (tuple).
 
         Parameters
         ----------
@@ -589,7 +587,7 @@ class Transform:
             py: Num = 0,
             ) -> Self:
         """
-        Scale width and height (tuple) around pivot point (two Nums)
+        Scale width and height (tuple) around pivot point (two Nums).
 
         Parameters
         ----------
@@ -626,7 +624,7 @@ class Transform:
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
-        Scale both width and height by same factor around pivot (tuple)
+        Scale both width and height by same factor around pivot (tuple).
 
         Parameters
         ----------
@@ -660,7 +658,7 @@ class Transform:
             py: Num = 0,
             ) -> Self:
         """
-        Scale both width and height by same factor around pivot (two Nums)
+        Scale both width and height by same factor around pivot (two Nums).
 
         Parameters
         ----------

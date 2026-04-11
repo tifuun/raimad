@@ -101,11 +101,12 @@ from raimad.snowman import Snowman
 
 epsilon = sys.float_info.epsilon
 
-# The function of __all__ is to specify which things get imported
-# when someone does `from raimad import *`,
-# but it also lets tools like ruff and mypy know that we're
-# importing these things for the purpose of namespace flattening,
-# so they don't complain that these are "unused" imports
+# __all__ should contain all re-exported objects
+# (checked by mypy and ruff)
+# do not edit this definition manually;
+# use scripts/patch_dunder_all.py
+# to update automatically.
+
 __all__ = [
     "sys",
     "types",

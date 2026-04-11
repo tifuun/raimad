@@ -1,3 +1,5 @@
+"""lyp.py: RAIMAD support for KLayout's Layer Properties (.lyp) format."""
+
 from dataclasses import dataclass
 from typing import Mapping, TypeAlias, Iterator
 
@@ -5,6 +7,8 @@ import raimad as rai
 
 @dataclass
 class Properties:
+    """Individual layer properties."""
+
     expanded: bool | None = None
     frame_color: str | None = None
     fill_color: str | None = None
@@ -28,6 +32,7 @@ def export_lyp(
         lyp: LayerProperties,
         dest: rai.saveto.Destination = None,
         ) -> str:
+    """Save LayerProperties to path, file, or stream. Returns saved string."""
     return rai.saveto._saveto('\n'.join(_export_lyp(lyp)), dest)
 
 def _export_lyp(

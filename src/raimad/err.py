@@ -24,6 +24,12 @@ from raimad.string_import import StringImportError
 
 from raimad.transform import EditingArgumentError
 
+# __all__ should contain all re-exported objects
+# (checked by mypy and ruff)
+# do not edit this definition manually;
+# use scripts/patch_dunder_all.py
+# to update automatically.
+
 __all__ = [
     "InvalidSubcompoError",
     "CompoInsteadOfProxyAsSubcompoError",

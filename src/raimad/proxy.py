@@ -1336,7 +1336,7 @@ class Proxy:
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
-        Scale width and height (two floats) around pivot point (tuple)
+        Scale width and height (two floats) around pivot point (tuple).
 
         Parameters
         ----------
@@ -1364,7 +1364,7 @@ class Proxy:
             py: Num = 0,
             ) -> Self:
         """
-        Scale width and height (two floats) around pivot point (two floats)
+        Scale width and height (two floats) around pivot point (two floats).
 
         Parameters
         ----------
@@ -1391,7 +1391,7 @@ class Proxy:
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
-        Scale width and height (tuple) around pivot point (tuple)
+        Scale width and height (tuple) around pivot point (tuple).
 
         Parameters
         ----------
@@ -1416,7 +1416,7 @@ class Proxy:
             py: Num = 0,
             ) -> Self:
         """
-        Scale width and height (tuple) around pivot point (two Nums)
+        Scale width and height (tuple) around pivot point (two Nums).
 
         Parameters
         ----------
@@ -1442,7 +1442,7 @@ class Proxy:
             pivot: Vec2 = (0, 0),
             ) -> Self:
         """
-        Scale both width and height by same factor around pivot (tuple)
+        Scale both width and height by same factor around pivot (tuple).
 
         Parameters
         ----------
@@ -1467,7 +1467,7 @@ class Proxy:
             py: Num = 0,
             ) -> Self:
         """
-        Scale both width and height by same factor around pivot (two Nums)
+        Scale both width and height by same factor around pivot (two Nums).
 
         Parameters
         ----------

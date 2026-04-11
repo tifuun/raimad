@@ -63,6 +63,9 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
+#[tool.ruff.lint.per-file-ignores]
+#"proxy.py" = ["RULE_CODE"]
+
 [tool.mypy]
 strict = true
 

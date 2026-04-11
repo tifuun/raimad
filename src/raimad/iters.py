@@ -70,7 +70,12 @@ quintles = _make_alias('quintles', nonoverlap, 5)
 # Python does not (really) support recursive types
 # (see mypy-experiments/recursive_iterable.py).
 # Solution: The Great Pyramid of Iterable
-I: TypeAlias = Iterable
+#
+# Not a complete solution since it does not
+# support "asymmetric" nested iterables (like an unbalanced tree made
+# out of lists),
+# but like whatever, caller can just type:ignore it
+I: TypeAlias = Iterable  #  noqa:E741
 V = TypeVar("V")
 def flatten(
         iterable:

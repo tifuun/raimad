@@ -371,7 +371,7 @@ class BoundPoint():
             y: Num,
             ) -> 'rai.typing.Proxy':
         """
-        Scale width and height (two floats) with this boundpoint as pivot
+        Scale width and height (two floats) with this boundpoint as pivot.
 
         Parameters
         ----------
@@ -394,7 +394,7 @@ class BoundPoint():
             scale: Vec2,
             ) -> 'rai.typing.Proxy':
         """
-        Scale width and height (tuple) with this boundpoint as pivot
+        Scale width and height (tuple) with this boundpoint as pivot.
 
         Parameters
         ----------
@@ -415,7 +415,7 @@ class BoundPoint():
             factor: Num,
             ) -> 'rai.typing.Proxy':
         """
-        Scale width and height by same factor with this boundpoint as pivot
+        Scale width and height by same factor with this boundpoint as pivot.
 
         Parameters
         ----------

@@ -1,22 +1,44 @@
-from __future__ import annotations
-from typing import Protocol, runtime_checkable, Literal, TypeAlias, Tuple, Union, Callable
-from collections.abc import Sequence, Mapping
-from typing import SupportsFloat
+"""Fundamental types for RAIMAD.
 
-# "loose" types: for annotating inputs of functions that
-# can support many different types of objects, as
-# long as they fulfill some criteria.
+This module provides two flavours of types: strict, and loose.
+The strict types are what RAIMAD functions return: concrete numeric types
+like float/int, concrete containers like lists, tuples, and dicts, etc.
+The loose types are what (most) RAIMAD function take in as arguments:
+protocols, generic types, etc.
+These support a wide range of classes, such as numpy numeric types
+and arrays.
+
+We make this decision to allow users of RAIMAD to pass in weird things
+(e.g. numpy arrays) directly into RAIMAD functions,
+without losing any confidence in what RAIMAD will hand back to them.
+"""
+
+from __future__ import annotations
+from typing import (
+        Callable,
+        Literal,
+        Protocol,
+        SupportsFloat,
+        Tuple,
+        TypeAlias,
+        Union,
+        runtime_checkable,
+        )
+from collections.abc import Sequence, Mapping
 
 # `float | int` is equivalent to just `float`
 # for static mypy checking,
 # but isinstance checks against just `float`
 # will reject `int`, so we include both.
-# `Real` will also match numpy numeric types.
 Num: TypeAlias = float | int | SupportsFloat
 
 @runtime_checkable
 class Vec2(Protocol):
-    def __getitem__(self, i: Literal[0, 1]) -> Num: ...
+    """Protocol for a vector of 2 numbers, x and y."""
+
+    def __getitem__(self, i: Literal[0, 1]) -> Num:
+        """Get either X (index 0) or Y (index 1) coordinate."""
+        ...
 
 Poly: TypeAlias = Sequence[Vec2]
 Polys: TypeAlias = Sequence[Poly]
@@ -58,19 +80,6 @@ types_strict: set[TypeAlias] = {
         GeomsS,
         Mat3S,
     }
-
-#@runtime_checkable
-#class Vec2Attr(Protocol):
-#    x: Real
-#    y: Real
-#
-#Vec2 = Vec2Idx | Vec2Attr
-#@runtime_checkable
-#class Vec2(Vec2Idx, Vec2Attr, Protocol):
-#    """Either indexable at 0/1 or has .x/.y attributes."""
-#    # No extra methods; this is a structural union-ish protocol
-#    ...
-
 
 
 LNameTransformer: TypeAlias = Union[
