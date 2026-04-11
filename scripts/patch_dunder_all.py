@@ -19,7 +19,7 @@ class Visitor(ast.NodeVisitor):
                 self.names.extend(
                     # rpartition strips the `foo.bar.`
                     # out of `import foo.bar.baz` lines
-                    alias.name.rpartition(".")[-1]
+                    (alias.asname or alias.name).rpartition(".")[-1]
                     for alias in node.names
                     )
 
