@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
 import ast
+from typing import Any
 
 class Visitor(ast.NodeVisitor):
-    def __init__(self, *args, **kwargs):
+
+    names: list[str]
+    line_range: None | tuple[int, int]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.line_range = None
         self.names = []
         super().__init__(*args, **kwargs)
 
-    def visit(self, node):
+    def visit(self, node: ast.AST) -> None:
         match node:
             case ast.ImportFrom() | ast.Import():
                 self.names.extend(
@@ -24,6 +29,11 @@ class Visitor(ast.NodeVisitor):
                         ],
                     value=ast.List(),
                     ):
+
+                # ...end line can be None according to mypy???
+                # Panic if this is the case.
+                assert node.end_lineno is not None
+
                 self.line_range = (node.lineno - 1, node.end_lineno)
 
                 # assume the __all__ asignment is last meaningful line in file.
@@ -31,7 +41,7 @@ class Visitor(ast.NodeVisitor):
 
         super().generic_visit(node)
 
-def replace_all_assignments(filename):
+def replace_all_assignments(filename: str) -> None:
     with open(filename, 'r') as f:
         lines = f.readlines()
     

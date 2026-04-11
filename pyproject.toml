@@ -63,9 +63,17 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
-
 [tool.mypy]
 strict = true
+
+# Files/dirs to check. Note: we do not check benchmarks
+files = [
+	"src",
+	"tests",
+	"scripts",
+]
+
+# Exclude specific files
 exclude = [
 	'tests/test_cif_noreuse.py',  # TODO cift type hints!
 	'tests/test_cif_layer_names.py',  # TODO cift type hints!

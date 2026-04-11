@@ -40,7 +40,6 @@
 *.so
 
 # Python
-*.dmypy.json*
 __pycache__/
 *.py[cod]
 *$py.class
@@ -82,8 +81,10 @@ htmlcov
 ### Project-specific ###
 
 *.cif
-*.lyp
-test.py
+!archive/*.tar
+paper/jats
+!paper/img/*.png
+
 
 
 
