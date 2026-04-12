@@ -87,6 +87,176 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             #    print(layer_name)
             #    self.assertTrue(rai.is_lname_valid(layer_name))
 
+    def test_error_untransformable_lname(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = (
+                rai.cif.lname_transformers.root,
+                rai.cif.lname_transformers.noop,
+                )
+
+            def _make(self):
+                self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo())
+
+    def test_custom_transformer(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = (
+                {
+                    'baz': 'BAZ',
+                    },
+                {
+                    'foo': 'FOO',
+                    },
+                lambda name: 'BAR' if name == 'bar' else None,
+                rai.cif.lname_transformers.root,
+                rai.cif.lname_transformers.noop,
+                )
+
+            def _make(self):
+                self.geoms.update({
+                    'foo': [[(0, 0), (0, 1), (1, 1)]],
+                    'bar': [[(0, 0), (0, 1), (1, 1)]],
+                    'baz': [[(0, 0), (0, 1), (1, 1)]],
+                    'root': [[(0, 0), (0, 1), (1, 1)]],  # caught by root
+                    'HAHA': [[(0, 0), (0, 1), (1, 1)]],  # caught by noop
+                    })
+
+        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'FOO', 'BAR', 'BAZ', 'ROOT', 'HAHA'})
+
+    def test_invalid_transformer(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [{
+                'foo': 'invalid lol'
+                }]
+
+            def _make(self):
+                self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
+
+        with self.assertRaises(rai.err.InvalidLayerNameTransformerOutput):
+            rai.export_cif(Foo())
+
+    ### test root ###
+
+    def test_transformer_root(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.root,
+                ]
+
+            def _make(self):
+                self.geoms.update({'root': [[(0, 0), (0, 1), (1, 1)]]})
+
+        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'ROOT'})
+
+    def test_transformer_root_neg(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.root,
+                ]
+
+            def _make(self):
+                self.geoms.update({'rooooot': [[(0, 0), (0, 1), (1, 1)]]})
+
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo())
+
+    ### test noop ###
+
+    def test_transformer_noop(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.noop,
+                ]
+
+            def _make(self):
+                self.geoms.update({
+                    'NOOP': [[(0, 0), (0, 1), (1, 1)]],
+                    '1234': [[(0, 0), (0, 1), (1, 1)]],
+                    '00AA': [[(0, 0), (0, 1), (1, 1)]],
+                    })
+
+        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'NOOP', '1234', '00AA'})
+
+    def test_transformer_noop_neg(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.noop,
+                ]
+
+            def _make(self):
+                self.geoms.update({
+                    'NOOP': [[(0, 0), (0, 1), (1, 1)]],
+                    '12345': [[(0, 0), (0, 1), (1, 1)]],
+                    '00AA': [[(0, 0), (0, 1), (1, 1)]],
+                    })
+
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo())
+
+    ### test capitalise ###
+
+    def test_transformer_capitalise(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.capitalise,
+                ]
+
+            def _make(self):
+                self.geoms.update({
+                    'oooo': [[(0, 0), (0, 1), (1, 1)]],
+                    '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                    'aBcD': [[(0, 0), (0, 1), (1, 1)]],
+                    })
+
+        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'OOOO', '12AB', 'ABCD'})
+
+    def test_transformer_capitalise_neg(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.capitalise,
+                ]
+
+            def _make(self):
+                self.geoms.update({'toolong': [[(0, 0), (0, 1), (1, 1)]]})
+
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo())
+
+    ### test enumerator ###
+
+    def test_transformer_enumerator(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.Enumerator(),
+                ]
+
+            def _make(self):
+                self.geoms.update({
+                    'oooo': [[(0, 0), (0, 1), (1, 1)]],
+                    '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                    'aBcD': [[(0, 0), (0, 1), (1, 1)]],
+                    })
+
+        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'0001', '0002', '0003'})
+
+
     #def test_warn_layer_names(self):
     #    """
     #    Test emmission of warning for cif-incompatible layer names.

@@ -24,6 +24,9 @@ from raimad.string_import import StringImportError
 
 from raimad.transform import EditingArgumentError
 
+from raimad.cif.lname_transformers import InvalidLayerNameTransformerOutput
+from raimad.cif.lname_transformers import UntransformableLayerName
+
 # __all__ should contain all re-exported objects
 # (checked by mypy and ruff)
 # do not edit this definition manually;

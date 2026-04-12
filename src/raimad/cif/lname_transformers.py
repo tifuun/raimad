@@ -25,6 +25,12 @@ layer transformer and try again.
 
 import raimad as rai
 
+class UntransformableLayerName(ValueError):
+    """RAIMAD layer name could not be transformed to CIF layer name"""
+
+class InvalidLayerNameTransformerOutput(ValueError):
+    """Layer name transformer did not return a valid CIF layer name"""
+
 def root(name: str) -> str | None:
     """
     Layer name transformer: replace `root` with `ROOT`.
@@ -62,7 +68,7 @@ class Enumerator:
     """
     Lname transformer that simply counts layers.
 
-    This lname transformer will produce layer names starting from `0`
+    This lname transformer will produce layer names starting from `0001`
     and counting upwards.
     """
 
@@ -89,5 +95,5 @@ class Enumerator:
 
         # TODO how does this play with layer order?? Annotations??
 
-        return str(layer_index)
+        return f'{layer_index:04d}'
 

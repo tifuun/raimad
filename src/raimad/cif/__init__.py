@@ -1,6 +1,6 @@
 """Namespace flattening for `rai.cif` module."""
-from .noreuse import NoReuse
 from . import lname_transformers
+from .noreuse import NoReuse
 
 # __all__ should contain all re-exported objects
 # (checked by mypy and ruff)

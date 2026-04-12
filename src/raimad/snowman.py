@@ -6,11 +6,11 @@ class Snowman(rai.Compo):
     """A sample component."""
 
     browser_tags = ["builtin", "example"]
-    _experimental_cif_lname_transformer = {
+    _experimental_extra_lname_transformers = [{
         'snow': 'SNOW',
         'carrot': 'CROT',
         'pebble': 'PEBL',
-        }
+        }]
 
     class Marks:
         nose = rai.Mark("Tip of the snowman's nose")
