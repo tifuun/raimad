@@ -6,15 +6,13 @@ from warnings import warn
 import raimad as rai
 from raimad.types import LNameTransformers
 from raimad.cif.lname_transformers import (
+    Enumerator,
+    InvalidLayerNameTransformerCallable,
     InvalidLayerNameTransformerOutput,
     UntransformableLayerName,
-    root,
-    noop
-    )
-
-DEFAULT_LNAME_TRANSFORMERS = (
-    root,
+    capitalise,
     noop,
+    root,
     )
 
 class NoReuse:
@@ -31,18 +29,45 @@ class NoReuse:
         self.multiplier = multiplier
 
         self.enable_cell_names = True  # TODO param
-        self.lname_transformers = (
-            getattr(compo, '_experimental_lname_transformers', None)
-            or
-            (
-                *(
-                    compo._experimental_extra_lname_transformers
-                    if hasattr(compo, '_experimental_extra_lname_transformers')
-                    else []
-                    ),
-                *DEFAULT_LNAME_TRANSFORMERS,
+
+        # TODO DOCUMENT THE LAMBDA THING SOMEWHERE!!
+        if hasattr(compo, '_experimental_lname_transformers'):
+            if hasattr(compo._experimental_lname_transformers, '__call__'):
+                self.lname_transformers = (
+                    compo._experimental_lname_transformers()
+                    )
+            else:
+                self.lname_transformers = (
+                    compo._experimental_lname_transformers
+                    )
+        else:
+            if hasattr(compo, '_experimental_extra_lname_transformers'):
+                if hasattr(
+                        compo._experimental_extra_lname_transformers,
+                        '__call__'
+                        ):
+                    extras = compo._experimental_extra_lname_transformers()
+                else:
+                    extras = compo._experimental_extra_lname_transformers
+            else:
+                extras = []
+
+            self.lname_transformers = (
+                *extras,
+                root,
+                noop,
+                capitalise,
+                Enumerator(
+                    warning=(
+                        "RAIMAD Layer name `{name}` converted to numeric CIF "
+                        "name `{result}.` For custom CIF layer names, specify "
+                        "a layer name transformer. To silence this warning "
+                        "while keeping the behavior, specify the "
+                        "rai.cif.lname_transformers.Enumerator() transformer "
+                        "manually. "
+                        )
+                    )
                 )
-            )
             
 
         self.cif_string = self._export_cif()
@@ -167,8 +192,15 @@ def _transform_lname(lname_transformers: LNameTransformers, name: str) -> str:
             except KeyError:
                 transformed = None
 
+        #elif isinstance(transformer, rai.types.LNameTransformerCallable):
         elif hasattr(transformer, '__call__'):
-            transformed = transformer(name)
+            try:
+                transformed = transformer(name)
+            # TODO custom err type?
+            except TypeError as err:
+                raise InvalidLayerNameTransformerCallable(
+                    "Could not call lname transformer {transformer}."
+                    ) from err
 
         if transformed is not None:
             if not rai.is_lname_valid(transformed):

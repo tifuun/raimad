@@ -23,13 +23,20 @@ In that case, the CIF exporter will move on to the next
 layer transformer and try again.
 """
 
+from warnings import warn
 import raimad as rai
 
+class CIFLayerNameWarning(UserWarning):
+    """Warning for automatic numeric layer names."""
+
 class UntransformableLayerName(ValueError):
-    """RAIMAD layer name could not be transformed to CIF layer name"""
+    """RAIMAD layer name could not be transformed to CIF layer name."""
 
 class InvalidLayerNameTransformerOutput(ValueError):
-    """Layer name transformer did not return a valid CIF layer name"""
+    """Layer name transformer did not return a valid CIF layer name."""
+
+class InvalidLayerNameTransformerCallable(TypeError):
+    """Invalid layer name transformer callable (e.g. doesn't take one arg)."""
 
 def root(name: str) -> str | None:
     """
@@ -74,8 +81,9 @@ class Enumerator:
 
     layer_indices: dict[str, int]
 
-    def __init__(self) -> None:
+    def __init__(self, warning: str | None = None) -> None:
         self.layer_indices = {}
+        self.warning = warning
 
     def __call__(self, name: str) -> str | None:
         """Convert RAIMAD layer name to CIF layer name via enumeration."""
@@ -95,5 +103,14 @@ class Enumerator:
 
         # TODO how does this play with layer order?? Annotations??
 
-        return f'{layer_index:04d}'
+        result = f'{layer_index:04d}'
+
+        if self.warning is not None:
+            warn(
+                self.warning.format(name=name, result=result),
+                CIFLayerNameWarning,
+                )
+
+        return result
+
 

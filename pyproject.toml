@@ -105,3 +105,10 @@ strict = false
 module = 'tests.utils'
 disable_error_code = ["attr-defined"]
 
+# The nested annotation classes inside compo class system
+# just doesn't work with raimad
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.test_compoclass_annots'
+disable_error_code = ["misc", "no-untyped-def"]
+

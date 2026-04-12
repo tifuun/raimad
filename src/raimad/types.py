@@ -82,9 +82,11 @@ types_strict: set[TypeAlias] = {
     }
 
 
+LNameTransformerCallable: TypeAlias = Callable[[str], str | None]
 LNameTransformer: TypeAlias = Union[
-        Callable[[str], str | None],
+        LNameTransformerCallable,
         Mapping[str, str | None]
         ]
 LNameTransformers: TypeAlias = Sequence[LNameTransformer]
+LNameTransformersLambda: TypeAlias = Callable[[], LNameTransformers]
 

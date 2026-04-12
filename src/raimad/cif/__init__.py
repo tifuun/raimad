@@ -9,6 +9,6 @@ from .noreuse import NoReuse
 # to update automatically.
 
 __all__ = [
-    "NoReuse",
     "lname_transformers",
+    "NoReuse",
     ]

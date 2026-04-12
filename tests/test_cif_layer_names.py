@@ -11,13 +11,7 @@ import cift as cf
 
 from .utils import AssertDoesntWarn
 
-def get_cif_layers(
-        compo_class,
-        grammar=cf.grammar.strict,
-        exporter_args=None
-        ):
-    #instance = compo_class()
-
+def autoinit(compo_class):
     # This incantation instantiates a compo with its
     # browser_default options.
     # TODO would be nice to break it out into a separate helper.
@@ -27,6 +21,14 @@ def get_cif_layers(
         for option in compo_class.Options.values()
         if option.browser_default is not rai.Empty
         })
+
+    return instance
+
+def get_cif_layers(
+        instance,
+        grammar=cf.grammar.strict,
+        exporter_args=None
+        ):
 
     exporter = rai.cif.NoReuse(
             instance,
@@ -72,7 +74,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
         for compo in builtin_compos:
 
             with self.assertDoesntWarn():
-                layers = get_cif_layers(compo)
+                layers = get_cif_layers(autoinit(compo))
 
             self.assertTrue(len(layers) > 0)
 
@@ -125,7 +127,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                     'HAHA': [[(0, 0), (0, 1), (1, 1)]],  # caught by noop
                     })
 
-        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
         self.assertEqual(layers, {'FOO', 'BAR', 'BAZ', 'ROOT', 'HAHA'})
 
     def test_invalid_transformer(self):
@@ -153,7 +155,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             def _make(self):
                 self.geoms.update({'root': [[(0, 0), (0, 1), (1, 1)]]})
 
-        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
         self.assertEqual(layers, {'ROOT'})
 
     def test_transformer_root_neg(self):
@@ -185,7 +187,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                     '00AA': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
-        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
         self.assertEqual(layers, {'NOOP', '1234', '00AA'})
 
     def test_transformer_noop_neg(self):
@@ -221,7 +223,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                     'aBcD': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
-        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
         self.assertEqual(layers, {'OOOO', '12AB', 'ABCD'})
 
     def test_transformer_capitalise_neg(self):
@@ -253,8 +255,90 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                     'aBcD': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
-        layers = get_cif_layers(Foo, cf.grammar.lenient_layers)
+        layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
         self.assertEqual(layers, {'0001', '0002', '0003'})
+
+    def test_enumerator_state_not_persistent(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = lambda _: [
+                rai.cif.lname_transformers.Enumerator(),
+                ]
+
+            def _make(self, alternative: bool = False):
+                if alternative:
+                    self.geoms.update({
+                        'alt': [[(0, 0), (0, 1), (1, 1)]],
+                        'alt2': [[(0, 0), (0, 1), (1, 1)]],
+                        })
+                else:
+                    self.geoms.update({
+                        'oooo': [[(0, 0), (0, 1), (1, 1)]],
+                        '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                        'aBcD': [[(0, 0), (0, 1), (1, 1)]],
+                        })
+
+        foo1 = Foo(alternative=False)
+        foo2 = Foo(alternative=True)
+
+        layers1 = get_cif_layers(foo1, cf.grammar.lenient_layers)
+        self.assertEqual(layers1, {'0001', '0002', '0003'})
+        del layers1
+
+        layers2 = get_cif_layers(foo2, cf.grammar.lenient_layers)
+        self.assertEqual(layers2, {'0001', '0002'})
+        del layers2
+
+    def test_enumerator_state_persistent(self):
+        my_persistent_enumerator = rai.cif.lname_transformers.Enumerator()
+
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                my_persistent_enumerator,
+                ]
+
+            def _make(self, alternative: bool = False):
+                if alternative:
+                    self.geoms.update({
+                        'alt': [[(0, 0), (0, 1), (1, 1)]],
+                        'alt2': [[(0, 0), (0, 1), (1, 1)]],
+                        })
+                else:
+                    self.geoms.update({
+                        'oooo': [[(0, 0), (0, 1), (1, 1)]],
+                        '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                        'aBcD': [[(0, 0), (0, 1), (1, 1)]],
+                        })
+
+        foo1 = Foo(alternative=False)
+        foo2 = Foo(alternative=True)
+
+        layers1 = get_cif_layers(foo1, cf.grammar.lenient_layers)
+        self.assertEqual(layers1, {'0001', '0002', '0003'})
+        del layers1
+
+        layers2 = get_cif_layers(foo2, cf.grammar.lenient_layers)
+        self.assertEqual(layers2, {'0004', '0005'})
+        del layers2
+
+
+    def test_default_lname_transformers(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.geoms.update({
+                    'root': [[(0, 0), (0, 1), (1, 1)]],  # caught by root
+                    'VLID': [[(0, 0), (0, 1), (1, 1)]],  # caught by noop
+                    '12ab': [[(0, 0), (0, 1), (1, 1)]],  # caught by capitalise
+                    'invalid': [[(0, 0), (0, 1), (1, 1)]],
+                    # ^ caught by enumerator
+                    'otherone': [[(0, 0), (0, 1), (1, 1)]],
+                    # ^ caught by enumerator
+                    })
+
+        with self.assertWarns(rai.err.CIFLayerNameWarning):
+            layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'ROOT', 'VLID', '12AB', '0001', '0002'})
 
 
     #def test_warn_layer_names(self):

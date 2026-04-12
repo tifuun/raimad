@@ -26,6 +26,8 @@ from raimad.transform import EditingArgumentError
 
 from raimad.cif.lname_transformers import InvalidLayerNameTransformerOutput
 from raimad.cif.lname_transformers import UntransformableLayerName
+from raimad.cif.lname_transformers import CIFLayerNameWarning
+from raimad.cif.lname_transformers import InvalidLayerNameTransformerCallable
 
 # __all__ should contain all re-exported objects
 # (checked by mypy and ruff)
@@ -52,5 +54,9 @@ __all__ = [
     "InvalidDestinationError",
     "StringImportError",
     "EditingArgumentError",
+    "InvalidLayerNameTransformerOutput",
+    "UntransformableLayerName",
+    "CIFLayerNameWarning",
+    "InvalidLayerNameTransformerCallable",
     ]
 
