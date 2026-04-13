@@ -12,6 +12,7 @@ from copy import copy
 
 import raimad as rai
 from raimad.types import Vec2, Vec2S, GeomsS, Num
+from raimad.compo import InvalidLayerNameError
 
 class LMap:
     """
@@ -43,6 +44,25 @@ class LMap:
 
     def __init__(self, shorthand: 'rai.typing.LMapShorthand') -> None:
         self.shorthand = shorthand
+
+        if isinstance(self.shorthand, str):
+            if not self.shorthand.isidentifier():
+                raise InvalidLayerNameError(
+                    f"`{self.shorthand}`: not a valid RAIMAD layer name. "
+                    "All RAIMAD layer names must be valid Python identifiers."
+                    )
+
+        if isinstance(self.shorthand, dict):
+            for name in self.shorthand.values():
+                if name is None:
+                    continue
+
+                if not name.isidentifier():
+                    raise InvalidLayerNameError(
+                        f"`{name}`: not a valid RAIMAD layer name. "
+                        "All RAIMAD layer names must be valid "
+                        "Python identifiers."
+                        )
 
     def __getitem__(self, name: str) -> str | None:
         """Given a child layer, return the parent layer."""

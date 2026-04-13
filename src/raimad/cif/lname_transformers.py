@@ -32,7 +32,7 @@ class CIFLayerNameWarning(UserWarning):
 class UntransformableLayerName(ValueError):
     """RAIMAD layer name could not be transformed to CIF layer name."""
 
-class InvalidLayerNameTransformerOutput(ValueError):
+class InvalidLayerNameTransformerOutput(UserWarning):
     """Layer name transformer did not return a valid CIF layer name."""
 
 class InvalidLayerNameTransformerCallable(TypeError):
@@ -112,5 +112,14 @@ class Enumerator:
                 )
 
         return result
+
+def klayout(name: str) -> str | None:
+    """
+    Prefix layer name with an uppercase `L`.
+
+    This will produce CIF layer names that are recognized
+    by KLayout, even if not necessarily conformant with the CIF spec.
+    """
+    return f'L{name}'
 
 

@@ -140,8 +140,30 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             def _make(self):
                 self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
 
-        with self.assertRaises(rai.err.InvalidLayerNameTransformerOutput):
+        with self.assertWarns(rai.err.InvalidLayerNameTransformerOutput):
             rai.export_cif(Foo())
+
+    ### test klayout ###
+
+    def test_transformer_klayout(self):
+        class Foo(rai.Compo):
+
+            _experimental_lname_transformers = [
+                rai.cif.lname_transformers.klayout,
+                ]
+
+            def _make(self):
+                self.geoms.update({
+                    'foo': [[(0, 0), (0, 1), (1, 1)]],
+                    'root': [[(0, 0), (0, 1), (1, 1)]],
+                    'foo_BAR': [[(0, 0), (0, 1), (1, 1)]],
+                    })
+
+        with self.assertWarns(rai.err.InvalidLayerNameTransformerOutput):
+            layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
+        self.assertEqual(layers, {'Lfoo', 'Lroot', 'Lfoo_BAR'})
+
+        #rai.export_cif(Foo(), 'Foo.cif')
 
     ### test root ###
 
@@ -183,12 +205,12 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             def _make(self):
                 self.geoms.update({
                     'NOOP': [[(0, 0), (0, 1), (1, 1)]],
-                    '1234': [[(0, 0), (0, 1), (1, 1)]],
-                    '00AA': [[(0, 0), (0, 1), (1, 1)]],
+                    'A234': [[(0, 0), (0, 1), (1, 1)]],
+                    'A00A': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
         layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
-        self.assertEqual(layers, {'NOOP', '1234', '00AA'})
+        self.assertEqual(layers, {'NOOP', 'A234', 'A00A'})
 
     def test_transformer_noop_neg(self):
         class Foo(rai.Compo):
@@ -200,8 +222,8 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             def _make(self):
                 self.geoms.update({
                     'NOOP': [[(0, 0), (0, 1), (1, 1)]],
-                    '12345': [[(0, 0), (0, 1), (1, 1)]],
-                    '00AA': [[(0, 0), (0, 1), (1, 1)]],
+                    'A2345': [[(0, 0), (0, 1), (1, 1)]],
+                    'AA00': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
         with self.assertRaises(rai.err.UntransformableLayerName):
@@ -219,12 +241,12 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             def _make(self):
                 self.geoms.update({
                     'oooo': [[(0, 0), (0, 1), (1, 1)]],
-                    '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                    'ab12': [[(0, 0), (0, 1), (1, 1)]],
                     'aBcD': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
         layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
-        self.assertEqual(layers, {'OOOO', '12AB', 'ABCD'})
+        self.assertEqual(layers, {'OOOO', 'AB12', 'ABCD'})
 
     def test_transformer_capitalise_neg(self):
         class Foo(rai.Compo):
@@ -251,7 +273,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
             def _make(self):
                 self.geoms.update({
                     'oooo': [[(0, 0), (0, 1), (1, 1)]],
-                    '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                    'ab12': [[(0, 0), (0, 1), (1, 1)]],
                     'aBcD': [[(0, 0), (0, 1), (1, 1)]],
                     })
 
@@ -274,7 +296,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                 else:
                     self.geoms.update({
                         'oooo': [[(0, 0), (0, 1), (1, 1)]],
-                        '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                        'ab12': [[(0, 0), (0, 1), (1, 1)]],
                         'aBcD': [[(0, 0), (0, 1), (1, 1)]],
                         })
 
@@ -307,7 +329,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                 else:
                     self.geoms.update({
                         'oooo': [[(0, 0), (0, 1), (1, 1)]],
-                        '12ab': [[(0, 0), (0, 1), (1, 1)]],
+                        'ab12': [[(0, 0), (0, 1), (1, 1)]],
                         'aBcD': [[(0, 0), (0, 1), (1, 1)]],
                         })
 
@@ -329,7 +351,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
                 self.geoms.update({
                     'root': [[(0, 0), (0, 1), (1, 1)]],  # caught by root
                     'VLID': [[(0, 0), (0, 1), (1, 1)]],  # caught by noop
-                    '12ab': [[(0, 0), (0, 1), (1, 1)]],  # caught by capitalise
+                    'ab12': [[(0, 0), (0, 1), (1, 1)]],  # caught by capitalise
                     'invalid': [[(0, 0), (0, 1), (1, 1)]],
                     # ^ caught by enumerator
                     'otherone': [[(0, 0), (0, 1), (1, 1)]],
@@ -338,7 +360,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
 
         with self.assertWarns(rai.err.CIFLayerNameWarning):
             layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
-        self.assertEqual(layers, {'ROOT', 'VLID', '12AB', '0001', '0002'})
+        self.assertEqual(layers, {'ROOT', 'VLID', 'AB12', '0001', '0002'})
 
 
     #def test_warn_layer_names(self):

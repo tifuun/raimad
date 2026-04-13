@@ -47,6 +47,9 @@ class CopyCompoError(ProxyCompoConfusionError):
     be copying a proxy pointing to the compo instead.
     """
 
+class InvalidLayerNameError(ValueError):
+    """Error for making invalid layer names."""
+
 
 T = TypeVar('T')
 class ProxyableDictList(rai.DictList[T]):
@@ -166,6 +169,13 @@ class Compo:
         self.marks = MarksContainer()
 
         self._make(*args, **kwargs)
+
+        for layer in self.geoms.keys():
+            if not layer.isidentifier():
+                raise InvalidLayerNameError(
+                    f"`{layer}`: not a valid RAIMAD layer name. "
+                    "All RAIMAD layer names must be valid Python identifiers."
+                    )
 
     def _make(self, *args: Any, **kwargs: Any) -> None:
         """

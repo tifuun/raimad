@@ -5,6 +5,7 @@ from raimad.compo import CompoInsteadOfProxyAsSubcompoError
 from raimad.compo import TransformCompoError
 from raimad.compo import CopyCompoError
 from raimad.compo import ProxyCompoConfusionError
+from raimad.compo import InvalidLayerNameError
 
 from raimad.ansec import AnSecError
 from raimad.ansec import AnSecRadiusError
@@ -41,6 +42,7 @@ __all__ = [
     "TransformCompoError",
     "CopyCompoError",
     "ProxyCompoConfusionError",
+    "InvalidLayerNameError",
     "AnSecError",
     "AnSecRadiusError",
     "AnSecRadiusTooManyArgumentsError",

@@ -139,6 +139,35 @@ class TestCompo(unittest.TestCase):
             )
         self.assertEqual(str(compo), repr(compo))
 
+    def test_invalid_layer_name_geoms(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.geoms.update({
+                    'in-valid': [[(0, 0), (1, 0), (0, 1)]]
+                    })
+
+        with self.assertRaises(rai.err.InvalidLayerNameError):
+            foo = Foo()
+
+    def test_invalid_layer_name_lmap_str(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = rai.RectLW(4, 4).proxy().map('in-valid')
+
+        with self.assertRaises(rai.err.InvalidLayerNameError):
+            foo = Foo()
+
+    def test_invalid_layer_name_lmap_dict(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = rai.RectLW(4, 4).proxy().map({
+                    'root': 'in-valid'
+                    })
+
+        with self.assertRaises(rai.err.InvalidLayerNameError):
+            foo = Foo()
+
+
     #def test_fail_copy_compo(self):
     #    """
     #    Test that trying to copy a compo

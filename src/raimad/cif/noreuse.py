@@ -197,7 +197,6 @@ def _transform_lname(lname_transformers: LNameTransformers, name: str) -> str:
         elif hasattr(transformer, '__call__'):
             try:
                 transformed = transformer(name)
-            # TODO custom err type?
             except TypeError as err:
                 raise InvalidLayerNameTransformerCallable(
                     "Could not call lname transformer {transformer}."
@@ -205,10 +204,14 @@ def _transform_lname(lname_transformers: LNameTransformers, name: str) -> str:
 
         if transformed is not None:
             if not rai.is_lname_valid(transformed):
-                raise InvalidLayerNameTransformerOutput(
-                    f"Layer name `{name}` was transformed to `transformed` "
+                warn(
+                    f"Layer name `{name}` was transformed to `{transformed}` "
                     f"by transformer `{transformer}`, which is not a valid "
-                    f"CIF layer name. Fix your layer name transformer!"
+                    f"CIF layer name. "
+                    f"The produced file may not be compatible with "
+                    f"all CIF viewers!!"
+                    ,
+                    InvalidLayerNameTransformerOutput
                     )
             break
 
