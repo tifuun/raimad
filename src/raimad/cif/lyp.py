@@ -1,6 +1,6 @@
 """lyp.py: RAIMAD support for KLayout's Layer Properties (.lyp) format."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Mapping, TypeAlias, Iterator, Sequence
 from warnings import warn
 
@@ -14,9 +14,9 @@ class DitherPattern:
     Lines of the pattern are given as a seuqnce of strings (no newline char).
     Order number is not specified; it is computed automatically during export.
     """
+
     lines: Sequence[str]
     name: str
-    #order
 
 @dataclass
 class Properties:

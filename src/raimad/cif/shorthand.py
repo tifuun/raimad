@@ -89,6 +89,12 @@ def export_lyp(
         *args: Any,
         **kwargs: Any,
         ) -> str:
+    """
+    Export component layer properties.
+
+    This function is identical to raimad.export_cif,
+    but with rai.cif.lyp.LypExporter as the default exporter.
+    """
 
     exporter_instance = (
             (exporter or rai.cif.lyp.LypExporter)
