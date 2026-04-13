@@ -84,6 +84,7 @@ htmlcov
 !archive/*.tar
 paper/jats
 !paper/img/*.png
+*.lyp
 
 
 

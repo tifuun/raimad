@@ -82,4 +82,19 @@ def export_cif(
 
     return rai.saveto._saveto(cif_string, dest)
 
+def export_lyp(
+        compo: 'rai.typing.CompoLike',
+        dest: rai.saveto.Destination = None,
+        exporter: type[ExporterProto] | None = None,
+        *args: Any,
+        **kwargs: Any,
+        ) -> str:
+
+    exporter_instance = (
+            (exporter or rai.cif.lyp.LypExporter)
+            (compo, *args, **kwargs)
+            )
+    # TODO names
+    return rai.saveto._saveto(exporter_instance.cif_string, dest)
+
 

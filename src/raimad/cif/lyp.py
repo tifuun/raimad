@@ -1,20 +1,44 @@
 """lyp.py: RAIMAD support for KLayout's Layer Properties (.lyp) format."""
 
-from dataclasses import dataclass
-from typing import Mapping, TypeAlias, Iterator
+from dataclasses import dataclass, field
+from typing import Mapping, TypeAlias, Iterator, Sequence
+from warnings import warn
 
 import raimad as rai
 
+@dataclass(frozen=True)
+class DitherPattern:
+    """
+    Custom dither pattern.
+
+    Lines of the pattern are given as a seuqnce of strings (no newline char).
+    Order number is not specified; it is computed automatically during export.
+    """
+    lines: Sequence[str]
+    name: str
+    #order
+
 @dataclass
 class Properties:
-    """Individual layer properties."""
+    """
+    Individual layer properties.
+
+    All fields are the same as in the lyp xml file,
+    with two exceptions:
+    1. there is not `name` field. A `Properties` object
+        is associated with a layer name using a dict.
+    2. The `dither_pattern` field is not an index,
+        but a `DitherPattern` object.
+        Indices are computed automatically.
+    """
 
     expanded: bool | None = None
     frame_color: str | None = None
     fill_color: str | None = None
     frame_brightness: int | None = None
     fill_brightness: int | None = None
-    dither_pattern: str | None = None
+    #dither_pattern: str | None = None
+    dither_pattern: DitherPattern | None = None
     line_style: str | None = None
     valid: bool | None = None
     visible: bool | None = None
@@ -28,18 +52,78 @@ class Properties:
 
 LayerProperties: TypeAlias = Mapping[str, Properties]
 
-def export_lyp(
+class LypExporter:
+    """Lyp exporter adhering to the exporter protocol."""
+
+    def __init__(
+            self,
+            compo: 'rai.typing.CompoLike',
+            ) -> None:
+        
+        if hasattr(compo, '_experimental_lyp'):
+            self.cif_string = export_properties(compo._experimental_lyp)
+        else:
+            self.cif_string = ''
+
+def export_properties(
         lyp: LayerProperties,
         dest: rai.saveto.Destination = None,
         ) -> str:
     """Save LayerProperties to path, file, or stream. Returns saved string."""
-    return rai.saveto._saveto('\n'.join(_export_lyp(lyp)), dest)
+    return rai.saveto._saveto('\n'.join(_export_properties(lyp)), dest)
 
-def _export_lyp(
+def _export_properties(
         lyp: LayerProperties,
         ) -> Iterator[str]:
     yield '<?xml version="1.0" encoding="utf-8"?>'
     yield '<layer-properties>'
+
+    patterns = _extract_dither_patterns(lyp)
+
+    for pattern, order in patterns.items():
+        yield '<custom-dither-pattern>'
+
+        yield '<pattern>'
+
+        if pattern.lines:
+            pattern_width = len(pattern.lines[0])
+
+            if pattern_width not in {8, 16, 32}:
+                # TODO test warnings
+                warn(
+                    "Pattern width is not 8, 16, or 32.",
+                    UserWarning
+                    )
+
+            for line in pattern.lines:
+                yield f'<line>{line}</line>'
+
+                if len(line) != pattern_width:
+                    warn(
+                        "Irregular pattern width.",
+                        UserWarning
+                        )
+
+                if set(line) > {'.', '*'}:
+                    warn(
+                        "Pattern line contains characters "
+                        "other than `.` and `*`."
+                        ,
+                        UserWarning
+                        )
+        else:
+            warn(
+                "Pattern with no lines...?",
+                UserWarning
+                )
+
+
+        yield '</pattern>'
+
+        yield f'<order>{order}</order>'
+        yield f'<name>{pattern.name}</name>'
+
+        yield '</custom-dither-pattern>'
 
     for source, layer in lyp.items():
 
@@ -70,7 +154,8 @@ def _export_lyp(
             yield f'<fill-brightness>{layer.fill_brightness}</fill-brightness>'
 
         if layer.dither_pattern is not None:
-            yield f'<dither-pattern>{layer.dither_pattern}</dither-pattern>'
+            pattern_idx = patterns[layer.dither_pattern]
+            yield f'<dither-pattern>C{pattern_idx}</dither-pattern>'
 
         if layer.line_style is not None:
             yield f'<line-style>{layer.line_style}</line-style>'
@@ -104,6 +189,16 @@ def _export_lyp(
     yield '<name/>'
     yield '</layer-properties>'
 
+def _extract_dither_patterns(
+        lyp: LayerProperties
+        ) -> Mapping[DitherPattern, int]:
+    patterns: dict[DitherPattern, int] = {}
+    idx = 0
+    for layer in lyp.values():
+        if layer.dither_pattern is not None:
+            patterns[layer.dither_pattern] = idx
+        idx += 1
+    return patterns
 
 
 

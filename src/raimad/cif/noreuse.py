@@ -31,6 +31,7 @@ class NoReuse:
         self.enable_cell_names = True  # TODO param
 
         # TODO DOCUMENT THE LAMBDA THING SOMEWHERE!!
+        # TODO propagate these properties thru proxy??
         if hasattr(compo, '_experimental_lname_transformers'):
             if hasattr(compo._experimental_lname_transformers, '__call__'):
                 self.lname_transformers = (

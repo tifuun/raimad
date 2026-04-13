@@ -79,11 +79,11 @@ from raimad import typing as t
 
 from raimad import cif
 from raimad.cif.shorthand import export_cif
+from raimad.cif.shorthand import export_lyp
 from raimad.svg import export_svg
 from raimad.show import show
 from raimad import err
 
-from raimad.cif.lyp import export_lyp
 from raimad.cif import lyp
 
 from raimad.fortune import fortune

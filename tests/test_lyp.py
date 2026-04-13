@@ -4,6 +4,145 @@ from io import StringIO
 
 import raimad
 
+SNOWMAN_LYP="""\
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<custom-dither-pattern>
+<pattern>
+<line>................................</line>
+<line>...................*............</line>
+<line>.........*......................</line>
+<line>..................*.............</line>
+<line>......*.........................</line>
+<line>...................**...........</line>
+<line>...........*....................</line>
+<line>....................*...........</line>
+<line>...*............................</line>
+<line>......................*.........</line>
+<line>..................*.............</line>
+<line>....................*...........</line>
+<line>........*.......................</line>
+<line>....................*...........</line>
+<line>..............*.................</line>
+<line>...................*............</line>
+<line>......................*.........</line>
+<line>..................*.............</line>
+<line>....................*...........</line>
+<line>...................*............</line>
+<line>....*...........................</line>
+<line>..................**............</line>
+<line>..................**............</line>
+<line>..................***...........</line>
+<line>.............*****..............</line>
+<line>..........***********...........</line>
+<line>.......****************.........</line>
+<line>.....********************.......</line>
+<line>...**********************.......</line>
+<line>..************************......</line>
+<line>.****************************...</line>
+<line>******************************..</line>
+</pattern>
+<order>0</order>
+<name>snow</name>
+</custom-dither-pattern>
+<custom-dither-pattern>
+<pattern>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>...............***..............</line>
+<line>..............*****.............</line>
+<line>..............*****.............</line>
+<line>...............***..............</line>
+<line>................*...............</line>
+<line>................*...............</line>
+<line>................**..............</line>
+<line>...............****.............</line>
+<line>..............******............</line>
+<line>.............*******............</line>
+<line>............********............</line>
+<line>............*********...........</line>
+<line>...........**********...........</line>
+<line>..........***********...........</line>
+<line>..........************..........</line>
+<line>........**************..........</line>
+<line>.......***************..........</line>
+<line>.......****************.........</line>
+<line>......*****************.........</line>
+<line>.....******************.........</line>
+<line>.....*******************........</line>
+<line>.....********************.......</line>
+<line>......********************......</line>
+<line>.......*******************......</line>
+<line>........******************......</line>
+<line>.........****************.......</line>
+<line>..........***************.......</line>
+<line>...........*************........</line>
+<line>............***********.........</line>
+<line>.............*********..........</line>
+</pattern>
+<order>1</order>
+<name>carrot</name>
+</custom-dither-pattern>
+<custom-dither-pattern>
+<pattern>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>..............*****.............</line>
+<line>.............*******............</line>
+<line>............*********...........</line>
+<line>............*********...........</line>
+<line>.............*******............</line>
+<line>..............*****.............</line>
+<line>................................</line>
+<line>..........******................</line>
+<line>.........********...............</line>
+<line>........**********..............</line>
+<line>........***********.............</line>
+<line>.........**********.............</line>
+<line>..........*******...............</line>
+<line>.............****...............</line>
+<line>................................</line>
+<line>..............******............</line>
+<line>.............********...........</line>
+<line>............*********...........</line>
+<line>............**********..........</line>
+<line>.............********...........</line>
+<line>..............******............</line>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+<line>................................</line>
+</pattern>
+<order>2</order>
+<name>pebble</name>
+</custom-dither-pattern>
+<properties>
+<source>SNOW</source>
+<frame-color>#444444</frame-color>
+<fill-color>#eeeeee</fill-color>
+<dither-pattern>C0</dither-pattern>
+</properties>
+<properties>
+<source>CROT</source>
+<frame-color>#444444</frame-color>
+<fill-color>#ff8800</fill-color>
+<dither-pattern>C1</dither-pattern>
+</properties>
+<properties>
+<source>PEBL</source>
+<frame-color>#aaaaaa</frame-color>
+<fill-color>#444444</fill-color>
+<dither-pattern>C2</dither-pattern>
+</properties>
+<name/>
+</layer-properties>"""
+
 class TestLYP(XmlComparisonMixin, unittest.TestCase):
     #def test_lyp_dict(self):
     #    self.assertXmlEqual(
@@ -31,7 +170,7 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
 
     def test_lyp_dataclass(self):
         self.assertXmlEqual(
-            raimad.export_lyp({
+            raimad.cif.lyp.export_properties({
                 'FOO': raimad.lyp.Properties(
                     name='bar',
                     frame_color='#ff00ff'
@@ -63,7 +202,7 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
         stream = StringIO()
 
         self.assertXmlEqual(
-            raimad.export_lyp({
+            raimad.cif.lyp.export_properties({
                 'FOO': raimad.lyp.Properties(
                     name='bar',
                     frame_color='#ff00ff'
@@ -91,4 +230,14 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
                 )
             )
 
+    def test_lyp_exporter(self):
+        self.assertXmlEqual(
+            raimad.export_lyp(raimad.Snowman()),
+            SNOWMAN_LYP
+            )
 
+#if __name__ == '__main__':
+#    snowman = raimad.Snowman()
+#    raimad.export_cif(snowman, 'Snowman.cif')
+#    raimad.export_lyp(snowman, 'Snowman.lyp')
+#
