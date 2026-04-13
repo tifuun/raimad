@@ -14,88 +14,28 @@ from raimad.cif.lname_transformers import (
     noop,
     root,
     )
+from raimad.saveto import SavetoDest
 
-class NoReuse:
-    """CIF Exporter that doesn't reuse subroutines."""
+def noreuse(
+        compo: 'rai.typing.CompoLike',
+        dest: SavetoDest = None,
+        *,
+        multiplier: float = 1e2,
+        enable_cell_names: bool = False,
+        ) -> str:
 
-    def __init__(
-            self,
-            compo: 'rai.typing.CompoLike',
-            multiplier: float = 1e2,
-            ) -> None:
-
-        self.compo = compo
-        self.rout_num = 1
-        self.multiplier = multiplier
-
-        self.enable_cell_names = True  # TODO param
-
-        # TODO DOCUMENT THE LAMBDA THING SOMEWHERE!!
-        if hasattr(compo, '_experimental_lname_transformers'):
-            if hasattr(compo._experimental_lname_transformers, '__call__'):
-                self.lname_transformers = (
-                    compo._experimental_lname_transformers()
-                    )
-            else:
-                self.lname_transformers = (
-                    compo._experimental_lname_transformers
-                    )
-        else:
-            if hasattr(compo, '_experimental_extra_lname_transformers'):
-                if hasattr(
-                        compo._experimental_extra_lname_transformers,
-                        '__call__'
-                        ):
-                    extras = compo._experimental_extra_lname_transformers()
-                else:
-                    extras = compo._experimental_extra_lname_transformers
-            else:
-                extras = []
-
-            self.lname_transformers = (
-                *extras,
-                root,
-                noop,
-                capitalise,
-                Enumerator(
-                    warning=(
-                        "RAIMAD Layer name `{name}` converted to numeric CIF "
-                        "name `{result}.` For custom CIF layer names, specify "
-                        "a layer name transformer. To silence this warning "
-                        "while keeping the behavior, specify the "
-                        "rai.cif.lname_transformers.Enumerator() transformer "
-                        "manually. "
-                        )
-                    )
-                )
-            
-
-        self.cif_string = self._export_cif()
-
-    def _export_cif(self) -> str:
-        return ''.join(self._yield_cif())
-
-    def _yield_cif(self) -> Iterator[str]:
-        """Yield lines of cif file."""
-        first_rout = self.rout_num
-        yield from self.yield_cif_bare(
-            self.compo,
-            cell_name=type(self.compo.final()).__name__
-            )
-        yield f'C {first_rout};\n'
-        yield 'E'
-
-    def yield_cif_bare(
-            self,
+    def _yield_cif_bare(
             compo: 'rai.typing.CompoLike',
             cell_name: str | None,
             ) -> Iterator[str]:
         """Yield lines of CIF of a particular component, without calling it."""
 
-        # Opening line, define the routine
-        yield f'DS {self.rout_num} 1 1;\n'
+        nonlocal rout_num
 
-        if self.enable_cell_names:
+        # Opening line, define the routine
+        yield f'DS {rout_num} 1 1;\n'
+
+        if enable_cell_names:
 
             if cell_name:
                 yield f'9 {cell_name};\n'
@@ -114,8 +54,8 @@ class NoReuse:
             # TODO what are the bounds on layer names?
             # no spaces it seems, but what else?
 
-        # advance to next routine number
-        self.rout_num += 1
+        # Advance to next routine number
+        rout_num += 1
 
         # Export all geometries
         for layer, geom in compo.geoms.items():
@@ -126,7 +66,7 @@ class NoReuse:
                 continue
 
             transformed_layer = _transform_lname(
-                self.lname_transformers,
+                lname_transformers,
                 layer
                 )
 
@@ -135,8 +75,8 @@ class NoReuse:
                 yield '\tP '
                 for point in poly:
                     yield (
-                        f'{int(point[0] * self.multiplier)} '
-                        f'{int(point[1] * self.multiplier)} '
+                        f'{int(point[0] * multiplier)} '
+                        f'{int(point[1] * multiplier)} '
                         )
                 yield ';\n'
 
@@ -150,12 +90,12 @@ class NoReuse:
         for subcompo_name, subcompo in compo.subcompos.items():
 
             subcompos.append((
-                self.rout_num,
-                list(self.yield_cif_bare(
+                rout_num,
+                list(_yield_cif_bare(
                     subcompo,
                     cell_name=
                         _compo_to_cell_name(subcompo_name, subcompo)
-                        if self.enable_cell_names
+                        if enable_cell_names
                         else None
                     ))
                 ))
@@ -168,6 +108,66 @@ class NoReuse:
         # Define those procedures
         for _, this_subcompo in subcompos:
             yield from this_subcompo
+
+    def _yield_cif() -> Iterator[str]:
+        """Yield lines of cif file."""
+
+        first_rout = rout_num
+
+        yield from _yield_cif_bare(
+            compo=compo,
+            cell_name=type(compo.final()).__name__
+            )
+        yield f'C {first_rout};\n'
+        yield 'E'
+
+    lname_transformers = _compute_lname_transformers(compo)
+
+    rout_num = 1
+    cif_string = ''.join(_yield_cif())
+
+    return rai.saveto._saveto(cif_string, dest)
+
+def _compute_lname_transformers(compo):
+    # TODO DOCUMENT THE LAMBDA THING SOMEWHERE!!
+    # TODO defaults in compo class!!
+    if hasattr(compo, '_experimental_lname_transformers'):
+        if hasattr(compo._experimental_lname_transformers, '__call__'):
+            return (
+                compo._experimental_lname_transformers()
+                )
+        else:
+            return (
+                compo._experimental_lname_transformers
+                )
+    else:
+        if hasattr(compo, '_experimental_extra_lname_transformers'):
+            if hasattr(
+                    compo._experimental_extra_lname_transformers,
+                    '__call__'
+                    ):
+                extras = compo._experimental_extra_lname_transformers()
+            else:
+                extras = compo._experimental_extra_lname_transformers
+        else:
+            extras = []
+
+        return (
+            *extras,
+            root,
+            noop,
+            capitalise,
+            Enumerator(
+                warning=(
+                    "RAIMAD Layer name `{name}` converted to numeric CIF "
+                    "name `{result}.` For custom CIF layer names, specify "
+                    "a layer name transformer. To silence this warning "
+                    "while keeping the behavior, specify the "
+                    "rai.cif.lname_transformers.Enumerator() transformer "
+                    "manually. "
+                    )
+                )
+            )
 
 def _compo_to_cell_name(
         subcompo_name: str | int,
@@ -221,4 +221,13 @@ def _transform_lname(lname_transformers: LNameTransformers, name: str) -> str:
 
     return transformed
 
+
+class NoReuse():
+    """For backwards compat."""
+    def __init__(
+            self,
+            compo: 'rai.typing.CompoLike',
+            multiplier: float = 1e2,
+            ) -> None:
+        self.cif_string = noreuse(compo, dest, multiplier=multiplier)
 

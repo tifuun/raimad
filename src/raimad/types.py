@@ -25,6 +25,8 @@ from typing import (
         runtime_checkable,
         )
 from collections.abc import Sequence, Mapping
+from pathlib import Path
+from typing import TextIO
 
 # `float | int` is equivalent to just `float`
 # for static mypy checking,
@@ -89,4 +91,6 @@ LNameTransformer: TypeAlias = Union[
         ]
 LNameTransformers: TypeAlias = Sequence[LNameTransformer]
 LNameTransformersLambda: TypeAlias = Callable[[], LNameTransformers]
+
+SavetoDest: TypeAlias = str | Path | TextIO | None
 

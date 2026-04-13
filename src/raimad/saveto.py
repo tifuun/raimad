@@ -3,6 +3,7 @@
 from typing import TypeAlias
 from pathlib import Path
 from typing import TextIO
+from raimad.types import SavetoDest
 
 class InvalidDestinationError(ValueError):
     """Error raised by `_saveto` helper when `dest` is set incorrectly."""
@@ -11,9 +12,7 @@ class InvalidDestinationError(ValueError):
 # this a public method for now because many possible usecases
 # not handled (e.g. bytes)
 
-Destination: TypeAlias = str | Path | TextIO | None
-
-def _saveto(string: str, dest: Destination = None) -> str:
+def _saveto(string: str, dest: SavetoDest = None) -> str:
     if dest is None:
         pass
     elif isinstance(dest, (str, Path)):

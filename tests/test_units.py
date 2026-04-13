@@ -15,7 +15,7 @@ class TestUnits(unittest.TestCase):
             def _make(self):
                 self.geoms.update({'root': [[(0, 0), (1, 1), (1, 0)]]})
 
-        exporter = rai.cif.NoReuse(Box())
+        exporter = rai.cif.noreuse(Box())
         cifstring = exporter.cif_string
         #print(cifstring)
         layers = cf.parse(cifstring)
@@ -33,7 +33,7 @@ class TestUnits(unittest.TestCase):
             def _make(self):
                 self.geoms.update({'root': [[(0, 0), (1, 1), (1, 0)]]})
 
-        exporter = rai.cif.NoReuse(Box(), multiplier=420)
+        exporter = rai.cif.noreuse(Box(), multiplier=420)
         cifstring = exporter.cif_string
         layers = cf.parse(cifstring)
 

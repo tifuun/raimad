@@ -30,7 +30,7 @@ LayerProperties: TypeAlias = Mapping[str, Properties]
 
 def export_lyp(
         lyp: LayerProperties,
-        dest: rai.saveto.Destination = None,
+        dest: rai.types.SavetoDest = None,
         ) -> str:
     """Save LayerProperties to path, file, or stream. Returns saved string."""
     return rai.saveto._saveto('\n'.join(_export_lyp(lyp)), dest)
