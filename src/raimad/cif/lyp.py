@@ -3,11 +3,101 @@
 from dataclasses import dataclass
 from typing import Mapping, TypeAlias, Iterator, Sequence
 from warnings import warn
+import re
 
 import raimad as rai
 
 @dataclass(frozen=True)
-class DitherPattern:
+class BuiltinDitherPattern:
+    """
+    KLayout-builtin dither pattern.
+
+    Currently this is just a wrapper for an `str` like `l0`, `l1`, `l2`, etc.
+    Definitions of klayout builtin dither patterns:
+
+    https://github.com/KLayout/klayout/
+    src/laybasic/laybasic/layDitherPattern.cc
+    """
+
+    def __init__(self, ref: str) -> None:
+        object.__setattr__(self, 'ref', ref)  # weird syntax because frozen
+        match = re.fullmatch(r'I(\d+)', self.ref)
+
+        if not match:
+            warn(
+                f"{self.ref}: not a valid klayout builtin dither "
+                "pattern reference."
+                ,
+                UserWarning
+                )
+            return
+
+
+        number = int(match.groups()[0])
+        if number > 46:
+            warn(
+                f"{self.ref}: KLayout only has 47 "
+                "builtin dither patterns (starting with `0`)."
+                ,
+                UserWarning
+                )
+
+
+    ref: str
+
+builtin = rai.DictList({
+    'solid': BuiltinDitherPattern('I0'),
+    'hollow': BuiltinDitherPattern('I1'),
+    'dotted': BuiltinDitherPattern('I2'),
+    'coarsely dotted': BuiltinDitherPattern('I3'),
+    'left-hatched': BuiltinDitherPattern('I4'),
+    'lightly left-hatched': BuiltinDitherPattern('I5'),
+    'strongly left-hatched dense': BuiltinDitherPattern('I6'),
+    'strongly left-hatched sparse': BuiltinDitherPattern('I7'),
+    'right-hatched': BuiltinDitherPattern('I8'),
+    'lightly right-hatched': BuiltinDitherPattern('I9'),
+    'strongly right-hatched dense': BuiltinDitherPattern('I10'),
+    'strongly right-hatched sparse': BuiltinDitherPattern('I11'),
+    'cross-hatched': BuiltinDitherPattern('I12'),
+    'lightly cross-hatched': BuiltinDitherPattern('I13'),
+    'checkerboard 2px': BuiltinDitherPattern('I14'),
+    'strongly cross-hatched sparse': BuiltinDitherPattern('I15'),
+    'heavy checkerboard': BuiltinDitherPattern('I16'),
+    'hollow bubbles': BuiltinDitherPattern('I17'),
+    'solid bubbles': BuiltinDitherPattern('I18'),
+    'pyramids': BuiltinDitherPattern('I19'),
+    'turned pyramids': BuiltinDitherPattern('I20'),
+    'plus': BuiltinDitherPattern('I21'),
+    'minus': BuiltinDitherPattern('I22'),
+    '22.5 degree down': BuiltinDitherPattern('I23'),
+    '22.5 degree up': BuiltinDitherPattern('I24'),
+    '67.5 degree down': BuiltinDitherPattern('I25'),
+    '67.5 degree up': BuiltinDitherPattern('I26'),
+    '22.5 cross hatched': BuiltinDitherPattern('I27'),
+    'zig zag': BuiltinDitherPattern('I28'),
+    'sine ': BuiltinDitherPattern('I29'),
+    'special pattern for light heavy dithering': BuiltinDitherPattern('I30'),
+    'special pattern for light frame dithering': BuiltinDitherPattern('I31'),
+    'vertical dense': BuiltinDitherPattern('I32'),
+    'vertical ': BuiltinDitherPattern('I33'),
+    'vertical thick': BuiltinDitherPattern('I34'),
+    'vertical sparse': BuiltinDitherPattern('I35'),
+    'vertical sparse, thick': BuiltinDitherPattern('I36'),
+    'horizontal dense': BuiltinDitherPattern('I37'),
+    'horizontal ': BuiltinDitherPattern('I38'),
+    'horizontal thick': BuiltinDitherPattern('I39'),
+    'horizontal ': BuiltinDitherPattern('I40'),
+    'horizontal ': BuiltinDitherPattern('I41'),
+    'grid dense': BuiltinDitherPattern('I42'),
+    'grid ': BuiltinDitherPattern('I43'),
+    'grid thick': BuiltinDitherPattern('I44'),
+    'grid sparse': BuiltinDitherPattern('I45'),
+    'grid sparse, thick': BuiltinDitherPattern('I46'),
+}, copy=False)
+
+
+@dataclass(frozen=True)
+class CustomDitherPattern:
     """
     Custom dither pattern.
 
@@ -38,7 +128,7 @@ class Properties:
     frame_brightness: int | None = None
     fill_brightness: int | None = None
     #dither_pattern: str | None = None
-    dither_pattern: DitherPattern | None = None
+    dither_pattern: CustomDitherPattern | BuiltinDitherPattern | None = None
     line_style: str | None = None
     valid: bool | None = None
     visible: bool | None = None
@@ -81,6 +171,10 @@ def _export_properties(
     patterns = _extract_dither_patterns(lyp)
 
     for pattern, order in patterns.items():
+
+        if not isinstance(pattern, CustomDitherPattern):
+            continue
+
         yield '<custom-dither-pattern>'
 
         yield '<pattern>'
@@ -154,8 +248,17 @@ def _export_properties(
             yield f'<fill-brightness>{layer.fill_brightness}</fill-brightness>'
 
         if layer.dither_pattern is not None:
-            pattern_idx = patterns[layer.dither_pattern]
-            yield f'<dither-pattern>C{pattern_idx}</dither-pattern>'
+            if isinstance(layer.dither_pattern, CustomDitherPattern):
+                pattern_idx = patterns[layer.dither_pattern]
+                yield f'<dither-pattern>C{pattern_idx}</dither-pattern>'
+            elif isinstance(layer.dither_pattern, BuiltinDitherPattern):
+                yield (
+                    '<dither-pattern>'
+                    f'{layer.dither_pattern.ref}'
+                    '</dither-pattern>'
+                    )
+            else:
+                assert False
 
         if layer.line_style is not None:
             yield f'<line-style>{layer.line_style}</line-style>'
@@ -191,13 +294,16 @@ def _export_properties(
 
 def _extract_dither_patterns(
         lyp: LayerProperties
-        ) -> Mapping[DitherPattern, int]:
-    patterns: dict[DitherPattern, int] = {}
+        ) -> Mapping[CustomDitherPattern, int]:
+    patterns: dict[CustomDitherPattern, int] = {}
     idx = 0
     for layer in lyp.values():
-        if layer.dither_pattern is not None:
-            patterns[layer.dither_pattern] = idx
+        if not isinstance(layer.dither_pattern, CustomDitherPattern):
+            continue
+
+        patterns[layer.dither_pattern] = idx
         idx += 1
+
     return patterns
 
 

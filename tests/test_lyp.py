@@ -143,6 +143,20 @@ SNOWMAN_LYP="""\
 <name/>
 </layer-properties>"""
 
+FOO_LYP="""\
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<properties>
+<source>FOO</source>
+<dither-pattern>I0</dither-pattern>
+</properties>
+<properties>
+<source>BAR</source>
+<dither-pattern>I24</dither-pattern>
+</properties>
+<name/>
+</layer-properties>"""
+
 class TestLYP(XmlComparisonMixin, unittest.TestCase):
     #def test_lyp_dict(self):
     #    self.assertXmlEqual(
@@ -235,6 +249,32 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
             raimad.export_lyp(raimad.Snowman()),
             SNOWMAN_LYP
             )
+
+    def test_lyp_builtin(self):
+        class Foo(raimad.Compo):
+            _experimental_lyp = {
+                'FOO': raimad.lyp.Properties(
+                    dither_pattern=raimad.lyp.builtin.solid
+                    ),
+                'BAR': raimad.lyp.Properties(
+                    dither_pattern=raimad.lyp.builtin['22.5 degree up']
+                    ),
+                }
+            def _make(self):
+                self.subcompos.r1 = raimad.RectLW(4, 4).proxy().map('foo')
+                self.subcompos.r2 = (
+                        raimad.RectLW(4, 4).proxy().map('bar').movex(5)
+                        )
+
+        self.assertXmlEqual(
+            raimad.export_lyp(Foo()),
+            FOO_LYP
+            )
+
+        #raimad.export_lyp(Foo(), 'Foo.lyp')
+        #raimad.export_cif(Foo(), 'Foo.cif')
+        # TODO KLayout craps out if we rename FOO and BAR to L0 and L1
+        # here???????????????
 
 #if __name__ == '__main__':
 #    snowman = raimad.Snowman()
