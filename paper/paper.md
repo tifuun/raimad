@@ -46,6 +46,7 @@ bibliography: paper.bib
 \newcommand{\pip}{\texttt{pip}}
 \newcommand{\compo}{\texttt{compo}}
 \newcommand{\proxy}{\texttt{proxy}}
+\newcommand{\tifuun}{TIFUUN}
 
 \Huge THIS IS A VERY EARLY DRAFT IM JUST WRITING WHAT POPS INTO MY HEAD \normalsize
 
@@ -112,17 +113,17 @@ for \texttt{RAIMAD Astronomical Instrument MAsk Designer}.
 # Statement of Need
 
 The development of \raimad was initiated in order to fulfill the needs in the
-TIFUUN (Terahertz Integral Field Units with Unified Nanotechnology) project
+\tifuun (Terahertz Integral Field Units with Unified Nanotechnology) project
 [@tifuun; @nishimura], to quickly design
 integral field units (IFUs) that are tailored to each astronomical science
 question as open-hardware [@openhardware].
 Previously, a small number of integrated superconducting
-spectrometer chips were designed for TIFUUN's precursor project,
+spectrometer chips were designed for \tifuun's precursor project,
 DESHIMA (Deep Spectroscopic High-redshift Mapper) [@deshima1; @deshima2],
 using an internally developed script.
 While that script proved to be a capable solution for the task at hand,
 its narrow scope and reliance on the
-end-of-life Python 2 made it unsuitable for use in TIFUUN.
+end-of-life Python 2 made it unsuitable for use in \tifuun.
 \raimad aims to build on the success of the script used in DESHIMA
 while also adhering to standard Python practices,
 such as the PEP8 style guide and
@@ -204,7 +205,7 @@ to "reason" about the structure of the design and make optimizations,
 such as re-using parts of the geometry using the
 subroutine <!-- TODO is it called subroutines? -->
 feature of the CIF format.
-Such optimizations are critical for the future of the TIFUUN project,
+Such optimizations are critical for the future of the \tifuun project,
 which will feature designs of a much higher complexity than DESHIMA.
 <!-- TODO explicitly mention that tifuun designs are complex
 but in a repeating way i.e. lots of spaxels and filterbanks
@@ -235,56 +236,30 @@ and separation of concerns for the designer
     because it is not yet published.
     -->
 
-\raimad is already being used in our group
-to create chips that are used to reach new technological advances
-that are needed for TIFUUN.
+The research impact of \raimad is demonstrated in the development
+of new technologies for use in the \tifuun project.
 
-Here is an abstract of a poster to be presented in
-July in Copenhagen at the SPIE conference
-[@leonposter].
-Here Leon developed a new type of PPC
-(parallel plate capacitor) KID that is suitable for TIFUUN.
-What's cool is that we already have this PPC KID design
-on \raidex,
-so you can see that \raidex is useful for actual important things,
-not just geometric primitives and toy compos.
+@pienthesis has proposed a design for a chip that can be used
+in the development of low-loss filterbanks suitable for the
+\tifuun project,
+with the majority of chip design work being carried out in \raimad.
+Similarly,
+@leonposter
+will present new developments in the design
+of parallel plate capacitor kinetic inducatance detectors
+(PPCKIDs),
+which were obtained (?) using a chip designed in \raimad.
+The PPCKIDs designed by @leonposter are already
+available publically in \raidex,
+demonstrating its capability 
+in facilitating reuse of real components.
 
-Here is also a thesis by a person called Pien
-[@pienthesis].
-Here they investigate how to get rid of dielectric material
-in resonators (?) and replace it with vacuum.
-This makes it work better.
-To do this, they made a chip, using \raimad,
-that had resonators (?) with vacuum instead of dielectric.
-They used it in a lab setting with a known source
-to measure the bandwidth of the fabry-perot resonators,
-and determine how good they could get it to work,
-compared to the established design that does use dielectric layer.
-This is really cool because it shows real chips
-that have been already fabricated that were designed in raimad.
-
-
-As you can see we have a lot of progress being made,
-which is only possible due to chips made with \raimad.
-But now that I say that, I am not sure I can make such a bold claim.
-I want to talk with Leon again and maybe Louis to see
-whether it's possible? feasible? convenient? to make things
-like that with not raimad.
-
-In the near future,
-we will also use \raimad to make the whole TIFUUN instrument,
-or at least I hope we do.
-This will be a lot of progress indeed,
-and it is near-term and credible.
-
-It would have been hard to make all these advancements with
-other software.
-It would be even more difficult to implement TIFUUN itself
-with something
-other than \raimad.
-And after TIFUUN we hope other people will use \raimad too
-because it is open source.
-
+The near-term significance
+is the design of the
+\tifuun instrument itself,
+where \raimad's
+modular approach to design will be crucial
+in managing the complexity of the chip.
 
 <!--
 
@@ -347,7 +322,7 @@ which is used in \raimad to maintain compatibility with
 Python 3.10.
 
 This work is supported by the European Union
-(ERC Consolidator Grant No. 101043486 TIFUUN).
+(ERC Consolidator Grant No. 101043486 \tifuun).
 Views and opinions expressed are however those of the
 authors only and do not necessarily reflect those of the
 European Union or the
