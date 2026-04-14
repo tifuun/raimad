@@ -239,22 +239,36 @@ and separation of concerns for the designer
 to create chips that are used to reach new technological advances
 that are needed for TIFUUN.
 
-Here is a paper about advances in fabrication that bring
-us closer to making TIFUUN a reality
-[@leonfab].
-The test patterns that Leon used to acheive this were made with
-\raimad,
-but I am not sure, so I will ask him.
+Here is an abstract of a poster to be presented in
+July in Copenhagen at the SPIE conference
+[@leonposter].
+Here Leon developed a new type of PPC
+(parallel plate capacitor) KID that is suitable for TIFUUN.
+What's cool is that we already have this PPC KID design
+on \raidex,
+so you can see that \raidex is useful for actual important things,
+not just geometric primitives and toy compos.
 
-Here is a different paper where we managed to make
-IFUs more efficient [@louisbank].
-It's basically a baby TIFUUN with only 14 KIDs
-(from what I understand).
-This was also made in \raimad,
-although I have to ask.
+Here is also a thesis by a person called Pien.
+Here they investigate how to get rid of dielectric material
+in resonators (?) and replace it with vacuum.
+This makes it work better.
+To do this, they made a chip, using \raimad,
+that had resonators (?) with vacuum instead of dielectric.
+They used it in a lab setting with a known source
+to measure the bandwidth of the fabry-perot resonators,
+and determine how good they could get it to work,
+compared to the established design that does use dielectric layer.
+This is really cool because it shows real chips
+that have been already fabricated that were designed in raimad.
+
 
 As you can see we have a lot of progress being made,
 which is only possible due to chips made with \raimad.
+But now that I say that, I am not sure I can make such a bold claim.
+I want to talk with Leon again and maybe Louis to see
+whether it's possible? feasible? convenient? to make things
+like that with not raimad.
 
 In the near future,
 we will also use \raimad to make the whole TIFUUN instrument,
