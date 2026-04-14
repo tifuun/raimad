@@ -112,7 +112,7 @@ for \texttt{RAIMAD Astronomical Instrument MAsk Designer}.
 <!-- REQUIRED SECTION!! -->
 # Statement of Need
 
-The development of \raimad was initiated in order to fulfill the needs in the
+The development of \raimad was initiated in order to fulfill the needs of the
 \tifuun (Terahertz Integral Field Units with Unified Nanotechnology) project
 [@tifuun; @nishimura], to quickly design
 integral field units (IFUs) that are tailored to each astronomical science
@@ -248,18 +248,36 @@ Similarly,
 will present new developments in the design
 of parallel plate capacitor kinetic inducatance detectors
 (PPCKIDs),
-which were obtained (?) using a chip designed in \raimad.
+which were obtained by measuring a chip that was
+designed in \raimad.
 The PPCKIDs designed by @leonposter are already
 available publically in \raidex,
 demonstrating its capability 
 in facilitating reuse of real components.
 
-The near-term significance
-is the design of the
-\tifuun instrument itself,
-where \raimad's
-modular approach to design will be crucial
-in managing the complexity of the chip.
+The near-term significance of \raimad
+is to be demonstrated
+in development of the \tifuun instrument,
+which will rely on novel fabrication techniques
+[@leonfab]
+and a high-efficiency filterbank design
+[@louisbank].
+The feasibility of these technologies has already
+been proven experimentally,
+paving the way for a full \tifuun implementation
+using \raimad.
+
+![
+A part of the chip designed and fabbed by @leonfab,
+designed in \raimad,
+rendered in KLayout.
+](img/louis-ppc-chip.png)
+
+![
+The chip proposed by @pienthesis,
+designed in \raimad,
+rendered in KLayout.
+](img/pien/chip.png)
 
 <!--
 
