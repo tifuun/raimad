@@ -249,7 +249,8 @@ on \raidex,
 so you can see that \raidex is useful for actual important things,
 not just geometric primitives and toy compos.
 
-Here is also a thesis by a person called Pien.
+Here is also a thesis by a person called Pien
+[@pienthesis].
 Here they investigate how to get rid of dielectric material
 in resonators (?) and replace it with vacuum.
 This makes it work better.
