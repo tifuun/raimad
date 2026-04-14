@@ -231,17 +231,54 @@ and separation of concerns for the designer
 <!-- -----NEW------ REQUIRED SECTION!! -->
 # Research Impact Statement
 
-I don't really know what to do here,
-since there is yet no published work done with raimad.
-Maybe we can ask Leon for a description of what this chip
-does (will do, once manufactured),
-include some pictures,
-and just say that this is done within the group?
+<!-- I don't want to talk about Pien's thesis here yet
+    because it is not yet published.
+    -->
+
+\raimad is already being used in our group
+to create chips that are used to reach new technological advances
+that are needed for TIFUUN.
+
+Here is a paper about advances in fabrication that bring
+us closer to making TIFUUN a reality
+[@leonfab].
+The test patterns that Leon used to acheive this were made with
+\raimad,
+but I am not sure, so I will ask him.
+
+Here is a different paper where we managed to make
+IFUs more efficient [@louisbank].
+It's basically a baby TIFUUN with only 14 KIDs
+(from what I understand).
+This was also made in \raimad,
+although I have to ask.
+
+As you can see we have a lot of progress being made,
+which is only possible due to chips made with \raimad.
+
+In the near future,
+we will also use \raimad to make the whole TIFUUN instrument,
+or at least I hope we do.
+This will be a lot of progress indeed,
+and it is near-term and credible.
+
+It would have been hard to make all these advancements with
+other software.
+It would be even more difficult to implement TIFUUN itself
+with something
+other than \raimad.
+And after TIFUUN we hope other people will use \raimad too
+because it is open source.
+
+
+<!--
 
 ![
 Part of the T7011 chip designed in \raimad,
 rendered in KLayout [@klay]
 ](img/t7011-closeup.png)
+
+-->
 
 
 <!-- -----NEW------ REQUIRED SECTION!! -->
