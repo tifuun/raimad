@@ -217,7 +217,8 @@ much like Python's MyPy.
 of preliminary chip designs
 for \tifuun,
 including a novel type of KIDs [@leonposter]
-and a testbed for measuring transmission line losses [@pienthesis].
+and a testbed for measuring transmission line losses [@pienthesis]
+(pictured in Figure 1).
 These publications have not only established \raimad
 as a versatile mask file creation tool,
 but have also enriched the \raidex
@@ -241,6 +242,12 @@ mask file design tool.
     then it would be a bridge.
     Right now it's just a one-way funnel.
     -->
+
+![
+Pictures of the chip designed in \raimad by @pienthesis.
+Left to right: entire chip, an arrangement of four antennas,
+a single antenna.
+](img/recursive-final.png)
 
 <!--
 
