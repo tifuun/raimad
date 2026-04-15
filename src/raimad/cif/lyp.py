@@ -45,6 +45,9 @@ class BuiltinDitherPattern:
 
     ref: str
 
+# DO NOT EDIT THIS DICTLIST MANUALLY
+# Use scripts/patch_klayout_dither_patterns.py
+
 builtin = rai.DictList({
     'solid': BuiltinDitherPattern('I0'),
     'hollow': BuiltinDitherPattern('I1'),
@@ -69,25 +72,30 @@ builtin = rai.DictList({
     'turned pyramids': BuiltinDitherPattern('I20'),
     'plus': BuiltinDitherPattern('I21'),
     'minus': BuiltinDitherPattern('I22'),
-    'zig zag': BuiltinDitherPattern('I23'),
-    'sine': BuiltinDitherPattern('I24'),
-    'heavy unordered': BuiltinDitherPattern('I25'),
-    'light unordered': BuiltinDitherPattern('I26'),
-    'vertical dense': BuiltinDitherPattern('I27'),
-    'vertical': BuiltinDitherPattern('I28'),
-    'vertical thick': BuiltinDitherPattern('I29'),
-    'vertical sparse': BuiltinDitherPattern('I30'),
-    'vertical sparse, thick': BuiltinDitherPattern('I31'),
-    'horizontal dense': BuiltinDitherPattern('I32'),
-    'horizontal': BuiltinDitherPattern('I33'),
-    'horizontal thick': BuiltinDitherPattern('I34'),
-    'horizontal sparse': BuiltinDitherPattern('I35'),
-    'horizontal sparse, thick': BuiltinDitherPattern('I36'),
-    'grid dense': BuiltinDitherPattern('I37'),
-    'grid': BuiltinDitherPattern('I38'),
-    'grid thick': BuiltinDitherPattern('I39'),
-    'grid sparse': BuiltinDitherPattern('I40'),
-    'grid sparse, thick': BuiltinDitherPattern('I41'),
+    '22.5 degree down': BuiltinDitherPattern('I23'),
+    '22.5 degree up': BuiltinDitherPattern('I24'),
+    '67.5 degree down': BuiltinDitherPattern('I25'),
+    '67.5 degree up': BuiltinDitherPattern('I26'),
+    '22.5 degree cross hatched': BuiltinDitherPattern('I27'),
+    'zig zag': BuiltinDitherPattern('I28'),
+    'sine': BuiltinDitherPattern('I29'),
+    'heavy unordered': BuiltinDitherPattern('I30'),
+    'light unordered': BuiltinDitherPattern('I31'),
+    'vertical dense': BuiltinDitherPattern('I32'),
+    'vertical': BuiltinDitherPattern('I33'),
+    'vertical thick': BuiltinDitherPattern('I34'),
+    'vertical sparse': BuiltinDitherPattern('I35'),
+    'vertical sparse, thick': BuiltinDitherPattern('I36'),
+    'horizontal dense': BuiltinDitherPattern('I37'),
+    'horizontal': BuiltinDitherPattern('I38'),
+    'horizontal thick': BuiltinDitherPattern('I39'),
+    'horizontal sparse': BuiltinDitherPattern('I40'),
+    'horizontal sparse, thick': BuiltinDitherPattern('I41'),
+    'grid dense': BuiltinDitherPattern('I42'),
+    'grid': BuiltinDitherPattern('I43'),
+    'grid thick': BuiltinDitherPattern('I44'),
+    'grid sparse': BuiltinDitherPattern('I45'),
+    'grid sparse, thick': BuiltinDitherPattern('I46'),
 }, copy=False)
 
 
