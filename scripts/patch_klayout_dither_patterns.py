@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
+"""
+patch_klayout_dither_patterns.py: read Klayout source and update dithers defs.
 
+This script reads klayout's layDitherPatterns.cc code,
+extracts all builtin dither pattern names,
+and updates RAIMAD's source code to mirror them.
+"""
+
+from typing import Any
+from typing import Iterator
+import ast
 import re
-from pathlib import Path
+
 
 # One day you are young, hopeful, and full of energy,
 # and the next you are parsing C++ code with regex
@@ -10,9 +20,10 @@ DITHER_FINDER = re.compile(
     re.MULTILINE
     )
 
-def translate(string):
+def translate(cc_code: str) -> Iterator[str]:
+    """Translate klayout C++ dither pattern defs to Python code."""
     yield 'builtin = rai.DictList({\n'
-    found = re.findall(DITHER_FINDER, string)
+    found = re.findall(DITHER_FINDER, cc_code)
     prev_num = -1
     for num, _comment_name, name in found:
         num = int(num)
@@ -24,10 +35,8 @@ def translate(string):
         yield f"    '{name}': BuiltinDitherPattern('I{num}'),\n"
     yield '}, copy=False)\n'
 
-import ast
-from typing import Any
-
 class Visitor(ast.NodeVisitor):
+    """Visit nodes in Python source and find `builtin=` assignment."""
 
     line_range: None | tuple[int, int]
 
@@ -36,6 +45,7 @@ class Visitor(ast.NodeVisitor):
         super().__init__(*args, **kwargs)
 
     def visit(self, node: ast.AST) -> None:
+        """Visit nodes in Python source and find `builtin=` assignment."""
         match node:
             case ast.Assign(
                     targets=[
@@ -50,13 +60,13 @@ class Visitor(ast.NodeVisitor):
 
                 self.line_range = (node.lineno - 1, node.end_lineno)
 
-                # assume the __all__ asignment is last meaningful line in file.
+                # no need to parse further
                 return
 
         super().generic_visit(node)
 
 def patch_dithers_def(file_cc: str, file_py: str) -> None:
-    """Patch `__all__` in single file."""
+    """Patch `builtin=` assignment with defs generated from klayout C++."""
     with open(file_py, 'r') as f:
         lines = f.readlines()
 
@@ -68,6 +78,7 @@ def patch_dithers_def(file_cc: str, file_py: str) -> None:
     visitor.visit(tree)
 
     replacement = translate(cc_source)
+    assert visitor.line_range is not None
     lines[visitor.line_range[0]:visitor.line_range[1]] = replacement
 
     with open(file_py, 'w') as f:
