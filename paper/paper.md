@@ -94,11 +94,7 @@ Using these files, a process engineer is
 able to transfer the design onto the desired
 substrate using general lithography techniques.
 
-<!--
-    TODO need MODULAR approach here already -- this is a big
-    design decision and one that we arrived at after stumbling
-    into pretty much every possible pitfall.
--->
+
 \raimad components are created using Python [@python] code,
 which allows for both simplicity and flexibility.
 \raimad itself is written in pure Python,
@@ -170,27 +166,22 @@ interface for all components in order to reduce complexity.
 <!-- -----NEW------ REQUIRED SECTION!! -->
 # Software design
 
-The current design of \raimad is a product of
-multiple years of iterative development,
-during which different approaches have been put into trial.
-One of the most fundamental design decisions that has
-emerged from this process
-is \raimad's balanced approach to mutability.
-\raimad's \compo{}s
-(a keyboard-friendly shorthand for "component"),
+One of the main design decisions of \raimad
+is its balanced approach to mutability.
+\raimad's Components,
 once instantiated, are immutable.
 Transformations, such as translation, rotations,
 duplication, and layer reassignment,
-are handled using \proxy{}s,
-which offer a mutable "view" of a \compo.
+are handled using Proxies,
+which offer a mutable view of a Component.
 Thus, the memory requirements of producing multiple
 instances of a particular structure --
 such as dozens of bridges on a coplanar waveguide --
 are lowered,
 since the underlying structure of the bridge is only stored
-once in the \compo,
+once in the Component object,
 while the translations and rotations of each instance are stored
-in a lightweight \proxy object.
+in a lightweight Proxy object.
 
 <!-- we already said that modular approach is
     easier to understand for developers
@@ -198,74 +189,60 @@ in a lightweight \proxy object.
     Now specifically I want to talk about why the compos are immutable.
     -->
 
-This approach also allows the exporter --
-the code responsible for translating \raimad structures
-into CIF output, akin to a compiler --
-to "reason" about the structure of the design and make optimizations,
+This approach also allows for potential optimisations
+in the CIF file produced by \raimad,
 such as re-using parts of the geometry using the
-subroutine <!-- TODO is it called subroutines? -->
+Symbols
 feature of the CIF format.
 Such optimizations are critical for the future of the \tifuun project,
 which will feature designs of a much higher complexity than DESHIMA.
-<!-- TODO explicitly mention that tifuun designs are complex
-but in a repeating way i.e. lots of spaxels and filterbanks
-of similar structure???? -->
 
-The theme of "reasonability" is also mirrored in the Annotations
-feature of \raimad's \compo{}s.
-Taking inspiration from Python's gradual typing system,
-\compo{}s may -- but are not required to -- have
-annotations that explain what layers, marks, and options they have.
-These annotations are used by the \raidex component browser
-to produce structured documentation,
+A major design goal of \raimad was to make it feel idiomatic
+to Python developers.
+As such, we have adopted the concept of Python's Gradual Typing
+into a feature called Annotations.
+Annotations are a way to document the layers, options, and marked coordinate
+points of \raimad Components
+in a structured way.
+Annotations are parsed by \raidex to generate structured documentation
 and may, in the future,
-be used for static checking of \compo{}s,
+be used for static checking of Components,
 much like Python's MyPy.
-Earlier versions of \raimad
-had mandatory \compo annotations.
-It was chosen to make them optional
-in order to allow more flexibility (e.g. dynamic mark names)
-and separation of concerns for the designer
-(e.g. write code first, annotate later).
-
 
 <!-- -----NEW------ REQUIRED SECTION!! -->
 # Research Impact Statement
 
-<!-- I don't want to talk about Pien's thesis here yet
-    because it is not yet published.
+
+\raimad is being used in the development
+of preliminary chip designs
+for \tifuun,
+including a novel type of KIDs [@leonposter]
+and a testbed for measuring transmission line losses [@pienthesis].
+These publications have not only established \raimad
+as a versatile mask file creation tool,
+but have also enriched the \raidex
+component library with new devices.
+Moreover,
+recent developments in
+fabrication techniques [@leonfab]
+and high-efficiency filterbank designs [@louisbank]
+signal success for the \tifuun project as a whole,
+wherein \raimad will figure as the central
+mask file design tool.
+
+<!-- Arend told me to call raimad a "bridge"
+    between design and fabrication
+    but I disagree here.
+    A bridge is two-way.
+    If we had some sort of design rule checker,
+    something that might tell you
+    "this wire is too thin for optical lithography,
+    try e-beam instead",
+    then it would be a bridge.
+    Right now it's just a one-way funnel.
     -->
 
-The research impact of \raimad is demonstrated in the development
-of new technologies for use in the \tifuun project.
-
-@pienthesis has proposed a design for a chip that can be used
-in the development of low-loss filterbanks suitable for the
-\tifuun project,
-with the majority of chip design work being carried out in \raimad.
-Similarly,
-@leonposter
-will present new developments in the design
-of parallel plate capacitor kinetic inducatance detectors
-(PPCKIDs),
-which were obtained by measuring a chip that was
-designed in \raimad.
-The PPCKIDs designed by @leonposter are already
-available publically in \raidex,
-demonstrating its capability 
-in facilitating reuse of real components.
-
-The near-term significance of \raimad
-is to be demonstrated
-in development of the \tifuun instrument,
-which will rely on novel fabrication techniques
-[@leonfab]
-and a high-efficiency filterbank design
-[@louisbank].
-The feasibility of these technologies has already
-been proven experimentally,
-paving the way for a full \tifuun implementation
-using \raimad.
+<!--
 
 ![
 A part of the chip designed and fabbed by @leonfab,
@@ -278,8 +255,6 @@ The chip proposed by @pienthesis,
 designed in \raimad,
 rendered in KLayout.
 ](img/pien/chip.png)
-
-<!--
 
 ![
 Part of the T7011 chip designed in \raimad,
