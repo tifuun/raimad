@@ -48,7 +48,9 @@ bibliography: paper.bib
 \newcommand{\proxy}{\texttt{proxy}}
 \newcommand{\tifuun}{TIFUUN}
 
+<!--
 \Huge THIS IS A VERY EARLY DRAFT IM JUST WRITING WHAT POPS INTO MY HEAD \normalsize
+-->
 
 <!-- REQUIRED SECTION!! -->
 # Summary
@@ -70,7 +72,7 @@ including rectangles, circles, and arcs.
 Users can combine these primitives into individual
 components,
 such as bandpass filters [@alejandro], waveguides,
-and kinetic inductance detectors [@mkids-day-actual].
+and KIDs (kinetic inductance detectors) [@mkids-day-actual].
 These components can then be assembled into a
 complete mask file for an astronomical instrument.
 This modular approach allows for
@@ -86,7 +88,7 @@ instruments.
     section where this can be elaborated
     (i think such a section would be iirelevant/too technical)
 -->
-\raimad designs can be exported as a \texttt{.cif}
+\raimad designs can be exported as a CIF
 (Caltech Intermediate Form)
 file [@cif],
 a format for storing mask files.
@@ -218,8 +220,8 @@ of preliminary chip designs
 for \tifuun,
 including a novel type of KIDs [@leonposter]
 and a testbed for measuring transmission line losses [@pienthesis]
-(pictured in Figure 1).
-These publications have not only established \raimad
+pictured in \autoref{fig:recursive}.
+These works have not only established \raimad
 as a versatile mask file creation tool,
 but have also enriched the \raidex
 component library with new devices.
@@ -227,7 +229,7 @@ Moreover,
 recent developments in
 fabrication techniques [@leonfab]
 and high-efficiency filterbank designs [@louisbank]
-signal success for the \tifuun project as a whole,
+signal advances for the \tifuun project as a whole,
 wherein \raimad will figure as the central
 mask file design tool.
 
@@ -244,9 +246,12 @@ mask file design tool.
     -->
 
 ![
-Pictures of the chip designed in \raimad by @pienthesis.
-Left to right: entire chip, an arrangement of four antennas,
-a single antenna.
+An example of a chip designed in \raimad{} [@pienthesis]
+and rendered in KLayout.
+Left: the entire chip on a 10cm wafer;
+centre: an arrangement of four antennas, each one approximately 1mm across;
+right: 2µm wide microstrips connected to each half of an antenna.
+\label{fig:recursive}
 ](img/recursive-final.png)
 
 <!--
