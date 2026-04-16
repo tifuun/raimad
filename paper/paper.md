@@ -246,7 +246,8 @@ mask file design tool.
     -->
 
 ![
-An example of a chip designed in \raimad{} [@pienthesis]
+An example of a chip [@pienthesis]
+designed in \raimad{}
 and rendered in KLayout.
 Left: the entire chip on a 10cm wafer;
 centre: an arrangement of four antennas, each one approximately 1mm across;
