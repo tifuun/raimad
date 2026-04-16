@@ -85,9 +85,8 @@ htmlcov
 paper/jats
 !paper/img/*.png
 *.lyp
-
-# remove this once get approval from Pien to reuse figures
-paper/pien/*
+paper/*original*
+paper/*tidy*
 
 
 
