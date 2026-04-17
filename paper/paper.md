@@ -322,7 +322,10 @@ of Delft University of Technology
 for helping resolve administrative issues
 in the early stages of RAIMAD development.
 
-We would also like to thank the developers and maintainers
+We would also like to thank Pien Abbink for her work in designing
+the chip shown in \autoref{fig:recursive}.
+
+Finally, we would like to thank the developers and maintainers
 of the \texttt{typing-extensions} package [@typeext],
 which is used in \raimad to maintain compatibility with
 Python 3.10.
