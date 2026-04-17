@@ -9,7 +9,15 @@ import raimad as rai
 
 @dataclass(frozen=True)
 class CustomLineStyle:
-    pass
+    """
+    Custom line style.
+
+    The pattern is given as a single string of '*' and '.'.
+    Order number is not specified; it is computed automatically during export.
+    """
+
+    pattern: str
+    name: str
 
 @dataclass(frozen=True)
 class BuiltinLineStyle:
@@ -272,7 +280,8 @@ def _export_properties(
 
         if layer.line_style is not None:
             if isinstance(layer.line_style, CustomLineStyle):
-                pass
+                style_idx = styles[layer.line_style]
+                yield f'<line-style>C{style_idx}</line-style>'
             elif isinstance(layer.line_style, BuiltinLineStyle):
                 yield (
                     '<line-style>'
@@ -383,10 +392,10 @@ def _extract_line_styles(
     styles: dict[CustomLineStyle, int] = {}
     idx = 0
     for layer in lyp.values():
-        if not isinstance(layer.dither_pattern, CustomLineStyle):
+        if not isinstance(layer.line_style, CustomLineStyle):
             continue
 
-        patterns[layer.line_style] = idx
+        styles[layer.line_style] = idx
         idx += 1
 
     return styles
@@ -394,9 +403,32 @@ def _extract_line_styles(
 def _export_line_styles(
         styles: Mapping[CustomLineStyle, int]
         ):
-    return
-    yield
-    #yield 'a'
+    for style, order in styles.items():
+
+        if not isinstance(style, CustomLineStyle):
+            continue
+
+        yield '<custom-line-style>'
+
+        yield f'<pattern>{style.pattern}</pattern>'
+
+        if len(style.pattern) > 32:
+            # TODO test warnings
+            warn(
+                "Line style longer than 32",
+                UserWarning
+                )
+
+        if set(style.pattern) > {'.', '*'}:
+            warn(
+                "Line style contains characters other than `.` and `*`.",
+                UserWarning
+                )
+
+        yield f'<order>{order}</order>'
+        yield f'<name>{style.name}</name>'
+
+        yield '</custom-line-style>'
 
 
 

@@ -173,6 +173,23 @@ LYP_BUILTIN_LINES="""\
 <name/>
 </layer-properties>"""
 
+LYP_CUSTOM_LINE="""\
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<custom-line-style>
+<pattern>*.*..*.*.....**..*..**..**.**...</pattern>
+<order>0</order>
+<name>ascii</name>
+</custom-line-style>
+<properties>
+<source>FOO</source>
+<line-style>C0</line-style>
+<width>5</width>
+</properties>
+<name/>
+</layer-properties>"""
+
+
 class TestLYP(XmlComparisonMixin, unittest.TestCase):
     #def test_lyp_dict(self):
     #    self.assertXmlEqual(
@@ -316,6 +333,28 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
         self.assertXmlEqual(
             raimad.export_lyp(Foo()),
             LYP_BUILTIN_LINES
+            )
+
+    def test_lyp_custom_lines(self):
+        class Foo(raimad.Compo):
+            _experimental_lyp = {
+                'FOO': raimad.lyp.Properties(
+                    line_style=raimad.lyp.CustomLineStyle(
+                        name='ascii',
+                        pattern='*.*..*.*.....**..*..**..**.**...',
+                        ),
+                    width=5,
+                    ),
+                }
+            def _make(self):
+                self.subcompos.r1 = raimad.RectLW(4, 4).proxy().map('foo')
+
+        raimad.export_lyp(Foo(), 'Foo.lyp')
+        raimad.export_cif(Foo(), 'Foo.cif')
+
+        self.assertXmlEqual(
+            raimad.export_lyp(Foo()),
+            LYP_CUSTOM_LINE
             )
 
 #if __name__ == '__main__':
