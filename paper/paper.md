@@ -218,7 +218,7 @@ much like Python's MyPy.
 \raimad is being used in the development
 of preliminary chip designs
 for \tifuun,
-including a novel type of KIDs [@leonposter]
+including a novel type of KID [@leonposter]
 and a testbed for measuring transmission line losses [@pienthesis]
 pictured in \autoref{fig:recursive}.
 These works have not only established \raimad
