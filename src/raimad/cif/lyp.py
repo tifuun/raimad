@@ -8,11 +8,63 @@ import re
 import raimad as rai
 
 @dataclass(frozen=True)
+class CustomLineStyle:
+    pass
+
+@dataclass(frozen=True)
+class BuiltinLineStyle:
+    """
+    KLayout-builtin line pattern.
+
+    Currently this is just a wrapper for an `str` like `I0`, `I1`, `I2`, etc.
+
+    https://github.com/KLayout/klayout/
+    src/laybasic/laybasic/layLineStyles.cc
+    """
+
+    def __init__(self, ref: str) -> None:
+        object.__setattr__(self, 'ref', ref)  # weird syntax because frozen
+        match = re.fullmatch(r'I(\d+)', self.ref)
+
+        if not match:
+            warn(
+                f"{self.ref}: not a valid klayout builtin line "
+                "style reference."
+                ,
+                UserWarning
+                )
+            return
+
+
+        number = int(match.groups()[0])
+        if number > 7:
+            warn(
+                f"{self.ref}: KLayout only has 7 "
+                "builtin line styles (starting with `0`)."
+                ,
+                UserWarning
+                )
+
+
+    ref: str
+
+lines = rai.DictList({
+    'solid': BuiltinLineStyle('I0'),
+    'dotted': BuiltinLineStyle('I1'),
+    'dashed': BuiltinLineStyle('I2'),
+    'dash-dotted': BuiltinLineStyle('I3'),
+    'short dashed': BuiltinLineStyle('I4'),
+    'short dash-dotted': BuiltinLineStyle('I5'),
+    'long dashed': BuiltinLineStyle('I6'),
+    'dash-double-dotted': BuiltinLineStyle('I7'),
+}, copy=False)
+
+@dataclass(frozen=True)
 class BuiltinDitherPattern:
     """
     KLayout-builtin dither pattern.
 
-    Currently this is just a wrapper for an `str` like `l0`, `l1`, `l2`, etc.
+    Currently this is just a wrapper for an `str` like `I0`, `I1`, `I2`, etc.
     Definitions of klayout builtin dither patterns:
 
     https://github.com/KLayout/klayout/
@@ -48,7 +100,7 @@ class BuiltinDitherPattern:
 # DO NOT EDIT THIS DICTLIST MANUALLY
 # Use scripts/patch_klayout_dither_patterns.py
 
-builtin = rai.DictList({
+dithers = rai.DictList({
     'solid': BuiltinDitherPattern('I0'),
     'hollow': BuiltinDitherPattern('I1'),
     'dotted': BuiltinDitherPattern('I2'),
@@ -132,7 +184,7 @@ class Properties:
     fill_brightness: int | None = None
     #dither_pattern: str | None = None
     dither_pattern: CustomDitherPattern | BuiltinDitherPattern | None = None
-    line_style: str | None = None
+    line_style: CustomLineStyle | BuiltinLineStyle | None = None
     valid: bool | None = None
     visible: bool | None = None
     transparent: bool | None = None
@@ -172,7 +224,110 @@ def _export_properties(
     yield '<layer-properties>'
 
     patterns = _extract_dither_patterns(lyp)
+    styles = _extract_line_styles(lyp)
 
+    yield from _export_dither_patterns(patterns)
+    yield from _export_line_styles(styles)
+
+    for source, layer in lyp.items():
+
+        if isinstance(layer, dict):
+            layer = Properties(**layer)
+
+        yield '<properties>'
+
+        yield f'<source>{source}</source>'
+
+        if layer.expanded is not None:
+            yield f'<expanded>{layer.expanded}</expanded>'
+
+        if layer.frame_color is not None:
+            yield f'<frame-color>{layer.frame_color}</frame-color>'
+
+        if layer.fill_color is not None:
+            yield f'<fill-color>{layer.fill_color}</fill-color>'
+
+        if layer.frame_brightness is not None:
+            yield (
+                    '<frame-brightness>'
+                    f'{layer.frame_brightness}'
+                    '</frame-brightness>'
+                    )
+
+        if layer.fill_brightness is not None:
+            yield f'<fill-brightness>{layer.fill_brightness}</fill-brightness>'
+
+        if layer.dither_pattern is not None:
+            if isinstance(layer.dither_pattern, CustomDitherPattern):
+                pattern_idx = patterns[layer.dither_pattern]
+                yield f'<dither-pattern>C{pattern_idx}</dither-pattern>'
+            elif isinstance(layer.dither_pattern, BuiltinDitherPattern):
+                yield (
+                    '<dither-pattern>'
+                    f'{layer.dither_pattern.ref}'
+                    '</dither-pattern>'
+                    )
+            else:
+                assert False
+
+        if layer.line_style is not None:
+            if isinstance(layer.line_style, CustomLineStyle):
+                pass
+            elif isinstance(layer.line_style, BuiltinLineStyle):
+                yield (
+                    '<line-style>'
+                    f'{layer.line_style.ref}'
+                    '</line-style>'
+                    )
+            else:
+                assert False
+
+        if layer.valid is not None:
+            yield f'<valid>{layer.valid}</valid>'
+
+        if layer.visible is not None:
+            yield f'<visible>{layer.visible}</visible>'
+
+        if layer.transparent is not None:
+            yield f'<transparent>{layer.transparent}</transparent>'
+
+        if layer.width is not None:
+            yield f'<width>{layer.width}</width>'
+
+        if layer.marked is not None:
+            yield f'<marked>{layer.marked}</marked>'
+
+        if layer.xfill is not None:
+            yield f'<xfill>{layer.xfill}</xfill>'
+
+        if layer.animation is not None:
+            yield f'<animation>{layer.animation}</animation>'
+
+        if layer.name is not None:
+            yield f'<name>{layer.name}</name>'
+
+        yield '</properties>'
+
+    yield '<name/>'
+    yield '</layer-properties>'
+
+def _extract_dither_patterns(
+        lyp: LayerProperties
+        ) -> Mapping[CustomDitherPattern, int]:
+    patterns: dict[CustomDitherPattern, int] = {}
+    idx = 0
+    for layer in lyp.values():
+        if not isinstance(layer.dither_pattern, CustomDitherPattern):
+            continue
+
+        patterns[layer.dither_pattern] = idx
+        idx += 1
+
+    return patterns
+
+def _export_dither_patterns(
+        patterns: Mapping[CustomDitherPattern, int]
+        ):
     for pattern, order in patterns.items():
 
         if not isinstance(pattern, CustomDitherPattern):
@@ -222,92 +377,26 @@ def _export_properties(
 
         yield '</custom-dither-pattern>'
 
-    for source, layer in lyp.items():
-
-        if isinstance(layer, dict):
-            layer = Properties(**layer)
-
-        yield '<properties>'
-
-        yield f'<source>{source}</source>'
-
-        if layer.expanded is not None:
-            yield f'<expanded>{layer.expanded}</expanded>'
-
-        if layer.frame_color is not None:
-            yield f'<frame-color>{layer.frame_color}</frame-color>'
-
-        if layer.fill_color is not None:
-            yield f'<fill-color>{layer.fill_color}</fill-color>'
-
-        if layer.frame_brightness is not None:
-            yield (
-                    '<frame-brightness>'
-                    f'{layer.frame_brightness}'
-                    '</frame-brightness>'
-                    )
-
-        if layer.fill_brightness is not None:
-            yield f'<fill-brightness>{layer.fill_brightness}</fill-brightness>'
-
-        if layer.dither_pattern is not None:
-            if isinstance(layer.dither_pattern, CustomDitherPattern):
-                pattern_idx = patterns[layer.dither_pattern]
-                yield f'<dither-pattern>C{pattern_idx}</dither-pattern>'
-            elif isinstance(layer.dither_pattern, BuiltinDitherPattern):
-                yield (
-                    '<dither-pattern>'
-                    f'{layer.dither_pattern.ref}'
-                    '</dither-pattern>'
-                    )
-            else:
-                assert False
-
-        if layer.line_style is not None:
-            yield f'<line-style>{layer.line_style}</line-style>'
-
-        if layer.valid is not None:
-            yield f'<valid>{layer.valid}</valid>'
-
-        if layer.visible is not None:
-            yield f'<visible>{layer.visible}</visible>'
-
-        if layer.transparent is not None:
-            yield f'<transparent>{layer.transparent}</transparent>'
-
-        if layer.width is not None:
-            yield f'<width>{layer.width}</width>'
-
-        if layer.marked is not None:
-            yield f'<marked>{layer.marked}</marked>'
-
-        if layer.xfill is not None:
-            yield f'<xfill>{layer.xfill}</xfill>'
-
-        if layer.animation is not None:
-            yield f'<animation>{layer.animation}</animation>'
-
-        if layer.name is not None:
-            yield f'<name>{layer.name}</name>'
-
-        yield '</properties>'
-
-    yield '<name/>'
-    yield '</layer-properties>'
-
-def _extract_dither_patterns(
+def _extract_line_styles(
         lyp: LayerProperties
-        ) -> Mapping[CustomDitherPattern, int]:
-    patterns: dict[CustomDitherPattern, int] = {}
+        ) -> Mapping[CustomLineStyle, int]:
+    styles: dict[CustomLineStyle, int] = {}
     idx = 0
     for layer in lyp.values():
-        if not isinstance(layer.dither_pattern, CustomDitherPattern):
+        if not isinstance(layer.dither_pattern, CustomLineStyle):
             continue
 
-        patterns[layer.dither_pattern] = idx
+        patterns[layer.line_style] = idx
         idx += 1
 
-    return patterns
+    return styles
+
+def _export_line_styles(
+        styles: Mapping[CustomLineStyle, int]
+        ):
+    return
+    yield
+    #yield 'a'
 
 
 
