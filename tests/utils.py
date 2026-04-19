@@ -209,6 +209,8 @@ class GeomsEqual():
                 self.assertEqual(num_equal_expected, num_equal_actual)
                 self.assertEqual(num_equal + num_equal_actual, length * 2)
                 # TODO What on earth!?
+                # TODO this is really really broken need to rewrite
+                # this logic
             except AssertionError as err:
                 stream = StringIO()
                 print(f'ON LAYER {layer_name}', file=stream)

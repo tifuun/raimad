@@ -38,7 +38,8 @@ fortunes_technology = [
     "Integration of our backdoor into your machine, that is. ",
 
     "We have two-factor authentication. "
-    "The first factor is your username, and second factor is your password. ",
+    "The first factor is your username, "
+    "and the second factor is your password. ",
 
     "Our platform is end-to-end encrypted. "
     "The one end is your client, and the other end is our server. ",
@@ -238,7 +239,7 @@ fortunes_politics = [
     "Geneva Convention? More like Geneva Suggestion! ",
 
     "Germany has the most environmentally-friendly trains, "
-    "because most of them are cancelled. ",
+    "because a cancelled train produces no emissions. ",
 
     "They cannot understand it, and therefore cannot control it. "
     "And that makes them furious. ",
@@ -264,11 +265,11 @@ fortunes_politics = [
 
     "Forget dog whistles, they've been using bull horns for a while now. ",
 
-    "This year - a factory of semiconductors!\n"
-    "Next year - a factory of whole conductors!",
+    "This year - a whole factory of semiconductors!\n"
+    "Next year - a semi-factory of whole conductors!",
 
-    "В этом году - фабрика полупроводников!\n"
-    "В следующем году - фабрика целых проводников!\n",
+    "В этом году - целая фабрика полупроводников!\n"
+    "В следующем году - полу-фабрика целых проводников!\n",
 
     "Please, we have no time to discuss such childish topics like "
     '"human rights" and "belgium".',
@@ -278,6 +279,14 @@ fortunes_politics = [
     "Time is yours, but everything else is ours.",
 
     "We must make a radical turn, at 360 degress.",
+
+    "Environmentalism without class consciousness "
+    "is just enlightened gardening.",
+
+    "Don't waste time arguing about pulling the lever if you're the ones "
+    "tied to the tracks.",
+
+    "Practice everything in moderation, especially moderation itself. ",
     ]
 
 fortunes_engineering = [
@@ -319,6 +328,13 @@ fortunes_engineering = [
 
     "The enemy of perfect is good enough.\n"
     "    -- maybetree, in response to Arend",
+
+    "What if the Chinese are already doing it?\n"
+    "Hmm, and what if they are doing a fartum radar?\n"
+    "What is a fartum radar?\n"
+    "A radar that can detect farts...\n"
+    "It is the same thing -- complete nonsense.\n"
+    "Money completely thrown away.",
     ]
 
 fortunes_resilience = [
@@ -531,13 +547,41 @@ fortunes_nonsense = [
 
     "We have numerous quantum tehnologies: \n"
     "A prototype of the Russian Empire, \n"
-    "A simulated Lavrentiy Beria, who won't retire, \n"
+    "A simulated Beria, who won't retire, \n"
     "An inspiring list of foes, \n"
     "Government cash in a truck-sized dose! \n"
-    "Cyclists who can neither talk or walk, \n"
+    "Cyclists who can neither talk nor walk, \n"
     "Managers who can't manage diddly-squak. \n"
-    "I beg for your absolution, \n"
+    "I beg for absolution, \n"
     "But this -- is importsubstitution! \n"
+    ,
+
+    "A radiant hue that eclipses the sun:\n"
+    "Ahmed the Designer's limited run.\n"
+    "A cosmic mist that thaws winter's frost\n"
+    "as it spews in clouds from the rear exhaust!\n"
+    "\n"
+    "Like a deathly-bright ray from Aldebaraan\n"
+    "I'm blasting through hyperspace to reach Tyoply Stan!\n"
+    "Taxi driver's diploma procured\n"
+    "(600 rubles is the cost I endured)\n"
+    "Passenger's comfort is always assured\n"
+    "Ministerial luxury as you're getting toured!\n"
+    "\n"
+    "VAZ - faceted diamond's reflective face\n"
+    "Headlights at night like an eagle's gaze\n"
+    "Sixteen hundred km per h\n"
+    "Neutron grenade of cosmic revenge!\n"
+    "\n"
+    "VAZ - Adidas suits\n"
+    "Armor of gods of galactic routes\n"
+    "Ja! Was ist los? Was ist das?\n"
+    "Three white stripes blind foes en masse!\n"
+    "\n"
+    "Shwarma hotter than nuclear fusion\n"
+    "Persimmon sunrise causes confusion!\n"
+    "Mountains echo ten myriad times:\n"
+    "Kazbek and Pegasus have family ties!\n"
     ,
     ]
 
