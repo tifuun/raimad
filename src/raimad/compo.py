@@ -154,6 +154,9 @@ class Compo:
     Layers: rai.DictList[rai.Layer]
     Options: rai.DictList[rai.Option]
 
+    _experimental_lyp: 'rai.cif.lyp.LayerProperties'
+    _experimental_lname_transformers: 'rai.types.LNameTransformers'
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Instantiate new Compo.

@@ -203,6 +203,7 @@ class Properties:
     name: str | None = None
     #klay_source: str
 
+# TODO solve the mess rai.types vs rai.typing
 LayerProperties: TypeAlias = Mapping[str, Properties]
 
 class LypExporter:
@@ -336,7 +337,7 @@ def _extract_dither_patterns(
 
 def _export_dither_patterns(
         patterns: Mapping[CustomDitherPattern, int]
-        ):
+        ) -> Iterator[str]:
     for pattern, order in patterns.items():
 
         if not isinstance(pattern, CustomDitherPattern):
@@ -402,7 +403,7 @@ def _extract_line_styles(
 
 def _export_line_styles(
         styles: Mapping[CustomLineStyle, int]
-        ):
+        ) -> Iterator[str]:
     for style, order in styles.items():
 
         if not isinstance(style, CustomLineStyle):

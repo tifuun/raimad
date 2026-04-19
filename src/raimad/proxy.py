@@ -223,11 +223,11 @@ class Proxy:
         self.transform = transform or rai.Transform()
 
     @property
-    def _experimental_lyp(self):
+    def _experimental_lyp(self) -> 'rai.cif.lyp.LayerProperties':
         return self.compo._experimental_lyp
 
     @property
-    def _experimental_lname_transformers(self):
+    def _experimental_lname_transformers(self) -> rai.types.LNameTransformers:
         return self.compo._experimental_lname_transformers
 
     def steamroll(self) -> GeomsS:
