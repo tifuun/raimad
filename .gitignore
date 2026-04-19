@@ -85,8 +85,6 @@ htmlcov
 paper/jats
 !paper/img/*.png
 *.lyp
-
-
-
-
+paper/*original*
+paper/*tidy*
 

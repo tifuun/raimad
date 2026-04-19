@@ -103,6 +103,9 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
         with self.assertRaises(rai.err.UntransformableLayerName):
             rai.export_cif(Foo())
 
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo().proxy())
+
     def test_custom_transformer(self):
         class Foo(rai.Compo):
 
@@ -142,6 +145,9 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
 
         with self.assertWarns(rai.err.InvalidLayerNameTransformerOutput):
             rai.export_cif(Foo())
+
+        with self.assertWarns(rai.err.InvalidLayerNameTransformerOutput):
+            rai.export_cif(Foo().proxy())
 
     ### test klayout ###
 
@@ -193,6 +199,9 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
         with self.assertRaises(rai.err.UntransformableLayerName):
             rai.export_cif(Foo())
 
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo().proxy())
+
     ### test noop ###
 
     def test_transformer_noop(self):
@@ -228,6 +237,9 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
 
         with self.assertRaises(rai.err.UntransformableLayerName):
             rai.export_cif(Foo())
+
+        with self.assertRaises(rai.err.UntransformableLayerName):
+            rai.export_cif(Foo().proxy())
 
     ### test capitalise ###
 
@@ -606,15 +618,4 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
     #    self.assertTrue(b'CIFLayerNameWarning' in proc_warn.stderr)
     #    self.assertTrue(b'CIFLayerNameWarning' not in proc_nowarn.stderr)
 
-# Use this to manually test what warning looks like:
-# `raimad export tests.test_cif_layer_names:Sample`
-class Sample(rai.Compo):
-    def _make(self):
-        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
-
-class SampleCap(rai.Compo):
-    def _make(self):
-        _experimental_cif_lname_transformer = \
-                rai.cif.lname_transformers.capitalise
-        self.geoms.update({'foo': [[(0, 0), (0, 1), (1, 1)]]})
 

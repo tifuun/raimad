@@ -15,7 +15,7 @@ import raimad as rai
 # "pebble".
 #
 
-pattern_snow = rai.lyp.DitherPattern(
+pattern_snow = rai.lyp.CustomDitherPattern(
     lines=(
             "................................",
             "...................*............",
@@ -53,7 +53,7 @@ pattern_snow = rai.lyp.DitherPattern(
     name='snow',
     )
 
-pattern_carrot = rai.lyp.DitherPattern(
+pattern_carrot = rai.lyp.CustomDitherPattern(
     lines=(
             "................................",
             "................................",
@@ -92,7 +92,7 @@ pattern_carrot = rai.lyp.DitherPattern(
     name='carrot',
     )
 
-pattern_pebble = rai.lyp.DitherPattern(
+pattern_pebble = rai.lyp.CustomDitherPattern(
     lines=(
             "................................",
             "................................",

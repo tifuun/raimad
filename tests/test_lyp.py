@@ -143,6 +143,53 @@ SNOWMAN_LYP="""\
 <name/>
 </layer-properties>"""
 
+LYP_BUILTIN_DITHERS="""\
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<properties>
+<source>FOO</source>
+<dither-pattern>I0</dither-pattern>
+</properties>
+<properties>
+<source>BAR</source>
+<dither-pattern>I24</dither-pattern>
+</properties>
+<name/>
+</layer-properties>"""
+
+LYP_BUILTIN_LINES="""\
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<properties>
+<source>FOO</source>
+<line-style>I1</line-style>
+<width>5</width>
+</properties>
+<properties>
+<source>BAR</source>
+<line-style>I6</line-style>
+<width>10</width>
+</properties>
+<name/>
+</layer-properties>"""
+
+LYP_CUSTOM_LINE="""\
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<custom-line-style>
+<pattern>*.*..*.*.....**..*..**..**.**...</pattern>
+<order>0</order>
+<name>ascii</name>
+</custom-line-style>
+<properties>
+<source>FOO</source>
+<line-style>C0</line-style>
+<width>5</width>
+</properties>
+<name/>
+</layer-properties>"""
+
+
 class TestLYP(XmlComparisonMixin, unittest.TestCase):
     #def test_lyp_dict(self):
     #    self.assertXmlEqual(
@@ -234,6 +281,85 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
         self.assertXmlEqual(
             raimad.export_lyp(raimad.Snowman()),
             SNOWMAN_LYP
+            )
+
+        self.assertXmlEqual(
+            raimad.export_lyp(raimad.Snowman().proxy()),
+            SNOWMAN_LYP
+            )
+
+    def test_lyp_builtin_dithers(self):
+        class Foo(raimad.Compo):
+            _experimental_lyp = {
+                'FOO': raimad.lyp.Properties(
+                    dither_pattern=raimad.lyp.dithers.solid
+                    ),
+                'BAR': raimad.lyp.Properties(
+                    dither_pattern=raimad.lyp.dithers['22.5 degree up']
+                    ),
+                }
+            def _make(self):
+                self.subcompos.r1 = raimad.RectLW(4, 4).proxy().map('foo')
+                self.subcompos.r2 = (
+                        raimad.RectLW(4, 4).proxy().map('bar').movex(5)
+                        )
+
+        self.assertXmlEqual(
+            raimad.export_lyp(Foo()),
+            LYP_BUILTIN_DITHERS
+            )
+
+        #raimad.export_lyp(Foo(), 'Foo.lyp')
+        #raimad.export_cif(Foo(), 'Foo.cif')
+        # TODO KLayout craps out if we rename FOO and BAR to L0 and L1
+        # here???????????????
+
+    def test_lyp_builtin_lines(self):
+        class Foo(raimad.Compo):
+            _experimental_lyp = {
+                'FOO': raimad.lyp.Properties(
+                    line_style=raimad.lyp.lines.dotted,
+                    width=5,
+                    ),
+                'BAR': raimad.lyp.Properties(
+                    line_style=raimad.lyp.lines['long dashed'],
+                    width=10,
+                    ),
+                }
+            def _make(self):
+                self.subcompos.r1 = raimad.RectLW(4, 4).proxy().map('foo')
+                self.subcompos.r2 = (
+                        raimad.RectLW(4, 4).proxy().map('bar').movex(5)
+                        )
+
+        #raimad.export_lyp(Foo(), 'Foo.lyp')
+        #raimad.export_cif(Foo(), 'Foo.cif')
+
+        self.assertXmlEqual(
+            raimad.export_lyp(Foo()),
+            LYP_BUILTIN_LINES
+            )
+
+    def test_lyp_custom_lines(self):
+        class Foo(raimad.Compo):
+            _experimental_lyp = {
+                'FOO': raimad.lyp.Properties(
+                    line_style=raimad.lyp.CustomLineStyle(
+                        name='ascii',
+                        pattern='*.*..*.*.....**..*..**..**.**...',
+                        ),
+                    width=5,
+                    ),
+                }
+            def _make(self):
+                self.subcompos.r1 = raimad.RectLW(4, 4).proxy().map('foo')
+
+        raimad.export_lyp(Foo(), 'Foo.lyp')
+        raimad.export_cif(Foo(), 'Foo.cif')
+
+        self.assertXmlEqual(
+            raimad.export_lyp(Foo()),
+            LYP_CUSTOM_LINE
             )
 
 #if __name__ == '__main__':
