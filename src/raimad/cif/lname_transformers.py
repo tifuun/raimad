@@ -115,11 +115,11 @@ class Enumerator:
 
 def klayout(name: str) -> str | None:
     """
-    Prefix layer name with an uppercase `L`.
+    Prefix layer name with `_L`.
 
     This will produce CIF layer names that are recognized
     by KLayout, even if not necessarily conformant with the CIF spec.
     """
-    return f'L{name}'
+    return f'L_{name}'
 
 

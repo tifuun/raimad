@@ -167,7 +167,7 @@ class TestLayerNames(AssertDoesntWarn, unittest.TestCase):
 
         with self.assertWarns(rai.err.InvalidLayerNameTransformerOutput):
             layers = get_cif_layers(Foo(), cf.grammar.lenient_layers)
-        self.assertEqual(layers, {'Lfoo', 'Lroot', 'Lfoo_BAR'})
+        self.assertEqual(layers, {'L_foo', 'L_root', 'L_foo_BAR'})
 
         #rai.export_cif(Foo(), 'Foo.cif')
 
