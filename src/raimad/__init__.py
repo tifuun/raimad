@@ -2,8 +2,11 @@
 
 import sys
 
+from raimad import types
+
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
+from raimad import saveto
 from raimad.helpers import (
     fullcircle,
     halfcircle,
@@ -23,6 +26,8 @@ from raimad.helpers import (
     eq,
     sub,
     distance_between,
+    is_lname_valid,
+    vec2s,
     )
 from raimad import affine
 import raimad.iters as iters
@@ -74,9 +79,12 @@ from raimad import typing as t
 
 from raimad import cif
 from raimad.cif.shorthand import export_cif
+from raimad.cif.shorthand import export_lyp
 from raimad.svg import export_svg
 from raimad.show import show
 from raimad import err
+
+from raimad.cif import lyp
 
 from raimad.fortune import fortune
 from raimad.fortune import fortunes_technology
@@ -93,89 +101,96 @@ from raimad.snowman import Snowman
 
 epsilon = sys.float_info.epsilon
 
-# The function of __all__ is to specify which things get imported
-# when someone does `from raimad import *`,
-# but it also lets tools like ruff and mypy know that we're
-# importing these things for the purpose of namespace flattening,
-# so they don't complain that these are "unused" imports
+# __all__ should contain all re-exported objects
+# (checked by mypy and ruff)
+# do not edit this definition manually;
+# use scripts/patch_dunder_all.py
+# to update automatically.
+
 __all__ = [
-    'export_svg',
-    'Transform',
-    'Compo',
-    'FilteredDictList',
-    'DictList',
-    'Proxy',
-    'BoundPoint',
-    'MarksContainer',
-    'SubcompoContainer',
-    'ProxyableDictList',
-    'AbstractBBox',
-    'BBox',
-    'BoundBBox',
-    'Partial',
-    'LMap',
-    'export_cif',
-    'string_import',
-    'Annotation',
-    'Mark',
-    'Layer',
-    'Option',
-    'Empty',
-    'EmptyType',
-    't',
-    'typing',
-    'AnSec',
-    'Circle',
-    'RectLW',
-    'RectWire',
-    'CustomPoly',
-    'Snowman',
-    'err',
-    'cif',
-    'braid',
-    'flatten',
-    'quintles',
-    'quadles',
-    'triples',
-    'couples',
-    'quintlets',
-    'quadlets',
-    'triplets',
-    'duplets',
-    'overlap',
-    'nonoverlap',
-    'iters',
-    'affine',
-    'fullcircle',
-    'halfcircle',
-    'quartercircle',
-    'eigthcircle',
-    'semicircle',
-    'demisemicircle',
-    'hemidemisemicircle',
-    'angle_between',
-    'polar',
-    'is_compo_class',
-    'custom_base',
-    'WINGDINGS',
-    'wingdingify',
-    'midpoint',
-    'gv',
-    'add',
-    'eq',
-    'sub',
-    'epsilon',
-    'show',
-    'distance_between',
-    'fortune',
-    'fortunes_technology',
-    'fortunes_economy',
-    'fortunes_education',
-    'fortunes_politics',
-    'fortunes_engineering',
-    'fortunes_resilience',
-    'fortunes_misc',
-    'fortunes_all',
+    "sys",
+    "types",
+    "Empty",
+    "EmptyType",
+    "gv",
+    "saveto",
+    "fullcircle",
+    "halfcircle",
+    "quartercircle",
+    "eigthcircle",
+    "semicircle",
+    "demisemicircle",
+    "hemidemisemicircle",
+    "angle_between",
+    "polar",
+    "is_compo_class",
+    "custom_base",
+    "WINGDINGS",
+    "wingdingify",
+    "midpoint",
+    "add",
+    "eq",
+    "sub",
+    "distance_between",
+    "is_lname_valid",
+    "vec2s",
+    "affine",
+    "iters",
+    "overlap",
+    "nonoverlap",
+    "duplets",
+    "triplets",
+    "quadlets",
+    "quintlets",
+    "couples",
+    "triples",
+    "quadles",
+    "quintles",
+    "flatten",
+    "braid",
+    "string_import",
+    "FilteredDictList",
+    "DictList",
+    "Annotation",
+    "Mark",
+    "Layer",
+    "Option",
+    "BoundPoint",
+    "Transform",
+    "Compo",
+    "MarksContainer",
+    "SubcompoContainer",
+    "ProxyableDictList",
+    "Proxy",
+    "LMap",
+    "Partial",
+    "AbstractBBox",
+    "BBox",
+    "BoundBBox",
+    "RectLW",
+    "RectWire",
+    "Circle",
+    "AnSec",
+    "CustomPoly",
+    "typing",
+    "t",
+    "cif",
+    "export_cif",
+    "export_lyp",
+    "export_svg",
+    "show",
+    "err",
+    "lyp",
+    "fortune",
+    "fortunes_technology",
+    "fortunes_economy",
+    "fortunes_education",
+    "fortunes_politics",
+    "fortunes_engineering",
+    "fortunes_resilience",
+    "fortunes_misc",
+    "fortunes_all",
+    "Snowman",
     ]
 
 

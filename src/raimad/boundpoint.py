@@ -1,8 +1,11 @@
 """boundpoint.py: home to BoundPoint class."""
 
-from typing import Literal, Iterator
+from typing import Literal, Iterator, overload
+from types import NoneType
 
 import raimad as rai
+from raimad.transform import EditingArgumentError
+from raimad.types import Vec2, Num, NumS
 
 class BoundPoint():
     """
@@ -28,7 +31,11 @@ class BoundPoint():
     for the transformation.
     """
 
-    def __init__(self, x: float, y: float, proxy: 'rai.typing.Proxy'):
+    _x: NumS
+    _y: NumS
+    proxy: 'rai.typing.Proxy'
+
+    def __init__(self, x: Num, y: Num, proxy: 'rai.typing.Proxy'):
         """
         Initialize new boundpoint.
 
@@ -45,11 +52,11 @@ class BoundPoint():
         proxy
             The proxy this to bind to
         """
-        self._x = x
-        self._y = y
+        self._x = float(x)
+        self._y = float(y)
         self._proxy = proxy
 
-    def __getitem__(self, index: Literal[0, 1]) -> float:
+    def __getitem__(self, index: Literal[0, 1]) -> Num:
         """
         Get the X or Y coordinate of this BoundPoint.
 
@@ -60,7 +67,7 @@ class BoundPoint():
 
         Returns
         -------
-        float
+        Num
             The coordinate value
 
         Raises
@@ -87,13 +94,13 @@ class BoundPoint():
             "so the index must be either 0 or 1"
             )
 
-    def __iter__(self) -> Iterator[float]:
+    def __iter__(self) -> Iterator[Num]:
         """
         Return an iterator of the x and y coordinates of this BoundPoint.
 
         Returns
         -------
-        Iterator[float]
+        Iterator[Num]
             Iterator containing x and y coordinate.
 
         """
@@ -163,34 +170,17 @@ class BoundPoint():
             '>'
             ))
 
-    def to(self, point: 'rai.typing.PointLike') -> 'rai.typing.Proxy':
-        """
-        Move the bound Proxy such that this BoundPoint aligns with `point`.
+    #-------------#
+    # Rotate      #
+    #-------------#
 
-        Parameters
-        ----------
-        point: rai.typing.PointLike
-            Target point.
-
-        Returns
-        -------
-        rai.typing.Proxy
-            The bound proxy (not this BoundPoint!) is returned
-            to allow chaining methods.
-        """
-        self._proxy.transform.move(
-            point[0] - self._x,
-            point[1] - self._y,
-            )
-        return self._proxy
-
-    def rotate(self, angle: float) -> 'rai.typing.Proxy':
+    def rotate(self, angle: Num) -> 'rai.typing.Proxy':
         """
         Rotate the bound Proxy around this BoundPoint.
 
         Parameters
         ----------
-        angle: float
+        angle: Num
             The rotation angle, specified in radians in the positive
             direction.
 
@@ -200,28 +190,32 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        self._proxy.transform.rotate(
+        self._proxy.transform.crotate(
             angle,
             self._x,
             self._y
             )
         return self._proxy
 
-    def move(self, x: float, y: float) -> 'rai.typing.Proxy':
-        """
-        Move the bound Proxy.
 
-        Since translation is a transformation that works the same
-        regardless of where the origin is,
-        this method is identicaly to simply calling the `move`
-        method of the bound transform itself.
+    #-------------#
+    # Move        #
+    #-------------#
+
+    def cmove(
+            self,
+            x: Num = 0,
+            y: Num = 0
+            ) -> 'rai.typing.Proxy':
+        """
+        Translate by x and y.
 
         Parameters
         ----------
-        x: float
-            Move this many units in the X direction
-        y: float
-            Move this many units in the Y direction
+        x : Num
+            Move this many units along x axis.
+        y : Num
+            Move this many units along y axis.
 
         Returns
         -------
@@ -229,18 +223,114 @@ class BoundPoint():
             The bound proxy (not this BoundPoint!) is returned
             to allow chaining methods.
         """
-        self._proxy.transform.move(x, y)
+        self._proxy.transform.cmove(x, y)
         return self._proxy
 
-    def flip(self) -> 'rai.typing.Proxy':
-        #TODO add tests
+    def pmove(
+            self,
+            offset: Vec2
+            ) -> 'rai.typing.Proxy':
+        """
+        Translate by x and y, given as a tuple.
+
+        Parameters
+        ----------
+        offset : Vec2
+            A tuple of two values (x, y).
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.pmove(offset)
+        return self._proxy
+
+    @overload
+    def move(self, /, a: Num, b: Num) -> 'rai.typing.Proxy': ...
+    @overload
+    def move(self, /, a: Vec2) -> 'rai.typing.Proxy': ...
+
+    def move(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> 'rai.typing.Proxy':
+        """
+        Translate vertically and horizontally (overload).
+
+        This is an overloaded method that can take the X and Y offsets either
+        as two separate x and y arguments, or as a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Num | Vec2
+            X offset or tuple of offsets
+        b : Num | None
+            Y offset or None
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.move(a, b)  # type: ignore
+        return self._proxy
+
+    def movex(self, x: Num = 0) -> 'rai.typing.Proxy':
+        """
+        Move along x axis.
+
+        Parameters
+        ----------
+        x : Num
+            Move this many units along x axis.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.movex(x)
+        return self._proxy
+
+    def movey(self, y: Num = 0) -> 'rai.typing.Proxy':
+        """
+        Move along y axis.
+
+        Parameters
+        ----------
+        y : Num
+            Move this many units along y axis.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.movey(y)
+        return self._proxy
+
+    #-------------#
+    # Flip        #
+    #-------------#
+
+    def flip(
+            self,
+            ) -> 'rai.typing.Proxy':
         """
         Flip the bound proxy around this boundpoint.
 
         Returns
         -------
-        Self
-            self is returned to allow chaining methods.
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
         """
         self._proxy.transform.flip(self._x, self._y)
         return self._proxy
@@ -251,11 +341,11 @@ class BoundPoint():
 
         Returns
         -------
-        Self
-            self is returned to allow chaining methods.
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
         """
-        #TODO add tests
-        self._proxy.transform.flip(self._x)
+        self._proxy.transform.hflip(self._x)
         return self._proxy
 
     def vflip(self) -> 'rai.typing.Proxy':
@@ -264,12 +354,244 @@ class BoundPoint():
 
         Returns
         -------
-        Self
-            self is returned to allow chaining methods.
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
         """
-        #TODO add tests
-        self._proxy.transform.flip(self._y)
+        self._proxy.transform.vflip(self._y)
         return self._proxy
 
-    # TODO the rest of the functions
+    #-------------#
+    # Scale       #
+    #-------------#
+
+    def cscale(
+            self,
+            x: Num,
+            y: Num,
+            ) -> 'rai.typing.Proxy':
+        """
+        Scale width and height (two floats) with this boundpoint as pivot.
+
+        Parameters
+        ----------
+        x : Num
+            Factor to scale by along the x axis
+        y : Num
+            Factor to scale by along the y axis.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.ccscale(x, y, self._x, self._y)
+        return self._proxy
+
+    def pscale(
+            self,
+            scale: Vec2,
+            ) -> 'rai.typing.Proxy':
+        """
+        Scale width and height (tuple) with this boundpoint as pivot.
+
+        Parameters
+        ----------
+        scale : Vec2
+            The x and y scale factors
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.ccscale(scale[0], scale[1], self._x, self._y)
+        return self._proxy
+
+    def ascale(
+            self,
+            factor: Num,
+            ) -> 'rai.typing.Proxy':
+        """
+        Scale width and height by same factor with this boundpoint as pivot.
+
+        Parameters
+        ----------
+        factor : Num
+            Factor to scale by.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        self._proxy.transform.acscale(factor, self._x, self._y)
+        return self._proxy
+
+    @overload
+    def scale(self, /, a: Num  ,         ) -> 'rai.typing.Proxy': ...
+    @overload
+    def scale(self, /, a: Num  , b: Num  ) -> 'rai.typing.Proxy': ...
+    @overload
+    def scale(self, /, a: Vec2,         ) -> 'rai.typing.Proxy': ...
+
+    def scale(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | Vec2 | None = None,
+            ) -> 'rai.typing.Proxy':
+        """
+        Scale width and height, using self as pivot point (overload).
+
+        This is an overloaded function. It can take:
+        - single scale factor
+            - `self.scale(5)`
+        - x, y scale factors (separate values)
+            - `self.scale(5, 4)`
+        - x, y scale factors (tuple)
+            - `self.scale((5, 4))`
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        # `Isinstance` check is against Num
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num)
+                ):
+            self._proxy.transform.ccscale(
+                float(a),
+                float(b),
+                self._x,
+                self._y
+                )
+        elif (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType)
+                ):
+            self._proxy.transform.pcscale(a, self._x, self._y)
+        elif (
+                isinstance(a, Num) and
+                isinstance(b, NoneType)
+                ):
+            self._proxy.transform.acscale(
+                float(a),
+                self._x,
+                self._y
+                )
+        else:
+            raise EditingArgumentError()
+
+        return self._proxy
+
+    #-------------#
+    # To          #
+    #-------------#
+
+    def pto(self, point: Vec2) -> 'rai.typing.Proxy':
+        """
+        Move the Proxy such that this BoundPoint ends up at `point` (tuple).
+
+        Parameters
+        ----------
+        point: Vec2
+            Target point.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        point = rai.vec2s(point)
+
+        self._proxy.transform.move(
+            point[0] - self._x,
+            point[1] - self._y,
+            )
+        return self._proxy
+
+    def cto(self, x: Num, y: Num) -> 'rai.typing.Proxy':
+        """
+        Move the Proxy so that this BoundPoint ends up at `point` (two Nums).
+
+        Parameters
+        ----------
+        x : Num
+            Move this many units along x axis.
+        y : Num
+            Move this many units along y axis.
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        x = float(x)
+        y = float(y)
+
+        self._proxy.transform.move(
+            x - self._x,
+            y - self._y,
+            )
+        return self._proxy
+
+    @overload
+    def to(self, a: Num, b: Num) -> 'rai.typing.Proxy': ...
+    @overload
+    def to(self, a: Vec2) -> 'rai.typing.Proxy': ...
+
+    def to(
+            self,
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> 'rai.typing.Proxy':
+        """
+        Move the Proxy so that this BoundPoint ends up at `point` (overload).
+
+        This is an overloaded method that can take the position of the target
+        point either as two separate x and y arguments, or as a single tuple
+        of two values.
+
+
+        Parameters
+        ----------
+        a : Num | Vec2
+            Either the X coordinate or target point
+        b : Num | None
+            Either the Y coordinate or None
+
+        Returns
+        -------
+        rai.typing.Proxy
+            The bound proxy (not this BoundPoint!) is returned
+            to allow chaining methods.
+        """
+        # `Isinstance` check is against float
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num)
+                ):
+            self.cto(float(a), float(b))
+        elif (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType)
+                ):
+            self.pto(a)
+        else:
+            raise EditingArgumentError()
+
+        return self._proxy
 

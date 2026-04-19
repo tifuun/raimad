@@ -10,7 +10,7 @@ fortunes_technology = [
 
     '''"Stable"? That's for horses. '''
 
-    'Roses are red, violets are blue. '
+    'Roses are red, violets are blue.\n'
     'Unterminated string literal at line 32. ',
 
     'A computer is much like air conditioning: '
@@ -53,9 +53,51 @@ fortunes_technology = [
 
     "Do NOT automate the production of maskfiles!\n"
     "    -- Jochem",
+
+    "Consider yourself warned. Now go do cool things with it.",
+
+    "If you want to know why the tree is growing upside-down, "
+    "go ask a computer scientist. "
+    "The conventional wisdom is that most of them have not been "
+    "outside in such a long time that they forgot what trees look like. ",
+
+    "Contrary to conventional wisdom, the reason trees are drawn "
+    "down the page is so that you don't have to guess how tall it will "
+    "be ahead of time. "
+    "This is obvious to anyone who has ever done any serious work; "
+    "that is to say, nobody from the mathematics department. ",
+
+    "Monad, monoid, hemorrhoid -- what's the difference!?\n",
+    "All three are a pain in the backside.",
+
+    "Razer Blade: sharp enough to cut corners, and not much more. ",
+
+    "Q: What is the most versatile XML parser?\n"
+    "A: /bin/rm",
+
+    "Q: Wait, what if multiple `comefrom`s reference the same label?\n"
+    "A: Ah, well that's how you do multithreading.",
+
+    "Debugging a GPUAssert: God doesn't know and Satan won't tell. ",
+
+    "Security at the expense of usability comes at the expense of security. ",
+
+    "- The blue team has to get it right every time. "
+    "The red team - just once. "
+    ,
+
+    '''maybetree: "Is MATLAB garbage-collected?\n'''
+    '''Arend: "No, it's just garbage". '''
+    ,
     ]
 
 fortunes_economy = [
+
+    "Money doesn't buy happiness, but neither does poverty. ",
+
+    "Money won't buy you happiness, "
+    "but it can vastly improve the quality of your misery. ",
+
     "Step one: solve the problem. Step two: become the problem. ",
 
     "This is a security feature. It secures our revenue stream. ",
@@ -72,6 +114,17 @@ fortunes_economy = [
 
     "When everyone is rushing to dig their own grave, "
     "sell shovels. ",
+
+    "Boss makes a dollar\n"
+    "I make a dime\n"
+    "That's why my algorithms\n"
+    "Run in exponential time\n",
+
+    "In Canada it gets so cold that even bank accounts freeze. ",
+
+    "Russia is the biggest country in the world! "
+    "Time timezones span 11 hours -- and also 11 decades. "
+    ,
     ]
 
 
@@ -107,15 +160,14 @@ fortunes_education = [
     "You are not always me, but in this particular case you are.",
 
     "You MUST question authority. There shall be no questions about this.",
+
+    "Bachelor Electrical Engineering:\n"
+    "Misery is not a consequence, it is a prerequisite."
+    ,
     ]
 
 fortunes_politics = [
     "Abuse of authority comes as no surprise. ",
-
-    "Money doesn't buy happiness, but neither does poverty. ",
-
-    "Money won't buy you happiness, "
-    "but it can vastly improve the quality of your misery. ",
 
     "Elect a clown, expect a circus. ",
 
@@ -161,7 +213,7 @@ fortunes_politics = [
     "Checklist for travel to The Netherlands:\n"
     "    - Do not travel to The Netherlands. ",
 
-    "Freedom of speech is ofcourse guaranteed. "
+    "Freedom of speech is ofcourse guaranteed.\n"
     "Freedom *after* the speech, however, is a more delicate topic. ",
 
     'When I commit violence, it is called "crime", '
@@ -183,6 +235,8 @@ fortunes_politics = [
 
     "Fair Use? More like Fairly Useless! ",
 
+    "Geneva Convention? More like Geneva Suggestion! ",
+
     "Germany has the most environmentally-friendly trains, "
     "because most of them are cancelled. ",
 
@@ -194,12 +248,12 @@ fortunes_politics = [
     "That was long ago and also not true.",
 
     "А у нас в России хорошо, приятно.\n"
-    "Дома рушаться очень аккуратно. ",
+    "Дома рушатся очень аккуратно. ",
 
     "And here, in Russia, it is beautiful and full of compassion.\n"
     "The houses -- they fall down in a very orderly fashion.",
 
-    "Your opinions is extremely valuable to us,\n"
+    "Your opinion is extremely valuable to us,\n"
     "but, all in all, not very important.",
 
     "Ваше мнение для меня очень важно,\n"
@@ -222,6 +276,8 @@ fortunes_politics = [
     "The militia belongs to the people and the people belong to the militia.",
 
     "Time is yours, but everything else is ours.",
+
+    "We must make a radical turn, at 360 degress.",
     ]
 
 fortunes_engineering = [
@@ -333,6 +389,12 @@ fortunes_resilience = [
     "And now it is time to harvest the fruit. ",
 
     "世界の全てに赦されたら愛の意味わかったの",
+
+    "Remember: the odds are good, but the goods are odd. ",
+
+    "Find what you love and let it kill you. ",
+
+    "Life could be a lot worse, but it could also be a lot better. ",
     ]
 
 fortunes_misc = [
@@ -409,6 +471,27 @@ fortunes_misc = [
     "Those who trade freedom for convenience will lose both",
 
     "Artificial intelligence proves futile against organic idiocy",
+
+    "Dear god, how many elephants can you fit in one room!?",
+
+    "Hold on, is anyone here NOT a federal agent!?",
+
+    "The only thing worse than bad art is boring art.", 
+
+    "Sometimes, you just want to be a human being, not a human doing. ",
+
+    "Communication is key, but you go first. ",
+
+    "Trust me, it makes you cool to like things nobody cares about.\n"
+    "Go support your local library.\n"
+    "Steal from the government.\n"
+    ,
+
+    "There was a time when it was ok to be unwelcoming towards stupidity. "
+    "They weren’t better times, but they were delusional in a different way.\n"
+    " - u/kemsat on lemmy.world "
+    ,
+    
     ]
 
 fortunes_nonsense = [

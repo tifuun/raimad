@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "raimad"
-version = "1.2.5"
+version = "1.3.0"
 description = """RAIMAD Astronomical Instrument MAsk Designer"""
 authors = [
 	{name = "maybetree", email = "maybetree48@proton.me"}
@@ -25,6 +25,14 @@ dependencies = [
     'typing-extensions',
 	]
 
+[project.optional-dependencies]
+dev = [
+	"numpy",
+	"cift",
+	"mypy",
+	"ipython",
+	]
+
 # This lets people use `raimad` directly as a shell command
 # instead of `python -m raimad`
 [project.scripts]
@@ -34,6 +42,7 @@ raimad = "raimad.cli:cli"
 exclude = [
     "tests/*",
     "benchmarks/*",
+    "mypy-experiments/*",
     #"docparse.py",  # TODO finish docstrings
     #"boundpoint.py",  # TODO finish docstrings
     #"ansec.py",  # TODO finish docstrings
@@ -51,6 +60,55 @@ ignore = [
     "D401",  # don't complain about "imperative mood"
     "D202",  # Allow blank line after docstring
     ]
+
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+#[tool.ruff.lint.per-file-ignores]
+#"proxy.py" = ["RULE_CODE"]
+
+[tool.mypy]
+strict = true
+
+# Files/dirs to check. Note: we do not check benchmarks
+files = [
+	"src",
+	"tests",
+	"scripts",
+]
+
+# Exclude specific files
+exclude = [
+	'tests/test_cif_noreuse.py',  # TODO cift type hints!
+	'tests/test_cif_layer_names.py',  # TODO cift type hints!
+	]
+
+# don't complain about missing -> None return annotation
+# in test methods
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.*'
+disallow_untyped_defs = false
+
+# Don't complain about missing attributes in test utils file.
+# This file relies heavily on mixins,
+# and type-hinting mixins -- especially mixins that
+# all depend on one another -- is a pants-backward tedious process
+# that produces tons of incomprehensible typing.Protocol boilerplate
+# (see https://stackoverflow.com/questions/59311963/ 
+# and commit 35ed468bde2404876599da74e023837730fc43cd in this repo ),
+# all for the dubious benefit of ensuring type safety in code
+# that, almost by-defenition, has 100% runtime coverage,
+# and never runs on the end-user's machine.
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.utils'
+disable_error_code = ["attr-defined"]
+
+# The nested annotation classes inside compo class system
+# just doesn't work with raimad
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.test_compoclass_annots'
+disable_error_code = ["misc", "no-untyped-def"]
 

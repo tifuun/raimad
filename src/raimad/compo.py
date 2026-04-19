@@ -9,6 +9,7 @@ except ImportError:
     from typing_extensions import Self
 
 import raimad as rai
+from raimad.types import Vec2, Vec2S, GeomsS
 
 class InvalidSubcompoError(TypeError):
     """
@@ -46,6 +47,9 @@ class CopyCompoError(ProxyCompoConfusionError):
     be copying a proxy pointing to the compo instead.
     """
 
+class InvalidLayerNameError(ValueError):
+    """Error for making invalid layer names."""
+
 
 T = TypeVar('T')
 class ProxyableDictList(rai.DictList[T]):
@@ -81,9 +85,9 @@ class ProxyableDictList(rai.DictList[T]):
 
 class MarksContainer(
         rai.FilteredDictList[
-            'rai.typing.Point',
-            'rai.typing.PointLike',
-            'rai.typing.Point',
+            Vec2S,
+            Vec2,
+            Vec2S,
             ]):
     """
     Specialized container that implements Compo.marks.
@@ -91,7 +95,7 @@ class MarksContainer(
     TODO explain.
     """
 
-    def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
+    def _filter_set(self, val: Vec2) -> Vec2S:
         """
         Set filter for markscontainer.
 
@@ -99,9 +103,9 @@ class MarksContainer(
         (regular tuple or boundpoint or whatever),
         what gets stored is a simple regular tuple.
         """
-        return (val[0], val[1])
+        return rai.vec2s(val)
 
-    def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.Point':
+    def _filter_get(self, val: Vec2S) -> Vec2S:
         return val
 
 class SubcompoContainer(ProxyableDictList['rai.typing.Proxy']):
@@ -142,13 +146,16 @@ class Compo:
     TODO explain
     """
 
-    geoms: 'rai.typing.Geoms'
+    geoms: GeomsS
     marks: MarksContainer
     subcompos: SubcompoContainer
 
     Marks: rai.DictList[rai.Mark]
     Layers: rai.DictList[rai.Layer]
     Options: rai.DictList[rai.Option]
+
+    _experimental_lyp: 'rai.cif.lyp.LayerProperties'
+    _experimental_lname_transformers: 'rai.types.LNameTransformers'
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -165,6 +172,13 @@ class Compo:
         self.marks = MarksContainer()
 
         self._make(*args, **kwargs)
+
+        for layer in self.geoms.keys():
+            if not layer.isidentifier():
+                raise InvalidLayerNameError(
+                    f"`{layer}`: not a valid RAIMAD layer name. "
+                    "All RAIMAD layer names must be valid Python identifiers."
+                    )
 
     def _make(self, *args: Any, **kwargs: Any) -> None:
         """
@@ -195,7 +209,7 @@ class Compo:
         """
         return rai.Partial(cls, **kwargs)
 
-    def steamroll(self) -> 'rai.typing.Geoms':
+    def steamroll(self) -> GeomsS:
         """
         Steamroll the entire compo hierarchy into one Geoms dict.
 
@@ -332,12 +346,14 @@ class Compo:
 
     def transform_point(
             self,
-            point: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            point: Vec2
+            ) -> Vec2S:
         """
-        Do nothing to `point` and return as-is.
+        Cast Vec2 to Vec2S.
 
         This method exists for uniformity with Proxy.transform_point.
+        It does not apply any transformation to the point,
+        but does cast it to Vec2s (tuple of two float | int).
 
         Parameters
         ----------
@@ -353,7 +369,7 @@ class Compo:
         -------
         raimad.Proxy.transform_point
         """
-        return point
+        return rai.vec2s(point)
 
     @property
     def scale(self) -> NoReturn:

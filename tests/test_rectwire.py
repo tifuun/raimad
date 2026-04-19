@@ -2,9 +2,9 @@ import unittest
 
 import raimad as rai
 
-from .utils import GeomsEqual, ArrayAlmostEqual
+from .utils import GeomsEqual, ArrayApproxEqual
 
-class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
+class TestPolys(ArrayApproxEqual, GeomsEqual, unittest.TestCase):
 
     def test_rectwire_p2p(self):
         rectwire = rai.RectWire.from_points((0, 0), (0, 20), 10)
@@ -13,10 +13,10 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
             {
                 'root': [
                     [
-                        [-5, 0],
-                        [5, 0],
-                        [5, 20],
-                        [-5, 20]
+                        (-5, 0),
+                        (5, 0),
+                        (5, 20),
+                        (-5, 20)
                         ],
                     ]
                 }
@@ -29,10 +29,10 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
             {
                 'root': [
                     [
-                        [-5, 0],
-                        [5, 0],
-                        [5, 20],
-                        [-5, 20]
+                        (-5, 0),
+                        (5, 0),
+                        (5, 20),
+                        (-5, 20)
                         ],
                     ]
                 }
@@ -50,10 +50,10 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
             {
                 'root': [
                     [
-                        [-5, 0],
-                        [5, 0],
-                        [5, 20],
-                        [-5, 20]
+                        (-5, 0),
+                        (5, 0),
+                        (5, 20),
+                        (-5, 20)
                         ],
                     ]
                 }

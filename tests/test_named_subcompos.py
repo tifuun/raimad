@@ -2,7 +2,7 @@ import unittest
 
 import raimad as rai
 
-from .utils import ArrayAlmostEqual
+from .utils import ArrayApproxEqual
 
 class Compo_direct(rai.Compo):
     def _make(self):
@@ -40,14 +40,14 @@ class Compo_auto(rai.Compo):
 #        coup_bot.snap_below(beam)
 
 
-class TestNamedSubcompos(ArrayAlmostEqual, unittest.TestCase):
+class TestNamedSubcompos(ArrayApproxEqual, unittest.TestCase):
 
     def test_named_subcompos(self):
 
         compo = Compo_direct()
 
-        self.assertArrayAlmostEqual(
-            compo.subcompos.coup_top.bbox.top_mid,
+        self.assertArrayApproxEqual(
+            rai.vec2s(compo.subcompos.coup_top.bbox.top_mid),
             (0, 20 / 2 + 2)
             )
 
@@ -60,8 +60,8 @@ class TestNamedSubcompos(ArrayAlmostEqual, unittest.TestCase):
 
         compo = Compo_auto()
 
-        self.assertArrayAlmostEqual(
-            compo.subcompos.coup_top.bbox.top_mid,
+        self.assertArrayApproxEqual(
+            rai.vec2s(compo.subcompos.coup_top.bbox.top_mid),
             (0, 20 / 2 + 2)
             )
 
@@ -74,7 +74,7 @@ class TestNamedSubcompos(ArrayAlmostEqual, unittest.TestCase):
 
     #    compo = Compo_shorthand()
 
-    #    self.assertArrayAlmostEqual(
+    #    self.assertArrayApproxEqual(
     #        compo.subcompos.coup_top.bbox.top_mid,
     #        (0, 20 / 2 + 2)
     #        )

@@ -6,13 +6,9 @@ of exporting components to CIF than using an exporter
 directly.
 """
 
-from pathlib import Path
-from typing import TextIO, Protocol, Any
+from typing import Protocol, Any
 
 import raimad as rai
-
-class InvalidDestinationError(ValueError):
-    """Error raised by `export_cif` when `dest` parameter is set incorrectly."""
 
 class ExporterProto(Protocol):
     """
@@ -45,7 +41,7 @@ class ExporterProto(Protocol):
 
 def export_cif(
         compo: 'rai.typing.CompoLike',
-        dest: str | Path | TextIO | None = None,
+        dest: rai.saveto.Destination = None,
         exporter: type[ExporterProto] | None = None,
         *args: Any,
         **kwargs: Any,
@@ -84,18 +80,27 @@ def export_cif(
     exporter_instance = (exporter or rai.cif.NoReuse)(compo, *args, **kwargs)
     cif_string = exporter_instance.cif_string
 
-    if dest is None:
-        pass
-    elif isinstance(dest, (str, Path)):
-        with open(dest, 'w') as file:
-            file.write(cif_string)
-    elif hasattr(dest, 'write'):
-        dest.write(cif_string)
-    else:
-        raise InvalidDestinationError(
-            f"Invalid destination type {type(dest)}. "
-            "Must be a file path or a file-like stream."
-            )
+    return rai.saveto._saveto(cif_string, dest)
 
-    return cif_string
+def export_lyp(
+        compo: 'rai.typing.CompoLike',
+        dest: rai.saveto.Destination = None,
+        exporter: type[ExporterProto] | None = None,
+        *args: Any,
+        **kwargs: Any,
+        ) -> str:
+    """
+    Export component layer properties.
+
+    This function is identical to raimad.export_cif,
+    but with rai.cif.lyp.LypExporter as the default exporter.
+    """
+
+    exporter_instance = (
+            (exporter or rai.cif.lyp.LypExporter)
+            (compo, *args, **kwargs)
+            )
+    # TODO names
+    return rai.saveto._saveto(exporter_instance.cif_string, dest)
+
 

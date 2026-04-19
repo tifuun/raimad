@@ -3,6 +3,8 @@ transform.py: home to Transform class.
 
 See the docstring of Transform for more information.
 """
+from typing import overload
+from types import NoneType
 from math import degrees
 
 from copy import deepcopy
@@ -14,6 +16,14 @@ except ImportError:
     from typing_extensions import Self
 
 import raimad as rai
+from raimad.types import Vec2, Vec2S, PolyS, Num, NumS, Poly
+
+class EditingArgumentError(TypeError):
+    """Invalid arguments are passed to "automatic" functions like *.move."""
+
+    def __init__(self) -> None:
+        super().__init__("Invalid arguments passed to editing method.")
+
 
 class Transform:
     """Transformation: container for affine matrix."""
@@ -24,70 +34,789 @@ class Transform:
         """Initialize a new Transform as an identity transform."""
         self.reset()
 
-    def reset(self) -> None:
-        """Reset this transform to be an identity transform."""
-        self._affine = rai.affine.identity()
+    #-------------#
+    # Rotate      #
+    #-------------#
 
-    def transform_poly(
+    def crotate(
             self,
-            poly: 'rai.typing.Poly'
-            ) -> 'rai.typing.Poly':
+            angle: Num,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
         """
-        Apply transformation to poly and return new transformed poly.
+        Rotate around a point given by x and y coordinate.
 
         Parameters
         ----------
-        poly : rai.typing.Poly
-            The Poly to transform
+        angle : Num
+            Angle to rotate by, in radians.
+        x : Num
+            Rotate around this point (x coordinate)
+            default: 0
+        y : Num
+            Rotate around this point (y coordinate)
+            default: 0
 
         Returns
         -------
-        rai.typing.Poly
-            The new, transformed, Poly
+        Self
+            This transform is returned to allow chaining methods.
         """
-        return rai.affine.transform_poly(self._affine, poly)
+        angle = float(angle)
+        x = float(x)
+        y = float(y)
 
-    def transform_point(
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.rotate(angle), x, y),
+            self._affine
+            )
+
+        return self
+
+    def protate(
             self,
-            point: 'rai.typing.PointLike'
-            ) -> 'rai.typing.Point':
+            angle: Num,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
         """
-        Apply this transform to a point, and return the transformed point.
-
-        A Point (tuple of two floats) is always returned,
-        even if a BoundPoint is passed in.
+        Rotate around a reference point given as an (x, y) tuple.
 
         Parameters
         ----------
-        point : rai.typing.PointLike
-            The point to transform.
+        angle : Num
+            Angle to rotate by, in radians.
+        pivot : Vec2
+            The point (x, y) to rotate around. Default: origin.
 
         Returns
         -------
-        rai.typing.Point
-            The transformed point.
+        Self
+            This transform is returned to allow chaining methods.
         """
-        return rai.affine.transform_point(self._affine, point)
+        angle = float(angle)
+        pivot = rai.vec2s(pivot)
 
-    def compose(self, transform: Self) -> Self:
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.rotate(angle), pivot[0], pivot[1]),
+            self._affine
+            )
+
+        return self
+
+    @overload
+    def rotate(self, angle: Num, /) -> Self: ...
+    # Trailing `/` is needed for mypy for some reason
+    @overload
+    def rotate(self, angle: Num, /, a: Num, b: Num) -> Self: ...
+    @overload
+    def rotate(self, angle: Num, /, a: Vec2) -> Self: ...
+
+    def rotate(
+            self,
+            angle: Num,
+            /,
+            a: Num | Vec2 | None = None,
+            b: Num | None = None,
+            ) -> Self:
         """
-        Apply a different transform to this transform.
+        Rotate around a pivot point (overload).
+
+        This is an overloaded method that can take the position of the pivot
+        point either as two separate x and y arguments, or as a single tuple
+        of two values.
 
         Parameters
         ----------
-        transform : Self
-            The other transform to apply to this one
+        angle : Num
+            Angle to rotate by, in radians.
+        a : Num | Vec2
+            Either the X coordinate, the entire pivot point,
+            or None
+        b : Num | None
+            Either the Y coordinate or None
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        # `Isinstance` check is against Num
+        # to support weird things like mypy numbers
+        # which we then convert to regular float
+
+        angle_float = float(angle)
+
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num)
+                ):
+            self.crotate(angle_float, float(a), float(b))
+        elif (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType)
+                ):
+            self.protate(angle_float, rai.vec2s(a))
+        elif (
+                isinstance(a, NoneType) and
+                isinstance(b, NoneType)
+                ):
+            self.protate(angle_float)
+        else:
+            raise EditingArgumentError()
+
+        return self
+
+
+    #-------------#
+    # Move        #
+    #-------------#
+
+    def cmove(
+            self,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
+        """
+        Translate by x and y.
+
+        Parameters
+        ----------
+        x : Num
+            Move this many units along x axis.
+        y : Num
+            Move this many units along y axis.
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        x = float(x)
+        y = float(y)
+
+        self._affine = rai.affine.matmul(rai.affine.move(x, y), self._affine)
+
+        return self
+
+    def pmove(
+            self,
+            offset: Vec2,
+            ) -> Self:
+        """
+        Translate by x and y, given as a tuple.
+
+        Parameters
+        ----------
+        offset : Vec2
+            A tuple of two values (x, y).
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        offset = rai.vec2s(offset)
+
+        self._affine = rai.affine.matmul(
+                rai.affine.move(offset[0], offset[1]),
+                self._affine)
+
+        return self
+
+    @overload
+    def move(self, /, a: Num, b: Num) -> Self: ...
+    @overload
+    def move(self, /, a: Vec2) -> Self: ...
+
+    def move(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> Self:
+        """
+        Translate vertically and horizontally (overload).
+
+        This is an overloaded method that can take the X and Y offsets either
+        as two separate x and y arguments, or as a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Num | Vec2
+            X offset or tuple of offsets
+        b : Num | None
+            Y offset or None
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        # `Isinstance` check is against Num
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num)
+                ):
+            self.cmove(float(a), float(b))
+        elif (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType)
+                ):
+            self.pmove(a)
+        else:
+            raise EditingArgumentError()
+
+        return self
+
+    def movex(self, x: Num = 0) -> Self:
+        """
+        Move along x axis.
+
+        Parameters
+        ----------
+        x : Num
+            Move this many units along x axis.
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        x = float(x)
+        self._affine = rai.affine.matmul(rai.affine.move(x, 0), self._affine)
+        return self
+
+    def movey(self, y: Num = 0) -> Self:
+        """
+        Move along y axis.
+
+        Parameters
+        ----------
+        y : Num
+            Move this many units along y axis.
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        y = float(y)
+        self._affine = rai.affine.matmul(rai.affine.move(0, y), self._affine)
+        return self
+
+    #-------------#
+    # Flip        #
+    #-------------#
+
+    def cflip(
+            self,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis.
+
+        Parameters
+        ----------
+        x : Num
+            Flip around this point (x coordinate)
+        y : Num
+            Flip around this point (y coordinate)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        x = float(x)
+        y = float(y)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.scale(-1, -1), x, y),
+            self._affine
+            )
+        return self
+
+    def pflip(
+            self,
+            pivot: Vec2
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis (tuple).
+
+        Parameters
+        ----------
+        pivot: Vec2
+            Tuple representing x and y coordinates of lines to mirror
+            against
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        pivot = rai.vec2s(pivot)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(
+                rai.affine.scale(-1, -1),
+                pivot[0], pivot[1],
+                ),
+            self._affine
+            )
+        return self
+
+    @overload
+    def flip(self, /, a: Num, b: Num) -> Self: ...
+    @overload
+    def flip(self, /, a: Vec2) -> Self: ...
+
+    def flip(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis.
+
+        This is an overloaded method that can take the X and Y intercepts of
+        the two mirroring lines either as two separate x and y arguments, or as
+        a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Num | Vec2
+            Either the x-intercept or a tuple of the two intercepts.
+        b : Num | None
+            Either the y-intercept or None
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        # `Isinstance` check is against Num
+        # to support weird things like mypy numbers
+        # which we then downcast to regular float
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num)
+                ):
+            self.cflip(float(a), float(b))
+        elif (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType)
+                ):
+            self.pflip(a)
+        else:
+            raise EditingArgumentError()
+
+        return self
+
+
+    def vflip(self, y: Num = 0) -> Self:
+        """
+        Flip (mirror) along horizontal axis.
+
+        Parameters
+        ----------
+        y : Num
+            Flip around this horizontal line (y coordinate)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        y = float(y)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.scale(1, -1), 0, y),
+            self._affine
+            )
+        return self
+
+    def hflip(self, x: Num = 0) -> Self:
+        """
+        Flip (mirror) along vertical axis.
+
+        Parameters
+        ----------
+        x : Num
+            Flip around this vertical line (x coordinate)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        x = float(x)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.scale(-1, 1), x, 0),
+            self._affine
+            )
+        return self
+
+    #-------------#
+    # Scale       #
+    #-------------#
+
+    def cpscale(
+            self,
+            x: Num,
+            y: Num,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Scale width and height (two Nums) around pivot point (tuple).
+
+        Parameters
+        ----------
+        x : Num
+            Factor to scale by along the x axis
+        y : Num
+            Factor to scale by along the y axis.
+        pivot : Vec2
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        x = float(x)
+        y = float(y)
+        pivot = rai.vec2s(pivot)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(
+                rai.affine.scale(x, y),
+                pivot[0], pivot[1]
+                ),
+            self._affine
+            )
+
+        return self
+
+    def ccscale(
+            self,
+            x: Num,
+            y: Num,
+            px: Num = 0,
+            py: Num = 0,
+            ) -> Self:
+        """
+        Scale width and height (two Nums) around pivot point (two Nums).
+
+        Parameters
+        ----------
+        x : Num
+            Factor to scale by along the x axis
+        y : Num
+            Factor to scale by along the y axis.
+        px : Num
+            X coordinate of origin of the scale (default: 0)
+        py : Num
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        x = float(x)
+        y = float(y)
+        px = float(px)
+        py = float(py)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(
+                rai.affine.scale(x, y),
+                px, py
+                ),
+            self._affine
+            )
+
+        return self
+
+    def ppscale(
+            self,
+            scale: Vec2,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Scale width and height (tuple) around pivot point (tuple).
+
+        Parameters
+        ----------
+        scale : Vec2
+            The x and y scale factors
+        pivot : Vec2
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        scale = rai.vec2s(scale)
+        pivot = rai.vec2s(pivot)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(
+                rai.affine.scale(
+                    scale[0], scale[1]
+                    ),
+                pivot[0], pivot[1]
+                ),
+            self._affine
+            )
+        return self
+
+    def pcscale(
+            self,
+            scale: Vec2,
+            px: Num = 0,
+            py: Num = 0,
+            ) -> Self:
+        """
+        Scale width and height (tuple) around pivot point (two Nums).
+
+        Parameters
+        ----------
+        scale : Vec2
+            The x and y scale factors
+        px : Num
+            X coordinate of origin of the scale (default: 0)
+        py : Num
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        scale = rai.vec2s(scale)
+        px = float(px)
+        py = float(py)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(
+                rai.affine.scale(
+                    scale[0], scale[1]
+                    ),
+                px, py
+                ),
+            self._affine
+            )
+        return self
+
+    def apscale(
+            self,
+            factor: Num,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Scale both width and height by same factor around pivot (tuple).
+
+        Parameters
+        ----------
+        factor : Num
+            Factor to scale by.
+        pivot : Vec2
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        factor = float(factor)
+        pivot = rai.vec2s(pivot)
+
+        self._affine = rai.affine.matmul(
+                rai.affine.around(
+                    rai.affine.scale(factor, factor),
+                    pivot[0], pivot[1]
+                    ),
+                self._affine
+                )
+        return self
+
+    def acscale(
+            self,
+            factor: Num,
+            px: Num = 0,
+            py: Num = 0,
+            ) -> Self:
+        """
+        Scale both width and height by same factor around pivot (two Nums).
+
+        Parameters
+        ----------
+        factor : Num
+            Factor to scale by.
+        px : Num
+            X coordinate of origin of the scale (default: 0)
+        py : Num
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        factor = float(factor)
+        px = float(px)
+        py = float(py)
+
+        self._affine = rai.affine.matmul(
+                rai.affine.around(
+                    rai.affine.scale(factor, factor),
+                    px, py
+                    ),
+                self._affine
+                )
+        return self
+
+    @overload
+    def scale(self, /, a: Num ,                             ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num ,          b: Vec2,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num ,          b: Num , c: Num  ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num , b: Num                     ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2,                             ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num , b: Num, c: Vec2,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2,          b: Vec2,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num , b: Num, c: Num , d: Num, ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2,          b: Num , c: Num  ) -> Self: ...
+
+    def scale(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | Vec2 | None = None,
+            c: Num | Vec2 | None = None,
+            d: Num | None = None,
+            ) -> Self:
+        """
+        Scale width and height around a pivot point (overload).
+
+        This is an overloaded function. It can take:
+        - single scale factor
+            - `self.scale(5)`
+        - single scale factor and pivot point (tuple)
+            - `self.scale(5, (1, 1))`
+        - single scale factor and pivot point (separate values)
+            - `self.scale(5, 1, 1)`
+        - x, y scale factors (separate values)
+            - `self.scale(5, 4)`
+        - x, y scale factors (tuple)
+            - `self.scale((5, 4))`
+        - x, y scale factors (separate values) and pivot (tuple)
+            - `self.scale(5, 4, (1, 1))`
+        - x, y scale factors (tuple) and pivot (tuple)
+            - `self.scale((5, 4), (1, 1))`
+        - x, y scale factors (separate values) and pivot (separate values)
+            - `self.scale(5, 4, 1, 1)`
+        - x, y scale factors (tuple) and pivot (separate values)
+            - `self.scale((5, 4), 1, 1)`
 
         Returns
         -------
         Self
             This transform is returned to allow method chaining.
         """
-        if transform is not None:
-            self._affine = rai.affine.matmul(transform._affine, self._affine)
-        return self
+        # "Mom, can we have structural pattern matching?"
+        # "We have structural pattern matching at python39"
+        # Structural pattern matching at python39:
 
-    def get_translation(self) -> tuple[float, float]:
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num) and
+                isinstance(c, Num) and
+                isinstance(d, Num)
+                ):
+            return self.ccscale(float(a), float(b), float(c), float(d))
+        if (
+                isinstance(a, Vec2) and
+                isinstance(b, Vec2) and
+                isinstance(c, NoneType) and
+                isinstance(d, NoneType)
+                ):
+            return self.ppscale(a, b)
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num) and
+                isinstance(c, Vec2) and
+                isinstance(d, NoneType)
+                ):
+            return self.cpscale(float(a), float(b), c)
+        if (
+                isinstance(a, Vec2) and
+                isinstance(b, Num) and
+                isinstance(c, Num) and
+                isinstance(d, NoneType)
+                ):
+            return self.pcscale(a, float(b), float(c))
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num) and
+                isinstance(c, Num) and
+                isinstance(d, NoneType)
+                ):
+            return self.acscale(float(a), float(b), float(c))
+        if (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType) and
+                isinstance(c, NoneType) and
+                isinstance(d, NoneType)
+                ):
+            return self.ppscale(a)
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num) and
+                isinstance(c, NoneType) and
+                isinstance(d, NoneType)
+                ):
+            return self.cpscale(float(a), float(b))
+        if (
+                isinstance(a, Num) and
+                isinstance(b, NoneType) and
+                isinstance(c, NoneType) and
+                isinstance(d, NoneType)
+                ):
+            return self.acscale(float(a))
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Vec2) and
+                isinstance(c, NoneType) and
+                isinstance(d, NoneType)
+                ):
+            return self.apscale(float(a), b)
+
+        raise EditingArgumentError()
+
+    #-------------#
+    # Extract     #
+    #-------------#
+
+    def get_translation(self) -> Vec2S:
         """
         Return how much this transform translates the coordinate plane.
 
@@ -101,7 +830,7 @@ class Transform:
         """
         return rai.affine.get_translation(self._affine)
 
-    def get_rotation(self) -> float:
+    def get_rotation(self) -> NumS:
         """
         Return how much this transform rotates the coordinate plane.
 
@@ -113,7 +842,7 @@ class Transform:
         """
         return rai.affine.get_rotation(self._affine)
 
-    def get_shear(self) -> float:
+    def get_shear(self) -> NumS:
         """
         Return a how much this transform shears the coordinate plane.
 
@@ -124,7 +853,7 @@ class Transform:
         """
         return rai.affine.get_shear(self._affine)
 
-    def get_scale(self) -> tuple[float, float]:
+    def get_scale(self) -> Vec2S:
         """
         Return how much this transform scales the x and y axis.
 
@@ -187,6 +916,73 @@ class Transform:
         scale_x, scale_y = self.get_scale()
         return abs(1 - scale_x) > rai.epsilon or abs(1 - scale_y) > rai.epsilon
 
+    #-------------#
+    # Misc        #
+    #-------------#
+
+    def reset(self) -> None:
+        """Reset this transform to be an identity transform."""
+        self._affine = rai.affine.identity()
+
+    def transform_poly(
+            self,
+            poly: Poly
+            ) -> PolyS:
+        """
+        Apply transformation to poly and return new transformed poly.
+
+        Parameters
+        ----------
+        poly : PolyS
+            The Poly to transform
+
+        Returns
+        -------
+        PolyS
+            The new, transformed, Poly
+        """
+        return rai.affine.transform_poly(self._affine, poly)
+
+    def transform_point(
+            self,
+            point: Vec2
+            ) -> Vec2S:
+        """
+        Apply this transform to a point, and return the transformed point.
+
+        A Point (tuple of two floats) is always returned,
+        even if a BoundPoint is passed in.
+
+        Parameters
+        ----------
+        point : Vec2
+            The point to transform.
+
+        Returns
+        -------
+        Vec2S
+            The transformed point.
+        """
+        return rai.affine.transform_point(self._affine, point)
+
+    def compose(self, transform: Self) -> Self:
+        """
+        Apply a different transform to this transform.
+
+        Parameters
+        ----------
+        transform : Self
+            The other transform to apply to this one
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow method chaining.
+        """
+        if transform is not None:
+            self._affine = rai.affine.matmul(transform._affine, self._affine)
+        return self
+
     def __repr__(self) -> str:
         """
         Return string representation of transform.
@@ -233,178 +1029,4 @@ class Transform:
             The copied transform.
         """
         return deepcopy(self)
-
-    # TODO typing.point
-    # types defined in own files
-    # then mergen in rai.typing
-    # or just PointType, CompoClassType, etc
-    def move(self, x: float, y: float) -> Self:
-        """
-        Move transform.
-
-        Parameters
-        ----------
-        x : float
-            Move this many units along x axis.
-        y : float
-            Move this many units along y axis.
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(rai.affine.move(x, y), self._affine)
-        return self
-
-    def movex(self, x: float = 0) -> Self:
-        """
-        Move along x axis.
-
-        Parameters
-        ----------
-        x : float
-            Move this many units along x axis.
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(rai.affine.move(x, 0), self._affine)
-        return self
-
-    def movey(self, y: float = 0) -> Self:
-        """
-        Move along y axis.
-
-        Parameters
-        ----------
-        y : float
-            Move this many units along y axis.
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(rai.affine.move(0, y), self._affine)
-        return self
-
-    def scale(self, x: float, y: float | None = None) -> Self:
-        """
-        Scale a transform.
-
-        Parameters
-        ----------
-        x : float
-            Factor to scale by along the x axis
-        y : float
-            Factor to scale by along the y axis.
-            If unspecified or None,
-            use the x scale factor.
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        if y is None:
-            y = x
-        self._affine = rai.affine.matmul(rai.affine.scale(x, y), self._affine)
-        return self
-
-    def rotate(
-            self,
-            angle: float,
-            x: float = 0,
-            y: float = 0
-            ) -> Self:
-        """
-        Rotate around a point.
-
-        Parameters
-        ----------
-        angle : float
-            Angle to rotate by, in radians.
-        x : float
-            Rotate around this point (x coordinate)
-            default: origin
-        y : float
-            Rotate around this point (y coordinate)
-            default: origin
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.rotate(angle), x, y),
-            self._affine
-            )
-
-        return self
-
-    def hflip(self, x: float = 0) -> Self:
-        """
-        Flip (mirror) along horizontal axis.
-
-        Parameters
-        ----------
-        x : float
-            Flip around this horizontal line (y coordinate)
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.scale(1, -1), 0, x),
-            self._affine
-            )
-        return self
-
-    def vflip(self, y: float = 0) -> Self:
-        """
-        Flip (mirror) along vertical axis.
-
-        Parameters
-        ----------
-        y : float
-            Flip around this vertical line (y coordinate)
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.scale(-1, 1), y, 0),
-            self._affine
-            )
-        return self
-
-    def flip(self, x: float = 0, y: float = 0) -> Self:
-        """
-        Flip (mirror) along both horizontal and vertical axis.
-
-        Parameters
-        ----------
-        x : float
-            Flip around this point (x coordinate)
-        y : float
-            Flip around this point (y coordinate)
-
-        Returns
-        -------
-        Self
-            This transform is returned to allow chaining methods.
-        """
-        self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.scale(-1, -1), x, y),
-            self._affine
-            )
-        return self
 

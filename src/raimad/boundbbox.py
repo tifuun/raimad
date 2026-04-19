@@ -1,6 +1,8 @@
 """boundbbox.py: contains BBox class."""
 import raimad as rai
 
+from raimad.types import PolyS
+
 class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
     """
     BoundBBox: a BBox bound to a Proxy.
@@ -17,7 +19,7 @@ class BoundBBox(rai.AbstractBBox['rai.typing.BoundPoint']):
     def __init__(
             self,
             proxy: 'rai.typing.Proxy',
-            poly: 'rai.typing.Poly | None' = None,
+            poly: PolyS | None = None,
             ) -> None:
         super().__init__(poly)
         self._proxy = proxy
