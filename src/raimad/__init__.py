@@ -1,7 +1,5 @@
 """__init__.py: Namespace flattening for RAIMAD."""
 
-hello=69
-
 import sys
 
 from raimad import types
