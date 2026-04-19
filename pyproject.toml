@@ -47,6 +47,7 @@ exclude = [
     #"boundpoint.py",  # TODO finish docstrings
     #"ansec.py",  # TODO finish docstrings
     #"bbox.py",  # TODO finish docstrings
+    'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
     ]
 select = [
     "E",
@@ -81,6 +82,7 @@ files = [
 exclude = [
 	'tests/test_cif_noreuse.py',  # TODO cift type hints!
 	'tests/test_cif_layer_names.py',  # TODO cift type hints!
+	'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
 	]
 
 # don't complain about missing -> None return annotation
