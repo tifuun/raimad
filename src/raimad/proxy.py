@@ -222,6 +222,14 @@ class Proxy:
         self.lmap = LMap(lmap)
         self.transform = transform or rai.Transform()
 
+    @property
+    def _experimental_lyp(self):
+        return self.compo._experimental_lyp
+
+    @property
+    def _experimental_lname_transformers(self):
+        return self.compo._experimental_lname_transformers
+
     def steamroll(self) -> GeomsS:
         """
         Get all geometries of this proxy.
