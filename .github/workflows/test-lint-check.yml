@@ -109,7 +109,7 @@ jobs:
     - name: Test with mypy
       id: mypy
       run: |
-        mypy --strict src/raimad && {
+        mypy && {
           echo 'badge_msg=No Issues' >> $GITHUB_OUTPUT
           echo 'badge_val=100' >> $GITHUB_OUTPUT
         } || {
