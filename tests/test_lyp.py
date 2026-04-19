@@ -283,6 +283,11 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
             SNOWMAN_LYP
             )
 
+        self.assertXmlEqual(
+            raimad.export_lyp(raimad.Snowman().proxy()),
+            SNOWMAN_LYP
+            )
+
     def test_lyp_builtin_dithers(self):
         class Foo(raimad.Compo):
             _experimental_lyp = {
