@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Parse dithers from `reference/raidithers` and patch `lyp.yp`."""
 
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,7 @@ XBM_WIDTH = 32
 XBM_HEIGHT = 32
 
 def translate(xbm: str, name: str) -> Iterator[str]:
+    """Given a since xbm dither pattern and name, yield python code."""
     yield f"    '{name}': CustomDitherPattern(name='{name}', lines=(\n"
     xbm_bytes = BYTE_FINDER.findall(xbm)
     assert len(xbm_bytes) == XBM_WIDTH * XBM_HEIGHT // BITS_IN_BYTE
@@ -28,6 +30,7 @@ def translate(xbm: str, name: str) -> Iterator[str]:
     yield "    )),\n"
 
 def translate_all(ass_id:str, xbms: list[tuple[str, str]]) -> Iterator[str]:
+    """Given a list of (name, xbm dither pattern), yield python code."""
     yield f'{ass_id} = rai.DictList({{\n'
     for name, xbm in xbms:
         yield from translate(xbm, name)
@@ -65,9 +68,10 @@ class Visitor(ast.NodeVisitor):
         super().generic_visit(node)
 
 def patch(
-        files_xbm: list[str],
-        file_py: str,
+        files_xbm: list[Path],
+        file_py: Path,
         ) -> None:
+    """Parse dithers from `reference/raidithers` and patch `lyp.yp`."""
 
     ass_id = 'raidithers'
 
