@@ -93,17 +93,16 @@ def patch_dithers_def(
 
 if __name__ == "__main__":
     patch_dithers_def(
-        'vendor/klayout/layDitherPattern.cc',
+        'reference/vendor/klayout/layDitherPattern.cc',
         'src/raimad/cif/lyp.py',
         'dithers',
         'BuiltinDitherPattern',
         )
     print('a')
     patch_dithers_def(
-        'vendor/klayout/layLineStyles.cc',
+        'reference/vendor/klayout/layLineStyles.cc',
         'src/raimad/cif/lyp.py',
         'lines',
         'BuiltinLineStyle',
         )
-    #extract(Path('vendor/klayout/layDitherPattern.cc').read_text())
 
