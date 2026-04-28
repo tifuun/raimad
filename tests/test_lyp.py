@@ -362,8 +362,8 @@ class TestLYP(XmlComparisonMixin, unittest.TestCase):
             LYP_CUSTOM_LINE
             )
 
-#if __name__ == '__main__':
-#    snowman = raimad.Snowman()
-#    raimad.export_cif(snowman, 'Snowman.cif')
-#    raimad.export_lyp(snowman, 'Snowman.lyp')
+if __name__ == '__main__':
+    snowman = raimad.Snowman()
+    raimad.export_cif(snowman, 'Snowman.cif')
+    raimad.export_lyp(snowman, 'Snowman.lyp')
 #
