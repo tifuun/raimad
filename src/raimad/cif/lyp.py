@@ -437,6 +437,7 @@ lines = rai.DictList({
 # DO NOT EDIT THIS DICTLIST MANUALLY
 # Use scripts/patch_raidithers.py
 
+raidithers: rai.DictList[CustomDitherPattern]
 raidithers = rai.DictList({
     'tifuun': CustomDitherPattern(name='tifuun', lines=(
         '................................',
