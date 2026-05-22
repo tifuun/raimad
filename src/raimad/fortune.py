@@ -469,7 +469,7 @@ fortunes_misc = [
     "and thermaltake is screwing over their customers, "
     "and we're gonna make sure they never get a sale again. ",
 
-    'This is an "A Condition" item. '
+    'This is an "A-Condition" item. '
     "That is to say, it's definitely in *a condition*. ",
 
     "I know writers who use subtext, and they're all cowards.",
