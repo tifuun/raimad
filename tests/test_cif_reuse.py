@@ -274,9 +274,9 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        from pathlib import Path
-        Path('test.cif').write_text(exporter.cif_string)
-        Path('test.gv').write_text(exporter.stat.call_graph_dot())
+        #from pathlib import Path
+        #Path('test.cif').write_text(exporter.cif_string)
+        #Path('test.gv').write_text(exporter.stat.call_graph_dot())
 
         #layers = cf.parse(
         #    exporter.cif_string,
@@ -299,12 +299,19 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
+        #from pathlib import Path
+        #Path('testmap.cif').write_text(exporter.cif_string)
+        #Path('testmap.gv').write_text(exporter.stat.call_graph_dot())
+
         #layers = cf.parse(
         #    exporter.cif_string,
         #    grammar=cf.grammar.lenient_layers
         #    )
 
-        self.assertEqual(exporter.stat.steamrolls, 0)
+        # the two parts of the bridge are lmapped, so 2 steamrolls
+        # plus the 4 rects of the transmission line,
+        # so 6 steamrolls total.
+        self.assertEqual(exporter.stat.steamrolls, 6)
 
                 
     def test_cif_reuse_proxyorder(self):
