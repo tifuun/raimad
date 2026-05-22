@@ -8,15 +8,15 @@ class BareGeometric(rai.Compo):
         self.geoms.update({
             'root': [
                 [
-                    [0, 0],
-                    [0, 10],
-                    [10, 10],
-                    [10, 0],
+                    (0, 0),
+                    (0, 10),
+                    (10, 10),
+                    (10, 0),
                     ],
                 [
-                    [20, 20],
-                    [40, 20],
-                    [30, 40],
+                    (20, 20),
+                    (40, 20),
+                    (30, 40),
                     ],
                 ]
             })
@@ -72,7 +72,8 @@ class TestCompo(unittest.TestCase):
         """
         class MyCompo(rai.Compo):
             def _make(self):
-                self.subcompos.invalid = 'invalid'
+                self.subcompos.invalid = 'invalid'  # type: ignore
+                # without the type: ignore, MyPy will also catch this error
 
         with self.assertRaises(rai.err.InvalidSubcompoError):
             MyCompo()
@@ -84,7 +85,8 @@ class TestCompo(unittest.TestCase):
         """
         class MyCompo(rai.Compo):
             def _make(self):
-                self.subcompos.invalid = rai.Snowman()
+                self.subcompos.invalid = rai.Snowman()  # type: ignore
+                # without the type: ignore, MyPy will also catch this error
 
         with self.assertRaises(rai.err.CompoInsteadOfProxyAsSubcompoError):
             MyCompo()
@@ -136,6 +138,35 @@ class TestCompo(unittest.TestCase):
                 )
             )
         self.assertEqual(str(compo), repr(compo))
+
+    def test_invalid_layer_name_geoms(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.geoms.update({
+                    'in-valid': [[(0, 0), (1, 0), (0, 1)]]
+                    })
+
+        with self.assertRaises(rai.err.InvalidLayerNameError):
+            foo = Foo()
+
+    def test_invalid_layer_name_lmap_str(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = rai.RectLW(4, 4).proxy().map('in-valid')
+
+        with self.assertRaises(rai.err.InvalidLayerNameError):
+            foo = Foo()
+
+    def test_invalid_layer_name_lmap_dict(self):
+        class Foo(rai.Compo):
+            def _make(self):
+                self.subcompos.foo = rai.RectLW(4, 4).proxy().map({
+                    'root': 'in-valid'
+                    })
+
+        with self.assertRaises(rai.err.InvalidLayerNameError):
+            foo = Foo()
+
 
     #def test_fail_copy_compo(self):
     #    """

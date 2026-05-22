@@ -8,6 +8,7 @@ except ImportError:
 
 
 import raimad as rai
+from raimad.types import Vec2, Num
 
 class RectWire(rai.Compo):
     """A rectangle defined by two points and a thickness."""
@@ -21,9 +22,9 @@ class RectWire(rai.Compo):
 
     def _make(
             self,
-            p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point',
-            width: float,
+            p1: Vec2,
+            p2: Vec2,
+            width: Num,
             ) -> None:
         """
         Make RectWire betweent two points.
@@ -42,6 +43,10 @@ class RectWire(rai.Compo):
         Self
             The newly construct RectWire object
         """
+
+        p1 = rai.vec2s(p1)
+        p2 = rai.vec2s(p2)
+        width = float(width)
 
         angle = rai.angle_between(p1, p2)
 
@@ -64,9 +69,9 @@ class RectWire(rai.Compo):
     @classmethod
     def from_points(
             cls,
-            p1: 'rai.typing.Point',
-            p2: 'rai.typing.Point',
-            width: float,
+            p1: Vec2,
+            p2: Vec2,
+            width: Num,
             ) -> Self:
         """
         Make RectWire betweent two points.
@@ -90,10 +95,10 @@ class RectWire(rai.Compo):
     @classmethod
     def from_polar(
             cls,
-            p1: 'rai.typing.Point',
-            angle: float,
-            length: float,
-            width: float,
+            p1: Vec2,
+            angle: Num,
+            length: Num,
+            width: Num,
             ) -> Self:
         """
         Make RectWire from polar coordinates.
@@ -115,6 +120,9 @@ class RectWire(rai.Compo):
         Self
             The newly construct RectWire object
         """
+        p1 = rai.vec2s(p1)
+        p2 = rai.vec2s(p1)
+
         step = rai.polar(angle, length)
         p2 = (
             p1[0] + step[0],

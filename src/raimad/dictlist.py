@@ -36,7 +36,7 @@ class FilteredDictList(Generic[T_STORED, T_ADDED, T_RETURNED]):
     TODO explain how it is used in markscontainer, etc.
     """
 
-    _dict: dict[str | int, T_STORED]
+    _dict: dict[int | str, T_STORED]
 
     def __init__(
             self,

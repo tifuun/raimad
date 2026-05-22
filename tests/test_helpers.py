@@ -4,44 +4,44 @@ from math import radians, sqrt
 import raimad as rai
 from raimad import add, eq, sub, midpoint
 
-from .utils import ArrayAlmostEqual
+from .utils import ArrayApproxEqual
 
 
-class TestPolys(ArrayAlmostEqual, unittest.TestCase):
+class TestPolys(ArrayApproxEqual, unittest.TestCase):
 
     def test_angle_between(self):
-        self.assertAlmostEqual(
+        self.assertApproxEqual(
             rai.angle_between((0, 0), (10, 0)),
             radians(0))
 
-        self.assertAlmostEqual(
+        self.assertApproxEqual(
             rai.angle_between((0, 0), (100, 0)),
             radians(0))
 
-        self.assertAlmostEqual(
+        self.assertApproxEqual(
             rai.angle_between((10, 0), (100, 0)),
             radians(0))
 
-        self.assertAlmostEqual(
+        self.assertApproxEqual(
             rai.angle_between((10, 0), (-100, 0)),
             radians(180))
 
-        self.assertAlmostEqual(
+        self.assertApproxEqual(
             rai.angle_between((10, 10), (20, 20)),
             radians(45))
 
     def test_polar(self):
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             rai.polar(radians(60), 2),
             (1, sqrt(3))
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             rai.polar(radians(-60), 2),
             (1, -sqrt(3))
             )
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             rai.polar(radians(180), 100),
             (-100, 0)
             )

@@ -2,9 +2,9 @@ import unittest
 
 import raimad as rai
 
-from .utils import GeomsEqual, ArrayAlmostEqual
+from .utils import GeomsEqual, ArrayApproxEqual
 
-class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
+class TestPolys(GeomsEqual, ArrayApproxEqual, unittest.TestCase):
 
     def test_rectlw(self):
         rect = rai.RectLW(10, 20)
@@ -27,7 +27,7 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
         points = circle.geoms['root'][0]
         self.assertGreaterEqual(len(points), 10)
         for point in points:
-            self.assertAlmostEqual(
+            self.assertApproxEqual(
                 rai.affine.norm(point),
                 69
                 )

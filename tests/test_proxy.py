@@ -1,4 +1,5 @@
 import unittest
+from typing import Sequence, Tuple
 import re
 
 import raimad as rai
@@ -7,7 +8,14 @@ from .utils import GeomsEqual
 
 class TestProxy(GeomsEqual, unittest.TestCase):
 
-    def check_tower(self, proxy, expected):
+    def check_tower(
+            self,
+            proxy: rai.typing.Proxy,
+            expected: Sequence[Tuple[bool, bool]]
+            ) -> None:
+        """
+        When I wrote this function, only God and I knew what it did. Now only God knows.
+        """
         try:
             tower_actual = tuple(proxy.descend_p())
             self.assertEqual(len(tower_actual), len(expected))

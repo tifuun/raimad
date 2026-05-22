@@ -2,9 +2,9 @@ import unittest
 
 import raimad as rai
 
-from .utils import GeomsEqual, ArrayAlmostEqual
+from .utils import GeomsEqual, ArrayApproxEqual
 
-class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
+class TestPolys(GeomsEqual, ArrayApproxEqual, unittest.TestCase):
 
     def test_ansec(self):
         same = [
@@ -77,14 +77,15 @@ class TestPolys(GeomsEqual, ArrayAlmostEqual, unittest.TestCase):
                 ),
             ]
 
-        for i, x in enumerate(same):
-            open(f'/tmp/{i}.svg', 'w').write(rai.export_svg(x))
+        if 0:
+            # Use this to debug manually
+            for i, x in enumerate(same):
+                open(f'/tmp/{i}.svg', 'w').write(rai.export_svg(x))
 
         i = 1
         for compo in same[1:]:
-            print(i)
             i += 1
-            self.assertArrayAlmostEqual(
+            self.assertArrayApproxEqual(
                 same[0].bbox.as_list(),
                 compo.bbox.as_list(),
                 epsilon=1

@@ -4,6 +4,8 @@ import argparse
 from typing import Sequence
 import sys
 import os
+from ast import literal_eval
+import json
 
 import raimad as rai
 
@@ -28,17 +30,22 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
         _process_args_export(args)
         Compo = args.component
 
+        opts = {}
+
         if args.use_browser_defaults:
             # TODO add a method for extracting browser defaults
             # so this incantation does not have to be copy-pasted
-            opts = {
+            opts.update({
                 option.name: option.browser_default
                 for option in Compo.Options.values()
                 if option.browser_default is not rai.Empty
-                }
-            # TODO unit test!!!!!!!
-        else:
-            opts = {}
+                })
+
+        if args.opts_dict is not None:
+            # If both opts and use-browser-defaults
+            # are specified, they are merged with opts taking
+            # precedence. This is intended, there is a test for this.
+            opts.update(args.opts_dict)
 
         compo = Compo(**opts)
 
@@ -121,6 +128,50 @@ def _add_export_action(
         default='{name}.cif',
         )
 
+    compo_opts = parser.add_mutually_exclusive_group()
+    #exporter_opts = parser.add_mutually_exclusive_group()
+
+    compo_opts.add_argument(
+        '--opts',
+        type=str,
+        nargs='*'
+        # TODO help text
+        )
+
+    compo_opts.add_argument(
+        '--opts-json',
+        type=str,
+        nargs='?'
+        # TODO help text
+        )
+
+    compo_opts.add_argument(
+        '--opts-dict',
+        type=str,
+        nargs='?'
+        # TODO help text
+        )
+
+    #exporter_opts.add_argument(
+    #    '--exporter-opts',
+    #    type=str,
+    #    nargs='*'
+    #    # TODO help text
+    #    )
+
+    #exporter_opts.add_argument(
+    #    '--exporter-opts-json',
+    #    type=str,
+    #    nargs='*'
+    #    )
+
+    #exporter_opts.add_argument(
+    #    '--exporter-opts-dict',
+    #    type=str,
+    #    nargs='*'
+    #    # TODO help text
+    #    )
+
 
 def _add_show_action(
         subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
@@ -182,6 +233,32 @@ def _process_args_export(args: argparse.Namespace) -> None:
         '{name}',
         args.component.__name__
         )
+
+    if args.opts is not None:
+        # TODO handle uneven number
+        args.opts_dict = {
+            key: literal_eval(val) for key, val in rai.couples(args.opts)
+            }
+
+    elif args.opts_dict is not None:
+        args.opts_dict = literal_eval(args.opts_dict)
+
+    elif args.opts_json is not None:
+        args.opts_dict = json.loads(args.opts_json)
+
+    #if args.exporter_opts is not None:
+    #    raise NotImplementedError("foo")
+    #    # TODO handle uneven number
+    #    args.exporter_opts_dict = {
+    #        key: literal_eval(val) for key, val
+    #        in rai.couples(args.exporter_opts)
+    #        }
+
+    #elif args.exporter_opts_dict is not None:
+    #    raise NotImplementedError("foo")
+
+    #elif args.exporter_opts_json is not None:
+    #    raise NotImplementedError("bar")
 
 def _ensure_pwd_in_path() -> None:
     try:

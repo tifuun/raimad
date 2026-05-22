@@ -19,13 +19,12 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
 
         layers = cf.parse(
             exporter.cif_string,
-            grammar=cf.grammar.lenient_layers
             )
 
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (-5, -10),
                         (5, -10),
@@ -42,7 +41,7 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         compo = (
             rai.RectLW(10, 20)
             .proxy()
-            .map('mylayer')
+            .map('LAYR')
             .bbox.bot_left.to((0, 0))
             )
 
@@ -53,13 +52,12 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
 
         layers = cf.parse(
             exporter.cif_string,
-            grammar=cf.grammar.lenient_layers
             )
 
         self.assertGeomsEqual(
             layers,
             {
-                'Lmylayer': [
+                'LAYR': [
                     [
                         (0, 0),
                         (10, 0),
@@ -95,20 +93,14 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
 
         compo = Third()
 
-        exporter = rai.cif.NoReuse(
-            compo,
-            multiplier=1,
-            )
+        exporter = rai.cif.NoReuse(compo, multiplier=1)
 
-        layers = cf.parse(
-            exporter.cif_string,
-            grammar=cf.grammar.lenient_layers
-            )
+        layers = cf.parse(exporter.cif_string)
 
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (-5, -5),
                         (5, -5),
@@ -134,19 +126,19 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         class MyCompo(rai.Compo):
             def _make(self):
                 self.subcompos.extend((
-                    rai.RectLW(10, 10).proxy().map('foo'),
-                    rai.RectLW(20, 20).proxy().map('bar'),
+                    rai.RectLW(10, 10).proxy().map('FOO'),
+                    rai.RectLW(20, 20).proxy().map('BAR'),
                 ))
 
         compo = MyCompo()
 
         p0 = compo.proxy()
-        p1 = compo.proxy().map({'foo': None, 'bar': 'bar'})
-        p2 = compo.proxy().map({'foo': 'foo', 'bar': None})
-        p3 = compo.proxy().map({'foo': None, 'bar': None})
-        p4 = compo.proxy().map({'foo': None, 'bar': 'ayy'})
-        p5 = compo.proxy().map({'foo': 'ayy', 'bar': None})
-        p6 = compo.proxy().map({'foo': 'ayy', 'bar': 'lmao'})
+        p1 = compo.proxy().map({'FOO': None, 'BAR': 'BAR'})
+        p2 = compo.proxy().map({'FOO': 'FOO', 'BAR': None})
+        p3 = compo.proxy().map({'FOO': None, 'BAR': None})
+        p4 = compo.proxy().map({'FOO': None, 'BAR': 'AYY'})
+        p5 = compo.proxy().map({'FOO': 'AYY', 'BAR': None})
+        p6 = compo.proxy().map({'FOO': 'AYY', 'BAR': 'LMAO'})
 
         def layers(compo):
             exporter = rai.cif.NoReuse(
@@ -156,17 +148,16 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
 
             layers = cf.parse(
                 exporter.cif_string,
-                grammar=cf.grammar.lenient_layers
                 )
             return layers
 
-        self.assertEqual(layers(p0).keys(), {'Lfoo', 'Lbar'})
-        self.assertEqual(layers(p1).keys(), {'Lbar'})
-        self.assertEqual(layers(p2).keys(), {'Lfoo'})
+        self.assertEqual(layers(p0).keys(), {'FOO', 'BAR'})
+        self.assertEqual(layers(p1).keys(), {'BAR'})
+        self.assertEqual(layers(p2).keys(), {'FOO'})
         self.assertEqual(layers(p3).keys(), set())
-        self.assertEqual(layers(p4).keys(), {'Layy'})
-        self.assertEqual(layers(p5).keys(), {'Layy'})
-        self.assertEqual(layers(p6).keys(), {'Layy', 'Llmao'})
+        self.assertEqual(layers(p4).keys(), {'AYY'})
+        self.assertEqual(layers(p5).keys(), {'AYY'})
+        self.assertEqual(layers(p6).keys(), {'AYY', 'LMAO'})
 
         self.assertGeomsEqualButAllowDifferentNames(layers(p0), layers(p6))
         self.assertGeomsEqualButAllowDifferentNames(layers(p1), layers(p4))
