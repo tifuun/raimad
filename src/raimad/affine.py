@@ -1,7 +1,6 @@
 """affine.py: operations on affine matrices and other math helpers."""
 
-from math import sqrt, atan2
-from raimad.symbolic import sin, cos
+from math import sin, cos, sqrt, atan2
 from typing import Sequence
 
 from raimad.types import Vec2, Vec2S, Poly, PolyS, Mat3S, NumS

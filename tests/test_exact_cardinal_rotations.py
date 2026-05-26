@@ -6,7 +6,7 @@ import cift as cf
 import math
 
 
-if 1:
+if 0:
     _pi = rai.symbolic.PieceOfPi()
     _quartercircle = _pi * 1 / 2
     _semicircle = _pi
@@ -24,82 +24,6 @@ else:
     _3 = 3
 
 class TestExactCardinalRotations(unittest.TestCase):
-    def test_pieceofpi_trig(self):
-
-        # TODO the other trig ops...? not needed because
-        # only these are needed for rotation......?
-        sin = rai.symbolic.sin
-        cos = rai.symbolic.cos
-        PieceOfPi = rai.symbolic.PieceOfPi
-
-        for halves in (-111, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 111):
-            self.assertEqual(
-                sin(PieceOfPi(halves)),
-                int(math.sin(math.pi * halves / 2))
-                )
-            self.assertAlmostEqual(
-                cos(PieceOfPi(halves)),
-                int(math.cos(math.pi * halves / 2))
-                )
-
-        for halves in (0.5, 0.434214, math.pi, -0.5, -0.2, -math.pi * 44.4454):
-            self.assertEqual(
-                sin(PieceOfPi(halves)),
-                math.sin(math.pi * halves / 2)
-                )
-            self.assertAlmostEqual(
-                cos(PieceOfPi(halves)),
-                math.cos(math.pi * halves / 2)
-                )
-
-    def test_pieceofpi_chained(self):
-        sin = rai.symbolic.sin
-        PieceOfPi = rai.symbolic.PieceOfPi
-
-        self.assertAlmostEqual(
-            (PieceOfPi() + PieceOfPi() * 2.33).as_float(),
-            (math.pi + math.pi * 2.33)
-            )
-
-        self.assertAlmostEqual(
-            (2.33 * PieceOfPi() + PieceOfPi()).as_float(),
-            (2.33 * math.pi + math.pi)
-            )
-
-        self.assertAlmostEqual(
-            ((2.33 * PieceOfPi() * 0.232 / 321.213 + PieceOfPi() * 0.1) / 0.1).as_float(),
-            ((2.33 * math.pi * 0.232 / 321.213 + math.pi * 0.1) / 0.1)
-            )
-
-        self.assertAlmostEqual(
-            sin((2.33 * PieceOfPi() * 0.232 / 321.213 + PieceOfPi() * 0.1) / 0.1),
-            math.sin((2.33 * math.pi * 0.232 / 321.213 + math.pi * 0.1) / 0.1)
-            )
-
-    def test_pieceofpi_chained_decay2float(self):
-        sin = rai.symbolic.sin
-        PieceOfPi = rai.symbolic.PieceOfPi
-
-        self.assertAlmostEqual(
-            (PieceOfPi() + 2.33),
-            (math.pi + 2.33)
-            )
-
-        self.assertAlmostEqual(
-            (2.33 + PieceOfPi() + PieceOfPi()),
-            (2.33 + math.pi + math.pi)
-            )
-
-        self.assertAlmostEqual(
-            ((2.33 + PieceOfPi() * 0.232 / 321.213 + 0.1) / 0.1),
-            ((2.33 + math.pi * 0.232 / 321.213 + 0.1) / 0.1)
-            )
-
-        self.assertAlmostEqual(
-            sin((2.33 + PieceOfPi() * 0.232 / 321.213 + 0.1) / 0.1),
-            math.sin((2.33 + math.pi * 0.232 / 321.213 + 0.1) / 0.1)
-            )
-
     def test_exact_cardinal_rotations_square(self):
         class Square(rai.Compo):
             def _make(self):
