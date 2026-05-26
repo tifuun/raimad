@@ -135,8 +135,8 @@ class NoReuse:
                 yield '\tP '
                 for point in poly:
                     yield (
-                        f'{int(point[0] * self.multiplier)} '
-                        f'{int(point[1] * self.multiplier)} '
+                        f'{round(point[0] * self.multiplier)} '
+                        f'{round(point[1] * self.multiplier)} '
                         )
                 yield ';\n'
 

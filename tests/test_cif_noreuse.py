@@ -164,6 +164,72 @@ class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqualButAllowDifferentNames(layers(p2), layers(p5))
         self.assertEqual(len(layers(p3)), 0)
 
+    def test_cif_noreuse_rounding_down(self):
+        compos = (
+            rai.RectLW(10, 20),
+            rai.RectLW(10 + 0.5, 20 + 0.5),
+            rai.RectLW(10 + 0.49999, 20 + 0.4999),
+            rai.RectLW(10 + 0.1, 20 + 0.1),
+            rai.RectLW(10 + 0.00001, 20 + 0.00001),
+            rai.RectLW(10 - 0.1, 20 - 0.1),
+            rai.RectLW(10 - 0.00001, 20 - 0.00001),
+            )
+
+        for compo in compos:
+            exporter = rai.cif.NoReuse(
+                compo,
+                multiplier=1,
+                )
+
+            layers = cf.parse(
+                exporter.cif_string,
+                )
+
+            self.assertGeomsEqual(
+                layers,
+                {
+                    'ROOT': [
+                        [
+                            (-5, -10),
+                            (5, -10),
+                            (5, 10),
+                            (-5, 10),
+                            ],
+                        ]
+                    }
+                )
+
+    def test_cif_noreuse_rounding_up(self):
+        compos = (
+            rai.RectLW(12, 22),
+            rai.RectLW(11 + .500001, 22 + .500001),
+            rai.RectLW(11 + 0.5, 21 + 0.5),
+            )
+
+        for compo in compos:
+            exporter = rai.cif.NoReuse(
+                compo,
+                multiplier=1,
+                )
+
+            layers = cf.parse(
+                exporter.cif_string,
+                )
+
+            self.assertGeomsEqual(
+                layers,
+                {
+                    'ROOT': [
+                        [
+                            (-6, -11),
+                            (6, -11),
+                            (6, 11),
+                            (-6, 11),
+                            ],
+                        ]
+                    }
+                )
+
 if __name__ == '__main__':
     unittest.main()
 
