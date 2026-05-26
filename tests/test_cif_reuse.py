@@ -506,36 +506,36 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             layers,
             {
                 'ROOT': [
-                    [  # stick: center, tall
+                    (  # stick: center, tall
                         (-5, -10),
                         (5, -10),
                         (5, 10),
                         (-5, 10),
-                        ],
-                    [  # rstick: center, long (90deg rotation)
+                        ),
+                    (  # rstick: center, long (90deg rotation)
                         (10, -5),
                         (10, 5),
                         (-10, 5),
                         (-10, -5),
-                        ],
-                    [  # rrstick: center, tall (180deg rotation)
+                        ),
+                    (  # rrstick: center, tall (180deg rotation)
                         (5, 10),
                         (-5, 10),
                         (-5, -10),
                         (5, -10),
-                        ],
-                    [  # brstick: right, long (90deg rotation)
+                        ),
+                    (  # brstick: right, long (90deg rotation)
                         (10 + 10, -5),
                         (10 + 10, 5),
                         (-10 + 10, 5),
                         (-10 + 10, -5),
-                        ],
-                    [  # rbrstick: right, tall (0 deg rotation)
+                        ),
+                    (  # rbrstick: right, tall (0 deg rotation)
                         (-5 + 10, -10),
                         (5 + 10, -10),
                         (5 + 10, 10),
                         (-5 + 10, 10),
-                        ],
+                        ),
                     ]
                 }
             )
@@ -556,36 +556,36 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             layers,
             {
                 'Lroot': [  #TODO NOREUSE NEW LAYER NAMES!!!!!!
-                    [  # stick: center, tall
+                    (  # stick: center, tall
                         (-5, -10),
                         (5, -10),
                         (5, 10),
                         (-5, 10),
-                        ],
-                    [  # rstick: center, long (90deg rotation)
+                        ),
+                    (  # rstick: center, long (90deg rotation)
                         (10, -5),
                         (10, 5),
                         (-10, 5),
                         (-10, -5),
-                        ],
-                    [  # rrstick: center, tall (180deg rotation)
+                        ),
+                    (  # rrstick: center, tall (180deg rotation)
                         (5, 10),
                         (-5, 10),
                         (-5, -10),
                         (5, -10),
-                        ],
-                    [  # brstick: right, long (90deg rotation)
+                        ),
+                    (  # brstick: right, long (90deg rotation)
                         (10 + 10, -5),
                         (10 + 10, 5),
                         (-10 + 10, 5),
                         (-10 + 10, -5),
-                        ],
-                    [  # rbrstick: right, tall (0 deg rotation)
+                        ),
+                    (  # rbrstick: right, tall (0 deg rotation)
                         (-5 + 10, -10),
                         (5 + 10, -10),
                         (5 + 10, 10),
                         (-5 + 10, 10),
-                        ],
+                        ),
                     ]
                 }
             )
