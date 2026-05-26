@@ -94,7 +94,7 @@ class Transform:
         Self
             This transform is returned to allow chaining methods.
         """
-        angle = float(angle)
+        #angle = float(angle) TODO pieceofpi
         pivot = rai.vec2s(pivot)
 
         self._affine = rai.affine.matmul(
@@ -145,7 +145,8 @@ class Transform:
         # to support weird things like mypy numbers
         # which we then convert to regular float
 
-        angle_float = float(angle)
+        #angle_float = float(angle) # TODO pieceofpi...?
+        angle_float = angle
 
         if (
                 isinstance(a, Num) and
