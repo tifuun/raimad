@@ -454,9 +454,22 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         """
         class Foo(rai.Compo):
             def _make(self):
-                stick = rai.RectLW(10, 20).proxy()
+                # Stick: just a tall stick centered at the origin
+                stick = rai.RectLW(10, 20).proxy().bbox.mid.to(0, 0)
+                assert stick.depth() == 1
+
+                # rotated stick:
+                # horizontally long stick centered at the origin
                 rstick = stick.proxy().bbox.mid.rotate(rai.quartercircle)
+                assert rstick.depth() == 2
+
+                # doubly rotated stick:
+                # we rotate it by two quarters, which means
+                # half-circle.
+                # So it looks the same as the first stick.
                 rrstick = rstick.proxy().bbox.mid.rotate(rai.quartercircle)
+                assert rrstick.depth() == 3
+
                 brstick = rstick.proxy().movex(10)
 
                 rbrstick = brstick.proxy()
