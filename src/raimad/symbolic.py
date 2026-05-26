@@ -11,22 +11,30 @@ class PieceOfPi:
         return type(self)(halves=self.halves / other)
 
     def __add__(self, other):
-        return type(self)(halves=self.halves + other)
+        if not isinstance(other, type(self)):
+            return self.as_float() + other
+        return type(self)(halves=self.halves + other.halves)
 
     def __sub__(self, other):
-        return type(self)(halves=self.halves - other)
+        if not isinstance(other, type(self)):
+            return self.as_float() - other
+        return type(self)(halves=self.halves - other.halves)
 
     def __rmul__(self, other):
-        return type(self)(halves=self.halves * other)
+        return type(self)(halves=other * self.halves)
 
     def __rtruediv__(self, other):
-        return type(self)(halves=self.halves / other)
+        return type(self)(halves=other / self.halves)
 
     def __radd__(self, other):
-        return type(self)(halves=self.halves + other)
+        if not isinstance(other, type(self)):
+            return other + self.as_float()
+        return type(self)(halves=other.halves + self.halves)
 
     def __rsub__(self, other):
-        return type(self)(halves=self.halves - other)
+        if not isinstance(other, type(self)):
+            return other - self.as_float()
+        return type(self)(halves=other.halves - self.halves)
 
     def as_float(self):
         return math.pi * self.halves / 2
@@ -60,5 +68,5 @@ def cos(num):
 
         num = num.as_float()
 
-    return math.sin(num)
+    return math.cos(num)
 
