@@ -74,6 +74,22 @@ class Transform:
 
         return self
 
+    def corotate(
+            self,
+            angle,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
+        x = float(x)
+        y = float(y)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.orotate(angle), x, y),
+            self._affine
+            )
+
+        return self
+
     def protate(
             self,
             angle: Num,
@@ -103,6 +119,21 @@ class Transform:
             )
 
         return self
+
+    def porotate(
+            self,
+            angle,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        pivot = rai.vec2s(pivot)
+
+        self._affine = rai.affine.matmul(
+            rai.affine.around(rai.affine.orotate(angle), pivot[0], pivot[1]),
+            self._affine
+            )
+
+        return self
+
 
     @overload
     def rotate(self, angle: Num, /) -> Self: ...
@@ -167,6 +198,35 @@ class Transform:
             raise EditingArgumentError()
 
         return self
+
+    def orotate(
+            self,
+            angle,
+            /,
+            a,
+            b,
+            ) -> Self:
+
+        if (
+                isinstance(a, Num) and
+                isinstance(b, Num)
+                ):
+            self.corotate(angle, float(a), float(b))
+        elif (
+                isinstance(a, Vec2) and
+                isinstance(b, NoneType)
+                ):
+            self.porotate(angle, rai.vec2s(a))
+        elif (
+                isinstance(a, NoneType) and
+                isinstance(b, NoneType)
+                ):
+            self.porotate(angle)
+        else:
+            raise EditingArgumentError()
+
+        return self
+
 
 
     #-------------#

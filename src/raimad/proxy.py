@@ -1125,6 +1125,17 @@ class Proxy:
         return self
 
 
+    def orotate(
+            self,
+            angle,
+            /,
+            a: Num | Vec2 | None = None,
+            b: Num | None = None,
+            ) -> Self:
+        self.transform.orotate(angle, a, b)
+        return self
+
+
     #-------------#
     # Move        #
     #-------------#

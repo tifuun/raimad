@@ -104,6 +104,14 @@ def rotate(angle: NumS) -> Mat3S:
         (0, 0, 1),
         )
 
+def orotate(angle) -> Mat3S:
+    sine, cosine = ((0, 1), (1, 0), (0, -1), (-1, 0))[abs(angle) % 4]
+    return (
+        (cosine, -sine, 0),
+        (sine, cosine, 0),
+        (0, 0, 1),
+        )
+
 def move(x: NumS, y: NumS) -> Mat3S:
     """Generate an affine matrix corresponding to a translation."""
     return (
