@@ -203,8 +203,8 @@ class Transform:
             self,
             angle,
             /,
-            a,
-            b,
+            a: Num | Vec2 | None = None,
+            b: Num | None = None,
             ) -> Self:
 
         if (

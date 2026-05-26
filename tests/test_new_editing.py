@@ -15,6 +15,8 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertTrue(hasattr(rai.Transform, 'crotate'))
         # pick protate / crotate automatically based on number of args
         self.assertTrue(hasattr(rai.Transform,  'rotate'))
+        # orthogonal rotate (only around origin)
+        self.assertTrue(hasattr(rai.Transform, 'orotate'))
 
         # separate move by coords (single arg)
         self.assertTrue(hasattr(rai.Transform,  'movex'))
@@ -50,6 +52,7 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertTrue(hasattr(rai.Proxy, 'protate'))
         self.assertTrue(hasattr(rai.Proxy, 'crotate'))
         self.assertTrue(hasattr(rai.Proxy,  'rotate'))
+        self.assertTrue(hasattr(rai.Proxy, 'orotate'))
 
         self.assertTrue(hasattr(rai.Proxy,  'movex'))
         self.assertTrue(hasattr(rai.Proxy,  'movey'))
@@ -75,7 +78,9 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
 
         # only one rotate method: the boundpoint itself
         # IS the x/y coords we're rotating about
-        self.assertTrue(hasattr(rai.BoundPoint, 'rotate'))
+        self.assertTrue( hasattr(rai.BoundPoint,  'rotate'))
+        # orotate is ONLY for origin -- boundpoint must not have it!
+        self.assertFalse(hasattr(rai.BoundPoint, 'orotate'))
 
         # These are same as transform/proxy methods --
         # doesn't make sense for movement to depend
@@ -117,6 +122,7 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertIs(transform.protate(0), transform)
         self.assertIs(transform.crotate(0), transform)
         self.assertIs(transform.rotate(0), transform)
+        self.assertIs(transform.orotate(0), transform)
 
         self.assertIs(transform.movex(0), transform)
         self.assertIs(transform.movey(0), transform)
@@ -145,6 +151,7 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertIs(proxy.protate(0), proxy)
         self.assertIs(proxy.crotate(0), proxy)
         self.assertIs(proxy.rotate(0), proxy)
+        self.assertIs(proxy.orotate(0), proxy)
 
         self.assertIs(proxy.movex(0), proxy)
         self.assertIs(proxy.movey(0), proxy)
@@ -210,18 +217,21 @@ class TestNewEditing(GeomsEqual, unittest.TestCase):
         self.assertManyGeomsEqual((
             shape.proxy(). rotate(rai.quartercircle, (0, 0)),
             shape.proxy(). rotate(rai.quartercircle,       ),
+            shape.proxy().orotate(1                ,       ),
             ))
 
         # test that default rotation is around origin (tuple)
         self.assertManyGeomsEqual((
             shape.proxy().protate(rai.quartercircle, (0, 0)),
             shape.proxy().protate(rai.quartercircle,       ),
+            shape.proxy().orotate(1                ,       ),
             ))
 
         # test that default rotation is around origin (coords)
         self.assertManyGeomsEqual((
             shape.proxy().crotate(rai.quartercircle,  0, 0 ),
             shape.proxy().crotate(rai.quartercircle,       ),
+            shape.proxy().orotate(1                ,       ),
             ))
 
         ## And also test boundpoint
