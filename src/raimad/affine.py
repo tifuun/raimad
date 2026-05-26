@@ -104,7 +104,24 @@ def rotate(angle: NumS) -> Mat3S:
         (0, 0, 1),
         )
 
-def orotate(angle) -> Mat3S:
+def orotate(angle: int) -> Mat3S:
+    """
+    Generate affine matrix corresponding to orthogonal rotation.
+
+    By "orthogonal rotation" we mean rotation by an integer multiple
+    of 90 degrees.
+
+    Parameters
+    ----------
+    angle : int
+        Number of quarter-circles to rotate in
+        the counterclockwise direction
+
+    Returns
+    -------
+    Mat3S
+        The corresponding rotation matrix
+    """
     sine, cosine = ((0, 1), (1, 0), (0, -1), (-1, 0))[abs(angle) % 4]
     return (
         (cosine, -sine, 0),

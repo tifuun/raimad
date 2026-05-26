@@ -74,22 +74,6 @@ class Transform:
 
         return self
 
-    def corotate(
-            self,
-            angle,
-            x: Num = 0,
-            y: Num = 0
-            ) -> Self:
-        x = float(x)
-        y = float(y)
-
-        self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.orotate(angle), x, y),
-            self._affine
-            )
-
-        return self
-
     def protate(
             self,
             angle: Num,
@@ -110,25 +94,11 @@ class Transform:
         Self
             This transform is returned to allow chaining methods.
         """
-        #angle = float(angle) TODO pieceofpi
+        angle = float(angle)
         pivot = rai.vec2s(pivot)
 
         self._affine = rai.affine.matmul(
             rai.affine.around(rai.affine.rotate(angle), pivot[0], pivot[1]),
-            self._affine
-            )
-
-        return self
-
-    def porotate(
-            self,
-            angle,
-            pivot: Vec2 = (0, 0),
-            ) -> Self:
-        pivot = rai.vec2s(pivot)
-
-        self._affine = rai.affine.matmul(
-            rai.affine.around(rai.affine.orotate(angle), pivot[0], pivot[1]),
             self._affine
             )
 
@@ -201,32 +171,32 @@ class Transform:
 
     def orotate(
             self,
-            angle,
-            /,
-            a: Num | Vec2 | None = None,
-            b: Num | None = None,
+            angle: int,
             ) -> Self:
+        """
+        Rotate orthogonally.
 
-        if (
-                isinstance(a, Num) and
-                isinstance(b, Num)
-                ):
-            self.corotate(angle, float(a), float(b))
-        elif (
-                isinstance(a, Vec2) and
-                isinstance(b, NoneType)
-                ):
-            self.porotate(angle, rai.vec2s(a))
-        elif (
-                isinstance(a, NoneType) and
-                isinstance(b, NoneType)
-                ):
-            self.porotate(angle)
-        else:
-            raise EditingArgumentError()
+        This method rotates by an integer multiple of 90 degrees
+        in the counterclockwise direction.
+        Useful for avoid floating point precision issues.
+        Unlike regular rotate, it does not take a pivot point.
 
+        Parameters
+        ----------
+        angle : int
+            Number of quarter-circles to rotate in
+            the counterclockwise direction
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self._affine = rai.affine.matmul(
+            rai.affine.orotate(angle),
+            self._affine
+            )
         return self
-
 
 
     #-------------#
