@@ -46,7 +46,10 @@ from raimad.iters import (
     quintles,
 
     flatten,
-    braid
+    braid,
+
+    rotated,
+    reversed,
     )
 from raimad.string_import import string_import
 

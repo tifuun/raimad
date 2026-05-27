@@ -161,4 +161,22 @@ def is_rotated(
             return True
     return False
 
+def rotated(count, seq):
+    if len(seq) == 0:
+        return seq[:]
+
+    count = count % len(seq)
+
+    if count < 0:
+        count = len(seq) + count
+
+    if count == 0:
+        return seq[:]
+
+    assert count > 0
+
+    return seq[-count:] + seq[:-count]
+
+def reversed(seq):
+    return seq[::-1]
 

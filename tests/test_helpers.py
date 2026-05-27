@@ -117,6 +117,59 @@ class TestPolys(ArrayApproxEqual, unittest.TestCase):
                 ],
             ))
 
+    def test_reversed(self):
+        self.assertEqual(rai.reversed(''), '')
+        self.assertEqual(rai.reversed('a'), 'a')
+        self.assertEqual(rai.reversed('abcd'), 'dcba')
+        self.assertEqual(rai.reversed([]), [])
+        self.assertEqual(rai.reversed(['a']), ['a'])
+        self.assertEqual(
+            rai.reversed(['a', 'b', 'c', 'd']),
+            ['d', 'c', 'b', 'a'],
+            )
+
+    def test_rotated(self):
+        self.assertEqual(rai.rotated(-8, ''), '')
+        self.assertEqual(rai.rotated(-8, 'a'), 'a')
+        self.assertEqual(rai.rotated(-8, []), [])
+        self.assertEqual(rai.rotated(-8, ['a']), ['a'])
+
+        self.assertEqual(rai.rotated(-8, 'abcd'), 'abcd')
+        self.assertEqual(rai.rotated(-7, 'abcd'), 'dabc')
+        self.assertEqual(rai.rotated(-6, 'abcd'), 'cdab')
+        self.assertEqual(rai.rotated(-5, 'abcd'), 'bcda')
+        self.assertEqual(rai.rotated(-4, 'abcd'), 'abcd')
+        self.assertEqual(rai.rotated(-3, 'abcd'), 'dabc')
+        self.assertEqual(rai.rotated(-2, 'abcd'), 'cdab')
+        self.assertEqual(rai.rotated(-1, 'abcd'), 'bcda')
+        self.assertEqual(rai.rotated( 0, 'abcd'), 'abcd')
+        self.assertEqual(rai.rotated( 1, 'abcd'), 'dabc')
+        self.assertEqual(rai.rotated( 2, 'abcd'), 'cdab')
+        self.assertEqual(rai.rotated( 3, 'abcd'), 'bcda')
+        self.assertEqual(rai.rotated( 4, 'abcd'), 'abcd')
+        self.assertEqual(rai.rotated( 5, 'abcd'), 'dabc')
+        self.assertEqual(rai.rotated( 6, 'abcd'), 'cdab')
+        self.assertEqual(rai.rotated( 7, 'abcd'), 'bcda')
+        self.assertEqual(rai.rotated( 8, 'abcd'), 'abcd')
+
+        self.assertEqual(rai.rotated(-8, list('abcd')), list('abcd'))
+        self.assertEqual(rai.rotated(-7, list('abcd')), list('dabc'))
+        self.assertEqual(rai.rotated(-6, list('abcd')), list('cdab'))
+        self.assertEqual(rai.rotated(-5, list('abcd')), list('bcda'))
+        self.assertEqual(rai.rotated(-4, list('abcd')), list('abcd'))
+        self.assertEqual(rai.rotated(-3, list('abcd')), list('dabc'))
+        self.assertEqual(rai.rotated(-2, list('abcd')), list('cdab'))
+        self.assertEqual(rai.rotated(-1, list('abcd')), list('bcda'))
+        self.assertEqual(rai.rotated( 0, list('abcd')), list('abcd'))
+        self.assertEqual(rai.rotated( 1, list('abcd')), list('dabc'))
+        self.assertEqual(rai.rotated( 2, list('abcd')), list('cdab'))
+        self.assertEqual(rai.rotated( 3, list('abcd')), list('bcda'))
+        self.assertEqual(rai.rotated( 4, list('abcd')), list('abcd'))
+        self.assertEqual(rai.rotated( 5, list('abcd')), list('dabc'))
+        self.assertEqual(rai.rotated( 6, list('abcd')), list('cdab'))
+        self.assertEqual(rai.rotated( 7, list('abcd')), list('bcda'))
+        self.assertEqual(rai.rotated( 8, list('abcd')), list('abcd'))
+
     def test_flatten(self):
         self.assertEqual(
             rai.flatten([[[1, 2], 3, [4], [5, 6], 7], 8]),
