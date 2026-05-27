@@ -16,14 +16,14 @@ all_squares = (
     )
 
 class TestGeomsComparison(unittest.TestCase):
-    def test_geom_helpers(self):
+    def test_sanity(self):
         for one, two in rai.duplets(all_squares):
             self.assertNotEqual(one, two)
             self.assertEqual(set(one), set(two))
 
         self.assertEqual(
             square_cw_top_left,
-            rai.rotated(-1, square_cw_top_right),
+            rai.rotated(1, square_cw_top_right),
             )
 
         self.assertEqual(
@@ -32,7 +32,7 @@ class TestGeomsComparison(unittest.TestCase):
             )
 
         self.assertEqual(
-            rai.rotated(1, square_cw_top_left),
+            rai.rotated(-1, square_cw_top_left),
             square_cw_top_right,
             )
 

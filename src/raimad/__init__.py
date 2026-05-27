@@ -50,6 +50,7 @@ from raimad.iters import (
 
     rotated,
     reversed,
+    is_rotated,
     )
 from raimad.string_import import string_import
 
