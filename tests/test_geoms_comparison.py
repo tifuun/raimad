@@ -23,26 +23,26 @@ class TestGeomsComparison(unittest.TestCase):
 
         self.assertEqual(
             square_cw_top_left,
-            rai.rotated(1, square_cw_top_right),
+            rai.rotated(square_cw_top_right, 1),
             )
 
         self.assertEqual(
             square_ccw_top_left,
-            rai.rotated(-1, square_ccw_top_right),
+            rai.rotated(square_ccw_top_right, -1),
             )
 
         self.assertEqual(
-            rai.rotated(-1, square_cw_top_left),
+            rai.rotated(square_cw_top_left, -1),
             square_cw_top_right,
             )
 
         self.assertEqual(
-            rai.rotated(1, square_ccw_top_left),
+            rai.rotated(square_ccw_top_left, 1),
             square_ccw_top_right,
             )
 
         self.assertEqual(
-            rai.rotated(4, square_ccw_top_right),
+            rai.rotated(square_ccw_top_right, 4),
             square_ccw_top_right,
             )
 
@@ -133,7 +133,7 @@ class TestGeomsComparison(unittest.TestCase):
                 ):
 
             self.assertFalse(rai.geom.poly_equal(
-                seq, cross_square,
+                sqr, cross_square,
                 check_rotation=False, check_orientation=False))
 
 
