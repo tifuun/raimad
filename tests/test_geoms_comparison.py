@@ -69,6 +69,73 @@ class TestGeomsComparison(unittest.TestCase):
 
             self.assertFalse(rai.is_rotated(sqr, cross_square))
 
+    def test_poly_comparison(self):
+        for first, second in rai.duplets(all_squares):
+            self.assertFalse(rai.geom.poly_equal(
+                first, second, check_rotation=True, check_orientation=True))
+
+        for sqr in all_squares:
+            self.assertTrue(rai.geom.poly_equal(
+                sqr, sqr, check_rotation=True, check_orientation=True))
+            self.assertTrue(rai.geom.poly_equal(
+                sqr, sqr, check_rotation=False, check_orientation=True))
+            self.assertTrue(rai.geom.poly_equal(
+                sqr, sqr, check_rotation=False, check_orientation=False))
+            self.assertTrue(rai.geom.poly_equal(
+                sqr, sqr, check_rotation=True, check_orientation=False))
+
+        self.assertFalse(rai.geom.poly_equal(
+            square_cw_top_left, square_ccw_top_left,
+            check_rotation=False, check_orientation=True))
+
+        self.assertFalse(rai.geom.poly_equal(
+            square_cw_top_right, square_ccw_top_right,
+            check_rotation=False, check_orientation=True))
+
+        self.assertFalse(rai.geom.poly_equal(
+            square_cw_top_left, square_cw_top_right,
+            check_rotation=True, check_orientation=False))
+
+        self.assertFalse(rai.geom.poly_equal(
+            square_ccw_top_left, square_ccw_top_right,
+            check_rotation=True, check_orientation=False))
+
+        ###
+
+        self.assertTrue(rai.geom.poly_equal(
+            square_cw_top_left, square_ccw_top_left,
+            check_rotation=True, check_orientation=False))
+
+        self.assertTrue(rai.geom.poly_equal(
+            square_cw_top_right, square_ccw_top_right,
+            check_rotation=True, check_orientation=False))
+
+        self.assertTrue(rai.geom.poly_equal(
+            square_cw_top_left, square_cw_top_right,
+            check_rotation=False, check_orientation=True))
+
+        self.assertTrue(rai.geom.poly_equal(
+            square_ccw_top_left, square_ccw_top_right,
+            check_rotation=False, check_orientation=True))
+        
+        ###
+
+        self.assertTrue(rai.geom.poly_equal(
+            square_ccw_top_left, square_cw_top_right,
+            check_rotation=False, check_orientation=False))
+
+
+        for sqr in (
+                square_cw_top_left,
+                square_cw_top_right,
+                square_ccw_top_left,
+                square_ccw_top_right,
+                ):
+
+            self.assertFalse(rai.geom.poly_equal(
+                seq, cross_square,
+                check_rotation=False, check_orientation=False))
+
 
 if __name__ == '__main__':
     unittest.main()

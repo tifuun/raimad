@@ -7,6 +7,7 @@ from raimad import types
 from raimad.empty import Empty, EmptyType
 from raimad import graphviz as gv
 from raimad import saveto
+from raimad import geom
 from raimad.helpers import (
     fullcircle,
     halfcircle,
@@ -50,6 +51,7 @@ from raimad.iters import (
 
     rotated,
     reversed,
+    reversed_pin,
     is_rotated,
     )
 from raimad.string_import import string_import

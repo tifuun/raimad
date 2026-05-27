@@ -161,7 +161,7 @@ def is_rotated(
             return True
     return False
 
-def rotated(count, seq):
+def rotated(seq, count):
     if len(seq) == 0:
         return seq[:]
 
@@ -179,4 +179,12 @@ def rotated(count, seq):
 
 def reversed(seq):
     return seq[::-1]
+
+def reversed_pin(seq, idx=0):
+    if idx >= len(seq):
+        raise IndexError("Pin index out of range of sequence.")
+    if idx < -len(seq):
+        raise IndexError("Pin back-index out of range of sequence.")
+
+    return reversed(rotated(seq, idx * 2 - 1))
 
