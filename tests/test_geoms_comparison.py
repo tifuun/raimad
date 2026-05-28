@@ -308,47 +308,38 @@ class TestGeomsComparison(unittest.TestCase):
         # through to a different function that's already tested,
         # I don't think it's necessary.
 
-    def test_geom_collapse(self):
-        coll_rot = rai.geom.coll_rot
-        coll_or = rai.geom.coll_or
+    def test_geom_canon(self):
+        canon_rot = rai.geom.canon_rot
+        canon_or = rai.geom.canon_or
 
-        # test collapse rotation
+        # test canon rotation
         self.assertEqual(
-            coll_rot(box_cw_top_left),
-            coll_rot(box_cw_top_right),
+            canon_rot(box_cw_top_left),
+            canon_rot(box_cw_top_right),
             )
 
         self.assertEqual(
-            coll_rot(box_ccw_top_left),
-            coll_rot(box_ccw_top_right),
+            canon_rot(box_ccw_top_left),
+            canon_rot(box_ccw_top_right),
             )
 
-        # test collapse both
+        # test canon both
         # TODO currying..?
         for first, second in rai.duplets(all_boxs):
             self.assertEqual(
-                rai.geom.coll_rot_or(first),
-                rai.geom.coll_rot_or(second),
+                rai.geom.canon_rot_or(first),
+                rai.geom.canon_rot_or(second),
                 )
 
-        # test collapse orientation TODO
-        #self.assertEqual(
-        #    coll_rot(box_cw_top_left),
-        #    coll_or(box_ccw_top_left),
-        #    )
+        self.assertEqual(
+            canon_or(box_cw_top_left),
+            canon_or(box_ccw_top_left),
+            )
 
-        #self.assertEqual(
-        #    coll_rot(box_cw_top_left),
-        #    coll_or(box_ccw_top_left),
-        #    )
-
-        # test that order of operations doesnt matter
-        #for box in all_boxs:
-        #    self.assertEqual(
-        #        coll_rot(coll_or(box)),
-        #        coll_or(coll_rot(box)),
-        #        )
-
+        self.assertEqual(
+            canon_or(box_cw_top_left),
+            canon_or(box_ccw_top_left),
+            )
 
 
 if __name__ == '__main__':
