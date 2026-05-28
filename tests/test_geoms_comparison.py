@@ -1,4 +1,5 @@
 import unittest
+import itertools
 
 import raimad as rai
 
@@ -73,65 +74,65 @@ class TestGeomsComparison(unittest.TestCase):
         # under strict comparison
         for first, second in rai.duplets((*all_boxs, cross_box)):
             self.assertFalse(rai.geom.poly_equal(
-                first, second, check_rotation=True, check_orientation=True))
+                first, second, None))
 
         # Check that a box is equal to itself under all
         # types of comparison
         for sqr in (*all_boxs, cross_box):
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, check_rotation=True, check_orientation=True))
+                sqr, sqr, rai.geom.canon_rot_or))
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, check_rotation=False, check_orientation=True))
+                sqr, sqr, rai.geom.canon_or))
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, check_rotation=False, check_orientation=False))
+                sqr, sqr, None))
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, check_rotation=True, check_orientation=False))
+                sqr, sqr, rai.geom.canon_or))
 
         # Check that strict orientation checking detects
         # boxes with different orientation
         self.assertFalse(rai.geom.poly_equal(
             box_cw_top_left, box_ccw_top_left,
-            check_rotation=False, check_orientation=True))
+            rai.geom.canon_rot))
 
         self.assertFalse(rai.geom.poly_equal(
             box_cw_top_right, box_ccw_top_right,
-            check_rotation=False, check_orientation=True))
+            rai.geom.canon_rot))
 
         # Check that strict rotation checking detects
         # boxes with different rotation
         self.assertFalse(rai.geom.poly_equal(
             box_cw_top_left, box_cw_top_right,
-            check_rotation=True, check_orientation=False))
+            rai.geom.canon_or))
 
         self.assertFalse(rai.geom.poly_equal(
             box_ccw_top_left, box_ccw_top_right,
-            check_rotation=True, check_orientation=False))
+            rai.geom.canon_or))
 
         # check that disabling strict orientation checking
         # actually makes it not care about orientation
         self.assertTrue(rai.geom.poly_equal(
             box_cw_top_left, box_ccw_top_left,
-            check_rotation=True, check_orientation=False))
+            rai.geom.canon_or))
 
         self.assertTrue(rai.geom.poly_equal(
             box_cw_top_right, box_ccw_top_right,
-            check_rotation=True, check_orientation=False))
+            rai.geom.canon_or))
 
         # check that disabling strict rotation checking
         # actually makes it not care about rotation
         self.assertTrue(rai.geom.poly_equal(
             box_cw_top_left, box_cw_top_right,
-            check_rotation=False, check_orientation=True))
+            rai.geom.canon_rot))
 
         self.assertTrue(rai.geom.poly_equal(
             box_ccw_top_left, box_ccw_top_right,
-            check_rotation=False, check_orientation=True))
+            rai.geom.canon_rot))
         
         # check that under loose comparison (any rotation, any orientation)
         # boxes with different rotation and orientation are the same
         self.assertTrue(rai.geom.poly_equal(
             box_ccw_top_left, box_cw_top_right,
-            check_rotation=False, check_orientation=False))
+            rai.geom.canon_rot_or))
 
 
         # Check that none of the box variants are equal to the cross-box
@@ -139,57 +140,52 @@ class TestGeomsComparison(unittest.TestCase):
         for sqr in all_boxs:
             self.assertFalse(rai.geom.poly_equal(
                 sqr, cross_box,
-                check_rotation=False, check_orientation=False))
+                rai.geom.canon_rot_or))
 
     def test_polys_comparison_common(self):
-        for bitfield in range(0b000, 0b111 + 1):
-            check_poly_order = bool(bitfield & (1 << 0))
-            check_rotation = bool(bitfield & (1 << 1))
-            check_orientation = bool(bitfield & (1 << 2))
+        for canon_polys, canon_poly in itertools.product(
+                (None, rai.geom.canon_order),
+                (
+                    None,
+                    rai.geom.canon_or,
+                    rai.geom.canon_rot,
+                    rai.geom.canon_rot_or
+                    ),
+                ):
 
             # Identical lists should be equal under all comparison options
             self.assertTrue(rai.geom.polys_equal(
                 [shape0, shape1, shape2],
                 [shape0, shape1, shape2],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
             # empty polys's should be equal under all comparison options
             self.assertTrue(rai.geom.polys_equal(
                 [],
                 [],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
             # single poly
             self.assertTrue(rai.geom.polys_equal(
                 [shape0],
                 [shape0],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
             # Repeated single poly
             self.assertTrue(rai.geom.polys_equal(
                 [shape0, shape0, shape0, shape0, shape0],
                 [shape0, shape0, shape0, shape0, shape0],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
             # Repeated single poly with one extra
             self.assertTrue(rai.geom.polys_equal(
                 [shape0, shape0, shape0, shape0, shape1],
                 [shape0, shape0, shape0, shape0, shape1],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
 
@@ -197,9 +193,7 @@ class TestGeomsComparison(unittest.TestCase):
             self.assertFalse(rai.geom.polys_equal(
                 [shape1, shape0],
                 [shape1, shape0, shape1],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
             # Again, different number of shapes, but one is empty.
@@ -207,9 +201,7 @@ class TestGeomsComparison(unittest.TestCase):
             self.assertFalse(rai.geom.polys_equal(
                 [],
                 [shape2],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
             # completely different shapes, but some are same: again, should
@@ -217,9 +209,7 @@ class TestGeomsComparison(unittest.TestCase):
             self.assertFalse(rai.geom.polys_equal(
                 [shape1, shape0, shape2],
                 [shape1, shape0, shape1],
-                check_poly_order=check_poly_order,
-                check_rotation=check_rotation,
-                check_orientation=check_orientation,
+                canon_polys, canon_poly,
                 ))
 
 
@@ -229,18 +219,15 @@ class TestGeomsComparison(unittest.TestCase):
         self.assertFalse(rai.geom.polys_equal(
             [shape1, shape1, shape0],
             [shape1, shape0, shape1],
-            check_poly_order=True,
-            check_rotation=True,
-            check_orientation=True,
+            None, None,
             ))
 
         # ...and are equal without strict order checking
         self.assertTrue(rai.geom.polys_equal(
             [shape1, shape1, shape0],
             [shape1, shape0, shape1],
-            check_poly_order=False,
-            check_rotation=True,
-            check_orientation=True,
+            rai.geom.canon_order,
+            None,
             ))
 
 
@@ -254,18 +241,15 @@ class TestGeomsComparison(unittest.TestCase):
         self.assertTrue(rai.geom.polys_equal(
             [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
             [box_ccw_top_left, box_cw_top_right, box_cw_top_left],
-            check_poly_order=True,
-            check_rotation=False,
-            check_orientation=True,
+            None,
+            rai.geom.canon_rot
             ))
 
         # ...and not equal with strict checking enabled.
         self.assertFalse(rai.geom.polys_equal(
             [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
             [box_ccw_top_left, box_cw_top_right, box_cw_top_left],
-            check_poly_order=True,
-            check_rotation=True,
-            check_orientation=True,
+            None, None
             ))
 
         # Same thing but now for orientation.
@@ -273,18 +257,14 @@ class TestGeomsComparison(unittest.TestCase):
         self.assertTrue(rai.geom.polys_equal(
             [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
             [box_cw_top_right, box_ccw_top_left, box_ccw_top_right],
-            check_poly_order=True,
-            check_rotation=True,
-            check_orientation=False,
+            None, rai.geom.canon_or
             ))
 
         # ...and not equal with strict checking enabled.
         self.assertFalse(rai.geom.polys_equal(
             [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
             [box_cw_top_right, box_ccw_top_left, box_ccw_top_right],
-            check_poly_order=True,
-            check_rotation=True,
-            check_orientation=True,
+            None, None,
             ))
 
         # Magnum opus of looseness: different order,
@@ -298,9 +278,7 @@ class TestGeomsComparison(unittest.TestCase):
             [shape0, box_cw_top_left, box_ccw_top_left,
                 box_cw_top_left, shape0],
 
-            check_poly_order=False,
-            check_rotation=False,
-            check_orientation=False,
+            rai.geom.canon_order, rai.geom.canon_rot_or
             ))
 
         # We could test for more permutations here

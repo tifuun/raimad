@@ -2,9 +2,6 @@ from functools import partial
 from collections import defaultdict
 import raimad as rai
 
-#def hash_poly(poly, mind_rotation, mind_orientation):
-#    pass
-
 def hash_poly(poly):
     return hash(tuple(poly))
 
@@ -30,67 +27,45 @@ def canon_or(poly):
         key=hash_poly
         )
 
-def canon(poly, check_rotation, check_orientation):
-    if check_rotation and check_orientation:
-        return poly
-    elif check_rotation and not check_orientation:
-        return canon_or(poly)
-    elif not check_rotation and check_orientation:
-        return canon_rot(poly)
-    elif not check_rotation and not check_orientation:
-        return canon_rot_or(poly)
-    assert False
+def poly_equal(one, two, canon_poly=None):
+    if canon_poly is not None:
+        one = canon_poly(one)
+        two = canon_poly(two)
 
+    return hash_poly(one) == hash_poly(two)
 
-def poly_equal(one, two, check_rotation, check_orientation):
-    one = canon(one, check_rotation, check_orientation)
-    two = canon(two, check_rotation, check_orientation)
-    #one, two = map(
-    #    (
-    #        canon_rot_or,
-    #        canon_rot,
-    #        canon_or,
-    #        lambda x: x,
-    #        )[check_rotation << 1 | check_orientation],
-    #    (one, two)
-    #    )
+def canon_order(polys):
+    return list(sorted(polys, key=hash_poly))
 
-    return one == two
+def hash_polys(polys):
+    return hash(tuple(map(hash_poly, polys)))
 
-    #if check_rotation and check_orientation:
-    #    return one == two
-    #elif not check_rotation and check_orientation:
-    #    return rai.is_rotated(one, two)
-    #elif check_rotation and not check_orientation:
-    #    return (
-    #        one == rai.reversed_pin(two)
-    #        or one == two
-    #        )
-    #elif not check_rotation and not check_orientation:
-    #    return (
-    #        rai.is_rotated(one, two)
-    #        or rai.is_rotated(one, rai.reversed(two))
-    #        )
-    #assert False
+def polys_equal(one, two, canon_polys=None, canon_poly=None):
+    if canon_poly is not None:
+        one = tuple(map(canon_poly, one))
+        two = tuple(map(canon_poly, two))
 
+    if canon_polys is not None:
+        one = canon_polys(one)
+        two = canon_polys(two)
 
-def polys_equal(one, two, check_poly_order, check_rotation, check_orientation):
-    if not check_poly_order:
-        counter_one = defaultdict(int)
-        counter_two = defaultdict(int)
+    return hash_polys(one) == hash_polys(two)
+    #if not check_poly_order:
+    #    counter_one = defaultdict(int)
+    #    counter_two = defaultdict(int)
 
-        for poly in one:
-            poly = canon(poly, check_rotation, check_orientation)
-            counter_one[hash_poly(poly)] += 1
+    #    for poly in one:
+    #        poly = canon(poly, check_rotation, check_orientation)
+    #        counter_one[hash_poly(poly)] += 1
 
-        for poly in two:
-            poly = canon(poly, check_rotation, check_orientation)
-            counter_two[hash_poly(poly)] += 1
+    #    for poly in two:
+    #        poly = canon(poly, check_rotation, check_orientation)
+    #        counter_two[hash_poly(poly)] += 1
 
-        return counter_one == counter_two
+    #    return counter_one == counter_two
 
-    thiscanon = partial(canon, check_rotation=check_rotation, check_orientation=check_orientation)
-    return tuple(map(thiscanon, one)) == tuple(map(thiscanon, two))
+    #thiscanon = partial(canon, check_rotation=check_rotation, check_orientation=check_orientation)
+    #return tuple(map(thiscanon, one)) == tuple(map(thiscanon, two))
 
     #return rai.is_rotated(
     #    one,
