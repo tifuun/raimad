@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-properties>
+<custom-line-style>
+<pattern>*.*..*.*.....**..*..**..**.**...</pattern>
+<order>0</order>
+<name>ascii</name>
+</custom-line-style>
+<properties>
+<source>FOO</source>
+<line-style>C0</line-style>
+<width>5</width>
+</properties>
+<name/>
+</layer-properties>
