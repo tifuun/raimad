@@ -169,54 +169,49 @@ class GeomsEqual():
 
         if isinstance(actual, CompoLike):
             actual = actual.steamroll()
+        else:
+            actual = {k:v for k, v in actual.items()}
 
         if isinstance(expected, CompoLike):
             expected = expected.steamroll()
+        else:
+            expected = {k:v for k, v in expected.items()}
 
-        self.assertEqual(set(actual.keys()), set(expected.keys()))
-        for layer_name in actual.keys():
+        # TODO better but still a mess
+        actual = {
+            k: rai.geom.map_vec2_in_polys(rai.geom.canon_micron, v)
+            for k, v in actual.items()
+            }
 
-            polys_actual = actual[layer_name]
-            polys_expected = expected[layer_name]
+        expected = {
+            k: rai.geom.map_vec2_in_polys(rai.geom.canon_micron, v)
+            for k, v in expected.items()
+            }
 
-            self.assertEqual(len(polys_actual), len(polys_expected))
-            length = len(polys_actual)
-
-            num_equal_actual = sum(
-                self.checkPolysEqual(poly1, poly2)
-                for poly1 in polys_actual
-                for poly2 in polys_actual
+        # TODO better but still a mess
+        actual = {
+            k: rai.geom.canon_order(
+                rai.geom.map_poly_in_polys(
+                    rai.geom.canon_rot_or,
+                    v,
+                    )
                 )
+            for k, v in actual.items()
+            }
 
-            num_equal_expected = sum(
-                self.checkPolysEqual(poly1, poly2)
-                for poly1 in polys_expected
-                for poly2 in polys_expected
+        expected = {
+            k: rai.geom.canon_order(
+                rai.geom.map_poly_in_polys(
+                    rai.geom.canon_rot_or,
+                    v,
+                    )
                 )
+            for k, v in expected.items()
+            }
 
-            num_equal = 0
-            for poly_actual in polys_actual:
-                for poly_expected in polys_expected:
-                    num_equal += rai.iters.is_rotated(
-                            poly_expected,
-                            poly_actual,
-                            comparison=self.checkPolysEqual
-                            # TODO omg this is borderline incomprehensible
-                            # TODO pass epsilon
-                            )
 
-            try:
-                self.assertEqual(num_equal_expected, num_equal_actual)
-                self.assertEqual(num_equal + num_equal_actual, length * 2)
-                # TODO What on earth!?
-            except AssertionError as err:
-                stream = StringIO()
-                print(f'ON LAYER {layer_name}', file=stream)
-                print("ACTUAL: ", file=stream)
-                pprint(polys_actual, stream=stream)
-                print("expected: ", file=stream)
-                pprint(polys_expected, stream=stream)
-                raise AssertionError(stream.getvalue()) from err
+        self.assertEqual(actual, expected)
+
 
     def assertGeomsEqualButAllowDifferentNames(
             self,

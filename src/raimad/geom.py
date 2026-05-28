@@ -2,8 +2,17 @@ from functools import partial
 from collections import defaultdict
 import raimad as rai
 
+def hash_vec2(vec2):
+    return hash(vec2)
+
+def canon_micron(vec2):
+    return tuple(map(lambda coord: round(coord * 100), vec2))
+
+def map_vec2_in_poly(fn, poly):
+    return list(map(fn, poly))
+
 def hash_poly(poly):
-    return hash(tuple(poly))
+    return hash(tuple(map_vec2_in_poly(hash_vec2, poly)))
 
 def canon_rot(poly):
     return min(
@@ -27,7 +36,11 @@ def canon_or(poly):
         key=hash_poly
         )
 
-def poly_equal(one, two, canon_poly=None):
+def poly_equal(one, two, canon_poly=None, canon_vec2=None):
+    if canon_vec2 is not None:
+        one = map_vec2_in_poly(canon_vec2, one)
+        two = map_vec2_in_poly(canon_vec2, two)
+
     if canon_poly is not None:
         one = canon_poly(one)
         two = canon_poly(two)
@@ -40,40 +53,27 @@ def canon_order(polys):
 def hash_polys(polys):
     return hash(tuple(map(hash_poly, polys)))
 
-def polys_equal(one, two, canon_polys=None, canon_poly=None):
+def map_vec2_in_polys(fn, polys):
+    return [
+        [fn(vec2) for vec2 in poly]
+        for poly in polys
+        ]
+
+def map_poly_in_polys(fn, polys):
+    return list(map(fn, polys))
+
+def polys_equal(one, two, canon_polys=None, canon_poly=None, canon_vec2=None):
+    if canon_vec2 is not None:
+        one = map_vec2_in_polys(canon_vec2, one)
+        two = map_vec2_in_polys(canon_vec2, two)
+
     if canon_poly is not None:
-        one = tuple(map(canon_poly, one))
-        two = tuple(map(canon_poly, two))
+        one = map_poly_in_polys(canon_poly, one)
+        two = map_poly_in_polys(canon_poly, two)
 
     if canon_polys is not None:
         one = canon_polys(one)
         two = canon_polys(two)
 
     return hash_polys(one) == hash_polys(two)
-    #if not check_poly_order:
-    #    counter_one = defaultdict(int)
-    #    counter_two = defaultdict(int)
-
-    #    for poly in one:
-    #        poly = canon(poly, check_rotation, check_orientation)
-    #        counter_one[hash_poly(poly)] += 1
-
-    #    for poly in two:
-    #        poly = canon(poly, check_rotation, check_orientation)
-    #        counter_two[hash_poly(poly)] += 1
-
-    #    return counter_one == counter_two
-
-    #thiscanon = partial(canon, check_rotation=check_rotation, check_orientation=check_orientation)
-    #return tuple(map(thiscanon, one)) == tuple(map(thiscanon, two))
-
-    #return rai.is_rotated(
-    #    one,
-    #    two,
-    #    partial(
-    #        poly_equal,
-    #        check_rotation=check_rotation,
-    #        check_orientation=check_orientation,
-    #        )
-    #    )
 

@@ -247,6 +247,7 @@ class TestGeomsEqualMixin(GeomsEqual, unittest.TestCase):
                         [
                             (0, 0),
                             (0, 1),
+                            (1, 1),
                             (1, 0),
                             ],
                         ],
@@ -255,8 +256,9 @@ class TestGeomsEqualMixin(GeomsEqual, unittest.TestCase):
                     'root': [
                         [
                             (0, 0),
-                            (1, 0),
+                            (1, 1),
                             (0, 1),
+                            (1, 0),
                             ],
                         ],
                     },
