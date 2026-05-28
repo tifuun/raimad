@@ -14,16 +14,16 @@ import unittest
 
 import raimad as rai
 
-from .utils import ArrayAlmostEqual
+from .utils import ArrayApproxEqual
 
 class BareGeometric(rai.Compo):
     def _make(self):
         self.geoms.update({
             'root': [
                 [
-                    [0, 0],
-                    [40, 0],
-                    [0, 40],
+                    (0, 0),
+                    (40, 0),
+                    (0, 40),
                     ],
                 ]
             })
@@ -37,7 +37,7 @@ class BareStructural(rai.Compo):
         self.subcompos.geometric = BareGeometric().proxy().move(3, 2)
         self.marks.corner_a = self.subcompos.geometric.marks.corner_a
 
-class TestBoundpoint(ArrayAlmostEqual, unittest.TestCase):
+class TestBoundpoint(ArrayApproxEqual, unittest.TestCase):
 
     def test_boundpoint_mark(self):
         """
@@ -46,7 +46,7 @@ class TestBoundpoint(ArrayAlmostEqual, unittest.TestCase):
         """
         compo = BareGeometric()
 
-        self.assertArrayAlmostEqual(
+        self.assertArrayApproxEqual(
             compo.marks.corner_a,
             (0, 0)
             )
@@ -60,8 +60,8 @@ class TestBoundpoint(ArrayAlmostEqual, unittest.TestCase):
         compo = BareGeometric().proxy()
         compo.move(2, 3)
 
-        self.assertArrayAlmostEqual(
-            compo.marks["corner_a"],
+        self.assertArrayApproxEqual(
+            rai.vec2s(compo.marks["corner_a"]),
             (2, 3)
             )
 
@@ -72,8 +72,8 @@ class TestBoundpoint(ArrayAlmostEqual, unittest.TestCase):
         """
         compo = BareStructural()
 
-        self.assertArrayAlmostEqual(
-            compo.subcompos.geometric.marks.corner_a,
+        self.assertArrayApproxEqual(
+            rai.vec2s(compo.subcompos.geometric.marks.corner_a),
             (3, 2)
             )
 
@@ -87,8 +87,8 @@ class TestBoundpoint(ArrayAlmostEqual, unittest.TestCase):
         compo = BareStructural().proxy()
         compo.move(10, 20)
 
-        self.assertArrayAlmostEqual(
-            compo.subcompos.geometric.marks.corner_a,
+        self.assertArrayApproxEqual(
+            rai.vec2s(compo.subcompos.geometric.marks.corner_a),
             (3 + 10, 2 + 20)
             )
 
@@ -96,8 +96,8 @@ class TestBoundpoint(ArrayAlmostEqual, unittest.TestCase):
         compo = BareStructural().proxy()
         compo.move(10, 20)
 
-        self.assertArrayAlmostEqual(
-            compo.subcompos.geometric.bbox.bot_left,
+        self.assertArrayApproxEqual(
+            rai.vec2s(compo.subcompos.geometric.bbox.bot_left),
             (3 + 10, 2 + 20)
             )
 

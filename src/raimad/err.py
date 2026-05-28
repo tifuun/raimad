@@ -5,6 +5,7 @@ from raimad.compo import CompoInsteadOfProxyAsSubcompoError
 from raimad.compo import TransformCompoError
 from raimad.compo import CopyCompoError
 from raimad.compo import ProxyCompoConfusionError
+from raimad.compo import InvalidLayerNameError
 
 from raimad.ansec import AnSecError
 from raimad.ansec import AnSecRadiusError
@@ -18,9 +19,22 @@ from raimad.ansec import AnSecThetaIncorrectArgumentsError
 
 from raimad.bbox import EmptyBBoxError
 
-from raimad.cif.shorthand import InvalidDestinationError
+from raimad.saveto import InvalidDestinationError
 
 from raimad.string_import import StringImportError
+
+from raimad.transform import EditingArgumentError
+
+from raimad.cif.lname_transformers import InvalidLayerNameTransformerOutput
+from raimad.cif.lname_transformers import UntransformableLayerName
+from raimad.cif.lname_transformers import CIFLayerNameWarning
+from raimad.cif.lname_transformers import InvalidLayerNameTransformerCallable
+
+# __all__ should contain all re-exported objects
+# (checked by mypy and ruff)
+# do not edit this definition manually;
+# use scripts/patch_dunder_all.py
+# to update automatically.
 
 __all__ = [
     "InvalidSubcompoError",
@@ -28,6 +42,7 @@ __all__ = [
     "TransformCompoError",
     "CopyCompoError",
     "ProxyCompoConfusionError",
+    "InvalidLayerNameError",
     "AnSecError",
     "AnSecRadiusError",
     "AnSecRadiusTooManyArgumentsError",
@@ -40,5 +55,10 @@ __all__ = [
     "EmptyBBoxError",
     "InvalidDestinationError",
     "StringImportError",
+    "EditingArgumentError",
+    "InvalidLayerNameTransformerOutput",
+    "UntransformableLayerName",
+    "CIFLayerNameWarning",
+    "InvalidLayerNameTransformerCallable",
     ]
 

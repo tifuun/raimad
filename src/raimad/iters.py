@@ -1,6 +1,6 @@
 """iters.py: iteration-related helpers."""
 
-from typing import TypeVar, Any
+from typing import TypeVar, Any, TypeAlias
 from collections.abc import Iterable, Callable, Sequence
 from itertools import chain
 
@@ -67,7 +67,42 @@ triples = _make_alias('triples', nonoverlap, 3)
 quadles = _make_alias('quadles', nonoverlap, 4)
 quintles = _make_alias('quintles', nonoverlap, 5)
 
-def flatten(iterable: Iterable[Any]) -> Iterable[Any]:
+# Python does not (really) support recursive types
+# (see mypy-experiments/recursive_iterable.py).
+# Solution: The Great Pyramid of Iterable
+#
+# Not a complete solution since it does not
+# support "asymmetric" nested iterables (like an unbalanced tree made
+# out of lists),
+# but like whatever, caller can just type:ignore it
+I: TypeAlias = Iterable  #  noqa:E741
+V = TypeVar("V")
+def flatten(
+        iterable:
+                                  V |
+                                 I[V] |
+                                I[I[V]] |
+                               I[I[I[V]]] |
+                              I[I[I[I[V]]]] |
+                             I[I[I[I[I[V]]]]] |
+                            I[I[I[I[I[I[V]]]]]] |
+                           I[I[I[I[I[I[I[V]]]]]]] |
+                          I[I[I[I[I[I[I[I[V]]]]]]]] |
+                         I[I[I[I[I[I[I[I[I[V]]]]]]]]] |
+                        I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]] |
+                       I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]] |
+                      I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]] |
+                     I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]] |
+                    I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]] |
+                   I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]] |
+                  I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]] |
+                 I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]] |
+                I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]] |
+               I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]] |
+              I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]]] |
+             I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]]]] |
+            I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[I[V]]]]]]]]]]]]]]]]]]]]]]
+        ) -> list[V]:
     """Recursively flatten a nested iterable."""
     if not isinstance(iterable, Iterable) or isinstance(iterable, str):
         # This terminates the recursion
@@ -126,4 +161,30 @@ def is_rotated(
             return True
     return False
 
+def rotated(seq, count):
+    if len(seq) == 0:
+        return seq[:]
+
+    count = count % len(seq)
+
+    if count < 0:
+        count = len(seq) + count
+
+    if count == 0:
+        return seq[:]
+
+    assert count > 0
+
+    return seq[-count:] + seq[:-count]
+
+def reversed(seq):
+    return seq[::-1]
+
+def reversed_pin(seq, idx=0):
+    if idx >= len(seq):
+        raise IndexError("Pin index out of range of sequence.")
+    if idx < -len(seq):
+        raise IndexError("Pin back-index out of range of sequence.")
+
+    return reversed(rotated(seq, idx * 2 - 1))
 

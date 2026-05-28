@@ -274,9 +274,9 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
-        from pathlib import Path
-        Path('test.cif').write_text(exporter.cif_string)
-        Path('test.gv').write_text(exporter.stat.call_graph_dot())
+        #from pathlib import Path
+        #Path('test.cif').write_text(exporter.cif_string)
+        #Path('test.gv').write_text(exporter.stat.call_graph_dot())
 
         #layers = cf.parse(
         #    exporter.cif_string,
@@ -299,12 +299,19 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             multiplier=1,
             )
 
+        #from pathlib import Path
+        #Path('testmap.cif').write_text(exporter.cif_string)
+        #Path('testmap.gv').write_text(exporter.stat.call_graph_dot())
+
         #layers = cf.parse(
         #    exporter.cif_string,
         #    grammar=cf.grammar.lenient_layers
         #    )
 
-        self.assertEqual(exporter.stat.steamrolls, 0)
+        # the two parts of the bridge are lmapped, so 2 steamrolls
+        # plus the 4 rects of the transmission line,
+        # so 6 steamrolls total.
+        self.assertEqual(exporter.stat.steamrolls, 6)
 
                 
     def test_cif_reuse_proxyorder(self):
@@ -447,66 +454,138 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         """
         class Foo(rai.Compo):
             def _make(self):
-                stick = rai.RectLW(10, 20).proxy()
-                rstick = stick.proxy().bbox.mid.rotate(rai.quartercircle)
-                rrstick = rstick.proxy().bbox.mid.rotate(rai.quartercircle)
-                brstick = rstick.proxy().movex(10)
+                # Stick: just a tall stick centered at the origin
+                stick = rai.RectLW(10, 20).proxy().bbox.mid.to(0, 0)
+                assert stick.depth() == 1
 
+                # rotated stick:
+                # horizontally long stick centered at the origin
+                rstick = stick.proxy().bbox.mid.rotate(rai.quartercircle)
+                assert rstick.depth() == 2
+
+                # doubly rotated stick:
+                # we rotate it by two quarters, which means
+                # half-circle.
+                # So it looks the same as the first stick.
+                rrstick = rstick.proxy().bbox.mid.rotate(rai.quartercircle)
+                assert rrstick.depth() == 3
+
+                # rotated then translated
+                # so a horizontally long stick centered 10 units
+                # to the right of the origin
+                brstick = rstick.proxy().movex(10)
+                assert brstick.depth() == 3
+
+                # rotated then translated then rotated stick
+                # the rotations should cancel out.
+                # because it is rotated counterclockwise
+                # around origin (center),
+                # then moved,
+                # then routed clockwise around center.
+                # So should be tall stick centered at (10, 0)
                 rbrstick = brstick.proxy()
                 rbrstick.bbox.mid.rotate(-rai.quartercircle)
+                assert rbrstick.depth() == 4
 
                 self.subcompos.stick = stick
                 self.subcompos.rstick = rstick
                 self.subcompos.rrstick = rrstick
                 self.subcompos.brstick = brstick
                 self.subcompos.rbrstick = rbrstick
+
+        ## STEP ONE: sanity check with noreuse exporter
                 
         compo = Foo()
+        exporter = rai.cif.NoReuse(compo, multiplier=1)
+        layers = cf.parse(
+            exporter.cif_string,
+            grammar=cf.grammar.lenient_layers
+            )
+
+        self.assertGeomsEqual(
+            layers,
+            {
+                'ROOT': [
+                    (  # stick: center, tall
+                        (-5, -10),
+                        (5, -10),
+                        (5, 10),
+                        (-5, 10),
+                        ),
+                    (  # rstick: center, long (90deg rotation)
+                        (10, -5),
+                        (10, 5),
+                        (-10, 5),
+                        (-10, -5),
+                        ),
+                    (  # rrstick: center, tall (180deg rotation)
+                        (5, 10),
+                        (-5, 10),
+                        (-5, -10),
+                        (5, -10),
+                        ),
+                    (  # brstick: right, long (90deg rotation)
+                        (10 + 10, -5),
+                        (10 + 10, 5),
+                        (-10 + 10, 5),
+                        (-10 + 10, -5),
+                        ),
+                    (  # rbrstick: right, tall (0 deg rotation)
+                        (-5 + 10, -10),
+                        (5 + 10, -10),
+                        (5 + 10, 10),
+                        (-5 + 10, 10),
+                        ),
+                    ]
+                }
+            )
+
+        ## STEP TWO: actual test with reuse exporter
         exporter = rai.cif.Reuse(compo, multiplier=1)
         layers = cf.parse(
             exporter.cif_string,
             grammar=cf.grammar.lenient_layers
             )
 
-        from pathlib import Path
-        Path('proxystacking.cif').write_text(exporter.cif_string)
-        Path('proxystacking.gv').write_text(exporter.stat.call_graph_dot())
-        rai.export_cif(compo, 'proxystacking_nr.cif', exporter=rai.cif.NoReuse)
+        #from pathlib import Path
+        #Path('proxystacking.cif').write_text(exporter.cif_string)
+        #Path('proxystacking.gv').write_text(exporter.stat.call_graph_dot())
+        #rai.export_cif(compo, 'proxystacking_nr.cif', exporter=rai.cif.NoReuse)
 
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
-                    [  # stick: center, tall
+                'Lroot': [  #TODO NOREUSE NEW LAYER NAMES!!!!!!
+                    (  # stick: center, tall
                         (-5, -10),
                         (5, -10),
                         (5, 10),
                         (-5, 10),
-                        ],
-                    [  # rstick: center, long (90deg rotation)
+                        ),
+                    (  # rstick: center, long (90deg rotation)
                         (10, -5),
                         (10, 5),
                         (-10, 5),
                         (-10, -5),
-                        ],
-                    [  # rrstick: center, tall (180deg rotation)
+                        ),
+                    (  # rrstick: center, tall (180deg rotation)
                         (5, 10),
                         (-5, 10),
                         (-5, -10),
                         (5, -10),
-                        ],
-                    [  # brstick: right, long (90deg rotation)
+                        ),
+                    (  # brstick: right, long (90deg rotation)
                         (10 + 10, -5),
                         (10 + 10, 5),
                         (-10 + 10, 5),
                         (-10 + 10, -5),
-                        ],
-                    [  # rbrstick: right, tall (0 deg rotation)
+                        ),
+                    (  # rbrstick: right, tall (0 deg rotation)
                         (-5 + 10, -10),
                         (5 + 10, -10),
                         (5 + 10, 10),
                         (-5 + 10, 10),
-                        ],
+                        ),
                     ]
                 }
             )

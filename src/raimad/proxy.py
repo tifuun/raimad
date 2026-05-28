@@ -1,6 +1,6 @@
 """proxy.py: home to Proxy class and supporting classes."""
 
-from typing import Iterator
+from typing import Iterator, overload
 
 try:
     from typing import Self
@@ -11,6 +11,8 @@ except ImportError:
 from copy import copy
 
 import raimad as rai
+from raimad.types import Vec2, Vec2S, GeomsS, Num
+from raimad.compo import InvalidLayerNameError
 
 class LMap:
     """
@@ -43,7 +45,26 @@ class LMap:
     def __init__(self, shorthand: 'rai.typing.LMapShorthand') -> None:
         self.shorthand = shorthand
 
-    def __getitem__(self, name: str) -> str:
+        if isinstance(self.shorthand, str):
+            if not self.shorthand.isidentifier():
+                raise InvalidLayerNameError(
+                    f"`{self.shorthand}`: not a valid RAIMAD layer name. "
+                    "All RAIMAD layer names must be valid Python identifiers."
+                    )
+
+        if isinstance(self.shorthand, dict):
+            for name in self.shorthand.values():
+                if name is None:
+                    continue
+
+                if not name.isidentifier():
+                    raise InvalidLayerNameError(
+                        f"`{name}`: not a valid RAIMAD layer name. "
+                        "All RAIMAD layer names must be valid "
+                        "Python identifiers."
+                        )
+
+    def __getitem__(self, name: str) -> str | None:
         """Given a child layer, return the parent layer."""
         if self.shorthand is None:
             return name
@@ -56,6 +77,7 @@ class LMap:
 
         assert False
     # TODO hacky
+    # also TODO docstring
 
     def copy(self) -> Self:
         """Copy this lmap."""
@@ -87,6 +109,8 @@ class LMap:
             # TODO better way to do this?
             if isinstance(self.shorthand, dict):
                 for self_k, self_val in tuple(self.shorthand.items()):
+                    if self_val is None:
+                        continue
                     try:
                         self.shorthand[self_k] = other[self_val]
                     except KeyError:
@@ -105,8 +129,8 @@ class LMap:
 
 class ProxiedMarksContainer(
         rai.FilteredDictList[
-            'rai.typing.Point',
-            'rai.typing.PointLike',
+            Vec2,
+            Vec2,
             'rai.typing.BoundPoint',
             ]):
     """
@@ -125,14 +149,14 @@ class ProxiedMarksContainer(
     def __init__(
             self,
             proxy: 'rai.typing.Proxy',
-            dict_: dict[int | str, 'rai.typing.Point'] | None = None,
+            dict_: dict[int | str, Vec2] | None = None,
             *,
             copy: bool | None = None
             ):
         super().__init__(dict_, copy=copy)
         self._proxy = proxy
 
-    def _filter_set(self, val: 'rai.typing.PointLike') -> 'rai.typing.Point':
+    def _filter_set(self, val: Vec2) -> Vec2S:
         """
         Set filter for markscontainer.
 
@@ -140,9 +164,9 @@ class ProxiedMarksContainer(
         (regular tuple or boundpoint or whatever),
         what gets stored is a simple regular tuple.
         """
-        return (val[0], val[1])
+        return rai.vec2s(val)
 
-    def _filter_get(self, val: 'rai.typing.Point') -> 'rai.typing.BoundPoint':
+    def _filter_get(self, val: Vec2) -> 'rai.typing.BoundPoint':
 
         assert not isinstance(val, rai.BoundPoint)
         assert isinstance(val, tuple)
@@ -151,8 +175,8 @@ class ProxiedMarksContainer(
 
         point = self._proxy.transform_point(val)
         boundpoint = rai.BoundPoint(
-            point[0],
-            point[1],
+            float(point[0]),
+            float(point[1]),
             self._proxy
             )
         return boundpoint
@@ -198,13 +222,21 @@ class Proxy:
         self.lmap = LMap(lmap)
         self.transform = transform or rai.Transform()
 
-    def steamroll(self) -> 'rai.typing.Geoms':
+    @property
+    def _experimental_lyp(self) -> 'rai.cif.lyp.LayerProperties':
+        return self.compo._experimental_lyp
+
+    @property
+    def _experimental_lname_transformers(self) -> rai.types.LNameTransformers:
+        return self.compo._experimental_lname_transformers
+
+    def steamroll(self) -> GeomsS:
         """
         Get all geometries of this proxy.
 
         Returns
         -------
-        rai.typing.Geoms
+        GeomsS
             Returns all geometries
             (i.e. all raw geometries as well as subcompos)
             of the CompoLike pointed to by this proxy,
@@ -273,25 +305,26 @@ class Proxy:
             )
 
     @property
-    def geoms(self) -> 'rai.typing.Geoms':
+    def geoms(self) -> GeomsS:
         """
         Get the raw geometries as seen through this proxy.
 
         Returns
         -------
-        rai.typing.Geoms
+        GeomsS
             Returns the raw geometries
             (i.e. NOT geometries defined in subcompos)
             defined in the CompoLike pointed to by this Proxy,
             as seen through this proxy.
         """
         return {
-            self.lmap[layer]: [
+            target_layer: [
                 self.transform.transform_poly(geom)
                 for geom in geoms
                 ]
             for layer, geoms
             in self.compo.geoms.items()
+            if (target_layer := self.lmap[layer]) is not None
             }
 
     @property
@@ -720,8 +753,8 @@ class Proxy:
 
     def transform_point(
             self,
-            point: 'rai.typing.PointLike'
-            ) -> 'rai.typing.PointLike':
+            point: Vec2
+            ) -> Vec2S:
         """
         Apply this proxies transform to a point, return the transformed point.
 
@@ -797,158 +830,6 @@ class Proxy:
         """
         return self.__str__()
 
-    # Transform functions #
-    # TODO for all transforms
-    # TODO same implementation as in Compo
-    # TODO stack another transform or modify self?
-    def scale(self, x: float, y: float | None = None) -> Self:
-        """
-        Scale this proxy.
-
-        Parameters
-        ----------
-        x : float
-            Factor to scale by along the x axis
-        y : float
-            Factor to scale by along the y axis.
-            If unspecified or None,
-            use the x scale factor.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.scale(x, y)
-        return self
-
-    def movex(self, factor: float) -> Self:
-        """
-        Move this proxy horizontally.
-
-        Parameters
-        ----------
-        x : float
-            Move this many units along x axis.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.movex(factor)
-        return self
-
-    def movey(self, factor: float) -> Self:
-        """
-        Move this proxy vertically.
-
-        Parameters
-        ----------
-        y : float
-            Move this many units along y axis.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.movey(factor)
-        return self
-
-    def move(self, x: float, y: float) -> Self:
-        """
-        Move this proxy.
-
-        Parameters
-        ----------
-        x : float
-            Move this many units along x axis.
-        y : float
-            Move this many units along y axis.
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.move(x, y)
-        return self
-
-    def hflip(self, x: float = 0) -> Self:
-        """
-        Flip (mirror) along horizontal axis.
-
-        Parameters
-        ----------
-        x : float
-            Flip around this horizontal line (x coordinate)
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.hflip(x)
-        return self
-
-    def vflip(self, y: float = 0) -> Self:
-        """
-        Flip (mirror) along vertical axis.
-
-        Parameters
-        ----------
-        y : float
-            Flip around this vertical line (y coordinate)
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.vflip(y)
-        return self
-
-    def flip(self, x: float = 0, y: float = 0) -> Self:
-        """
-        Flip (mirror) along both horizontal and vertical axis.
-
-        Parameters
-        ----------
-        x : float
-            Flip around this point (x coordinate). Default: origin
-        y : float
-            Flip around this point (y coordinate). Default: origin
-
-        Returns
-        -------
-        Self
-            self is returned to allow chaining methods.
-        """
-        self.transform.flip(x, y)
-        return self
-
-    def rotate(self, angle: float, x: float = 0, y: float = 0) -> Self:
-        """
-        Rotate this proxy, possibly around a point.
-
-        Parameters
-        ----------
-        angle : float
-            Rotate by this many radians in the positive orientation
-        x : float
-            Rotate around this point (x coord). Default: origin
-        y : float
-            Rotate around this point (y coord). Default: origin
-
-        Returns
-        -------
-        Self
-            self is returned to allow method chaining.
-        """
-        self.transform.rotate(angle, x, y)
-        return self
-
     def map(self, lmap_shorthand: 'rai.typing.LMapShorthand') -> Self:
         """
         Apply a layermap shorthand to a proxy.
@@ -983,13 +864,14 @@ class Proxy:
         Returns
         -------
         ProxiedMarksContainer
-            A special `ProxiesMarksContainer` is returned
+            A special `ProxiedMarksContainer` is returned
             which can be used to query the underlying CompoLike's
             marks as seen through this proxy.
         """
         return ProxiedMarksContainer(
             self,
-            self.compo.marks._dict,
+            self.compo.marks._dict,  # type: ignore
+            # Honestly NO CLUE what mypy wants from me here
             copy=False
             )
 
@@ -1147,4 +1029,546 @@ class Proxy:
         rai.Compo._export_svg_
         """
         return rai.export_svg(self)
+
+    #-------------#
+    # Rotate      #
+    #-------------#
+
+    def crotate(
+            self,
+            angle: Num,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
+        """
+        Rotate around a point given by x and y coordinate.
+
+        Parameters
+        ----------
+        angle : float
+            Angle to rotate by, in radians.
+        x : float
+            Rotate around this point (x coordinate)
+            default: 0
+        y : float
+            Rotate around this point (y coordinate)
+            default: 0
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.crotate(angle, x, y)
+        return self
+
+    def protate(
+            self,
+            angle: Num,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Rotate around a reference point given as an (x, y) tuple.
+
+        Parameters
+        ----------
+        angle : float
+            Angle to rotate by, in radians.
+        pivot : Vec2S
+            The point (x, y) to rotate around. Default: origin.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.protate(angle, pivot)
+        return self
+
+    @overload
+    def rotate(self, angle: Num, /) -> Self: ...
+    @overload
+    def rotate(self, angle: Num, /, a: Num, b: Num) -> Self: ...
+    @overload
+    def rotate(self, angle: Num, /, a: Vec2) -> Self: ...
+
+    def rotate(
+            self,
+            angle: Num,
+            /,
+            a: Num | Vec2 | None = None,
+            b: Num | None = None,
+            ) -> Self:
+        """
+        Rotate around a pivot point (overload).
+
+        This is an overloaded method that can take the position of the pivot
+        point either as two separate x and y arguments, or as a single tuple
+        of two values.
+
+        Parameters
+        ----------
+        angle : Num
+            Angle to rotate by, in radians.
+        a : Num | Vec2
+            Either the X coordinate, the entire pivot point,
+            or None
+        b : Num | None
+            Either the Y coordinate or None
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.rotate(angle, a, b)  # type: ignore
+        return self
+
+
+    #-------------#
+    # Move        #
+    #-------------#
+
+    def cmove(
+            self,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
+        """
+        Translate by x and y.
+
+        Parameters
+        ----------
+        x : float
+            Move this many units along x axis.
+        y : float
+            Move this many units along y axis.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.cmove(x, y)
+        return self
+
+    def pmove(
+            self,
+            offset: Vec2
+            ) -> Self:
+        """
+        Translate by x and y, given as a tuple.
+
+        Parameters
+        ----------
+        offset : Vec2
+            A tuple of two values (x, y).
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.pmove(offset)
+        return self
+
+    @overload
+    def move(self, /, a: Num, b: Num) -> 'rai.typing.Proxy': ...
+    @overload
+    def move(self, /, a: Vec2) -> 'rai.typing.Proxy': ...
+
+    def move(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> Self:
+        """
+        Translate vertically and horizontally (overload).
+
+        This is an overloaded method that can take the X and Y offsets either
+        as two separate x and y arguments, or as a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Num | Vec2
+            X offset or tuple of offsets
+        b : Num | None
+            Y offset or None
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
+        """
+        self.transform.move(a, b)  # type: ignore
+        return self
+
+    def movex(self, x: Num = 0) -> Self:
+        """
+        Move along x axis.
+
+        Parameters
+        ----------
+        x : Num
+            Move this many units along x axis.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.movex(x)
+        return self
+
+    def movey(self, y: Num = 0) -> Self:
+        """
+        Move along y axis.
+
+        Parameters
+        ----------
+        y : Num
+            Move this many units along y axis.
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.movey(y)
+        return self
+
+    #-------------#
+    # Flip        #
+    #-------------#
+
+    def cflip(
+            self,
+            x: Num = 0,
+            y: Num = 0
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis.
+
+        Parameters
+        ----------
+        x : Num
+            Flip around this point (x coordinate)
+        y : Num
+            Flip around this point (y coordinate)
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.cflip(x, y)
+        return self
+
+    def pflip(
+            self,
+            pivot: Vec2
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis (tuple).
+
+        Parameters
+        ----------
+        pivot: Vec2
+            Tuple representing x and y coordinates of lines to mirror
+            against
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.pflip(pivot)
+        return self
+
+    @overload
+    def flip(self, /, a: Num, b: Num) -> Self: ...
+    @overload
+    def flip(self, /, a: Vec2) -> Self: ...
+
+    def flip(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | None = None,
+            ) -> Self:
+        """
+        Flip (mirror) along both horizontal and vertical axis.
+
+        This is an overloaded method that can take the X and Y intercepts of
+        the two mirroring lines either as two separate x and y arguments, or as
+        a single tuple of two values.
+
+        Parameters
+        ----------
+        a : Num | Vec2
+            Either the x-intercept or a tuple of the two intercepts.
+        b : Num | None
+            Either the y-intercept or None
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.flip(a, b)  # type: ignore
+        return self
+
+    def vflip(self, y: Num = 0) -> Self:
+        """
+        Flip (mirror) along horizontal axis.
+
+        Parameters
+        ----------
+        y : Num
+            Flip around this horizontal line (y coordinate)
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.vflip(y)
+        return self
+
+    def hflip(self, x: Num = 0) -> Self:
+        """
+        Flip (mirror) along vertical axis.
+
+        Parameters
+        ----------
+        x : Num
+            Flip around this vertical line (x coordinate)
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.hflip(x)
+        return self
+
+    #-------------#
+    # Scale       #
+    #-------------#
+
+    def cpscale(
+            self,
+            x: Num,
+            y: Num,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Scale width and height (two floats) around pivot point (tuple).
+
+        Parameters
+        ----------
+        x : Num
+            Factor to scale by along the x axis
+        y : Num
+            Factor to scale by along the y axis.
+        pivot : Vec2
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.cpscale(x, y, pivot)
+        return self
+
+    def ccscale(
+            self,
+            x: Num,
+            y: Num,
+            px: Num = 0,
+            py: Num = 0,
+            ) -> Self:
+        """
+        Scale width and height (two floats) around pivot point (two floats).
+
+        Parameters
+        ----------
+        x : Num
+            Factor to scale by along the x axis
+        y : Num
+            Factor to scale by along the y axis.
+        px : Num
+            X coordinate of origin of the scale (default: 0)
+        py : Num
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.ccscale(x, y, px, py)
+        return self
+
+    def ppscale(
+            self,
+            scale: Vec2,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Scale width and height (tuple) around pivot point (tuple).
+
+        Parameters
+        ----------
+        scale : Vec2
+            The x and y scale factors
+        pivot : Vec2
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.ppscale(scale, pivot)
+        return self
+
+    def pcscale(
+            self,
+            scale: Vec2,
+            px: Num = 0,
+            py: Num = 0,
+            ) -> Self:
+        """
+        Scale width and height (tuple) around pivot point (two Nums).
+
+        Parameters
+        ----------
+        scale : Vec2
+            The x and y scale factors
+           `None` means origin.
+        px : Num
+            X coordinate of origin of the scale (default: 0)
+        py : Num
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.pcscale(scale, px, py)
+        return self
+
+    def apscale(
+            self,
+            factor: Num,
+            pivot: Vec2 = (0, 0),
+            ) -> Self:
+        """
+        Scale both width and height by same factor around pivot (tuple).
+
+        Parameters
+        ----------
+        factor : Num
+            Factor to scale by.
+        pivot : Vec2
+            Use this point as origin for the scale.
+            Default: origin
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.apscale(factor, pivot)
+        return self
+
+    def acscale(
+            self,
+            factor: Num,
+            px: Num = 0,
+            py: Num = 0,
+            ) -> Self:
+        """
+        Scale both width and height by same factor around pivot (two Nums).
+
+        Parameters
+        ----------
+        factor : Num
+            Factor to scale by.
+        px : Num
+            X coordinate of origin of the scale (default: 0)
+        py : Num
+            Y coordinate of origin of the scale (default: 0)
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self.transform.acscale(factor, px, py)
+        return self
+
+    @overload
+    def scale(self, /, a: Num ,                             ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num ,          b: Vec2,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num ,          b: Num , c: Num  ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num , b: Num                     ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2,                             ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num , b: Num, c: Vec2,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2,          b: Vec2,          ) -> Self: ...
+    @overload
+    def scale(self, /, a: Num , b: Num, c: Num , d: Num, ) -> Self: ...
+    @overload
+    def scale(self, /, a: Vec2,          b: Num , c: Num  ) -> Self: ...
+
+    def scale(
+            self,
+            /,
+            a: Num | Vec2,
+            b: Num | Vec2 | None = None,
+            c: Num | Vec2 | None = None,
+            d: Num | None = None,
+            ) -> Self:
+        """
+        Scale width and height around a pivot point (overload).
+
+        This is an overloaded function. It can take:
+        - single scale factor
+            - `self.scale(5)`
+        - single scale factor and pivot point (tuple)
+            - `self.scale(5, (1, 1))`
+        - single scale factor and pivot point (separate values)
+            - `self.scale(5, 1, 1)`
+        - x, y scale factors (separate values)
+            - `self.scale(5, 4)`
+        - x, y scale factors (tuple)
+            - `self.scale((5, 4))`
+        - x, y scale factors (separate values) and pivot (tuple)
+            - `self.scale(5, 4, (1, 1))`
+        - x, y scale factors (tuple) and pivot (tuple)
+            - `self.scale((5, 4), (1, 1))`
+        - x, y scale factors (separate values) and pivot (separate values)
+            - `self.scale(5, 4, 1, 1)`
+        - x, y scale factors (tuple) and pivot (separate values)
+            - `self.scale((5, 4), 1, 1)`
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow method chaining.
+        """
+        self.transform.scale(a, b, c, d)  # type: ignore
+        return self
 

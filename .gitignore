@@ -81,8 +81,10 @@ htmlcov
 ### Project-specific ###
 
 *.cif
-
-
-
-
+!archive/*.tar
+paper/jats
+!paper/img/*.png
+*.lyp
+paper/*original*
+paper/*tidy*
 
