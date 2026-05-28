@@ -142,8 +142,6 @@ class TestGeomsComparison(unittest.TestCase):
                 check_rotation=False, check_orientation=False))
 
     def test_polys_comparison_common(self):
-        return
-
         for bitfield in range(0b000, 0b111 + 1):
             check_poly_order = bool(bitfield & (1 << 0))
             check_rotation = bool(bitfield & (1 << 1))
@@ -171,7 +169,6 @@ class TestGeomsComparison(unittest.TestCase):
             self.assertTrue(rai.geom.polys_equal(
                 [shape0],
                 [shape0],
-                [box_ccw_top_right],
                 check_poly_order=check_poly_order,
                 check_rotation=check_rotation,
                 check_orientation=check_orientation,
@@ -227,8 +224,6 @@ class TestGeomsComparison(unittest.TestCase):
 
 
     def test_polys_comparison_strict_order(self):
-        return
-
         # same shapes, different order are not equal with strict
         # order checking...
         self.assertFalse(rai.geom.polys_equal(
@@ -250,8 +245,6 @@ class TestGeomsComparison(unittest.TestCase):
 
 
     def test_polys_comparison_propagate(self):
-        return
-
         # check_rotation and check_orientation
         # of polys_equal
         # should just propagate
@@ -316,8 +309,6 @@ class TestGeomsComparison(unittest.TestCase):
         # I don't think it's necessary.
 
     def test_geom_collapse(self):
-        return
-
         coll_rot = rai.geom.coll_rot
         coll_or = rai.geom.coll_or
 
