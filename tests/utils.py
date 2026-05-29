@@ -179,41 +179,13 @@ class GeomsEqual():
         else:
             expected = {k:v for k, v in expected.items()}
 
-        # TODO better but still a mess
-        actual = {
-            k: rai.geom.map_vec2_in_polys(rai.geom.canon_micron, v)
-            for k, v in actual.items()
-            }
-
-        expected = {
-            k: rai.geom.map_vec2_in_polys(rai.geom.canon_micron, v)
-            for k, v in expected.items()
-            }
-
-        # TODO better but still a mess
-        actual = {
-            k: rai.geom.canon_order(
-                rai.geom.map_poly_in_polys(
-                    rai.geom.canon_rot_or,
-                    v,
-                    )
-                )
-            for k, v in actual.items()
-            }
-
-        expected = {
-            k: rai.geom.canon_order(
-                rai.geom.map_poly_in_polys(
-                    rai.geom.canon_rot_or,
-                    v,
-                    )
-                )
-            for k, v in expected.items()
-            }
-
-
-        self.assertEqual(actual, expected)
-
+        self.assertTrue(rai.geom.geoms_equal(
+            (expected, actual),
+            canon_geoms=rai.geom.canon_layer_order,
+            canon_polys=rai.geom.canon_order,
+            canon_poly=rai.geom.canon_rot_or,
+            canon_vec2=rai.geom.canon_micron,
+            ))
 
     def assertGeomsEqualButAllowDifferentNames(
             self,
