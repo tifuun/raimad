@@ -1,7 +1,10 @@
 import unittest
 import itertools
 
+from typing import Iterable
+
 import raimad as rai
+from raimad.types import PolyS
 
 all_boxs = (
     # clockwise box starting top left
@@ -19,6 +22,7 @@ cross_box = [(+1, +1), (-1, -1), (+1, -1), (-1, +1)]
 shape0 = [(1, 1), (10, 10), (10, 1)]
 shape1 = [(1, 1), (10, 10), (20, 10), (10, 1)]
 shape2 = [(2, 1), (20, 10), (10, 10), (-10, 1)]
+
 
 class TestGeomsComparison(unittest.TestCase):
     def test_sanity(self):
@@ -74,64 +78,64 @@ class TestGeomsComparison(unittest.TestCase):
         # under strict comparison
         for first, second in rai.duplets((*all_boxs, cross_box)):
             self.assertFalse(rai.geom.poly_equal(
-                first, second, None))
+                (first, second), None))
 
         # Check that a box is equal to itself under all
         # types of comparison
         for sqr in (*all_boxs, cross_box):
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, rai.geom.canon_rot_or))
+                (sqr, sqr), rai.geom.canon_rot_or))
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, rai.geom.canon_or))
+                (sqr, sqr), rai.geom.canon_or))
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, None))
+                (sqr, sqr), None))
             self.assertTrue(rai.geom.poly_equal(
-                sqr, sqr, rai.geom.canon_or))
+                (sqr, sqr), rai.geom.canon_or))
 
         # Check that strict orientation checking detects
         # boxes with different orientation
         self.assertFalse(rai.geom.poly_equal(
-            box_cw_top_left, box_ccw_top_left,
+            (box_cw_top_left, box_ccw_top_left),
             rai.geom.canon_rot))
 
         self.assertFalse(rai.geom.poly_equal(
-            box_cw_top_right, box_ccw_top_right,
+            (box_cw_top_right, box_ccw_top_right),
             rai.geom.canon_rot))
 
         # Check that strict rotation checking detects
         # boxes with different rotation
         self.assertFalse(rai.geom.poly_equal(
-            box_cw_top_left, box_cw_top_right,
+            (box_cw_top_left, box_cw_top_right),
             rai.geom.canon_or))
 
         self.assertFalse(rai.geom.poly_equal(
-            box_ccw_top_left, box_ccw_top_right,
+            (box_ccw_top_left, box_ccw_top_right),
             rai.geom.canon_or))
 
         # check that disabling strict orientation checking
         # actually makes it not care about orientation
         self.assertTrue(rai.geom.poly_equal(
-            box_cw_top_left, box_ccw_top_left,
+            (box_cw_top_left, box_ccw_top_left),
             rai.geom.canon_or))
 
         self.assertTrue(rai.geom.poly_equal(
-            box_cw_top_right, box_ccw_top_right,
+            (box_cw_top_right, box_ccw_top_right),
             rai.geom.canon_or))
 
         # check that disabling strict rotation checking
         # actually makes it not care about rotation
         self.assertTrue(rai.geom.poly_equal(
-            box_cw_top_left, box_cw_top_right,
+            (box_cw_top_left, box_cw_top_right),
             rai.geom.canon_rot))
 
         self.assertTrue(rai.geom.poly_equal(
-            box_ccw_top_left, box_ccw_top_right,
+            (box_ccw_top_left, box_ccw_top_right),
             rai.geom.canon_rot))
         
         # check that under loose comparison (any rotation, any orientation)
         # boxes with different rotation and orientation are the same
         self.assertTrue(rai.geom.poly_equal(
-            box_ccw_top_left, box_cw_top_right,
+            (box_ccw_top_left, box_cw_top_right),
             rai.geom.canon_rot_or))
 
 
@@ -139,7 +143,7 @@ class TestGeomsComparison(unittest.TestCase):
         # under loose comparison
         for sqr in all_boxs:
             self.assertFalse(rai.geom.poly_equal(
-                sqr, cross_box,
+                (sqr, cross_box),
                 rai.geom.canon_rot_or))
 
     def test_polys_comparison_common(self):
@@ -155,60 +159,76 @@ class TestGeomsComparison(unittest.TestCase):
 
             # Identical lists should be equal under all comparison options
             self.assertTrue(rai.geom.polys_equal(
-                [shape0, shape1, shape2],
-                [shape0, shape1, shape2],
+                (
+                    [shape0, shape1, shape2],
+                    [shape0, shape1, shape2],
+                ),
                 canon_polys, canon_poly,
                 ))
 
             # empty polys's should be equal under all comparison options
             self.assertTrue(rai.geom.polys_equal(
-                [],
-                [],
+                (
+                    [],
+                    [],
+                ),
                 canon_polys, canon_poly,
                 ))
 
             # single poly
             self.assertTrue(rai.geom.polys_equal(
-                [shape0],
-                [shape0],
+                (
+                    [shape0],
+                    [shape0],
+                ),
                 canon_polys, canon_poly,
                 ))
 
             # Repeated single poly
             self.assertTrue(rai.geom.polys_equal(
-                [shape0, shape0, shape0, shape0, shape0],
-                [shape0, shape0, shape0, shape0, shape0],
+                (
+                    [shape0, shape0, shape0, shape0, shape0],
+                    [shape0, shape0, shape0, shape0, shape0],
+                ),
                 canon_polys, canon_poly,
                 ))
 
             # Repeated single poly with one extra
             self.assertTrue(rai.geom.polys_equal(
-                [shape0, shape0, shape0, shape0, shape1],
-                [shape0, shape0, shape0, shape0, shape1],
+                (
+                    [shape0, shape0, shape0, shape0, shape1],
+                    [shape0, shape0, shape0, shape0, shape1],
+                ),
                 canon_polys, canon_poly,
                 ))
 
 
             # different number of shapes: no matter what, should  never equal
             self.assertFalse(rai.geom.polys_equal(
-                [shape1, shape0],
-                [shape1, shape0, shape1],
+                (
+                    [shape1, shape0],
+                    [shape1, shape0, shape1],
+                ),
                 canon_polys, canon_poly,
                 ))
 
             # Again, different number of shapes, but one is empty.
             # should never equal
             self.assertFalse(rai.geom.polys_equal(
-                [],
-                [shape2],
+                (
+                    [],
+                    [shape2],
+                ),
                 canon_polys, canon_poly,
                 ))
 
             # completely different shapes, but some are same: again, should
             # never equal
             self.assertFalse(rai.geom.polys_equal(
-                [shape1, shape0, shape2],
-                [shape1, shape0, shape1],
+                (
+                    [shape1, shape0, shape2],
+                    [shape1, shape0, shape1],
+                ),
                 canon_polys, canon_poly,
                 ))
 
@@ -217,15 +237,19 @@ class TestGeomsComparison(unittest.TestCase):
         # same shapes, different order are not equal with strict
         # order checking...
         self.assertFalse(rai.geom.polys_equal(
-            [shape1, shape1, shape0],
-            [shape1, shape0, shape1],
+            (
+                [shape1, shape1, shape0],
+                [shape1, shape0, shape1],
+            ),
             None, None,
             ))
 
         # ...and are equal without strict order checking
         self.assertTrue(rai.geom.polys_equal(
-            [shape1, shape1, shape0],
-            [shape1, shape0, shape1],
+            (
+                [shape1, shape1, shape0],
+                [shape1, shape0, shape1],
+            ),
             rai.geom.canon_order,
             None,
             ))
@@ -239,31 +263,39 @@ class TestGeomsComparison(unittest.TestCase):
 
         # first, rotation: equal with strick checking disabled...
         self.assertTrue(rai.geom.polys_equal(
-            [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
-            [box_ccw_top_left, box_cw_top_right, box_cw_top_left],
+            (
+                [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
+                [box_ccw_top_left, box_cw_top_right, box_cw_top_left],
+            ),
             None,
             rai.geom.canon_rot
             ))
 
         # ...and not equal with strict checking enabled.
         self.assertFalse(rai.geom.polys_equal(
-            [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
-            [box_ccw_top_left, box_cw_top_right, box_cw_top_left],
+            (
+                [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
+                [box_ccw_top_left, box_cw_top_right, box_cw_top_left],
+            ),
             None, None
             ))
 
         # Same thing but now for orientation.
         # Strict checking disabled means should be equal...
         self.assertTrue(rai.geom.polys_equal(
-            [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
-            [box_cw_top_right, box_ccw_top_left, box_ccw_top_right],
+            (
+                [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
+                [box_cw_top_right, box_ccw_top_left, box_ccw_top_right],
+            ),
             None, rai.geom.canon_or
             ))
 
         # ...and not equal with strict checking enabled.
         self.assertFalse(rai.geom.polys_equal(
-            [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
-            [box_cw_top_right, box_ccw_top_left, box_ccw_top_right],
+            (
+                [box_ccw_top_right, box_cw_top_left, box_cw_top_right],
+                [box_cw_top_right, box_ccw_top_left, box_ccw_top_right],
+            ),
             None, None,
             ))
 
@@ -272,11 +304,13 @@ class TestGeomsComparison(unittest.TestCase):
         # but should still be equal under loosest checking
         self.assertTrue(rai.geom.polys_equal(
 
-            [box_ccw_top_right, shape0, shape0,
-                box_cw_top_left, box_cw_top_right],
+            (
+                [box_ccw_top_right, shape0, shape0,
+                    box_cw_top_left, box_cw_top_right],
 
-            [shape0, box_cw_top_left, box_ccw_top_left,
-                box_cw_top_left, shape0],
+                [shape0, box_cw_top_left, box_ccw_top_left,
+                    box_cw_top_left, shape0],
+            ),
 
             rai.geom.canon_order, rai.geom.canon_rot_or
             ))

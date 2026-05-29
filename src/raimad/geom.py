@@ -1,26 +1,35 @@
-from functools import partial
+from functools import partial, reduce
 from collections import defaultdict
 import raimad as rai
+from raimad.types import Vec2S, PolyS, PolysS
+from typing import Callable, TypeVar, TypeAlias, Iterable, Any, Sequence
 
-def hash_vec2(vec2):
+def hash_vec2(vec2: Vec2S) -> int:
     return hash(vec2)
 
-def canon_micron(vec2):
-    return tuple(map(lambda coord: round(coord * 100), vec2))
+#def canon_micron(vec2: Vec2S) -> tuple[int, int]:
+def canon_micron(vec2: Vec2S) -> Vec2S:
+    return (
+        round(vec2[0] * 100),
+        round(vec2[1] * 100),
+        )
 
-def map_vec2_in_poly(fn, poly):
+def tf_vec2_in_poly(
+        fn: Callable[[Vec2S], Vec2S],
+        poly: PolyS,
+        ) -> PolyS:
     return list(map(fn, poly))
 
-def hash_poly(poly):
-    return hash(tuple(map_vec2_in_poly(hash_vec2, poly)))
+def hash_poly(poly: PolyS) -> int:
+    return hash(tuple(poly))
 
-def canon_rot(poly):
+def canon_rot(poly: PolyS) -> PolyS:
     return min(
         (rai.rotated(poly, count) for count in range(len(poly))),
         key=hash_poly
         )
 
-def canon_rot_or(poly):
+def canon_rot_or(poly: PolyS) -> PolyS:
     return min(
         (
             rai.rotated(rpoly, count)
@@ -30,50 +39,60 @@ def canon_rot_or(poly):
         key=hash_poly
         )
 
-def canon_or(poly):
+def canon_or(poly: PolyS) -> PolyS:
     return min(
         (poly, rai.reversed_pin(poly)),
         key=hash_poly
         )
 
-def poly_equal(one, two, canon_poly=None, canon_vec2=None):
+CanoniserVec2: TypeAlias = Callable[[Vec2S], Vec2S] | None
+CanoniserPoly: TypeAlias = Callable[[PolyS], PolyS] | None
+CanoniserPolys: TypeAlias = Callable[[PolysS], PolysS] | None
+
+def poly_equal(
+        polys: Iterable[PolyS],
+        canon_poly: CanoniserPoly = None,
+        canon_vec2: CanoniserVec2 = None,
+        ) -> bool:
+
     if canon_vec2 is not None:
-        one = map_vec2_in_poly(canon_vec2, one)
-        two = map_vec2_in_poly(canon_vec2, two)
+        polys = tuple(tf_vec2_in_poly(canon_vec2, poly) for poly in polys)
 
     if canon_poly is not None:
-        one = canon_poly(one)
-        two = canon_poly(two)
+        polys = tuple(canon_poly(poly) for poly in polys)
 
-    return hash_poly(one) == hash_poly(two)
+    return len(set(map(hash_poly, polys))) == 1
 
-def canon_order(polys):
+def canon_order(polys: PolysS) -> PolysS:
     return list(sorted(polys, key=hash_poly))
 
-def hash_polys(polys):
-    return hash(tuple(map(hash_poly, polys)))
+def hash_polys(polys: PolysS) -> int:
+    return hash(tuple(map(tuple, polys)))
 
-def map_vec2_in_polys(fn, polys):
+def tf_vec2_in_polys(fn: Callable[[Vec2S], Vec2S], polys: PolysS) -> PolysS:
     return [
         [fn(vec2) for vec2 in poly]
         for poly in polys
         ]
 
-def map_poly_in_polys(fn, polys):
+def tf_poly_in_polys(fn: Callable[[PolyS], PolyS], polys: PolysS) -> PolysS:
     return list(map(fn, polys))
 
-def polys_equal(one, two, canon_polys=None, canon_poly=None, canon_vec2=None):
+def polys_equal(
+        polyss: Iterable[PolysS],
+        canon_polys: CanoniserPolys = None,
+        canon_poly: CanoniserPoly = None,
+        canon_vec2: CanoniserVec2 = None,
+        ) -> bool:
+
     if canon_vec2 is not None:
-        one = map_vec2_in_polys(canon_vec2, one)
-        two = map_vec2_in_polys(canon_vec2, two)
+        polyss = tuple(tf_vec2_in_polys(canon_vec2, polys) for polys in polyss)
 
     if canon_poly is not None:
-        one = map_poly_in_polys(canon_poly, one)
-        two = map_poly_in_polys(canon_poly, two)
+        polyss = tuple(tf_poly_in_polys(canon_poly, polys) for polys in polyss)
 
     if canon_polys is not None:
-        one = canon_polys(one)
-        two = canon_polys(two)
+        polyss = tuple(canon_polys(polys) for polys in polyss)
 
-    return hash_polys(one) == hash_polys(two)
+    return len(set(map(hash_polys, polyss))) == 1
 

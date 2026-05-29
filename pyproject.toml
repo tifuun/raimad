@@ -81,6 +81,8 @@ files = [
 # Exclude specific files
 exclude = [
 	'tests/test_cif_noreuse.py',  # TODO cift type hints!
+	'tests/test_cif_reuse.py',  # TODO
+	'src/raimad/cif/reuse.py',  # TODO
 	'tests/test_cif_layer_names.py',  # TODO cift type hints!
 	'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
 	]
@@ -113,4 +115,10 @@ disable_error_code = ["attr-defined"]
 strict = false
 module = 'tests.test_compoclass_annots'
 disable_error_code = ["misc", "no-untyped-def"]
+
+# TODO explain
+[[tool.mypy.overrides]]
+strict = false
+module = 'tests.test_geoms_comparison'
+disable_error_code = ["arg-type", "list-item"]
 

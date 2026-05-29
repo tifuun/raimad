@@ -22,6 +22,8 @@ class XmlComparisonMixin:
                 )
         self.assertEqual(xml1, xml2)
 
+### BGEIN CHATGPT CODE ###
+
 class AssertDoesntWarn:
     """
     Mixin for unittest.TestCaseProto that adds `assertDoesntWarn` context manager.

@@ -161,9 +161,9 @@ def is_rotated(
             return True
     return False
 
-def rotated(seq, count):
+def rotated(seq: Sequence[T], count: int) -> list[T]:
     if len(seq) == 0:
-        return seq[:]
+        return list(seq[:])
 
     count = count % len(seq)
 
@@ -171,16 +171,18 @@ def rotated(seq, count):
         count = len(seq) + count
 
     if count == 0:
-        return seq[:]
+        return list(seq[:])
 
     assert count > 0
 
-    return seq[-count:] + seq[:-count]
+    return [*seq[-count:], *seq[:-count]]
 
-def reversed(seq):
-    return seq[::-1]
+#T = TypeVar("T")
+def reversed(seq: Sequence[T]) -> list[T]:
+    return list(seq[::-1])
 
-def reversed_pin(seq, idx=0):
+#T = TypeVar("T")
+def reversed_pin(seq: Sequence[T], idx: int = 0) -> list[T]:
     if idx >= len(seq):
         raise IndexError("Pin index out of range of sequence.")
     if idx < -len(seq):

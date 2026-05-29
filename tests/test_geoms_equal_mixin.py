@@ -3,7 +3,6 @@ from .utils import GeomsEqual
 
 import raimad as rai
 
-
 class TestGeomsEqualMixin(GeomsEqual, unittest.TestCase):
     """
     Test whether the `GeomsEqual` TestCase mixin
