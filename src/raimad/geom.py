@@ -384,11 +384,12 @@ def tf_polys_in_geoms(fn: Callable[[PolysS], PolysS], geoms: GeomsS) -> GeomsS:
 
 def canon_layer_order(geoms: GeomsS) -> GeomsS:
     """
-    Canonicalise GeomsS: by layer order
+    Canonicalise GeomsS: by layer order.
 
     Python dicts are ordered since Python 3.7.
     This will sort the entries of the GeomsS by key (layer name)
     using Python's built-in `sorted`.
+    Useful for checking that two GeomsS are the same.
 
     See Also
     --------
@@ -398,6 +399,29 @@ def canon_layer_order(geoms: GeomsS) -> GeomsS:
     # TODO what to do about duplicate layer names,,?
     # or wait thats not even possible because dict..??
     return dict(sorted(tuple(geoms.items()), key=lambda pair: pair[0]))
+
+def canon_no_layer_names(geoms: GeomsS) -> GeomsS:
+    """
+    Canonicalise GeomsS: by layer content, ignoring names.
+
+    This will canonicalize a GeomsS by sorting them by their content
+    (using `hash_polys` as key),
+    and replacing all layer names with `L{integer starting with 0}`.
+    Useful for checking that two GeomsS have the same geometric content
+    regardless of layer names.
+
+    See Also
+    --------
+    TODO link to explanation of geom canonicalisation, once that is written.
+
+    """
+    # TODO what to do about duplicate layer names,,?
+    # or wait thats not even possible because dict..??
+    return {
+        f"L{i}": v
+        for (i, (_k, v)) in enumerate(sorted(
+            geoms.items(), key=lambda pair: hash_polys(pair[1])))
+        }
 
 def geoms_equal(
         geomss: Iterable[GeomsS],

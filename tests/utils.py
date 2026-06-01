@@ -171,13 +171,9 @@ class GeomsEqual():
 
         if isinstance(actual, CompoLike):
             actual = actual.steamroll()
-        else:
-            actual = {k:v for k, v in actual.items()}
 
         if isinstance(expected, CompoLike):
             expected = expected.steamroll()
-        else:
-            expected = {k:v for k, v in expected.items()}
 
         self.assertTrue(rai.geom.geoms_equal(
             (expected, actual),
@@ -193,11 +189,17 @@ class GeomsEqual():
             expected: GeomsS,
             epsilon: float | None = None) -> None:
 
-        # TODO this is a hack
-        # TODO FIXME FIXME this breaks if layer order is different FIXME
-        return self.assertGeomsEqual(
-            {f"layer{i}": geoms for i, geoms in enumerate(actual.values())},
-            {f"layer{i}": geoms for i, geoms in enumerate(expected.values())},
-            epsilon
-            )
+        if isinstance(actual, CompoLike):
+            actual = actual.steamroll()
+
+        if isinstance(expected, CompoLike):
+            expected = expected.steamroll()
+
+        self.assertTrue(rai.geom.geoms_equal(
+            (expected, actual),
+            canon_geoms=rai.geom.canon_no_layer_names,
+            canon_polys=rai.geom.canon_order,
+            canon_poly=rai.geom.canon_rot_or,
+            canon_vec2=rai.geom.canon_micron,
+            ))
 
