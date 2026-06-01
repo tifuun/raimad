@@ -384,19 +384,15 @@ def tf_polys_in_geoms(fn: Callable[[PolysS], PolysS], geoms: GeomsS) -> GeomsS:
 
 def canon_layer_order(geoms: GeomsS) -> GeomsS:
     """
-    Canonicalise Vec2S: snap to closest micron.
+    Canonicalise GeomsS: by layer order
 
-    This will multiply both coordinates by 100 and round to the nearest int,
-    just like the CIF exporters do by default.
+    Python dicts are ordered since Python 3.7.
+    This will sort the entries of the GeomsS by key (layer name)
+    using Python's built-in `sorted`.
 
     See Also
     --------
     TODO link to explanation of geom canonicalisation, once that is written.
-
-    Examples
-    --------
-    >>> rai.geom.canon_micron((10.00001, 30.00001))
-    (1000, 3000)
 
     """
     # TODO what to do about duplicate layer names,,?
