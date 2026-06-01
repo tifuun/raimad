@@ -1,6 +1,5 @@
 """reuse.py: home to the Reuse CIF exporter."""
 
-from typing import Iterator
 import weakref
 from dataclasses import dataclass, field
 

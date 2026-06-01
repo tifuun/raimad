@@ -6,11 +6,9 @@ data types from `rai.types`.
 
 """
 
-from functools import partial, reduce
-from collections import defaultdict
 import raimad as rai
 from raimad.types import Vec2S, PolyS, PolysS, GeomsS
-from typing import Callable, TypeVar, TypeAlias, Iterable, Any, Sequence
+from typing import Callable, TypeAlias, Iterable
 
 def hash_vec2(vec2: Vec2S) -> int:
     """
@@ -74,7 +72,7 @@ def hash_poly(poly: PolyS) -> int:
 
 def canon_rot(poly: PolyS) -> PolyS:
     """
-    Canonicalise PolyS: by cycling
+    Canonicalise PolyS: by cycling.
 
     This will return a cycled version of `poly` (potentially unchanged)
     such that the value of `hash_poly(poly)` is minimized.
@@ -101,7 +99,7 @@ def canon_rot(poly: PolyS) -> PolyS:
 
 def canon_rot_or(poly: PolyS) -> PolyS:
     """
-    Canonicalise PolyS: by cycling and orientation
+    Canonicalise PolyS: by cycling and orientation.
 
     This will return a (potentially) cycled and (potentially) reversed
     copy of `poly` such that the value of `hash_poly(poly)` is minimised.
@@ -137,7 +135,7 @@ def canon_rot_or(poly: PolyS) -> PolyS:
 
 def canon_or(poly: PolyS) -> PolyS:
     """
-    Canonicalise PolyS: by orientation only
+    Canonicalise PolyS: by orientation only.
 
     This will return a (potentially) reversed
     copy of `poly` such that the value of `hash_poly(poly)` is minimised.
@@ -218,7 +216,7 @@ def poly_equal(
 
 def canon_order(polys: PolysS) -> PolysS:
     """
-    Canonicalise PolysS: by order of polygons
+    Canonicalise PolysS: by order of polygons.
 
     This will return a copy of `polys`, sorted in ascending order.
     `hash_poly` is used as the key for the sorting operation.
@@ -330,7 +328,10 @@ def hash_geoms(geoms: GeomsS) -> int:
     It may or may not be a thin wrapper around Python's built-in `hash`.
     In many usecases, the builtin `hash` may be more clear than this method.
     """
-    hashable = tuple((layer, tuple(map(tuple, polys))) for layer, polys in geoms.items())
+    hashable = tuple(
+        (layer, tuple(map(tuple, polys)))
+        for layer, polys in geoms.items()
+        )
     #print(f"{geoms = }")
     #print(f"{hashable = }")
     #print(f"{hash(hashable) = }")
