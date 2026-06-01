@@ -114,41 +114,66 @@ class GeomsEqual():
 
     def assertGeomsEqual(
             self,
-            actual: GeomsS | CompoLike,
-            expected: GeomsS | CompoLike,
+            *inputs: GeomsS | CompoLike,
+            canon_geoms=rai.geom.canon_layer_order,
             ) -> None:
 
-        if isinstance(actual, CompoLike):
-            actual = actual.steamroll()
 
-        if isinstance(expected, CompoLike):
-            expected = expected.steamroll()
+        #self.assertTrue(rai.geom.geoms_equal(
+        #    (expected, actual),
+        #    canon_geoms=rai.geom.canon_layer_order,
+        #    canon_polys=rai.geom.canon_order,
+        #    canon_poly=rai.geom.canon_rot_or,
+        #    canon_vec2=rai.geom.canon_micron,
+        #    ))
 
-        self.assertTrue(rai.geom.geoms_equal(
-            (expected, actual),
-            canon_geoms=rai.geom.canon_layer_order,
-            canon_polys=rai.geom.canon_order,
-            canon_poly=rai.geom.canon_rot_or,
-            canon_vec2=rai.geom.canon_micron,
-            ))
+        geomss = [
+            obj.steamroll() if isinstance(obj, CompoLike) else obj
+            for obj in inputs
+            ]
+
+        geomss_canon = [
+            rai.geom.multicanon_geoms(
+                geoms,
+                canon_geoms=canon_geoms,
+                canon_polys=rai.geom.canon_order,
+                canon_poly=rai.geom.canon_rot_or,
+                canon_vec2=rai.geom.canon_micron,
+                )
+            for geoms in geomss
+            ]
+
+        try:
+            self.assertEqual(
+                len(set(map(rai.geom.hash_geoms, geomss_canon))),
+                1
+                )
+
+        except AssertionError as err:
+
+            ss = StringIO()
+            print("", file=ss)
+            print("VERBATIM: ", file=ss)
+            for geoms in geomss:
+                pprint(geoms, stream=ss)
+            print("", file=ss)
+
+            print("CANONICALIZED: ", file=ss)
+            for geoms in geomss_canon:
+                pprint(geoms, stream=ss)
+            print("", file=ss)
+
+            err.add_note(ss.getvalue())
+            raise err
+
 
     def assertGeomsEqualButAllowDifferentNames(
             self,
-            actual: GeomsS,
-            expected: GeomsS,
+            *inputs: GeomsS | CompoLike,
             ) -> None:
 
-        if isinstance(actual, CompoLike):
-            actual = actual.steamroll()
-
-        if isinstance(expected, CompoLike):
-            expected = expected.steamroll()
-
-        self.assertTrue(rai.geom.geoms_equal(
-            (expected, actual),
+        return self.assertGeomsEqual(
+            *inputs,
             canon_geoms=rai.geom.canon_no_layer_names,
-            canon_polys=rai.geom.canon_order,
-            canon_poly=rai.geom.canon_rot_or,
-            canon_vec2=rai.geom.canon_micron,
-            ))
+            )
 

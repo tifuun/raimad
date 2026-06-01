@@ -552,6 +552,8 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         #Path('proxystacking.gv').write_text(exporter.stat.call_graph_dot())
         #rai.export_cif(compo, 'proxystacking_nr.cif', exporter=rai.cif.NoReuse)
 
+        # IF FAILS HERE MEANS PROXYSTACKING BUG IN 
+        # REUSE BUT NOT IN NOREUSE
         self.assertGeomsEqual(
             layers,
             {

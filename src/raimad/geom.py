@@ -470,17 +470,39 @@ def geoms_equal(
         False otherwise.
     """
 
+    geomss_canon = [
+        rai.geom.multicanon_geoms(
+            geoms,
+            canon_geoms=canon_geoms,
+            canon_polys=canon_polys,
+            canon_poly=canon_poly,
+            canon_vec2=canon_vec2,
+            )
+        for geoms in geomss
+        ]
+
+    return len(set(map(hash_geoms, geomss_canon))) == 1
+
+
+def multicanon_geoms(
+        geoms: GeomsS,
+        canon_geoms: CanoniserGeoms = None,
+        canon_polys: CanoniserPolys = None,
+        canon_poly: CanoniserPoly = None,
+        canon_vec2: CanoniserVec2 = None,
+        ) -> GeomsS:
+
     if canon_vec2 is not None:
-        geomss = tuple(tf_vec2_in_geoms(canon_vec2, geoms) for geoms in geomss)
+        geoms = tf_vec2_in_geoms(canon_vec2, geoms)
 
     if canon_poly is not None:
-        geomss = tuple(tf_poly_in_geoms(canon_poly, geoms) for geoms in geomss)
+        geoms = tf_poly_in_geoms(canon_poly, geoms)
 
     if canon_polys is not None:
-        geomss = tuple(tf_polys_in_geoms(canon_polys, geoms) for geoms in geomss)
+        geoms = tf_polys_in_geoms(canon_polys, geoms)
 
     if canon_geoms is not None:
-        geomss = tuple(canon_geoms(geoms) for geoms in geomss)
+        geoms = canon_geoms(geoms)
 
-    return len(set(map(hash_geoms, geomss))) == 1
+    return geoms
 
