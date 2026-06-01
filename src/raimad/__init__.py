@@ -49,10 +49,10 @@ from raimad.iters import (
     flatten,
     braid,
 
-    rotated,
+    cycled,
     reversed,
     reversed_pin,
-    is_rotated,
+    is_cycled,
     )
 from raimad.string_import import string_import
 
@@ -155,10 +155,10 @@ __all__ = [
     "quintles",
     "flatten",
     "braid",
-    "rotated",
+    "cycled",
     "reversed",
     "reversed_pin",
-    "is_rotated",
+    "is_cycled",
     "string_import",
     "FilteredDictList",
     "DictList",

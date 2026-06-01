@@ -127,13 +127,13 @@ def is_distinct(iterable: Iterable[Any]) -> bool:
     raise NotImplementedError()
     return len(iterable) == len(set(iterable))
 
-def is_rotated(
+def is_cycled(
         first: Sequence[T],
         second: Sequence[T],
         comparison: Callable[[Sequence[T], Sequence[T]], bool] =
                 lambda a, b: a == b) -> bool:
     """
-    Given two iterables, figure out whether they are "rotated" versions of each other.
+    Given two iterables, figure out whether they are "cycled" versions of each other.
 
     Type of the iterables is not taken into account.
 
@@ -144,7 +144,7 @@ def is_rotated(
 
     :first: the first iterable
     :second: the other iterable
-    :returns: Whether or not one can be obtained by rotating the other
+    :returns: Whether or not one can be obtained by cycling the other
     """
     if len(first) != len(second):
         return False
@@ -155,13 +155,13 @@ def is_rotated(
     # also be cast to tuple
 
     for x in range(0, length):
-        rotated = (*second[x:], *second[:x])
-        assert len(rotated) == length
-        if comparison(first_as_tuple, rotated):
+        cycled = (*second[x:], *second[:x])
+        assert len(cycled) == length
+        if comparison(first_as_tuple, cycled):
             return True
     return False
 
-def rotated(seq: Sequence[T], count: int) -> list[T]:
+def cycled(seq: Sequence[T], count: int) -> list[T]:
     if len(seq) == 0:
         return list(seq[:])
 
@@ -188,5 +188,5 @@ def reversed_pin(seq: Sequence[T], idx: int = 0) -> list[T]:
     if idx < -len(seq):
         raise IndexError("Pin back-index out of range of sequence.")
 
-    return reversed(rotated(seq, idx * 2 - 1))
+    return reversed(cycled(seq, idx * 2 - 1))
 

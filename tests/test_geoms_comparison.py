@@ -32,45 +32,45 @@ class TestGeomsComparison(unittest.TestCase):
 
         self.assertEqual(
             box_cw_top_left,
-            rai.rotated(box_cw_top_right, 1),
+            rai.cycled(box_cw_top_right, 1),
             )
 
         self.assertEqual(
             box_ccw_top_left,
-            rai.rotated(box_ccw_top_right, -1),
+            rai.cycled(box_ccw_top_right, -1),
             )
 
         self.assertEqual(
-            rai.rotated(box_cw_top_left, -1),
+            rai.cycled(box_cw_top_left, -1),
             box_cw_top_right,
             )
 
         self.assertEqual(
-            rai.rotated(box_ccw_top_left, 1),
+            rai.cycled(box_ccw_top_left, 1),
             box_ccw_top_right,
             )
 
         self.assertEqual(
-            rai.rotated(box_ccw_top_right, 4),
+            rai.cycled(box_ccw_top_right, 4),
             box_ccw_top_right,
             )
 
         self.assertTrue(
-            rai.is_rotated(
+            rai.is_cycled(
                 rai.reversed(box_cw_top_right),
                 box_ccw_top_right,
             )
         )
 
         self.assertTrue(
-            rai.is_rotated(
+            rai.is_cycled(
                 rai.reversed(box_cw_top_left),
                 box_ccw_top_left,
             )
         )
 
         for sqr in all_boxs:
-            self.assertFalse(rai.is_rotated(sqr, cross_box))
+            self.assertFalse(rai.is_cycled(sqr, cross_box))
 
     def test_poly_comparison(self):
 

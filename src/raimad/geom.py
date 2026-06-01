@@ -25,14 +25,14 @@ def hash_poly(poly: PolyS) -> int:
 
 def canon_rot(poly: PolyS) -> PolyS:
     return min(
-        (rai.rotated(poly, count) for count in range(len(poly))),
+        (rai.cycled(poly, count) for count in range(len(poly))),
         key=hash_poly
         )
 
 def canon_rot_or(poly: PolyS) -> PolyS:
     return min(
         (
-            rai.rotated(rpoly, count)
+            rai.cycled(rpoly, count)
             for rpoly in (poly, rai.reversed(poly))
             for count in range(len(poly))
             ),
