@@ -162,6 +162,34 @@ def is_cycled(
     return False
 
 def cycled(seq: Sequence[T], count: int) -> list[T]:
+    """
+    Return `seq` cycled by `count` steps.
+
+    By "cycling" a sequence we mean shifting its items forward
+    (higher index numbers), and wrapping the last item back
+    to the start such that the length stays the same.
+
+    Parameters
+    ----------
+    seq : Sequence[T]
+        The sequence to cycle
+    count: int
+        Number of steps to cycle the sequence forward
+
+    Returns
+    -------
+    list[T]
+        The sequence, cycled. No matter the type of the input sequence,
+        a list is always returned.
+
+    Examples
+    --------
+    >>> raimad.cycled(('a', 'b', 'c', 'd'), 2)
+    ('c', 'd', 'a', 'b')
+
+    >>> raimad.cycled(('a', 'b', 'c', 'd'), -1)
+    ('b', 'c', 'd', 'a')
+    """
     if len(seq) == 0:
         return list(seq[:])
 
@@ -179,10 +207,48 @@ def cycled(seq: Sequence[T], count: int) -> list[T]:
 
 #T = TypeVar("T")
 def reversed(seq: Sequence[T]) -> list[T]:
+    """Return `seq` backwards (in reverse order), as a list."""
     return list(seq[::-1])
 
 #T = TypeVar("T")
 def reversed_pin(seq: Sequence[T], idx: int = 0) -> list[T]:
+    """
+    Return `seq` reversed and cycled so that a particular item does not move.
+
+    Will return `seq`, as a list, in reverse order, and cycled
+    by `idx` * 2 - 1 positions.
+    This will make it so the item at index `idx` in the original
+    is in the same index in the returned list.
+    Useful for cycling the points of a Poly or PolyS while keeping
+    one point in place.
+
+    Parameters
+    ----------
+    seq : Sequence[T]
+        Any Sequence (list, tuple, etc).
+    idx : int, optional
+        Index to pin in place. 0 by default.
+
+    Returns
+    -------
+    list[T]
+        A list is returned no matter the type of the original sequence.
+
+    Raises
+    ------
+    IndexError
+        If `idx` is out of bounds of `seq` ( idx >= len(seq) OR
+        idx < -len(seq) )
+
+    Examples
+    --------
+    >>> raimad.reversed_pin(('a', 'b', 'c', 'd'))
+    ('a', 'd', 'c', 'b')
+
+    >>> raimad.reversed_pin(('a', 'b', 'c', 'd'), 1)
+    ('c', 'b', 'a', 'd')
+
+    """
     if idx >= len(seq):
         raise IndexError("Pin index out of range of sequence.")
     if idx < -len(seq):
