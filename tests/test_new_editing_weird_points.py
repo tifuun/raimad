@@ -185,18 +185,16 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
             box.proxy().move(ALL_VECS[14]),
             box.proxy().move(ALL_VECS[15]),
             box.proxy().move(ALL_VECS[16]),
-            *(
-                {
-                    'root': [
-                        [
-                            (-1 + 2, -1 + 3),
-                            (1  + 2, -1 + 3),
-                            (1  + 2, 1  + 3),
-                            (-1 + 2, 1  + 3),
-                            ]
+            {
+                'root': [
+                    [
+                        (-1 + 2, -1 + 3),
+                        (1  + 2, -1 + 3),
+                        (1  + 2, 1  + 3),
+                        (-1 + 2, 1  + 3),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     def test_scale_weird_vectors_proxy(self):
@@ -210,37 +208,35 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
         self.assertManyGeomsEqual((
             *(
                 box.proxy().scale(vec)
-                for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (-1 * 2, -1 * 3),
-                            (1  * 2, -1 * 3),
-                            (1  * 2, 1  * 3),
-                            (-1 * 2, 1  * 3),
-                            ]
+                for vec in ALL_VECS
+                ),
+            {
+                'root': [
+                    [
+                        (-1 * 2, -1 * 3),
+                        (1  * 2, -1 * 3),
+                        (1  * 2, 1  * 3),
+                        (-1 * 2, 1  * 3),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
         self.assertManyGeomsEqual((
             *(
                 box.proxy().scale(vec, vec)
-                for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (-4, -9),
-                            (-0, -9),
-                            (-0, -3),
-                            (-4, -3),
-                            ]
+                for vec in ALL_VECS
+                ),
+            {
+                'root': [
+                    [
+                        (-4, -9),
+                        (-0, -9),
+                        (-0, -3),
+                        (-4, -3),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     def test_flip_weird_vectors_proxy(self):
@@ -255,18 +251,16 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
             *(
                 box.proxy().flip(vec)
                 for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (5, 7),
-                            (3, 7),
-                            (3, 5),
-                            (5, 5),
-                            ]
+            {
+                'root': [
+                    [
+                        (5, 7),
+                        (3, 7),
+                        (3, 5),
+                        (5, 5),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     def test_rotate_weird_vectors_proxy(self):
@@ -287,18 +281,16 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
                     np.float64(np.pi / 2),
                     )
                 ),
-            *(
-                {
-                    'root': [
-                        [
-                            (6, 0),
-                            (6, 2),
-                            (4, 2),
-                            (4, 0),
-                            ]
+            {
+                'root': [
+                    [
+                        (6, 0),
+                        (6, 2),
+                        (4, 2),
+                        (4, 0),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     #------------#
@@ -317,18 +309,16 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
             *(
                 box.proxy().bbox.mid_left.move(vec)
                 for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (-1 + 2, -1 + 3),
-                            (1  + 2, -1 + 3),
-                            (1  + 2, 1  + 3),
-                            (-1 + 2, 1  + 3),
-                            ]
+            {
+                'root': [
+                    [
+                        (-1 + 2, -1 + 3),
+                        (1  + 2, -1 + 3),
+                        (1  + 2, 1  + 3),
+                        (-1 + 2, 1  + 3),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     def test_scale_weird_vectors_bp(self):
@@ -343,36 +333,32 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
             *(
                 box.proxy().bbox.mid.scale(vec)
                 for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (-1 * 2, -1 * 3),
-                            (1  * 2, -1 * 3),
-                            (1  * 2, 1  * 3),
-                            (-1 * 2, 1  * 3),
-                            ]
+            {
+                'root': [
+                    [
+                        (-1 * 2, -1 * 3),
+                        (1  * 2, -1 * 3),
+                        (1  * 2, 1  * 3),
+                        (-1 * 2, 1  * 3),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
         self.assertManyGeomsEqual((
             *(
                 box.proxy().scale(vec, vec)
                 for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (-4, -9),
-                            (-0, -9),
-                            (-0, -3),
-                            (-4, -3),
-                            ]
+            {
+                'root': [
+                    [
+                        (-4, -9),
+                        (-0, -9),
+                        (-0, -3),
+                        (-4, -3),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     def test_rotate_weird_vectors_bp(self):
@@ -392,18 +378,16 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
                     np.float64(np.pi / 2),
                     )
                 ),
-            *(
-                {
-                    'root': [
-                        [
-                            (1, -1),
-                            (1, 1),
-                            (-1, 1),
-                            (-1, -1),
-                            ]
+            {
+                'root': [
+                    [
+                        (1, -1),
+                        (1, 1),
+                        (-1, 1),
+                        (-1, -1),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 
     def test_to_weird_vectors(self):
@@ -418,17 +402,15 @@ class TestNewEditingWeirdVectors(GeomsEqual, unittest.TestCase):
             *(
                 box.proxy().bbox.mid.to(vec)
                 for vec in ALL_VECS),
-            *(
-                {
-                    'root': [
-                        [
-                            (1, 2),
-                            (3, 2),
-                            (3, 4),
-                            (1, 4),
-                            ]
+            {
+                'root': [
+                    [
+                        (1, 2),
+                        (3, 2),
+                        (3, 4),
+                        (1, 4),
                         ]
-                    }
-                ,)
+                    ]
+                }
             ))
 

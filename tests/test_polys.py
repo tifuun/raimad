@@ -13,10 +13,10 @@ class TestPolys(GeomsEqual, ArrayApproxEqual, unittest.TestCase):
             {
                 'root': [
                     [
-                        [-5, -10],
-                        [5, -10],
-                        [5, 10],
-                        [-5, 10]
+                        (-5, -10),
+                        (5, -10),
+                        (5, 10),
+                        (-5, 10)
                         ],
                     ]
                 }
@@ -46,9 +46,9 @@ class TestPolys(GeomsEqual, ArrayApproxEqual, unittest.TestCase):
             {
                 'root': [
                     [
-                        [10, 10],
-                        [20, 10],
-                        [20, 30],
+                        (10, 10),
+                        (20, 10),
+                        (20, 30),
                         ],
                     ]
                 }
@@ -68,9 +68,9 @@ class TestPolys(GeomsEqual, ArrayApproxEqual, unittest.TestCase):
             {
                 'root': [
                     [
-                        [10, 10],
-                        [20, 10],
-                        [20, 30],
+                        (10, 10),
+                        (20, 10),
+                        (20, 30),
                         ],
                     ]
                 }

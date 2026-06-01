@@ -6,7 +6,7 @@ import warnings
 
 from io import StringIO
 import raimad as rai
-from raimad.types import Geoms, Poly
+from raimad.types import GeomsS, Poly
 from raimad.typing import CompoLike
 
 from unittest import TestCase
@@ -108,19 +108,19 @@ class TestCaseGeomsProto(Protocol):
     epsilon: ClassVar[float]
     def assertManyGeomsEqual(
             self,
-            geomses: Sequence[Geoms | CompoLike],
+            geomses: Sequence[GeomsS | CompoLike],
             epsilon: float | None = None) -> None: ...
 
     def assertGeomsEqual(
             self,
-            actual: Geoms | CompoLike,
-            expected: Geoms | CompoLike,
+            actual: GeomsS | CompoLike,
+            expected: GeomsS | CompoLike,
             epsilon: float | None = None) -> None: ...
 
     def assertGeomsEqualButAllowDifferentNames(
             self,
-            actual: Geoms,
-            expected: Geoms,
+            actual: GeomsS,
+            expected: GeomsS,
             epsilon: float | None = None) -> None: ...
 
     def checkPolysEqual(
@@ -157,7 +157,7 @@ class GeomsEqual():
 
     def assertManyGeomsEqual(
             self,
-            geomses: Sequence[Geoms | CompoLike],
+            geomses: Sequence[GeomsS | CompoLike],
             epsilon: float | None = None) -> None:
 
         for a, b in rai.duplets(geomses):
@@ -165,8 +165,8 @@ class GeomsEqual():
 
     def assertGeomsEqual(
             self,
-            actual: Geoms | CompoLike,
-            expected: Geoms | CompoLike,
+            actual: GeomsS | CompoLike,
+            expected: GeomsS | CompoLike,
             epsilon: float | None = None) -> None:
 
         if isinstance(actual, CompoLike):
@@ -189,8 +189,8 @@ class GeomsEqual():
 
     def assertGeomsEqualButAllowDifferentNames(
             self,
-            actual: Geoms,
-            expected: Geoms,
+            actual: GeomsS,
+            expected: GeomsS,
             epsilon: float | None = None) -> None:
 
         # TODO this is a hack
