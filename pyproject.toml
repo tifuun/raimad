@@ -102,7 +102,7 @@ disallow_untyped_defs = false
 # that, almost by-defenition, has 100% runtime coverage,
 # and never runs on the end-user's machine.
 [[tool.mypy.overrides]]
-strict = false
+strict = true
 module = 'tests.utils'
 disable_error_code = ["attr-defined"]
 

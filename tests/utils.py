@@ -97,68 +97,17 @@ class ArrayApproxEqual():
             ) -> None:
         self.assertTrue(abs(actual - expected) <= (epsilon or self.epsilon))
 
-class TestCaseGeomsProto(Protocol):
-    """
-    TODO docstring
-    """
-    def assertEqual(self, a: Any, b: Any) -> None: ...
-    def assertTrue(self, a: Any) -> None: ...
-    def fail(self, msg: str) -> None: ...
-    def _formatMessage(self, a: str | None, b: str) -> str: ...
-    epsilon: ClassVar[float]
-    def assertManyGeomsEqual(
-            self,
-            geomses: Sequence[GeomsS | CompoLike],
-            epsilon: float | None = None) -> None: ...
-
-    def assertGeomsEqual(
-            self,
-            actual: GeomsS | CompoLike,
-            expected: GeomsS | CompoLike,
-            epsilon: float | None = None) -> None: ...
-
-    def assertGeomsEqualButAllowDifferentNames(
-            self,
-            actual: GeomsS,
-            expected: GeomsS,
-            epsilon: float | None = None) -> None: ...
-
-    def checkPolysEqual(
-            self,
-            actual: Poly,
-            expected: Poly,
-            epsilon: float | None = None
-            ) -> bool: ...
-
 class GeomsEqual():
     """
     Mixin for comparing geoms, regardless
     of the order of polys in each layer,
     or the order of points in each poly
     """
-    epsilon: float
-
-    def __init_subclass__(cls, *args: Any, epsilon: float = 0.001, **kwargs: Any) -> None:
-        cls.epsilon = epsilon
-        super().__init_subclass__(*args, **kwargs)
-
-    def checkPolysEqual(
-            self,
-            actual: Poly,
-            expected: Poly,
-            epsilon: float | None = None
-            ) -> bool:
-
-        return all(
-            rai.distance_between(point1, point2) <= (epsilon or self.epsilon)
-            for point1, point2 in
-            zip(actual, expected, strict=True)
-            )
 
     def assertManyGeomsEqual(
             self,
             geomses: Sequence[GeomsS | CompoLike],
-            epsilon: float | None = None) -> None:
+            ) -> None:
 
         for a, b in rai.duplets(geomses):
             self.assertGeomsEqual(a, b)
@@ -167,7 +116,7 @@ class GeomsEqual():
             self,
             actual: GeomsS | CompoLike,
             expected: GeomsS | CompoLike,
-            epsilon: float | None = None) -> None:
+            ) -> None:
 
         if isinstance(actual, CompoLike):
             actual = actual.steamroll()
@@ -187,7 +136,7 @@ class GeomsEqual():
             self,
             actual: GeomsS,
             expected: GeomsS,
-            epsilon: float | None = None) -> None:
+            ) -> None:
 
         if isinstance(actual, CompoLike):
             actual = actual.steamroll()
