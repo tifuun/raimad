@@ -903,7 +903,7 @@ class Transform:
         """
         return abs(self.get_shear()) > rai.epsilon
 
-    def does_scale(self) -> bool:
+    def does_scale(self, _epsilon=None) -> bool:
         """
         Check whether this transform applies a scale.
 
@@ -913,8 +913,11 @@ class Transform:
             True if the transform scales.
             False otherwise.
         """
+        if _epsilon is None:
+            # TODO THIS IS A MESSSSSSS
+            _epsilon = rai.epsilon
         scale_x, scale_y = self.get_scale()
-        return abs(1 - scale_x) > rai.epsilon or abs(1 - scale_y) > rai.epsilon
+        return abs(1 - scale_x) > _epsilon or abs(1 - scale_y) > _epsilon
 
     #-------------#
     # Misc        #

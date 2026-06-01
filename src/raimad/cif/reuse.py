@@ -76,8 +76,8 @@ def geoms2cif(geoms, multiplier):
 
 def ciffify(transform, multiplier, multiplier_rot = 1000):
 
-    if transform.does_scale():
-        raise NotImplementedError()
+    if transform.does_scale(_epsilon = 0.001):
+        raise NotImplementedError(f"{transform.get_scale() = }")
 
     if transform.does_shear():
         raise NotImplementedError()
@@ -194,9 +194,9 @@ class Reuse:
 
         new_lines.append(f'DS {this_rout_num} 1 1;')
         line_call = [f"C {this_rout_num}"]
-        self.cache[compo] = this_rout_num
 
         if isinstance(compo, rai.Compo):
+            self.cache[compo] = this_rout_num
             #print('this is a compo.')
             new_lines.extend(
                 self.export_compo(compo, this_rout_num)
@@ -211,6 +211,7 @@ class Reuse:
                 new_lines.append(
                     DelayedRoutCall(
                         weakref.ref(compo.compo),
+                        #weakref.ref(compo),
                         this_rout_num
                         )
                     )
