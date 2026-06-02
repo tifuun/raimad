@@ -453,13 +453,6 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
     def test_cif_reuse_proxystacking(self):
         """
         Make sure that proxies of proxies work correctly.
-
-        As I'm writing this test, there's currently a bug
-        where proxies of proxies get "double-stacked"
-        transforms i.e. transforms of underlying proxies
-        bubble their way upwards into the proxies above them.
-        There's also broken weirdness with how it interacts
-        with the cache, will need to test that later.
         """
         class Foo(rai.Compo):
             def _make(self):
@@ -500,7 +493,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
                 self.subcompos.rstick = rstick
                 self.subcompos.rrstick = rrstick
                 self.subcompos.brstick = brstick
-                #self.subcompos.rbrstick = rbrstick
+                self.subcompos.rbrstick = rbrstick
 
         ## STEP ONE: sanity check with noreuse exporter
                 
@@ -513,40 +506,41 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
 
         expected = {
             'Lroot': [  #TODO NOREUSE NEW LAYER NAMES!!!!!!
-                (  # 1 OKOKOK stick: center, tall
+                (  # 1 stick: center, tall
                     (-5, -10),
                     (5, -10),
                     (5, 10),
                     (-5, 10),
                     ),
-                (  # 2 OKOKOK rstick: center, long (90deg rotation)
+                (  # 2 rstick: center, long (90deg rotation)
                     (10, -5),
                     (10, 5),
                     (-10, 5),
                     (-10, -5),
                     ),
-                (  # 3 OOF rrstick: center, tall (180deg rotation)
+                (  # 3 rrstick: center, tall (180deg rotation)
                     (5, 10),
                     (-5, 10),
                     (-5, -10),
                     (5, -10),
                     ),
-                #(  # 3 OOF brstick: right, long (90deg rotation)
-                #    (10 + 10, -5),
-                #    (10 + 10, 5),
-                #    (-10 + 10, 5),
-                #    (-10 + 10, -5),
-                #    ),
-                #(  # 4 OOF rbrstick: right, tall (0 deg rotation)
-                #    (-5 + 10, -10),
-                #    (5 + 10, -10),
-                #    (5 + 10, 10),
-                #    (-5 + 10, 10),
-                #    ),
+                (  # 3 brstick: right, long (90deg rotation)
+                    (10 + 10, -5),
+                    (10 + 10, 5),
+                    (-10 + 10, 5),
+                    (-10 + 10, -5),
+                    ),
+                (  # 4 rbrstick: right, tall (0 deg rotation)
+                    (-5 + 10, -10),
+                    (5 + 10, -10),
+                    (5 + 10, 10),
+                    (-5 + 10, 10),
+                    ),
                 ]
             }
 
-        #self.assertGeomsEqualButAllowDifferentNames(layers, expected)
+        # FIRST: TEST WITH NOREUSE
+        self.assertGeomsEqualButAllowDifferentNames(layers, expected)
 
         ## STEP TWO: actual test with reuse exporter
         exporter = rai.cif.Reuse(compo, multiplier=1)
@@ -555,33 +549,10 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             grammar=cf.grammar.lenient_layers
             )
 
-        from pathlib import Path
-        Path('proxystacking.cif').write_text(exporter.cif_string)
-        Path('proxystacking.gv').write_text(exporter.stat.call_graph_dot())
-        rai.export_cif(compo, 'proxystacking_nr.cif', exporter=rai.cif.NoReuse)
 
-        # IF FAILS HERE MEANS PROXYSTACKING BUG IN 
-        # REUSE BUT NOT IN NOREUSE
+        # SECOND: TEST WITH REUSE
         self.assertGeomsEqualButAllowDifferentNames(layers, expected)
 
-    def test_cif_reuse_staircase(self):
-        """
-        I hate my life
-        """
-        class Foo(rai.Compo):
-            def _make(self):
-                box = rai.RectLW(10, 20).proxy().bbox.mid.to(0, 0)
-                self.subcompos.append(box)
-                for x in range(15):
-                    box = (box.proxy()
-                        .move(25, 25)
-                        .bbox.mid.rotate(rai.fullcircle / 26)
-                        )
-                    self.subcompos.append(box)
-
-                
-        compo = Foo()
-        polydump(compo, 'staircase')
 
 
 if __name__ == '__main__':
