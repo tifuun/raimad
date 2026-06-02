@@ -120,6 +120,9 @@ class Reuse:
         self.rout_num = 1
         self.multiplier = multiplier
 
+        self.enable_cell_names = True  # TODO param
+        # Test emission of cell names
+
         self.lname_transformers = get_lname_transformers(compo)
 
         self.cache = weakref.WeakKeyDictionary()

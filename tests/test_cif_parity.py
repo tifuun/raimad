@@ -36,24 +36,24 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertParity(rai.RectLW(10, 10))
 
 
-    #def test_cif_reuse_staircase(self):
-    #    """
-    #    I hate my life
-    #    """
-    #    class Foo(rai.Compo):
-    #        def _make(self):
-    #            box = rai.RectLW(10, 20).proxy().bbox.mid.to(0, 0)
-    #            self.subcompos.append(box)
-    #            for x in range(15):
-    #                box = (box.proxy()
-    #                    .move(25, 25)
-    #                    .bbox.mid.rotate(rai.fullcircle / 26)
-    #                    )
-    #                self.subcompos.append(box)
+    def test_cif_reuse_staircase(self):
+        """
+        I hate my life
+        """
+        class Foo(rai.Compo):
+            def _make(self):
+                box = rai.RectLW(10, 20).proxy().bbox.mid.to(0, 0)
+                self.subcompos.append(box)
+                for x in range(15):
+                    box = (box.proxy()
+                        .move(25, 25)
+                        .bbox.mid.rotate(rai.fullcircle / 26)
+                        )
+                    self.subcompos.append(box)
 
-    #            
-    #    compo = Foo()
-    #    polydump(compo, 'staircase')
+                
+        compo = Foo()
+        polydump(compo, 'staircase')
 
 
 if __name__ == '__main__':

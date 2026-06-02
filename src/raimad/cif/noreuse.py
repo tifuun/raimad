@@ -5,6 +5,7 @@ from warnings import warn
 
 import raimad as rai
 from raimad.types import LNameTransformers
+from raimad.cif.cellnames import compo_to_cell_name, digits_needed
 from raimad.cif.lname_transformers import (
     Enumerator,
     InvalidLayerNameTransformerCallable,
@@ -31,6 +32,7 @@ class NoReuse:
         self.multiplier = multiplier
 
         self.enable_cell_names = True  # TODO param
+        # Test emission of cell names
 
         self.lname_transformers = get_lname_transformers(compo)
 
@@ -111,14 +113,14 @@ class NoReuse:
         # you just have to generate each subcompo and keep track of
         # the routine number
         subcompos = []
+        digits = digits_needed(compo.subcompos)
         for subcompo_name, subcompo in compo.subcompos.items():
-
             subcompos.append((
                 self.rout_num,
                 list(self.yield_cif_bare(
                     subcompo,
                     cell_name=
-                        _compo_to_cell_name(subcompo_name, subcompo)
+                        compo_to_cell_name(subcompo_name, subcompo, digits)
                         if self.enable_cell_names
                         else None
                     ))
@@ -132,20 +134,4 @@ class NoReuse:
         # Define those procedures
         for _, this_subcompo in subcompos:
             yield from this_subcompo
-
-def _compo_to_cell_name(
-        subcompo_name: str | int,
-        subcompo: 'rai.typing.CompoLike',
-        ) -> str:
-    if isinstance(subcompo_name, int):
-        instance_name = f'{subcompo_name}-ANON'
-    elif isinstance(subcompo_name, str):
-        instance_name = subcompo_name
-    else:
-        assert False
-
-    type_name = type(subcompo.final()).__name__
-
-    return f"{type_name}::{instance_name}"
-
 
