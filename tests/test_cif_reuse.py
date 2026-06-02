@@ -84,7 +84,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (-5, -10),
                         (5, -10),
@@ -156,7 +156,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (0, 0),
                         (10, 0),
@@ -205,7 +205,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (-5, -5),
                         (5, -5),
@@ -368,7 +368,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (-5, -10),
                         (5, -10),
@@ -427,7 +427,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         self.assertGeomsEqual(
             layers,
             {
-                'Lroot': [
+                'ROOT': [
                     [
                         (-5, -10),
                         (5, -10),
@@ -505,7 +505,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             )
 
         expected = {
-            'Lroot': [  #TODO NOREUSE NEW LAYER NAMES!!!!!!
+            'ROOT': [
                 (  # 1 stick: center, tall
                     (-5, -10),
                     (5, -10),
@@ -540,7 +540,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
             }
 
         # FIRST: TEST WITH NOREUSE
-        self.assertGeomsEqualButAllowDifferentNames(layers, expected)
+        self.assertGeomsEqual(layers, expected)
 
         ## STEP TWO: actual test with reuse exporter
         exporter = rai.cif.Reuse(compo, multiplier=1)
@@ -551,7 +551,7 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
 
 
         # SECOND: TEST WITH REUSE
-        self.assertGeomsEqualButAllowDifferentNames(layers, expected)
+        self.assertGeomsEqual(layers, expected)
 
 
 

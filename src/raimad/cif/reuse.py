@@ -5,6 +5,12 @@ from dataclasses import dataclass, field
 
 import raimad as rai
 
+from raimad.types import LNameTransformers
+from raimad.cif.lname_transformers import (
+    get_lname_transformers,
+    transform_lname,
+    )
+
 @dataclass
 class SymbCall:
     src: int
@@ -74,7 +80,7 @@ def geoms2cif(geoms, multiplier):
                 ';'
                 )))
 
-def ciffify(transform, multiplier, multiplier_rot = 1000):
+def ciffify(transform, multiplier, multiplier_rot = 100):
 
     if transform.does_scale(_epsilon = 0.001):
         raise NotImplementedError(f"{transform.get_scale() = }")
@@ -106,13 +112,15 @@ class Reuse:
     def __init__(
             self,
             compo: 'rai.typing.CompoLike',
-            multiplier: float = 1e3
+            multiplier: float = 100
             ) -> None:
 
         self.stat = ReuseStat()
         self.compo = compo
         self.rout_num = 1
         self.multiplier = multiplier
+
+        self.lname_transformers = get_lname_transformers(compo)
 
         self.cache = weakref.WeakKeyDictionary()
 
@@ -238,7 +246,16 @@ class Reuse:
             if layer is None:
                 continue
 
-            lines.append(f'L L{layer};')
+            #lines.append(f'L L{layer};')
+
+            transformed_layer = transform_lname(
+                self.lname_transformers,
+                layer
+                )
+
+            lines.append(f'\tL {transformed_layer};\n')
+
+
             for poly in geom:
                 lines.append(' '.join((
                     'P ',

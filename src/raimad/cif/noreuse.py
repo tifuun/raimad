@@ -13,6 +13,8 @@ from raimad.cif.lname_transformers import (
     capitalise,
     noop,
     root,
+    get_lname_transformers,
+    transform_lname,
     )
 
 class NoReuse:
@@ -21,7 +23,7 @@ class NoReuse:
     def __init__(
             self,
             compo: 'rai.typing.CompoLike',
-            multiplier: float = 1e2,
+            multiplier: float = 100,
             ) -> None:
 
         self.compo = compo
@@ -30,45 +32,7 @@ class NoReuse:
 
         self.enable_cell_names = True  # TODO param
 
-        # TODO DOCUMENT THE LAMBDA THING SOMEWHERE!!
-        if hasattr(compo, '_experimental_lname_transformers'):
-            if hasattr(compo._experimental_lname_transformers, '__call__'):
-                self.lname_transformers = (
-                    compo._experimental_lname_transformers()
-                    )
-            else:
-                self.lname_transformers = (
-                    compo._experimental_lname_transformers
-                    )
-        else:
-            if hasattr(compo, '_experimental_extra_lname_transformers'):
-                if hasattr(
-                        compo._experimental_extra_lname_transformers,
-                        '__call__'
-                        ):
-                    extras = compo._experimental_extra_lname_transformers()
-                else:
-                    extras = compo._experimental_extra_lname_transformers
-            else:
-                extras = []
-
-            self.lname_transformers = (
-                *extras,
-                root,
-                noop,
-                capitalise,
-                Enumerator(
-                    warning=(
-                        "RAIMAD Layer name `{name}` converted to numeric CIF "
-                        "name `{result}.` For custom CIF layer names, specify "
-                        "a layer name transformer. To silence this warning "
-                        "while keeping the behavior, specify the "
-                        "rai.cif.lname_transformers.Enumerator() transformer "
-                        "manually. "
-                        )
-                    )
-                )
-            
+        self.lname_transformers = get_lname_transformers(compo)
 
         self.cif_string = self._export_cif()
 
@@ -125,7 +89,7 @@ class NoReuse:
             if layer is None:
                 continue
 
-            transformed_layer = _transform_lname(
+            transformed_layer = transform_lname(
                 self.lname_transformers,
                 layer
                 )
@@ -183,45 +147,5 @@ def _compo_to_cell_name(
     type_name = type(subcompo.final()).__name__
 
     return f"{type_name}::{instance_name}"
-
-def _transform_lname(lname_transformers: LNameTransformers, name: str) -> str:
-    for transformer in lname_transformers:
-        if hasattr(transformer, '__getitem__'):
-            try:
-                transformed = transformer[name]
-            except KeyError:
-                transformed = None
-
-        #elif isinstance(transformer, rai.types.LNameTransformerCallable):
-        elif hasattr(transformer, '__call__'):
-            try:
-                transformed = transformer(name)
-            except TypeError as err:
-                raise InvalidLayerNameTransformerCallable(
-                    "Could not call lname transformer {transformer}."
-                    ) from err
-
-        if transformed is not None:
-            if not rai.is_lname_valid(transformed):
-                warn(
-                    f"Layer name `{name}` was transformed to `{transformed}` "
-                    f"by transformer `{transformer}`, which is not a valid "
-                    f"CIF layer name. "
-                    f"The produced file may not be compatible with "
-                    f"all CIF viewers!!"
-                    ,
-                    InvalidLayerNameTransformerOutput
-                    )
-            break
-
-    if transformed is None:
-        raise UntransformableLayerName(
-            f"RAIMAD Layer name `{name}` could not be transformed to "
-            "a valid CIF layer name by any of the specified transformers "
-            f"( {lname_transformers} ). "
-            "Change the layer name or add a transformer that understands it. "
-            )
-
-    return transformed
 
 
