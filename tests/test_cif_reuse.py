@@ -292,6 +292,8 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
         #    grammar=cf.grammar.lenient_layers
         #    )
 
+        polydump(compo, 'bridges')
+
         self.assertEqual(exporter.stat.steamrolls, 0)
 
 

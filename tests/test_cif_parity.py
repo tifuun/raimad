@@ -52,8 +52,8 @@ class TestCIFReuse(GeomsEqual, unittest.TestCase):
                     self.subcompos.append(box)
 
                 
-        #compo = Foo()
-        #polydump(compo, 'staircase')
+        compo = Foo()
+        polydump(compo, 'staircase')
 
         # TODO this test does nothing now actually because cift
         # is WAY TOO SLOW to parse this thing!!
