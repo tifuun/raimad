@@ -2,6 +2,7 @@
 
 from typing import Iterator
 from warnings import warn
+import math
 
 import raimad as rai
 from raimad.types import LNameTransformers
@@ -14,6 +15,17 @@ from raimad.cif.lname_transformers import (
     noop,
     root,
     )
+
+def round_half_up(n: float) -> int:
+    """
+    Round float to int, always rounding .5 up.
+
+    Python's builtin `round` does Banker's AKA Scottish rounding.
+    Half up rounding is more suited for geometry tasks.
+    """
+    #print(f"{n} -> {math.copysign(math.floor(abs(n) + 0.5), n)}")
+    return int(math.copysign(int(abs(n) + 0.5), n))
+    #return int(Decimal(n).quantize(Decimal(1), rounding=ROUND_HALF_UP))
 
 class NoReuse:
     """CIF Exporter that doesn't reuse subroutines."""
@@ -135,8 +147,8 @@ class NoReuse:
                 yield '\tP '
                 for point in poly:
                     yield (
-                        f'{int(point[0] * self.multiplier)} '
-                        f'{int(point[1] * self.multiplier)} '
+                        f'{round_half_up(point[0] * self.multiplier)} '
+                        f'{round_half_up(point[1] * self.multiplier)} '
                         )
                 yield ';\n'
 
