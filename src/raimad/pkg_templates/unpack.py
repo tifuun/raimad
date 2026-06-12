@@ -1,6 +1,5 @@
 #from raimad.pkg_templates.default import template_default
 from pathlib import Path
-from typing import TypeAlias
 from string import Template
 from raimad.pkg_templates.types import UserInput, Context, Fillable, Tree
 from raimad.pkg_templates.prompt import prompt

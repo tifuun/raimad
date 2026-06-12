@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Protocol, TypeAlias
+from typing import TypeAlias
 from string import Template
 
 Fillable: TypeAlias = str | Template
@@ -8,6 +8,7 @@ Tree: TypeAlias = 'dict[Fillable, Fillable | Tree]'
 @dataclass
 class UserInput:
     """Info received from user."""
+
     pkg_name:     str
     pkg_desc:     str
     author_name:  str
@@ -20,6 +21,7 @@ class UserInput:
 @dataclass
 class Context:
     """Full context needed to unpack template"""
+
     pkg_name:       str
     pkg_desc:       str
     author_name:    str
