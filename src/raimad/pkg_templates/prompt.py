@@ -13,15 +13,14 @@ def camel2snake(camel):
         ).lstrip('_')
 
 def pester(name: str, default: str, validator: Validator) -> str:
-    while (user_input := input(f"{name} [{default}]: ")):
+    while True:
+        user_input = input(f"{name} [{default}]: ") or default
         is_ok, reason = validator(user_input)
         if is_ok:
             if reason:
                 print(reason)
             break
         print(reason)
-    else:
-        user_input = default
     return user_input
 
 def prompt():

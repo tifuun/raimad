@@ -1,4 +1,5 @@
 from typing import TypeAlias, Callable
+from pathlib import Path
 
 PKG_NAME_CHARS = set('abcdefghijklmnopqrstuvwxyz0123456789_')
 
@@ -55,18 +56,18 @@ def path(path: str) -> Response:
     path = Path(path)
 
     if path.exists():
-        return False, "The path `{path}` already exists."
+        return False, f"The path `{path}` already exists."
 
-    earliest_parent = path
-    while not earliest_path.exists():
-        earlier_parent = earliest_parent.parent()
+    #earliest_parent = path
+    #while not earliest_parent.exists():
+    #    earlier_parent = earliest_parent.parent
 
-    if not os.access(earliest_parent, os.W_OK):
-        return (
-            False,
-            "The first existing parent directory (`{earliest_parent}`) "
-            "is not writeable."
-            )
+    #if not os.access(earliest_parent, os.W_OK):
+    #    return (
+    #        False,
+    #        f"The first existing parent directory (`{earliest_parent}`) "
+    #        "is not writeable."
+    #        )
 
     return True, ""
 
