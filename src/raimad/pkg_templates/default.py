@@ -1,6 +1,7 @@
 from string import Template
+from raimad.pkg_templates.types import Tree
 
-template_default = {
+template_default: Tree = {
     "pyproject.toml": Template("""\
 [build-system]
 

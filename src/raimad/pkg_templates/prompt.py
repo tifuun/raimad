@@ -5,7 +5,8 @@ from raimad.pkg_templates import validators
 from raimad.pkg_templates.validators import Validator
 from raimad.pkg_templates import probe
 
-def camel2snake(camel):
+def camel2snake(camel: str) -> str:
+    """Translate CamelCase name to snake_case."""
     return re.sub(
         r"([A-Z])([a-z0-9]+)",
         lambda m: f"_{m[1].lower()}{m[2]}",
@@ -13,6 +14,29 @@ def camel2snake(camel):
         ).lstrip('_')
 
 def pester(name: str, default: str, validator: Validator) -> str:
+    """
+    Keep on asking user for input until `validator` is satisfied.
+
+    Parameters
+    ----------
+    name : str
+        Name of the field (displayed in the `input` prompt)
+    default : str
+        Default value. Displayed in the `input` prompt line,
+        and falls back to this value if user gives
+        empty input (i.e. just presses enter key)
+    validator: Validator
+        Function that checks user input string
+        and returns `bool`, `str` tuple
+        indicating whether it's okay or not,
+        and why.
+
+    Returns
+    -------
+    str
+        Either the user input that satisfied the validator
+        or `default`.
+    """
     while True:
         user_input = input(f"{name} [{default}]: ") or default
         is_ok, reason = validator(user_input)
@@ -23,7 +47,15 @@ def pester(name: str, default: str, validator: Validator) -> str:
         print(reason)
     return user_input
 
-def prompt():
+def prompt() -> UserInput:
+    """
+    Ask user all questions needed to build package boilerplate.
+
+    Returns
+    -------
+    UserInput
+        UserInput dataclass with all answers.
+    """
     print("Welcome to the RAIMAD package creator wizard!")
     print("You will be prompted to enter the following details: ")
     print()

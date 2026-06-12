@@ -2,13 +2,10 @@
 from pathlib import Path
 from typing import TypeAlias
 from string import Template
-from raimad.pkg_templates.types import UserInput, Context
+from raimad.pkg_templates.types import UserInput, Context, Fillable, Tree
 from raimad.pkg_templates.prompt import prompt
 from raimad.pkg_templates import probe
 from raimad.pkg_templates.default import template_default
-
-Fillable: TypeAlias = str | Template
-Tree: TypeAlias = 'dict[Fillable, Fillable | Tree]'
 
 def hydrate(user_input: UserInput) -> Context:
     return Context(
@@ -24,13 +21,13 @@ def hydrate(user_input: UserInput) -> Context:
         compo_snake=user_input.compo_snake,
         )
 
-def fill(fillable: Fillable, context: Context):
+def fill(fillable: Fillable, context: Context) -> str:
     if isinstance(fillable, str):
         return fillable
     elif isinstance(fillable, Template):
         return fillable.substitute(**context.__dict__)
 
-def unpack(basepath: Path, template: Tree, context: Context):
+def unpack(basepath: Path, template: Tree, context: Context) -> None:
     # TODO check that already exists
     for name, val in template.items():
         name = fill(name, context)
@@ -43,7 +40,7 @@ def unpack(basepath: Path, template: Tree, context: Context):
         else:
             raise TypeError()
 
-def doit():
+def doit() -> None:
     user_input = prompt()
     context = hydrate(user_input)
     unpack(Path(user_input.path), template_default, context)

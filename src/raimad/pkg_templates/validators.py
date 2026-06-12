@@ -1,5 +1,6 @@
 from typing import TypeAlias, Callable
 from pathlib import Path
+import re
 
 PKG_NAME_CHARS = set('abcdefghijklmnopqrstuvwxyz0123456789_')
 
@@ -23,7 +24,7 @@ def pkg_name(name: str) -> Response:
     return True, ""
 
 def pkg_desc(desc: str) -> Response:
-    if name.contains('\n'):
+    if '\n' in desc:
         # AFAIK this will never happen because `input` is
         # by-definition one line
         return False, "description must be single-line"
@@ -52,8 +53,8 @@ def compo_snake(camel: str) -> Response:
 
     return True, ""
 
-def path(path: str) -> Response:
-    path = Path(path)
+def path(pathstr: str) -> Response:
+    path = Path(pathstr)
 
     if path.exists():
         return False, f"The path `{path}` already exists."

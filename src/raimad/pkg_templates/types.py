@@ -1,5 +1,9 @@
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, TypeAlias
+from string import Template
+
+Fillable: TypeAlias = str | Template
+Tree: TypeAlias = 'dict[Fillable, Fillable | Tree]'
 
 @dataclass
 class UserInput:
