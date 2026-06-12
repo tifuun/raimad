@@ -1,3 +1,5 @@
+"""Utilities for prompting user for input for package template system."""
+
 import re
 
 from raimad.pkg_templates.types import UserInput

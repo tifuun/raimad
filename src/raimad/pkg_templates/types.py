@@ -1,3 +1,5 @@
+"""Types for package template system."""
+
 from dataclasses import dataclass
 from typing import TypeAlias
 from string import Template
@@ -20,7 +22,7 @@ class UserInput:
 
 @dataclass
 class Context:
-    """Full context needed to unpack template"""
+    """Full context needed to fill in template."""
 
     pkg_name:       str
     pkg_desc:       str

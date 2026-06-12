@@ -1,3 +1,5 @@
+"""The default (and only) package template for RAIMAD."""
+
 from string import Template
 from raimad.pkg_templates.types import Tree
 

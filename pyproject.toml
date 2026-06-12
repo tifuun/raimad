@@ -48,6 +48,7 @@ exclude = [
     #"ansec.py",  # TODO finish docstrings
     #"bbox.py",  # TODO finish docstrings
     'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
+    'src/raimad/pkg_templates/__init__.py',  # ???empty file?
     ]
 select = [
     "E",

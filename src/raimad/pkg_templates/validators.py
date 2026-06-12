@@ -1,3 +1,5 @@
+"""validators.py: validator functions for pkg template user input."""
+
 from typing import TypeAlias, Callable
 from pathlib import Path
 import re
@@ -8,6 +10,7 @@ Response: TypeAlias = tuple[bool, str]
 Validator: TypeAlias = Callable[[str], Response]
 
 def pkg_name(name: str) -> Response:
+    """Validate RAIMAD package name."""
     if not name.startswith('rai_'):
         return False, "package name must start with `rai_`."
 
@@ -24,6 +27,7 @@ def pkg_name(name: str) -> Response:
     return True, ""
 
 def pkg_desc(desc: str) -> Response:
+    """Validate RAIMAD package description."""
     if '\n' in desc:
         # AFAIK this will never happen because `input` is
         # by-definition one line
@@ -31,11 +35,13 @@ def pkg_desc(desc: str) -> Response:
     return True, ""
 
 def author_email(email: str) -> Response:
+    """Validate author email."""
     if not re.match(r"^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$", email):
         return False, "email must be valid"
     return True, ""
 
 def compo_camel(camel: str) -> Response:
+    """Validate component name (CamelCase)."""
     if not re.match(r"^(?:[A-Z][a-z0-9]+)+$", camel):
         return False, "Must be in CamelCase"
 
@@ -45,6 +51,7 @@ def compo_camel(camel: str) -> Response:
     return True, ""
 
 def compo_snake(camel: str) -> Response:
+    """Validate component name (snake_case)."""
     if not re.match(r"^(?:[a-z0-9]+_)*[a-z0-9]$", camel):
         return False, "Must be in snake_case"
 
@@ -54,6 +61,7 @@ def compo_snake(camel: str) -> Response:
     return True, ""
 
 def path(pathstr: str) -> Response:
+    """Validate RAIMAD package path."""
     path = Path(pathstr)
 
     if path.exists():
