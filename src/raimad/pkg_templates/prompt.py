@@ -1,0 +1,91 @@
+import re
+
+from raimad.pkg_templates.types import UserInput, Context
+from raimad.pkg_templates import validators
+from raimad.pkg_templates.validators import Validator
+from raimad.pkg_templates import probe
+
+def camel2snake(camel):
+    return re.sub(
+        r"([A-Z])([a-z0-9]+)",
+        lambda m: f"_{m[1].lower()}{m[2]}",
+        camel,
+        ).lstrip('_')
+
+def pester(name: str, default: str, validator: Validator) -> str:
+    while (user_input := input(f"{name} [{default}]: ")):
+        is_ok, reason = validator(user_input)
+        if is_ok:
+            if reason:
+                print(reason)
+            break
+        print(reason)
+    else:
+        user_input = default
+    return user_input
+
+def prompt():
+    print("Welcome to the RAIMAD package creator wizard!")
+    print("You will be prompted to enter the following details: ")
+    print()
+    print("- Package name and description")
+    print("- Author (that's you!) name and email address")
+    print("- A single component name")
+    print()
+    print("For each entry, you can press Enter ")
+    print("to accept the [default value].")
+    print("Press Ctrl-C at any time to quit.")
+    print()
+    pkg_name = pester(
+        "Package name",
+        "rai_mypkg",
+        validators.pkg_name,
+        )
+    print("Enter path to the package directory to be created.")
+    path = pester(
+        "Path",
+        f"./{pkg_name}",
+        validators.path,
+        )
+    pkg_desc = pester(
+        "Package description",
+        "My RAIMAD Package",
+        validators.pkg_desc,
+        )
+    author_name = pester(
+        "Author name",
+        probe.probe_author_name(),
+        lambda _: (True, ""),
+        )
+    author_email = pester(
+        "Author email address",
+        "noemail@example.com",
+        validators.author_email
+        )
+    print("I will create one sample component in your package.")
+    print("Enter the component name in CamelCase.")
+    print("This is how your component will appear to users of your package.")
+    compo_camel = pester(
+        "Component name (CamelCase)",
+        "MyCompo",
+        validators.compo_camel,
+        )
+    print("Enter the name of your component in snake_case.")
+    print("This is used for the filename containing the component code.")
+    compo_snake = pester(
+        "Component name (snake_case)",
+        camel2snake(compo_camel),
+        validators.compo_snake
+        )
+
+    return UserInput(
+        pkg_name=pkg_name,
+        pkg_desc=pkg_desc,
+        author_name=author_name,
+        author_email=author_email,
+        compo_camel=compo_camel,
+        compo_snake=compo_snake,
+        path=path,
+        )
+
+

@@ -8,11 +8,11 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "$NAME"
+name = "$pkg_name"
 version = "0.0.1"
-description = "$DESCRIPTION"
+description = "$pkg_desc"
 authors = [
-	{name = "$AUTHOR_NAME", email = "$AUTHOR_EMAIL"}
+	{name = "$author_name", email = "$author_email"}
 	]
 license = "GPL-3.0-only"
 readme = "README.md"
@@ -21,7 +21,7 @@ classifiers = [
 	]
 requires-python = ">=3.11"
 dependencies = [
-    '$RAIMAD_DEP',
+    '$raimad_dep',
 	]
 
 [project.optional-dependencies]
@@ -71,7 +71,7 @@ disallow_untyped_defs = false
 
 """),
     "README.md": Template("""\
-# $NAME
+# $pkg_name
 
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
@@ -91,20 +91,20 @@ in culpa qui officia deserunt mollit anim id est laborum.
 
 ## License
 
-$NAME is free software: you can redistribute it and/or modify it under
+$pkg_name is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation, version 3 of the License only.
 
-$NAME is distributed in the hope that it will be useful, but WITHOUT ANY
+$pkg_name is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
-$NAME. If not, see <https://www.gnu.org/licenses/>. 
+$pkg_name. If not, see <https://www.gnu.org/licenses/>. 
 
 ---
 
-Copyright (c) $YEAR, maybetree.
+Copyright (c) $copyright_year, $author_name.
 
 """),
     "LICENSE.md": r"""\
@@ -900,18 +900,18 @@ CMakeInit.txt
 
 """,
     "src": {
-        Template("$NAME"): {
+        Template("$pkg_name"): {
             "__init__.py": Template("""\
-from $NAME.$COMPO_SNAKE import $COMPO_CAMEL
+from $pkg_name.$compo_snake import $compo_camel
 
 __all__ = [
-    "$COMPO_CAMEL",
+    "$compo_camel",
 ]
 """),
-            Template("$COMPO_SNAKE.py"): Template("""\
+            Template("$compo_snake.py"): Template("""\
 import raimad as rai
 
-class $COMPO_CAMEL(rai.Compo):
+class $compo_camel(rai.Compo):
     class Options:
         width = rai.Option.Geometric("Width of the wire")
 
@@ -941,15 +941,15 @@ class $COMPO_CAMEL(rai.Compo):
     },
     "tests": {
         "__init__.py": "",
-        Template("test_$COMPO_SNAKE.py"): Template("""\
+        Template("test_$compo_snake.py"): Template("""\
 import unittest
 
 import raimad as rai
-import $NAME
+import $pkg_name
 
-class Test$COMPO_CAMEL(unittest.TestCase):
-    def test_$COMPO_SNAKE(self):
-        compo = $NAME.$COMPO_CAMEL(width=12)
+class Test$compo_camel(unittest.TestCase):
+    def test_$compo_snake(self):
+        compo = $pkg_name.$compo_camel(width=12)
         self.assertEqual(compo.bbox.width, 12)
 
 """),

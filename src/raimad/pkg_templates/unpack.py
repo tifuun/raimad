@@ -2,35 +2,49 @@
 from pathlib import Path
 from typing import TypeAlias
 from string import Template
+from raimad.pkg_templates.types import UserInput, Context
+from raimad.pkg_templates.prompt import prompt
+from raimad.pkg_templates import probe
+from raimad.pkg_templates.default import template_default
 
 Fillable: TypeAlias = str | Template
 Tree: TypeAlias = 'dict[Fillable, Fillable | Tree]'
 
-def fill(fillable: Fillable):
+def hydrate(user_input: UserInput) -> Context:
+    return Context(
+        pkg_name=user_input.pkg_name,
+        pkg_desc=user_input.pkg_desc,
+        author_name=user_input.author_name,
+        author_email=user_input.author_email,
+
+        raimad_dep=probe.probe_raimad_dep(),
+        copyright_year=probe.probe_copyright_year(),
+
+        compo_camel=user_input.compo_camel,
+        compo_snake=user_input.compo_snake,
+        )
+
+def fill(fillable: Fillable, context: Context):
     if isinstance(fillable, str):
         return fillable
     elif isinstance(fillable, Template):
-        return fillable.substitute(
-            NAME="samplepackage",
-            DESCRIPTION="A package for things and stuff",
-            AUTHOR_NAME="Foo Barr",
-            AUTHOR_EMAIL="no@email.com",
-            RAIMAD_DEP="raimad==1.3.0",
-            YEAR="2026",
-            COMPO_SNAKE="my_compo",
-            COMPO_CAMEL="MyCompo",
-            )
+        return fillable.substitute(**context.__dict__)
 
-def unpack(basepath: Path, template: Tree):
+def unpack(basepath: Path, template: Tree, context: Context):
     # TODO check that already exists
     for name, val in template.items():
-        name = fill(name)
+        name = fill(name, context)
         if isinstance(val, Fillable):
-            val = fill(val)
+            val = fill(val, context)
             basepath.mkdir(exist_ok=True, parents=True)
             (basepath / name).write_text(val)
         elif isinstance(val, dict):
-            unpack(basepath / name, val)
+            unpack(basepath / name, val, context)
         else:
             raise TypeError()
+
+def doit():
+    user_input = prompt()
+    context = hydrate(user_input)
+    unpack(Path(user_input.path), template_default, context)
 
