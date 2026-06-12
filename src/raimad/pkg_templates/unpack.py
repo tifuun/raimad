@@ -15,7 +15,7 @@ def fill(fillable: Fillable):
             DESCRIPTION="A package for things and stuff",
             AUTHOR_NAME="Foo Barr",
             AUTHOR_EMAIL="no@email.com",
-            RAIMAD_DEP="raimad=1.3.0",
+            RAIMAD_DEP="raimad==1.3.0",
             YEAR="2026",
             COMPO_SNAKE="my_compo",
             COMPO_CAMEL="MyCompo",

@@ -28,11 +28,11 @@ dependencies = [
 dev = [
 	"mypy",
 	"ruff",
+	"twine",
+	"build",
 	]
 
 [tool.ruff.lint]
-exclude = [
-    ]
 select = [
     "E",
     "F",
@@ -49,8 +49,6 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
-#[tool.ruff.lint.per-file-ignores]
-
 [tool.mypy]
 strict = true
 
@@ -58,7 +56,6 @@ strict = true
 files = [
 	"src",
 	"tests",
-	"scripts",
 ]
 
 # Exclude specific files
@@ -904,7 +901,13 @@ CMakeInit.txt
 """,
     "src": {
         Template("$NAME"): {
-            "__init__.py": "",
+            "__init__.py": Template("""\
+from $NAME.$COMPO_SNAKE import $COMPO_CAMEL
+
+__all__ = [
+    "$COMPO_CAMEL",
+]
+"""),
             Template("$COMPO_SNAKE.py"): Template("""\
 import raimad as rai
 
@@ -937,6 +940,7 @@ class $COMPO_CAMEL(rai.Compo):
         },
     },
     "tests": {
+        "__init__.py": "",
         Template("test_$COMPO_SNAKE.py"): Template("""\
 import unittest
 
@@ -945,7 +949,7 @@ import $NAME
 
 class Test$COMPO_CAMEL(unittest.TestCase):
     def test_$COMPO_SNAKE(self):
-        compo = $NAME.$COMPO_SNAKE(width=12)
+        compo = $NAME.$COMPO_CAMEL(width=12)
         self.assertEqual(compo.bbox.width, 12)
 
 """),
