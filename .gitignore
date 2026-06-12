@@ -87,4 +87,6 @@ paper/jats
 *.lyp
 paper/*original*
 paper/*tidy*
+foo.py
+foopkg
 
