@@ -237,9 +237,9 @@ def _add_init_action(
         subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
         ) -> None:
     """Add the init action to the root parser."""
-    parser = subparsers.add_parser(
+    _ = subparsers.add_parser(
         ACTION_INIT,
-        help="Create new RAIMAD package from template.",
+        help="Interactively create a new RAIMAD package.",
         )
 
 def _process_args_export(args: argparse.Namespace) -> None:
