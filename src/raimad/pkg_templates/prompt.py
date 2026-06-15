@@ -58,6 +58,7 @@ def prompt() -> UserInput:
     UserInput
         UserInput dataclass with all answers.
     """
+    # TODO nicer output on keyboardinterrupt
     print("Welcome to the RAIMAD package creator wizard!")
     print("You will be prompted to enter the following details: ")
     print()

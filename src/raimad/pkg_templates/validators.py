@@ -50,12 +50,13 @@ def compo_camel(camel: str) -> Response:
 
     return True, ""
 
-def compo_snake(camel: str) -> Response:
+def compo_snake(snake: str) -> Response:
     """Validate component name (snake_case)."""
-    if not re.match(r"^(?:[a-z0-9]+_)*[a-z0-9]$", camel):
+    if not re.match(r"^(?:[a-z0-9]+_)*[a-z0-9]+$", snake):
+        print('aaaaa', snake)
         return False, "Must be in snake_case"
 
-    if not camel.isidentifier():
+    if not snake.isidentifier():
         return False, "Compo name must be a valid Python identifier."
 
     return True, ""

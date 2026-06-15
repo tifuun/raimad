@@ -8,7 +8,7 @@ import unittest
 
 import raimad as rai
 
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 
 class TestLayers(unittest.TestCase, GeomsEqual):
 

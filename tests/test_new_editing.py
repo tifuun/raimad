@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
 
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 import raimad as rai
 
 class TestNewEditing(GeomsEqual, unittest.TestCase):

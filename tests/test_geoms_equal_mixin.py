@@ -1,5 +1,5 @@
 import unittest
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 
 import raimad as rai
 

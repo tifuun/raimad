@@ -90,4 +90,6 @@ paper/*tidy*
 foo.py
 foopkg
 rai_mypkg
+testpkg
+rai_testpkg
 

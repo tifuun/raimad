@@ -59,7 +59,8 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
         print(rai.fortune(args.category))
 
     elif args.action == ACTION_INIT:
-        print('foo')
+        from raimad.pkg_templates.unpack import doit
+        doit()
 
     else:
         # This should never happen, since
