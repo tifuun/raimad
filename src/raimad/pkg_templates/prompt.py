@@ -39,15 +39,28 @@ def pester(name: str, default: str, validator: Validator) -> str:
         Either the user input that satisfied the validator
         or `default`.
     """
+    last_input = None
     while True:
         user_input = input(f"{name} [{default}]: ") or default
         is_ok, reason = validator(user_input)
+
+        if last_input is not None and user_input.strip() in {'`!`', '!'}:
+            print(
+                f'Using invalid value `{last_input}` anyway, '
+                'expect breakage!'
+                )
+            user_input = last_input
+            break
+
         if is_ok:
             if reason:
                 print(reason)
             break
-        print(reason)
+
+        print(f'Invalid input: {reason} Enter `!` to override.')
         print()
+        last_input = user_input
+
     print()
     return user_input
 
