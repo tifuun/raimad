@@ -42,7 +42,7 @@ def author_email(email: str) -> Response:
 
 def compo_camel(camel: str) -> Response:
     """Validate component name (CamelCase)."""
-    if not re.match(r"^(?:[A-Z][a-z0-9]+)+$", camel):
+    if not re.match(r"^(?:[A-Z][a-z]*[0-9]*)+$", camel):
         return False, "Must be in CamelCase"
 
     if not camel.isidentifier():
