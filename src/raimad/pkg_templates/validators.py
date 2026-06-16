@@ -40,12 +40,12 @@ def author_email(email: str) -> Response:
         return False, "email must be valid"
     return True, ""
 
-def compo_camel(camel: str) -> Response:
-    """Validate component name (CamelCase)."""
-    if not re.match(r"^(?:[A-Z][a-z]*[0-9]*)+$", camel):
-        return False, "Must be in CamelCase"
+def compo_pascal(pascal: str) -> Response:
+    """Validate component name (PascalCase)."""
+    if not re.match(r"^(?:[A-Z][a-z]*[0-9]*)+$", pascal):
+        return False, "Must be in PascalCase"
 
-    if not camel.isidentifier():
+    if not pascal.isidentifier():
         return False, "Compo name must be a valid Python identifier."
 
     return True, ""

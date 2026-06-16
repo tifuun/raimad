@@ -7,12 +7,12 @@ from raimad.pkg_templates import validators
 from raimad.pkg_templates.validators import Validator
 from raimad.pkg_templates import probe
 
-def camel2snake(camel: str) -> str:
-    """Translate CamelCase name to snake_case."""
+def pascal2snake(pascal: str) -> str:
+    """Translate PascalCase name to snake_case."""
     return re.sub(
         r"([A-Z])([a-z0-9]+)",
         lambda m: f"_{m[1].lower()}{m[2]}",
-        camel,
+        pascal,
         ).lstrip('_')
 
 def pester(name: str, default: str, validator: Validator) -> str:
@@ -114,20 +114,20 @@ def prompt() -> UserInput:
         validators.author_email
         )
     print("I will create one sample component in your package.")
-    print("Enter the component name in CamelCase.")
+    print("Enter the component name in PascalCase.")
     print("This is how your component will appear to users of your package.")
     print()
-    compo_camel = pester(
-        "Component name (CamelCase)",
+    compo_pascal = pester(
+        "Component name (PascalCase)",
         "MyCompo",
-        validators.compo_camel,
+        validators.compo_pascal,
         )
     print("Enter the name of your component in snake_case.")
     print("This is used for the filename containing the component code.")
     print()
     compo_snake = pester(
         "Component name (snake_case)",
-        camel2snake(compo_camel),
+        pascal2snake(compo_pascal),
         validators.compo_snake
         )
 
@@ -136,7 +136,7 @@ def prompt() -> UserInput:
         pkg_desc=pkg_desc,
         author_name=author_name,
         author_email=author_email,
-        compo_camel=compo_camel,
+        compo_pascal=compo_pascal,
         compo_snake=compo_snake,
         path=path,
         )

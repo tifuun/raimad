@@ -15,7 +15,7 @@ class UserInput:
     pkg_desc:     str
     author_name:  str
     author_email: str
-    compo_camel:  str
+    compo_pascal:  str
     compo_snake:  str
     path:         str
 
@@ -30,7 +30,7 @@ class Context:
     author_email:   str
     raimad_dep:     str
     copyright_year: str
-    compo_camel:    str
+    compo_pascal:    str
     compo_snake:    str
     path:           str
 

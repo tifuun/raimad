@@ -80,7 +80,7 @@ class TestTemplate(unittest.TestCase):
                 "This is a test package",  # description
                 "Foo Barr",                # author
                 "foo@barr.com",            # email
-                "FooBarrCompo",            # camel
+                "FooBarrCompo",            # pascal
                 "",                        # snake (use default)
             ))
             self._run_package_tests(folder / 'testpkg')
@@ -97,47 +97,47 @@ class TestTemplate(unittest.TestCase):
                 "",  # description
                 "",  # author
                 "",  # email
-                "",  # camel
+                "",  # pascal
                 "",  # snake
             ))
             self._run_package_tests(folder / 'rai_mypkg')
 
-    def test_validator_camel_case(self):
-        """Test CamelCase validator for template user input."""
-        self.assertTrue(validators.compo_camel("Foobar")[0])
-        self.assertTrue(validators.compo_camel("Foo")[0])
-        self.assertTrue(validators.compo_camel("Fo")[0])
-        self.assertTrue(validators.compo_camel("FoFoFo")[0])
-        self.assertTrue(validators.compo_camel("AShapedFilter")[0])
-        self.assertTrue(validators.compo_camel("ACRONYMTail")[0])
-        self.assertTrue(validators.compo_camel("SomethingE")[0])
-        self.assertTrue(validators.compo_camel("SomethingEEEEE")[0])
-        self.assertTrue(validators.compo_camel("Something1312")[0])
-        self.assertTrue(validators.compo_camel("Some23Thing")[0])
-        self.assertTrue(validators.compo_camel("Foo2Bar2")[0])
-        self.assertTrue(validators.compo_camel("Maru9")[0])
-        self.assertTrue(validators.compo_camel("M9")[0])
+    def test_validator_pascal_case(self):
+        """Test PascalCase validator for template user input."""
+        self.assertTrue(validators.compo_pascal("Foobar")[0])
+        self.assertTrue(validators.compo_pascal("Foo")[0])
+        self.assertTrue(validators.compo_pascal("Fo")[0])
+        self.assertTrue(validators.compo_pascal("FoFoFo")[0])
+        self.assertTrue(validators.compo_pascal("AShapedFilter")[0])
+        self.assertTrue(validators.compo_pascal("ACRONYMTail")[0])
+        self.assertTrue(validators.compo_pascal("SomethingE")[0])
+        self.assertTrue(validators.compo_pascal("SomethingEEEEE")[0])
+        self.assertTrue(validators.compo_pascal("Something1312")[0])
+        self.assertTrue(validators.compo_pascal("Some23Thing")[0])
+        self.assertTrue(validators.compo_pascal("Foo2Bar2")[0])
+        self.assertTrue(validators.compo_pascal("Maru9")[0])
+        self.assertTrue(validators.compo_pascal("M9")[0])
 
-        self.assertFalse(validators.compo_camel("f")[0])
-        self.assertFalse(validators.compo_camel("fffff")[0])
-        self.assertFalse(validators.compo_camel("fffFfff")[0])
-        self.assertFalse(validators.compo_camel("fFF")[0])
-        self.assertFalse(validators.compo_camel("snake_case")[0])
-        self.assertFalse(validators.compo_camel("kebab-case")[0])
-        self.assertFalse(validators.compo_camel("CamelCasent_")[0])
-        self.assertFalse(validators.compo_camel("")[0])
-        self.assertFalse(validators.compo_camel("-")[0])
-        self.assertFalse(validators.compo_camel("something1312")[0])
+        self.assertFalse(validators.compo_pascal("f")[0])
+        self.assertFalse(validators.compo_pascal("fffff")[0])
+        self.assertFalse(validators.compo_pascal("fffFfff")[0])
+        self.assertFalse(validators.compo_pascal("fFF")[0])
+        self.assertFalse(validators.compo_pascal("snake_case")[0])
+        self.assertFalse(validators.compo_pascal("kebab-case")[0])
+        self.assertFalse(validators.compo_pascal("PascalCasent_")[0])
+        self.assertFalse(validators.compo_pascal("")[0])
+        self.assertFalse(validators.compo_pascal("-")[0])
+        self.assertFalse(validators.compo_pascal("something1312")[0])
         # Some people say the below should be valid. Not me.
-        self.assertFalse(validators.compo_camel("Some23thing")[0])
-        self.assertFalse(validators.compo_camel("2Foo2Bar")[0])
-        self.assertFalse(validators.compo_camel("99999")[0])
-        self.assertFalse(validators.compo_camel("9")[0])
-        self.assertFalse(validators.compo_camel("m9")[0])
+        self.assertFalse(validators.compo_pascal("Some23thing")[0])
+        self.assertFalse(validators.compo_pascal("2Foo2Bar")[0])
+        self.assertFalse(validators.compo_pascal("99999")[0])
+        self.assertFalse(validators.compo_pascal("9")[0])
+        self.assertFalse(validators.compo_pascal("m9")[0])
 
         # deliberate non-tests
         #
-        # self.assert?????(validators.compo_camel("F")[0])
+        # self.assert?????(validators.compo_pascal("F")[0])
 
 
 

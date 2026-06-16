@@ -905,16 +905,16 @@ CMakeInit.txt
     "src": {
         Template("$pkg_name"): {
             "__init__.py": Template("""\
-from $pkg_name.$compo_snake import $compo_camel
+from $pkg_name.$compo_snake import $compo_pascal
 
 __all__ = [
-    "$compo_camel",
+    "$compo_pascal",
 ]
 """),
             Template("$compo_snake.py"): Template("""\
 import raimad as rai
 
-class $compo_camel(rai.Compo):
+class $compo_pascal(rai.Compo):
     class Options:
         width = rai.Option.Geometric("Width of the wire")
 
@@ -950,9 +950,9 @@ import unittest
 import raimad as rai
 import $pkg_name
 
-class Test$compo_camel(unittest.TestCase):
+class Test$compo_pascal(unittest.TestCase):
     def test_$compo_snake(self):
-        compo = $pkg_name.$compo_camel(width=12)
+        compo = $pkg_name.$compo_pascal(width=12)
         self.assertEqual(compo.bbox.width, 12)
 
 """),

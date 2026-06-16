@@ -18,7 +18,7 @@ def hydrate(user_input: UserInput) -> Context:
         raimad_dep=probe.probe_raimad_dep(),
         copyright_year=probe.probe_copyright_year(),
 
-        compo_camel=user_input.compo_camel,
+        compo_pascal=user_input.compo_pascal,
         compo_snake=user_input.compo_snake,
         path=user_input.path,
         )
