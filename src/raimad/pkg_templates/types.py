@@ -32,4 +32,5 @@ class Context:
     copyright_year: str
     compo_camel:    str
     compo_snake:    str
+    path:           str
 

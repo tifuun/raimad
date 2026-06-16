@@ -3,7 +3,7 @@
 from pathlib import Path
 from string import Template
 from raimad.pkg_templates.types import UserInput, Context, Fillable, Tree
-from raimad.pkg_templates.prompt import prompt
+from raimad.pkg_templates.prompt import prompt, postunpack
 from raimad.pkg_templates import probe
 from raimad.pkg_templates.default import template_default
 
@@ -20,6 +20,7 @@ def hydrate(user_input: UserInput) -> Context:
 
         compo_camel=user_input.compo_camel,
         compo_snake=user_input.compo_snake,
+        path=user_input.path,
         )
 
 def fill(fillable: Fillable, context: Context) -> str:
@@ -78,5 +79,8 @@ def doit() -> None:
     """Prompt user for package details and create package file hierarchy."""
     user_input = prompt()
     context = hydrate(user_input)
+    print()
+    print("Unpacking template...")
     unpack(Path(user_input.path), template_default, context)
+    postunpack(context)
 

@@ -2,7 +2,7 @@
 
 import re
 
-from raimad.pkg_templates.types import UserInput
+from raimad.pkg_templates.types import UserInput, Context
 from raimad.pkg_templates import validators
 from raimad.pkg_templates.validators import Validator
 from raimad.pkg_templates import probe
@@ -47,6 +47,8 @@ def pester(name: str, default: str, validator: Validator) -> str:
                 print(reason)
             break
         print(reason)
+        print()
+    print()
     return user_input
 
 def prompt() -> UserInput:
@@ -59,6 +61,7 @@ def prompt() -> UserInput:
         UserInput dataclass with all answers.
     """
     # TODO nicer output on keyboardinterrupt
+    print()
     print("Welcome to the RAIMAD package creator wizard!")
     print("You will be prompted to enter the following details: ")
     print()
@@ -76,6 +79,7 @@ def prompt() -> UserInput:
         validators.pkg_name,
         )
     print("Enter path to the package directory to be created.")
+    print()
     path = pester(
         "Path",
         f"./{pkg_name}",
@@ -99,6 +103,7 @@ def prompt() -> UserInput:
     print("I will create one sample component in your package.")
     print("Enter the component name in CamelCase.")
     print("This is how your component will appear to users of your package.")
+    print()
     compo_camel = pester(
         "Component name (CamelCase)",
         "MyCompo",
@@ -106,6 +111,7 @@ def prompt() -> UserInput:
         )
     print("Enter the name of your component in snake_case.")
     print("This is used for the filename containing the component code.")
+    print()
     compo_snake = pester(
         "Component name (snake_case)",
         camel2snake(compo_camel),
@@ -122,4 +128,22 @@ def prompt() -> UserInput:
         path=path,
         )
 
+def postunpack(ctx: Context) -> None:
+    """Print some text after unpacking template."""
+
+    print()
+    print(f"Successfully created new RAIMAD package at `{ctx.path}`.")
+    print(f"Files of interest:")
+    print(f" - `{ctx.path}/pyproject.toml` -- package metadata")
+    print(f" - `{ctx.path}/src/{ctx.compo_snake}.py` -- component source code")
+    print(f" - `{ctx.path}/src/{ctx.pkg_name}/{ctx.compo_snake}.py` -- component source code")
+    print(f" - `{ctx.path}/src/{ctx.pkg_name}/__init__.py` -- namespace flattening")
+    print()
+    print("The package has been initialised with the ")
+    print("GNU General Public License Version 3 Only.")
+    print("You may choose a different license by editing ")
+    print("`pyproject.toml`, `README.md`, and `LICENSE.md`.")
+    print()
+    print("Good luck!")
+    print()
 

@@ -10,7 +10,6 @@ import tempfile
 from pathlib import Path
 
 import raimad as rai
-from .utils.expect import BasicExpect
 
 class TestTemplate(unittest.TestCase):
     #def __init__(self, *args, **kwargs):

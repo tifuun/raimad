@@ -105,7 +105,7 @@ disallow_untyped_defs = false
 # and never runs on the end-user's machine.
 [[tool.mypy.overrides]]
 strict = false
-module = 'tests.utils'
+module = 'tests.utils.mixins'
 disable_error_code = ["attr-defined"]
 
 # The nested annotation classes inside compo class system
