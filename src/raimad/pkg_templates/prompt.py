@@ -9,11 +9,13 @@ from raimad.pkg_templates import probe
 
 def pascal2snake(pascal: str) -> str:
     """Translate PascalCase name to snake_case."""
-    return re.sub(
-        r"([A-Z])([a-z0-9]+)",
-        lambda m: f"_{m[1].lower()}{m[2]}",
+    result = re.sub(
+        r"([A-Z]*)([A-Z]|$)",
+        lambda m: ''.join(f"_{f.lower()}" for f in m.groups() if f),
         pascal,
-        ).lstrip('_')
+        ).strip('_')
+    assert result.lower() == result
+    return result
 
 def pester(name: str, default: str, validator: Validator) -> str:
     """

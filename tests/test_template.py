@@ -12,6 +12,7 @@ from typing import Sequence, cast
 
 import raimad as rai
 from raimad.pkg_templates import validators
+from raimad.pkg_templates.prompt import pascal2snake
 
 def spawn_python(
         args: Sequence[str],
@@ -138,6 +139,24 @@ class TestTemplate(unittest.TestCase):
         # deliberate non-tests
         #
         # self.assert?????(validators.compo_pascal("F")[0])
+
+    def test_pascal2snake(self):
+        """Test pascal2snake function from template prompt module."""
+        self.assertEqual(pascal2snake("Foobar"),         "foobar")
+        self.assertEqual(pascal2snake("Foo"),            "foo")
+        self.assertEqual(pascal2snake("Fo"),             "fo")
+        self.assertEqual(pascal2snake("FoFoFo"),         "fo_fo_fo")
+        self.assertEqual(pascal2snake("AShapedFilter"),  "a_shaped_filter")
+        self.assertEqual(pascal2snake("ACRONYMTail"),    "acronym_tail")
+        self.assertEqual(pascal2snake("SomethingE"),     "something_e")
+        self.assertEqual(pascal2snake("SomethingEEEEE"), "something_eeeee")
+        self.assertEqual(pascal2snake("Something1312"),  "something1312")
+        self.assertEqual(pascal2snake("Some23Thing"),    "some23_thing")
+        self.assertEqual(pascal2snake("Foo2Bar2"),       "foo2_bar2")
+        self.assertEqual(pascal2snake("Maru9"),          "maru9")
+        self.assertEqual(pascal2snake("M9"),             "m9")
+        self.assertEqual(pascal2snake("A999a"),          "a999a")
+        self.assertEqual(pascal2snake("A999"),           "a999")
 
 
 
