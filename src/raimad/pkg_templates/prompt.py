@@ -133,11 +133,17 @@ def postunpack(ctx: Context) -> None:
 
     print()
     print(f"Successfully created new RAIMAD package at `{ctx.path}`.")
-    print(f"Files of interest:")
+    print("Files of interest:")
     print(f" - `{ctx.path}/pyproject.toml` -- package metadata")
     print(f" - `{ctx.path}/src/{ctx.compo_snake}.py` -- component source code")
-    print(f" - `{ctx.path}/src/{ctx.pkg_name}/{ctx.compo_snake}.py` -- component source code")
-    print(f" - `{ctx.path}/src/{ctx.pkg_name}/__init__.py` -- namespace flattening")
+    print(
+        f" - `{ctx.path}/src/{ctx.pkg_name}/{ctx.compo_snake}.py`"
+        " -- component source code"
+    )
+    print(
+        f" - `{ctx.path}/src/{ctx.pkg_name}/__init__.py`"
+        "-- namespace flattening"
+    )
     print()
     print("The package has been initialised with the ")
     print("GNU General Public License Version 3 Only.")
