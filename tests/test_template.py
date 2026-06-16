@@ -1,5 +1,5 @@
 """
-Test the `init` cli action (create new package template)
+Test the `init` cli action (create new package from template)
 """
 
 import os
@@ -19,6 +19,7 @@ def spawn_python(
         ) -> subprocess.Popen[str]:
         # the [str] generic means the Popen is in text mode
         # (`text=True`)
+    """Spawn new Python with subprocess.Popen"""
 
     env = {}
 
@@ -50,11 +51,13 @@ def send_lines(
 class TestTemplate(unittest.TestCase):
 
     def _run_wizard(self, folder: Path, user_input: Sequence[str]) -> None:
+        """Run `raimad init` with custom input."""
         p = spawn_python(('-m', 'raimad', 'init'), folder)
         send_lines(p, user_input)
         self.assertEqual(p.returncode, 0)
 
     def _run_package_tests(self, folder: Path) -> None:
+        """Run `python -m unittest` in a folder."""
         p = spawn_python(
             ('-m', 'unittest'),
             folder,
@@ -66,6 +69,7 @@ class TestTemplate(unittest.TestCase):
 
 
     def test_template_happy_path(self):
+        """Test happy user path of creating new package."""
         with tempfile.TemporaryDirectory() as tmpfolder:
             folder = Path(tmpfolder)
 
@@ -82,6 +86,7 @@ class TestTemplate(unittest.TestCase):
 
 
     def test_template_default_path(self):
+        """Test that all default values of template wizard work."""
         with tempfile.TemporaryDirectory() as tmpfolder:
             folder = Path(tmpfolder)
 
