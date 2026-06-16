@@ -49,14 +49,27 @@ def send_lines(
 
 class TestTemplate(unittest.TestCase):
 
+    def _run_wizard(self, folder: Path, user_input: Sequence[str]) -> None:
+        p = spawn_python(('-m', 'raimad', 'init'), folder)
+        send_lines(p, user_input)
+        self.assertEqual(p.returncode, 0)
+
+    def _run_package_tests(self, folder: Path) -> None:
+        p = spawn_python(
+            ('-m', 'unittest'),
+            folder,
+            pythonpath = ('./src', )   # <- make package `import`able
+        )
+        stdout, stderr = p.communicate()
+        self.assertEqual(p.returncode, 0)
+        self.assertTrue('OK' in stderr)
+
+
     def test_template_happy_path(self):
         with tempfile.TemporaryDirectory() as tmpfolder:
             folder = Path(tmpfolder)
 
-            # Part one: run the interactive wizard
-
-            p = spawn_python(('-m', 'raimad', 'init'), folder)
-            send_lines(p, (
+            self._run_wizard(folder, (
                 "rai_testpkg",             # package name
                 "./testpkg",               # path
                 "This is a test package",  # description
@@ -65,18 +78,23 @@ class TestTemplate(unittest.TestCase):
                 "FooBarrCompo",            # camel
                 "",                        # snake (use default)
             ))
-            self.assertEqual(p.returncode, 0)
+            self._run_package_tests(folder / 'testpkg')
 
-            # Part two: run autogenned package's unittest
 
-            p = spawn_python(
-                ('-m', 'unittest'),
-                folder / 'testpkg',  # <- cd into package root
-                pythonpath = ('./src', )   # <- make package `import`able
-            )
-            stdout, stderr = p.communicate()
-            self.assertEqual(p.returncode, 0)
-            self.assertTrue('OK' in stderr)
+    def test_template_default_path(self):
+        with tempfile.TemporaryDirectory() as tmpfolder:
+            folder = Path(tmpfolder)
+
+            self._run_wizard(folder, (
+                "",  # package name
+                "",  # path
+                "",  # description
+                "",  # author
+                "",  # email
+                "",  # camel
+                "",  # snake
+            ))
+            self._run_package_tests(folder / 'rai_mypkg')
 
 
 if __name__ == '__main__':
