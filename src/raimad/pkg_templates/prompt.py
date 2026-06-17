@@ -78,12 +78,13 @@ def prompt() -> UserInput:
     # TODO nicer output on keyboardinterrupt
     print()
     print("Welcome to the RAIMAD package creator wizard!")
-    print("You will be prompted to enter the following details: ")
-    print()
-    print("- Package name and description")
-    print("- Author (that's you!) name and email address")
-    print("- A single component name")
-    print()
+    print("I will ask you some questions about your package.")
+    #print("You will be prompted to enter the following details: ")
+    #print()
+    #print("- Package name and description")
+    #print("- Author (that's you!) name and email address")
+    #print("- A single component name")
+    #print()
     print("For each entry, you can press Enter ")
     print("to accept the [default value].")
     print("Press Ctrl-C at any time to quit.")
@@ -100,21 +101,26 @@ def prompt() -> UserInput:
         f"./{pkg_name}",
         validators.path,
         )
-    pkg_desc = pester(
-        "Package description",
-        "My RAIMAD Package",
-        validators.pkg_desc,
-        )
-    author_name = pester(
-        "Author name",
-        probe.probe_author_name(),
-        lambda _: (True, ""),
-        )
-    author_email = pester(
-        "Author email address",
-        "noemail@example.com",
-        validators.author_email
-        )
+    #pkg_desc = pester(
+    #    "Package description",
+    #    "My RAIMAD Package",
+    #    validators.pkg_desc,
+    #    )
+    #author_name = pester(
+    #    "Author name",
+    #    probe.probe_author_name(),
+    #    lambda _: (True, ""),
+    #    )
+    #author_email = pester(
+    #    "Author email address",
+    #    "noemail@example.com",
+    #    validators.author_email
+    #    )
+
+    pkg_desc = "Package description goes here."
+    author_name = "John Doe"
+    author_email = "no@email.com"
+
     print("I will create one sample component in your package.")
     print("Enter the component name in PascalCase.")
     print("This is how your component will appear to users of your package.")
