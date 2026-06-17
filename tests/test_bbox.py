@@ -3,7 +3,7 @@ from math import radians
 
 import raimad as rai
 
-from .utils import ArrayApproxEqual
+from .utils.mixins import ArrayApproxEqual
 
 class TwoCircles(rai.Compo):
     """

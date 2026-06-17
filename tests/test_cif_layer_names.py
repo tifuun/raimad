@@ -9,7 +9,7 @@ import sys
 import raimad as rai
 import cift as cf
 
-from .utils import AssertDoesntWarn
+from .utils.mixins import AssertDoesntWarn
 
 def autoinit(compo_class):
     # This incantation instantiates a compo with its

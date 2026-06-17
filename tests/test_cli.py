@@ -1,3 +1,9 @@
+"""
+Test CLI export and fortune actions.
+For the `init` action (package template)
+see `test_template.py`
+"""
+
 import unittest
 from contextlib import redirect_stderr
 import shlex

@@ -87,4 +87,11 @@ paper/jats
 *.lyp
 paper/*original*
 paper/*tidy*
+foo.py
+foopkg
+rai_mypkg
+testpkg
+rai_testpkg
+foo
+!archive/asciinema/*.gif
 

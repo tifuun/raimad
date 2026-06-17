@@ -1,5 +1,5 @@
 import unittest
-from .utils import XmlComparisonMixin
+from .utils.mixins import XmlComparisonMixin
 from io import StringIO
 
 import raimad

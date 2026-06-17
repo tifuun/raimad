@@ -17,7 +17,7 @@ import typing
 
 import numpy as np
 
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 import raimad as rai
 
 class IdxVec2:

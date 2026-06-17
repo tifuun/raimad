@@ -4,7 +4,7 @@ import re
 
 import raimad as rai
 
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 
 class TestProxy(GeomsEqual, unittest.TestCase):
 

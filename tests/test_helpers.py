@@ -4,7 +4,7 @@ from math import radians, sqrt
 import raimad as rai
 from raimad import add, eq, sub, midpoint
 
-from .utils import ArrayApproxEqual
+from .utils.mixins import ArrayApproxEqual
 
 
 class TestPolys(ArrayApproxEqual, unittest.TestCase):

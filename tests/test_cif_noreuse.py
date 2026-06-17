@@ -3,7 +3,7 @@ import unittest
 import raimad as rai
 import cift as cf
 
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 
 class TestCIFNoReuse(GeomsEqual, unittest.TestCase):
 

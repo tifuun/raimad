@@ -2,7 +2,7 @@ import unittest
 
 import raimad as rai
 
-from .utils import ArrayApproxEqual
+from .utils.mixins import ArrayApproxEqual
 
 class Compo_direct(rai.Compo):
     def _make(self):

@@ -12,6 +12,7 @@ import raimad as rai
 ACTION_EXPORT = 'export'
 ACTION_SHOW = 'show'
 ACTION_FORTUNE = 'fortune'
+ACTION_INIT = 'init'
 FILE_STDOUT = '-'
 
 def cli(custom_args: Sequence[str] | None = None) -> None:
@@ -57,6 +58,10 @@ def cli(custom_args: Sequence[str] | None = None) -> None:
     elif args.action == ACTION_FORTUNE:
         print(rai.fortune(args.category))
 
+    elif args.action == ACTION_INIT:
+        from raimad.pkg_templates.unpack import doit
+        doit()
+
     else:
         # This should never happen, since
         # argparse validates this.
@@ -77,6 +82,7 @@ def _setup_parser() -> argparse.ArgumentParser:
     _add_export_action(subparsers)
     _add_show_action(subparsers)
     _add_fortune_action(subparsers)
+    _add_init_action(subparsers)
 
     return parser
 
@@ -226,6 +232,15 @@ def _add_fortune_action(
             "Pass `any`, `all`, or emptystring to select from all "
             "categories. "
             )
+        )
+
+def _add_init_action(
+        subparsers: 'argparse._SubParsersAction[argparse.ArgumentParser]'
+        ) -> None:
+    """Add the init action to the root parser."""
+    _ = subparsers.add_parser(
+        ACTION_INIT,
+        help="Interactively create a new RAIMAD package.",
         )
 
 def _process_args_export(args: argparse.Namespace) -> None:

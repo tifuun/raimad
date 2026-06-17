@@ -28,7 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
 	"numpy",
-	"cift",
+	"cift==0.1.3",
 	"mypy",
 	"ipython",
 	]
@@ -48,6 +48,7 @@ exclude = [
     #"ansec.py",  # TODO finish docstrings
     #"bbox.py",  # TODO finish docstrings
     'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
+    'src/raimad/pkg_templates/__init__.py',  # ???empty file?
     ]
 select = [
     "E",
@@ -104,7 +105,7 @@ disallow_untyped_defs = false
 # and never runs on the end-user's machine.
 [[tool.mypy.overrides]]
 strict = false
-module = 'tests.utils'
+module = 'tests.utils.mixins'
 disable_error_code = ["attr-defined"]
 
 # The nested annotation classes inside compo class system

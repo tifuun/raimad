@@ -9,6 +9,12 @@ import raimad as rai
 from raimad.types import Geoms, Poly
 from raimad.typing import CompoLike
 
+import subprocess
+import threading
+import queue
+
+
+
 from unittest import TestCase
 
 class XmlComparisonMixin:
@@ -231,4 +237,5 @@ class GeomsEqual():
             {f"layer{i}": geoms for i, geoms in enumerate(expected.values())},
             epsilon
             )
+
 

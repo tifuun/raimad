@@ -2,7 +2,7 @@ import unittest
 
 import raimad as rai
 
-from .utils import GeomsEqual, ArrayApproxEqual
+from .utils.mixins import GeomsEqual, ArrayApproxEqual
 
 class TestPolys(ArrayApproxEqual, GeomsEqual, unittest.TestCase):
 
