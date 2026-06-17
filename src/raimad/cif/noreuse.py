@@ -1,7 +1,8 @@
 """noreuse.py: home to the NoReuse CIF exporter."""
 
-from typing import Iterator
+from typing import Iterator, Protocol
 from warnings import warn
+from functools import partial
 
 import raimad as rai
 from raimad.types import LNameTransformers
@@ -15,19 +16,35 @@ from raimad.cif.lname_transformers import (
     root,
     )
 
+class UnitConvFn(Protocol):
+    """Protocol for a unit conversion function."""
+
+    def __call__(self, micron: float, multiplier: float = ...) -> int:
+        """
+        The call method of the unit conversion funciton.
+
+        This protocol describes a callable that takes in
+        a float micron quantity and an optional multiplier,
+        and returns a quantity in CIF units.
+        An example is `rai.micron2cif`.
+        """
+        ...
+
 class NoReuse:
     """CIF Exporter that doesn't reuse subroutines."""
 
     def __init__(
             self,
             compo: 'rai.typing.CompoLike',
-            multiplier: float = 1e2,
+            multiplier: float = 100,
+            _unit_conv_fn: UnitConvFn = rai.micron2cif,
             ) -> None:
 
         self.compo = compo
         self.rout_num = 1
         self.multiplier = multiplier
 
+        self._unit_conv_fn = partial(_unit_conv_fn, multiplier=multiplier)
         self.enable_cell_names = True  # TODO param
 
         # TODO DOCUMENT THE LAMBDA THING SOMEWHERE!!
@@ -135,8 +152,8 @@ class NoReuse:
                 yield '\tP '
                 for point in poly:
                     yield (
-                        f'{int(point[0] * self.multiplier)} '
-                        f'{int(point[1] * self.multiplier)} '
+                        f'{self._unit_conv_fn(point[0])} '
+                        f'{self._unit_conv_fn(point[1])} '
                         )
                 yield ';\n'
 

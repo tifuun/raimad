@@ -56,7 +56,7 @@ class BoundPoint():
         self._y = float(y)
         self._proxy = proxy
 
-    def __getitem__(self, index: Literal[0, 1]) -> Num:
+    def __getitem__(self, index: Literal[0, 1]) -> NumS:
         """
         Get the X or Y coordinate of this BoundPoint.
 

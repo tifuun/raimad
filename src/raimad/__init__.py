@@ -28,6 +28,8 @@ from raimad.helpers import (
     distance_between,
     is_lname_valid,
     vec2s,
+    round_half_up,
+    micron2cif,
     )
 from raimad import affine
 import raimad.iters as iters
@@ -134,6 +136,8 @@ __all__ = [
     "distance_between",
     "is_lname_valid",
     "vec2s",
+    "round_half_up",
+    "micron2cif",
     "affine",
     "iters",
     "overlap",

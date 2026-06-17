@@ -397,4 +397,52 @@ def vec2s(a: float | Vec2, b: float | None = None) -> Vec2S:
 
     raise TypeError('TODO')
 
+def round_half_up(n: float) -> int:
+    """
+    Round float to int, always rounding .5 up.
+
+    Python's builtin `round` does Banker's AKA Scottish rounding.
+    Half up rounding is more suited for geometry tasks.
+
+    Parameters
+    ----------
+    n : float
+        the number to round
+
+    Returns
+    -------
+    int
+        the rounded value of n, as an int.
+    """
+    #print(f"{n} -> {math.copysign(math.floor(abs(n) + 0.5), n)}")
+    return int(math.copysign(int(abs(n) + 0.5), n))
+    #return int(Decimal(n).quantize(Decimal(1), rounding=ROUND_HALF_UP))
+
+def micron2cif(micron: float, multiplier: float = 100) -> int:
+    """
+    Convert float micron quantity to integer CIF unit quantity.
+
+    The implementation of this function is simply
+    `rai.round_half_up(micron * multiplier)`.
+    It is here in order for the caller to be explicit what they
+    are converting.
+
+    Parameters
+    ----------
+    micron : float
+        The measurement, as microns.
+
+    multiplier : float
+        CIF units are by-definition one hundredth of a micron.
+        So the multiplier should always be 100,
+        which is the default value.
+        It can be overridden for debugging purposes.
+
+    Returns
+    -------
+    int
+        The measurement, as CIF units.
+    """
+    return round_half_up(micron * multiplier)
+
 

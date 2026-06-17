@@ -104,6 +104,7 @@ class Transform:
 
         return self
 
+
     @overload
     def rotate(self, angle: Num, /) -> Self: ...
     # Trailing `/` is needed for mypy for some reason
@@ -145,7 +146,8 @@ class Transform:
         # to support weird things like mypy numbers
         # which we then convert to regular float
 
-        angle_float = float(angle)
+        #angle_float = float(angle) # TODO pieceofpi...?
+        angle_float = angle
 
         if (
                 isinstance(a, Num) and
@@ -165,6 +167,35 @@ class Transform:
         else:
             raise EditingArgumentError()
 
+        return self
+
+    def orotate(
+            self,
+            angle: int,
+            ) -> Self:
+        """
+        Rotate orthogonally.
+
+        This method rotates by an integer multiple of 90 degrees
+        in the counterclockwise direction.
+        Useful for avoid floating point precision issues.
+        Unlike regular rotate, it does not take a pivot point.
+
+        Parameters
+        ----------
+        angle : int
+            Number of quarter-circles to rotate in
+            the counterclockwise direction
+
+        Returns
+        -------
+        Self
+            This transform is returned to allow chaining methods.
+        """
+        self._affine = rai.affine.matmul(
+            rai.affine.orotate(angle),
+            self._affine
+            )
         return self
 
 

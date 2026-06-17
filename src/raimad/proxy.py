@@ -1124,6 +1124,31 @@ class Proxy:
         self.transform.rotate(angle, a, b)  # type: ignore
         return self
 
+    def orotate(
+            self,
+            angle: int,
+            ) -> Self:
+        """
+        Rotate orthogonally.
+
+        This method rotates by an integer multiple of 90 degrees
+        in the counterclockwise direction.
+        Useful for avoid floating point precision issues.
+        Unlike regular rotate, it does not take a pivot point.
+
+        Parameters
+        ----------
+        angle : int
+            Number of quarter-circles to rotate in
+            the counterclockwise direction
+
+        Returns
+        -------
+        Self
+            This proxy is returned to allow chaining methods.
+        """
+        self.transform.orotate(angle)
+        return self
 
     #-------------#
     # Move        #
