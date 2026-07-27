@@ -3,7 +3,7 @@ import unittest
 import raimad as rai
 import cift as cf
 
-from .utils import GeomsEqual
+from .utils.mixins import GeomsEqual
 
 
 def micron2cif_floor(micron: float, multiplier: float = 100) -> int:
