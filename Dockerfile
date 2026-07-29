@@ -7,8 +7,6 @@ ARG PYTHONS="3.14 3.13 3.12 3.11 3.10"
 # coverage, ruff, mypy
 ARG PYTHON_MAIN="3.13"
 
-COPY . /raimad-source
-
 RUN \
 	--mount=type=cache,target=/root/.cache/pip \
 	--mount=type=cache,target=/var/cache/xbps \
@@ -20,6 +18,7 @@ RUN \
 	xbps-install -Syu \
 		man \
 		wget \
+		jq \
 		xtools `xdowngrade command` \
 		`python deps` \
 		libffi \
@@ -35,9 +34,26 @@ RUN \
 		echo '' | xdowngrade ./freshsnakes-python$python*.xbps | cat && \
 		rm ./freshsnakes-python$python*.xbps && \
 		/opt/freshsnakes-python$python/bin/python3 -m venv /venv$python && \
-		/venv$python/bin/pip install -e /raimad-source[dev] && \
 		: ; \
 	done && \
 	/venv$PYTHON_MAIN/bin/pip install coverage mypy ruff && \
 	:
+
+COPY . /raimad-source
+
+RUN \
+	--mount=type=cache,target=/root/.cache/pip \
+	--mount=type=cache,target=/var/cache/xbps \
+	\
+	for python in $PYTHONS ; do \
+		/venv$python/bin/pip install -e /raimad-source[dev] && \
+		: ; \
+	done && \
+	:
+
+
+ENV PYTHONS=${PYTHONS}
+ENV PYTHON_MAIN=${PYTHON_MAIN}
+WORKDIR /raimad-source
+CMD ["./scripts/tooling-summary.sh"]
 

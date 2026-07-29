@@ -40,17 +40,20 @@
 *.so
 
 # Python
-__pycache__/
+__pycache__
 *.py[cod]
+.mypy_cache
 *$py.class
 .clirope
 *.egg-info
+*.egg_info
 build
 dist
 coverage.json
 htmlcov
 *.spec
 .coverage
+venv
 
 # Archives
 *.zip

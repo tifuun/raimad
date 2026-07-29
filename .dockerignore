@@ -104,5 +104,8 @@ img
 benchmarks
 .git
 .git*
+*.pyc
+__pycache__
+Dockerfile
 
 
