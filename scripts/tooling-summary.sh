@@ -13,11 +13,12 @@ py_main=/venv$PYTHON_MAIN/bin/python3
 run_tests() {
 	for python in $PYTHONS
 	do
+		python_nodot=$(echo "$python" | tr -cd [0-9])
 		if "/venv$python/bin/python3" -m unittest 1>&2
 		then
-			echo "TOOLING_UNITTEST_$python=true  # Did unittests pass?" >> /tmp/raimad-tooling
+			echo "TOOLING_UNITTEST_$python_nodot=true  # Did unittests pass?" >> /tmp/raimad-tooling
 		else
-			echo "TOOLING_UNITTEST_$python=false  # Did unittests pass?" >> /tmp/raimad-tooling
+			echo "TOOLING_UNITTEST_$python_nodot=false  # Did unittests pass?" >> /tmp/raimad-tooling
 		fi
 	done
 }
@@ -90,7 +91,7 @@ else
 fi
 
 # convert to json
-cat /tmp/raimad-tooling | jq --raw-input '[inputs] | map({(split("=")[0]): (split("=")[1]|split(" ")[0])}) | reduce .[] as $item ({}; . * $item)' > /tmp/raimad-tooling.json
+cat /tmp/raimad-tooling | jq --raw-input '[inputs] | map({(split("=")[0]): (split("=")[1]|split(" ")[0])}) | reduce .[] as $item ({}; . * $item)' | sed 's/true/Pass/g' | sed 's/false/Fail/g' > /tmp/raimad-tooling.json
 
 cat /tmp/raimad-tooling
 
