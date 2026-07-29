@@ -83,8 +83,11 @@ files = [
 # Exclude specific files
 exclude = [
 	'tests/test_cif_noreuse.py',  # TODO cift type hints!
+	'tests/test_cif_rounding.py',  # TODO cift type hints!
 	'tests/test_cif_layer_names.py',  # TODO cift type hints!
+	'tests/test_units.py',  # TODO cift type hints!
 	'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
+	'scripts/find-reviewers.py',  # this one also
 	]
 
 # don't complain about missing -> None return annotation
