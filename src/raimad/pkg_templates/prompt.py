@@ -5,7 +5,7 @@ import re
 from raimad.pkg_templates.types import UserInput, Context
 from raimad.pkg_templates import validators
 from raimad.pkg_templates.validators import Validator
-from raimad.pkg_templates import probe
+#from raimad.pkg_templates import probe
 
 def pascal2snake(pascal: str) -> str:
     """Translate PascalCase name to snake_case."""

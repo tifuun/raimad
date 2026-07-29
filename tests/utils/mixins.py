@@ -1,6 +1,6 @@
 from pprint import pprint
 from sys import stderr
-from typing import ClassVar, Sequence, Protocol, Any, Iterator, Self
+from typing import ClassVar, Sequence, Protocol, Any, Iterator
 from contextlib import contextmanager
 import warnings
 
@@ -12,6 +12,12 @@ from raimad.typing import CompoLike
 import subprocess
 import threading
 import queue
+
+try:
+    from typing import Self
+except ImportError:
+    # py3.9 and lower
+    from typing_extensions import Self
 
 
 

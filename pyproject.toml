@@ -47,7 +47,8 @@ exclude = [
     #"boundpoint.py",  # TODO finish docstrings
     #"ansec.py",  # TODO finish docstrings
     #"bbox.py",  # TODO finish docstrings
-    'scripts/paper-bibtex-line-breaks.py',  # that script is a mess
+    'scripts/find-reviewers.py',  # that script is a mess
+    'scripts/paper-bibtex-line-breaks.py',  # this script is also a mess
     'src/raimad/pkg_templates/__init__.py',  # ???empty file?
     ]
 select = [
