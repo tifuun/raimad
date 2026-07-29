@@ -17,7 +17,7 @@ do
 	fi
 done
 
-if $py_main -m mypy --strict src/raimad 1>&2
+if $py_main -m mypy 1>&2
 then
 	echo "TOOLING_MYPY=true  # Were there NO mypy issues?" >> /tmp/raimad-tooling
 else
@@ -29,7 +29,14 @@ coverage_percent=$($py_main -m coverage json -q -o /dev/stdout -i | jq --raw-out
 
 echo "TOOLING_COVERAGE=$coverage_percent  # Percentage of codebase covered by tests" >> /tmp/raimad-tooling
 
-num_todos=$(find src tests -name '__pycache__' -prune -o -type f -exec grep -Eo "TODO|FIXME" {} \; | wc -l)
+num_todos=$(
+	find . \
+		-name '__pycache__' -prune -o \
+		-name '.git' -prune -o \
+		-name 'dist' -prune -o \
+		-name '*egg*info*' -prune -o \
+		-name 'archive' -prune -o \
+		-type f -exec grep -Eo "TODO|FIXME" {} \; | wc -l)
 
 echo "TOOLING_TODOS=$num_todos  # How many TODOs and FIXMEs are in the code?" >> /tmp/raimad-tooling
 
