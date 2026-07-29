@@ -28,10 +28,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build image
         run: |
-          docker build . --tag ${{ github.repository }}:main
-          docker push ${{ github.repository }}:main
+          docker build . --tag ghcr.io/${{ github.repository }}:main
+
+      - name: Push image
+        run: |
+          docker push ghcr.io/${{ github.repository }}:main
 
   run-tooling:
     runs-on: ubuntu-latest
