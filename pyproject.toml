@@ -28,7 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
 	"numpy",
-	"cift==0.1.3",
+	"cift==0.1.4",
 	"mypy",
 	"ipython",
 	]
