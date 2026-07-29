@@ -89,5 +89,8 @@ else
 	"$@"
 fi
 
+# convert to json
+cat /tmp/raimad-tooling | jq --raw-input '[inputs] | map({(split("=")[0]): (split("=")[1]|split(" ")[0])}) | reduce .[] as $item ({}; . * $item)' > /tmp/raimad-tooling.json
+
 cat /tmp/raimad-tooling
 
