@@ -61,3 +61,8 @@ jobs:
           files: |
             /tmp/raimad-tooling.json
 
+      - name: Publish to PyPI
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: ./scripts/pypi.sh
+

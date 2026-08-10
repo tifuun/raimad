@@ -36,7 +36,7 @@ RUN \
 		/opt/freshsnakes-python$python/bin/python3 -m venv /venv$python && \
 		: ; \
 	done && \
-	/venv$PYTHON_MAIN/bin/pip install coverage mypy ruff && \
+	/venv$PYTHON_MAIN/bin/pip install coverage mypy ruff twine build && \
 	:
 
 COPY . /raimad-source
