@@ -4,16 +4,16 @@ RAIMAD Astronomical Instrument MAsk Designer
 
 ![RAIMAD banner](img/raimad-banner.png)
 
-![Python 3.14 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.14&query=TOOLING_UNITTEST_314)
-![Python 3.13 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.13&query=TOOLING_UNITTEST_313)
-![Python 3.12 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.12&query=TOOLING_UNITTEST_312)
-![Python 3.11 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.11&query=TOOLING_UNITTEST_311)
-![Python 3.10 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.10&query=TOOLING_UNITTEST_310)
+![Python 3.14 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.14&query=TOOLING_UNITTEST_314)
+![Python 3.13 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.13&query=TOOLING_UNITTEST_313)
+![Python 3.12 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.12&query=TOOLING_UNITTEST_312)
+![Python 3.11 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.11&query=TOOLING_UNITTEST_311)
+![Python 3.10 tests badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Python+3.10&query=TOOLING_UNITTEST_310)
 
-![MyPy badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=MyPy&query=TOOLING_MYPY)
-![Ruff badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Ruff+Violations&query=TOOLING_RUFF)
-![Coverage badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=Test+Coverage&query=TOOLING_COVERAGE&suffix=%)
-![Number of TODOs and FIXMEs](https://img.shields.io/badge/dynamic/json?url=https://github.com/maybeetree/raimad-fork/releases/latest/download/raimad-tooling.json&style=plastic&label=TODOs+and+FIXMEs&query=TOOLING_TODOS)
+![MyPy badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=MyPy&query=TOOLING_MYPY)
+![Ruff badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Ruff+Violations&query=TOOLING_RUFF)
+![Coverage badge](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=Test+Coverage&query=TOOLING_COVERAGE&suffix=%)
+![Number of TODOs and FIXMEs](https://img.shields.io/badge/dynamic/json?url=https://github.com/tifuun/raimad/releases/latest/download/raimad-tooling.json&style=plastic&label=TODOs+and+FIXMEs&query=TOOLING_TODOS)
 
 Read the documentation at [RAIDOC](https://tifuun.github.io/raidoc/).
 
