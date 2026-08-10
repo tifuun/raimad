@@ -64,5 +64,7 @@ jobs:
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: ./scripts/pypi.sh
+        run: |
+          cd /raimad-source
+          ./scripts/pypi.sh
 
